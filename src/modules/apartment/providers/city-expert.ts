@@ -1,4 +1,5 @@
 import { capitalizeWords } from 'common/utils';
+import { FiltersDto } from '../dto/filters.dto';
 import { BaseProvider } from './base-provider';
 
 export class CityExpertProvider extends BaseProvider {
@@ -6,7 +7,7 @@ export class CityExpertProvider extends BaseProvider {
 
   static getResults = results => results.data.result;
 
-  makeRequest(filters) {
+  makeRequest(filters: FiltersDto) {
     const rentOrSale = {
       rent: 'r',
       sale: 's',

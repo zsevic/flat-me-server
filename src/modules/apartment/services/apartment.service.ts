@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { ApartmentQueryDto } from './dto/apartment-query.dto';
+import { FiltersDto } from '../dto/filters.dto';
 import {
   BaseProvider,
   CetiriZidaProvider,
   CityExpertProvider,
-} from './providers';
+} from '../providers';
 
 @Injectable()
 export class ApartmentService {
@@ -13,11 +13,11 @@ export class ApartmentService {
     cityExpert: CityExpertProvider,
   };
 
-  async getApartmentList(query: ApartmentQueryDto) {
+  async getApartmentList(filters: FiltersDto) {
     try {
       const providerRequests = BaseProvider.getProviderRequests(
         this.providers,
-        query,
+        filters,
       );
       const providerResults = await Promise.all(
         providerRequests.map(providerRequest => providerRequest.request),

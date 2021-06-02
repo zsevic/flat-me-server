@@ -1,8 +1,8 @@
-import { IsArray, IsEnum, IsNotEmpty, Validate } from 'class-validator';
+import { IsEnum, IsNotEmpty, Validate } from 'class-validator';
 import { ArrayContainsValidator } from 'common/validators/array-contains.validator';
 import { MUNICIPALITIES, RentOrSale, STRUCTURES } from '../apartment-filters';
 
-export class ApartmentQueryDto {
+export class FiltersDto {
   @IsNotEmpty()
   minPrice: number;
 

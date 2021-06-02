@@ -1,12 +1,13 @@
 import { capitalizeWords, separateWords } from 'common/utils';
 import { BaseProvider } from './base-provider';
+import { FiltersDto } from '../dto/filters.dto';
 
 export class CetiriZidaProvider extends BaseProvider {
   private readonly url = 'https://api.4zida.rs/v6/search/apartments';
 
   static getResults = results => results.data.ads;
 
-  makeRequest(filters) {
+  makeRequest(filters: FiltersDto) {
     const structures = {
       '1.0': 102,
       1.5: 103,
