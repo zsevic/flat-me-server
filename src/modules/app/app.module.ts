@@ -16,6 +16,7 @@ import config from 'common/config';
 import databaseConfig from 'common/config/database';
 import { EventsModule } from 'common/events/events.module';
 import { ApartmentModule } from 'modules/apartment/apartment.module';
+import { FilterModule } from 'modules/filter/filter.module';
 import { AppController } from './app.controller';
 
 const typeOrmConfig = {
@@ -41,6 +42,7 @@ const typeOrmConfig = {
     TypeOrmModule.forRootAsync(typeOrmConfig),
     ApartmentModule,
     EventsModule,
+    FilterModule,
   ],
   controllers: [AppController],
   providers: [

@@ -1,5 +1,5 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { FiltersDto } from './dto/filters.dto';
+import { FiltersDto } from 'modules/filter/dto/filters.dto';
 import { ApartmentService } from './services';
 
 @Controller('apartments')

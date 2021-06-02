@@ -1,6 +1,7 @@
 import { IsEnum, IsNotEmpty, Validate } from 'class-validator';
 import { ArrayContainsValidator } from 'common/validators/array-contains.validator';
-import { MUNICIPALITIES, RentOrSale, STRUCTURES } from '../apartment-filters';
+import { MUNICIPALITIES, STRUCTURES } from '../filter.constants';
+import { RentOrSale } from '../filter.enums';
 
 export class FiltersDto {
   @IsNotEmpty()

@@ -1,5 +1,5 @@
 import { getLocation } from 'common/utils/location';
-import { FiltersDto } from '../dto/filters.dto';
+import { FiltersDto } from 'modules/filter/dto/filters.dto';
 
 export class MailService {
   private renderApartmentInfo = (apartmentInfo): string => {

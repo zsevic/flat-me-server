@@ -1,5 +1,5 @@
 import { capitalizeWords } from 'common/utils';
-import { FiltersDto } from '../dto/filters.dto';
+import { FiltersDto } from 'modules/filter/dto/filters.dto';
 import { BaseProvider } from './base-provider';
 
 export class CityExpertProvider extends BaseProvider {

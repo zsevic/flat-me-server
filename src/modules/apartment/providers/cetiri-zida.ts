@@ -1,6 +1,6 @@
 import { capitalizeWords, separateWords } from 'common/utils';
+import { FiltersDto } from 'modules/filter/dto/filters.dto';
 import { BaseProvider } from './base-provider';
-import { FiltersDto } from '../dto/filters.dto';
 
 export class CetiriZidaProvider extends BaseProvider {
   private readonly url = 'https://api.4zida.rs/v6/search/apartments';

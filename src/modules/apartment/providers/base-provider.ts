@@ -1,6 +1,6 @@
 import axios from 'axios';
+import { FiltersDto } from 'modules/filter/dto/filters.dto';
 import { FURNISHED } from '../apartment.constants';
-import { FiltersDto } from '../dto/filters.dto';
 
 export class BaseProvider {
   static getProviderRequests = (providers: any, filters: FiltersDto) => {
