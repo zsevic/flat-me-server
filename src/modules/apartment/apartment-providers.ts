@@ -1,11 +1,6 @@
 import axios from 'axios';
 import { capitalizeWords, separateWords } from 'common/utils';
-
-const FURNISHED = ['yes', 1];
-const providersApiUrls = {
-  '4zida': 'https://api.4zida.rs/v6/search/apartments',
-  cityExpert: 'https://cityexpert.rs/api/Search/',
-};
+import { FURNISHED } from './apartment.constants';
 
 function parseCommonApartmentInfo(apartmentInfo) {
   return {
@@ -18,7 +13,7 @@ function parseCommonApartmentInfo(apartmentInfo) {
 const apartmentProviders = {
   '4zida': {
     getResults: results => results.data.ads,
-    makeRequest: filters => {
+    makeRequest: function(filters) {
       const structures = {
         '1.0': 102,
         1.5: 103,
@@ -49,7 +44,7 @@ const apartmentProviders = {
       };
 
       return {
-        url: providersApiUrls['4zida'],
+        url: this.url,
         params,
       };
     },
@@ -69,10 +64,11 @@ const apartmentProviders = {
       structure: apartmentInfo.roomCount,
       url: `https://4zida.rs${apartmentInfo.urlPath}`,
     }),
+    url: 'https://api.4zida.rs/v6/search/apartments',
   },
   cityExpert: {
     getResults: results => results.data.result,
-    makeRequest: filters => {
+    makeRequest: function(filters) {
       const rentOrSale = {
         rent: 'r',
         sale: 's',
@@ -130,7 +126,7 @@ const apartmentProviders = {
       };
 
       return {
-        url: providersApiUrls.cityExpert,
+        url: this.url,
         headers: {
           'content-type': 'application/json',
         },
@@ -187,6 +183,7 @@ const apartmentProviders = {
           .toLowerCase()}`,
       };
     },
+    url: 'https://cityexpert.rs/api/Search/',
   },
 };
 
