@@ -1,9 +1,6 @@
-import { IsEnum, IsNotEmpty } from 'class-validator';
-
-enum rentOrSale {
-  rent = 'rent',
-  sale = 'sale',
-}
+import { IsArray, IsEnum, IsNotEmpty, Validate } from 'class-validator';
+import { ArrayContainsValidator } from 'common/validators/array-contains.validator';
+import { MUNICIPALITIES, RentOrSale, STRUCTURES } from '../apartment-filters';
 
 export class ApartmentQueryDto {
   @IsNotEmpty()
@@ -12,13 +9,13 @@ export class ApartmentQueryDto {
   @IsNotEmpty()
   maxPrice: number;
 
-  @IsNotEmpty()
+  @Validate(ArrayContainsValidator, MUNICIPALITIES)
   municipalities: string[];
 
   @IsNotEmpty()
-  @IsEnum(rentOrSale)
-  rentOrSale: rentOrSale;
+  @IsEnum(RentOrSale)
+  rentOrSale: RentOrSale;
 
-  @IsNotEmpty()
+  @Validate(ArrayContainsValidator, STRUCTURES)
   structures: string[];
 }
