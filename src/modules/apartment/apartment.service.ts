@@ -1,29 +1,41 @@
 import { Injectable } from '@nestjs/common';
-import apartmentProviders, { getProviderRequests } from './apartment-providers';
 import { ApartmentQueryDto } from './dto/apartment-query.dto';
+import {
+  BaseProvider,
+  CetiriZidaProvider,
+  CityExpertProvider,
+} from './providers';
 
 @Injectable()
 export class ApartmentService {
+  private readonly providers = {
+    cetiriZida: CetiriZidaProvider,
+    cityExpert: CityExpertProvider,
+  };
+
   async getApartmentList(query: ApartmentQueryDto) {
     try {
-      const providerRequests = getProviderRequests(apartmentProviders, query);
+      const providerRequests = BaseProvider.getProviderRequests(
+        this.providers,
+        query,
+      );
       const providerResults = await Promise.all(
         providerRequests.map(providerRequest => providerRequest.request),
       );
 
       const foundApartments = [];
       providerResults.forEach((providerResult, index) => {
-        const { provider: providerKey } = providerRequests[index];
+        const { providerName } = providerRequests[index];
 
-        const apartments = apartmentProviders[providerKey].getResults(
+        const apartments = this.providers[providerName].getResults(
           providerResult,
         );
         apartments.forEach(apartment => {
           if (!apartment.price) return;
 
-          const apartmentInfo = apartmentProviders[
-            providerKey
-          ].parseApartmentInfo(apartment);
+          const apartmentInfo = new this.providers[
+            providerName
+          ]().parseApartmentInfo(apartment);
           foundApartments.push(apartmentInfo);
         });
       });
