@@ -36,7 +36,7 @@ const apartmentProviders = {
 
       const params = {
         for: rentOrSale[filters.rentOrSale],
-        ...(filters.minPrice && { priceFrom: filters.minPrice }),
+        priceFrom: filters.minPrice,
         priceTo: filters.maxPrice,
         page: 1,
         placeIds: Object.keys(placesIds)
@@ -92,7 +92,7 @@ const apartmentProviders = {
         heatingArray: [],
         parkingArray: [],
         petsArray: [],
-        minPrice: filters.minPrice || null,
+        minPrice: filters.minPrice,
         maxPrice: filters.maxPrice,
         minSize: null,
         maxSize: null,
