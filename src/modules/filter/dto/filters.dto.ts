@@ -19,9 +19,8 @@ export class FiltersDto {
   rentOrSale: RentOrSale;
 
   @Validate(ArrayContainsValidator, STRUCTURES)
-  @Transform((structures: string[]): number[] => {
-    console.log('structures', structures);
-    return structures.map((structure: string): number => Number(structure));
-  })
+  @Transform((structures: string[]): number[] =>
+    structures.map((structure: string): number => Number(structure)),
+  )
   structures: string[];
 }

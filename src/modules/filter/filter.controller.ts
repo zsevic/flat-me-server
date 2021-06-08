@@ -1,11 +1,14 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { SaveFilterDto } from './dto/save-filter.dto';
+import { SaveFiltersDto } from './dto/save-filters.dto';
+import { Filters } from './filter.schema';
+import { FilterService } from './filter.service';
 
 @Controller('filters')
 export class FilterController {
+  constructor(private readonly filterService: FilterService) {}
+
   @Post()
-  saveFilter(@Body() filters: SaveFilterDto) {
-    console.log('filters', filters);
-    return;
+  saveFilters(@Body() filters: SaveFiltersDto): Promise<Filters> {
+    return this.filterService.saveFilters(filters);
   }
 }
