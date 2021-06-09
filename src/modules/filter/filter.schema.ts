@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Schema as MongooseSchema } from 'mongoose';
 
 export type FiltersDocument = Filters & Document;
 
@@ -20,13 +20,11 @@ export class Filters {
   @Prop()
   municipalities: string[];
 
-  @Prop()
-  email: string;
-
   @Prop({
-    default: false,
+    ref: 'User',
+    type: MongooseSchema.Types.ObjectId,
   })
-  is_active: boolean;
+  user_id: string;
 }
 
 export const FiltersSchema = SchemaFactory.createForClass(Filters);
