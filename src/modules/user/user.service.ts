@@ -8,6 +8,13 @@ import { User, UserDocument } from './user.schema';
 export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
+  private getExpiresAt = (): Date => {
+    const expiresAt = new Date();
+    expiresAt.setHours(expiresAt.getHours() + 1);
+
+    return expiresAt;
+  };
+
   async saveUser(email: string): Promise<User> {
     const token = await generateToken();
     const expiresAt = this.getExpiresAt();
@@ -38,10 +45,17 @@ export class UserService {
       );
   }
 
-  private getExpiresAt = (): Date => {
-    const expiresAt = new Date();
-    expiresAt.setHours(expiresAt.getHours() + 1);
+  async verifyUser(token: string): Promise<void> {
+    const user = await this.userModel.findOne({
+      'token.value': token,
+      'token.expires_at': {
+        $gt: new Date(),
+      },
+      is_verified: false,
+    });
+    if (!user) throw new BadRequestException('Token is not valid');
 
-    return expiresAt;
-  };
+    user.is_verified = true;
+    await user.save();
+  }
 }
