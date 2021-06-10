@@ -55,7 +55,10 @@ export class UserService {
     });
     if (!user) throw new BadRequestException('Token is not valid');
 
-    user.is_verified = true;
+    user.set({
+      is_verified: true,
+      token: null,
+    });
     await user.save();
   }
 }
