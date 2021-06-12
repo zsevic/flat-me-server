@@ -5,22 +5,22 @@ import {
   OnApplicationShutdown,
 } from '@nestjs/common';
 import { ConfigService, ConfigModule } from '@nestjs/config';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Subject } from 'rxjs';
 import config from 'common/config';
-import { EventsModule } from 'common/events/events.module';
 import { ApartmentModule } from 'modules/apartment/apartment.module';
 import { FilterModule } from 'modules/filter/filter.module';
 import { AppController } from './app.controller';
 
 @Module({
   imports: [
+    EventEmitterModule.forRoot(),
     ConfigModule.forRoot({
       load: [config],
     }),
     MongooseModule.forRoot('mongodb://localhost/flat-me-server'),
     ApartmentModule,
-    EventsModule,
     FilterModule,
   ],
   controllers: [AppController],
