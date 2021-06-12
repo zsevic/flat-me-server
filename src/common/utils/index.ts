@@ -6,6 +6,10 @@ export function capitalizeWords(words: string): string {
     .join(' ');
 }
 
+export function isEnvironment(environment: string): boolean {
+  return process.env.NODE_ENV === environment;
+}
+
 export function separateWords(words: string): string {
   const separatedWords = words.replace(/([A-Z])/g, ' $1');
   return separatedWords

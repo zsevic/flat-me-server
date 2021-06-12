@@ -3,6 +3,7 @@
   "entryFile": "src/main",
   "sourceRoot": "src/modules",
   "compilerOptions": {
+    "assets": ["mail/templates/**/*"],
     "plugins": ["@nestjs/swagger/plugin"]
   }
 }
