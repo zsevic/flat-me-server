@@ -7,10 +7,12 @@ import {
 import { ConfigService, ConfigModule } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ScheduleModule } from '@nestjs/schedule';
 import { Subject } from 'rxjs';
 import databaseConfig from 'common/config/database';
 import { ApartmentModule } from 'modules/apartment/apartment.module';
 import { FilterModule } from 'modules/filter/filter.module';
+import { TasksModule } from 'modules/tasks/tasks.module';
 import { AppController } from './app.controller';
 
 @Module({
@@ -30,8 +32,10 @@ import { AppController } from './app.controller';
         uri: configService.get('database.MONGODB_URL'),
       }),
     }),
+    ScheduleModule.forRoot(),
     ApartmentModule,
     FilterModule,
+    TasksModule,
   ],
   controllers: [AppController],
   providers: [

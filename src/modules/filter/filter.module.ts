@@ -12,5 +12,6 @@ import { FilterService } from './filter.service';
   ],
   controllers: [FilterController],
   providers: [FilterService],
+  exports: [FilterService],
 })
 export class FilterModule {}
