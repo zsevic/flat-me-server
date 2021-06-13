@@ -6,8 +6,9 @@ import {
 } from '@nestjs/common';
 import { ConfigService, ConfigModule } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import { MongooseModule } from '@nestjs/mongoose';
-import { ScheduleModule } from '@nestjs/schedule';
+import { InjectConnection, MongooseModule } from '@nestjs/mongoose';
+import { ScheduleModule, SchedulerRegistry } from '@nestjs/schedule';
+import { Connection } from 'mongoose';
 import { Subject } from 'rxjs';
 import databaseConfig from 'common/config/database';
 import { ApartmentModule } from 'modules/apartment/apartment.module';
@@ -50,12 +51,33 @@ export class AppModule implements OnApplicationShutdown {
   private readonly logger = new Logger(AppModule.name);
   private readonly shutdownListener$: Subject<void> = new Subject();
 
+  constructor(
+    @InjectConnection() private readonly connection: Connection,
+    private readonly schedulerRegistry: SchedulerRegistry,
+  ) {}
+
+  async closeDatabaseConnection(): Promise<void> {
+    await this.connection
+      .close()
+      .then(() => this.logger.log('Database connection is closed'));
+  }
+
   onApplicationShutdown = async (signal: string): Promise<void> => {
     if (!signal) return;
     this.logger.log(`Detected signal: ${signal}`);
 
+    this.stopCronJobs();
     this.shutdownListener$.next();
+    await this.closeDatabaseConnection();
   };
+
+  stopCronJobs(): void {
+    const jobs = this.schedulerRegistry.getCronJobs();
+    jobs.forEach((job, jobName) => {
+      job.stop();
+      this.logger.log(`Cron job "${jobName}" is stopped`);
+    });
+  }
 
   subscribeToShutdown = (shutdownFn: () => void): void => {
     this.shutdownListener$.subscribe(() => {

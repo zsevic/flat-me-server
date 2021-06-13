@@ -1,0 +1,1 @@
+export const SCRAPING_CRON_JOB = 'SCRAPING_CRON_JOB';

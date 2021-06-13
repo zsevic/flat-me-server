@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { UserCreatedEvent } from 'modules/user/events/user-created.event';
 import { UserService } from 'modules/user/user.service';
@@ -13,11 +13,6 @@ export class FilterController {
     private readonly filterService: FilterService,
     private readonly userService: UserService,
   ) {}
-
-  @Get()
-  async getFilters() {
-    return this.filterService.getUniqueFilters();
-  }
 
   @Post()
   async saveFilters(@Body() saveFiltersDto: SaveFiltersDto): Promise<Filters> {
