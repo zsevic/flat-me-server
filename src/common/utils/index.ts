@@ -6,6 +6,21 @@ export function capitalizeWords(words: string): string {
     .join(' ');
 }
 
+export function getUniqueValuesQuery(fieldName: string) {
+  return {
+    $reduce: {
+      input: fieldName,
+      initialValue: [],
+      in: {
+        $let: {
+          vars: { elem: { $concatArrays: ['$$this', '$$value'] } },
+          in: { $setUnion: '$$elem' },
+        },
+      },
+    },
+  };
+}
+
 export function isEnvironment(environment: string): boolean {
   return process.env.NODE_ENV === environment;
 }
