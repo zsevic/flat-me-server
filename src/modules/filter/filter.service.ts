@@ -52,6 +52,9 @@ export class FilterService {
 
   static getInitialFilters = (filters: FiltersDto): FiltersDto => ({
     ...filters,
+    ...(Array.isArray(filters.rentOrSale) && {
+      rentOrSale: filters.rentOrSale[0],
+    }),
     pageNumber: 1,
   });
 
