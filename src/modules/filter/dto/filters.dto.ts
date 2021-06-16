@@ -1,4 +1,4 @@
-import { Transform } from 'class-transformer';
+import { Type } from 'class-transformer';
 import { IsEnum, IsNotEmpty, Validate } from 'class-validator';
 import { ArrayContainsValidator } from 'common/validators/array-contains.validator';
 import { MUNICIPALITIES, STRUCTURES } from '../filter.constants';
@@ -19,9 +19,7 @@ export class FiltersDto {
   rentOrSale: RentOrSale;
 
   @Validate(ArrayContainsValidator, STRUCTURES)
-  @Transform((structures: string[]): number[] =>
-    structures.map((structure: string): number => Number(structure)),
-  )
+  @Type(() => Number)
   structures: string[];
 
   pageNumber: number;
