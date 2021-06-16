@@ -13,7 +13,7 @@ export class TasksService {
     private readonly filterService: FilterService,
   ) {}
 
-  @Cron(CronExpression.EVERY_10_SECONDS, {
+  @Cron(CronExpression.EVERY_HOUR, {
     name: SCRAPING_CRON_JOB,
   })
   async handleScraping(): Promise<void> {

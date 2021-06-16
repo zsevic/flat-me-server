@@ -82,5 +82,7 @@ export class ApartmentService {
   }
 
   saveApartmentList = async (apartments): Promise<Apartment[]> =>
-    this.apartmentModel.insertMany(apartments);
+    this.apartmentModel.insertMany(apartments, {
+      ordered: false,
+    });
 }
