@@ -46,7 +46,7 @@ const createTestAccountAsync = promisify(createTestAccount);
         return {
           transport,
           defaults: {
-            from: '"No Reply" <noreply@flat.me>',
+            from: 'zeljko@sevic.dev',
           },
           template: {
             dir: path.join(__dirname, '../../../mail/templates'),

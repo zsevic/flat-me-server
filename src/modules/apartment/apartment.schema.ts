@@ -14,7 +14,9 @@ class LocationSchema {
   longitude: number;
 }
 
-@Schema()
+@Schema({
+  timestamps: true,
+})
 export class Apartment {
   @Prop({
     index: {
@@ -28,9 +30,6 @@ export class Apartment {
 
   @Prop()
   availableFrom: string;
-
-  @Prop()
-  createdAt: string;
 
   @Prop()
   description: string;
@@ -52,6 +51,9 @@ export class Apartment {
 
   @Prop()
   place: string;
+
+  @Prop()
+  postedAt: string;
 
   @Prop()
   price: number;

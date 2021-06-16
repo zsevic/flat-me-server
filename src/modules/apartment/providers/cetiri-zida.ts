@@ -68,13 +68,13 @@ export class CetiriZidaProvider extends BaseProvider implements Provider {
       ...(apartmentInfo.address && {
         address: capitalizeWords(apartmentInfo.address),
       }),
-      createdAt: apartmentInfo.createdAt,
       description: apartmentInfo.description100,
       ...(apartmentInfo.heatingType && {
         heatingType: separateWords(apartmentInfo.heatingType),
       }),
       municipality: this.getMunicipality(apartmentInfo),
       place: apartmentInfo?.placeNames?.[0],
+      postedAt: apartmentInfo.createdAt,
       rentOrSale: apartmentInfo.for,
       size: apartmentInfo.m2,
       structure: apartmentInfo.roomCount,
