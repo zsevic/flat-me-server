@@ -10,7 +10,7 @@ export class MailService {
   constructor(private readonly mailerService: MailerService) {}
 
   async sendVerificationMail(email: string, token: string): Promise<void> {
-    const url = `http://172.26.203.64:8080/users/verify/${token}`; // TODO replace with client url
+    const url = `https://flat-me.herokuapp.com/users/verify/${token}`; // TODO replace with client url
 
     const mailInfo = await this.mailerService.sendMail({
       to: email,
