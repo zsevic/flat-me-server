@@ -13,19 +13,19 @@ export class TasksService {
     private readonly filterService: FilterService,
   ) {}
 
-  @Cron(CronExpression.EVERY_HOUR, {
+  @Cron(CronExpression.EVERY_10_SECONDS, {
     name: SCRAPING_CRON_JOB,
   })
-  async handleScraping() {
+  async handleScraping(): Promise<void> {
     this.logger.log('Scraping started...');
     const [filters] = await this.filterService.getUniqueFilters();
     this.logger.log(`Filters: ${!filters ? '{}' : JSON.stringify(filters)}`);
 
     if (!filters) return;
 
-    const apartmentList = await this.apartmentService.getApartmentList(
+    const apartmentList = await this.apartmentService.getApartmentListFromProviders(
       FilterService.getInitialFilters(filters),
     );
-    console.log('apartment list', apartmentList);
+    await this.apartmentService.saveApartmentList(apartmentList);
   }
 }

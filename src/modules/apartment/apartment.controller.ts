@@ -9,7 +9,7 @@ export class ApartmentController {
 
   @Get()
   async getApartmentList(@Query() filters: FiltersDto) {
-    return this.apartmentService.getApartmentList(
+    return this.apartmentService.getApartmentListFromProviders(
       FilterService.getInitialFilters(filters),
     );
   }

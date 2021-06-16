@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 import { FiltersDto } from 'modules/filter/dto/filters.dto';
+import { Apartment, ApartmentDocument } from '../apartment.schema';
 import {
   BaseProvider,
   CetiriZidaProvider,
@@ -12,6 +15,11 @@ export class ApartmentService {
     cetiriZida: CetiriZidaProvider,
     cityExpert: CityExpertProvider,
   };
+
+  constructor(
+    @InjectModel(Apartment.name)
+    private apartmentModel: Model<ApartmentDocument>,
+  ) {}
 
   async findApartments(providerRequests, filters: FiltersDto, foundApartments) {
     const newRequests = [];
@@ -60,7 +68,7 @@ export class ApartmentService {
       : foundApartments;
   }
 
-  async getApartmentList(filters: FiltersDto) {
+  async getApartmentListFromProviders(filters: FiltersDto) {
     try {
       const providerRequests = new BaseProvider().getProviderRequests(
         this.providers,
@@ -72,4 +80,7 @@ export class ApartmentService {
       console.error(error);
     }
   }
+
+  saveApartmentList = async (apartments): Promise<Apartment[]> =>
+    this.apartmentModel.insertMany(apartments);
 }
