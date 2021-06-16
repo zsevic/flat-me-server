@@ -81,6 +81,19 @@ export class ApartmentService {
     }
   }
 
+  async getApartmentListFromDatabase(filters: FiltersDto) {
+    // @ts-ignore
+    return this.apartmentModel.find({
+      price: {
+        $gte: filters.minPrice,
+        $lte: filters.maxPrice,
+      },
+      structure: {
+        $in: filters.structures,
+      },
+    });
+  }
+
   saveApartmentList = async (apartments): Promise<Apartment[]> =>
     this.apartmentModel.insertMany(apartments, {
       ordered: false,
