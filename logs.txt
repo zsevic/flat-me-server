@@ -1,0 +1,42 @@
+
+> flat-me-server@0.0.1 start:dev
+> NODE_ENV=development nest start --watch
+
+c[[90m12:56:19 PM[0m] Starting compilation in watch mode...
+
+[[90m12:56:21 PM[0m] Found 0 errors. Watching for file changes.
+
+{"context":"NestFactory","level":"info","message":"Starting Nest application...","timestamp":"2021-06-16T10:56:22.548Z"}
+{"context":"InstanceLoader","level":"info","message":"MongooseModule dependencies initialized","timestamp":"2021-06-16T10:56:22.578Z"}
+{"context":"InstanceLoader","level":"info","message":"MailerModule dependencies initialized","timestamp":"2021-06-16T10:56:22.579Z"}
+{"context":"InstanceLoader","level":"info","message":"ConfigHostModule dependencies initialized","timestamp":"2021-06-16T10:56:22.579Z"}
+{"context":"InstanceLoader","level":"info","message":"DiscoveryModule dependencies initialized","timestamp":"2021-06-16T10:56:22.579Z"}
+{"context":"InstanceLoader","level":"info","message":"ConfigModule dependencies initialized","timestamp":"2021-06-16T10:56:22.580Z"}
+{"context":"InstanceLoader","level":"info","message":"ScheduleModule dependencies initialized","timestamp":"2021-06-16T10:56:22.580Z"}
+{"context":"InstanceLoader","level":"info","message":"ConfigModule dependencies initialized","timestamp":"2021-06-16T10:56:22.580Z"}
+{"context":"InstanceLoader","level":"info","message":"EventEmitterModule dependencies initialized","timestamp":"2021-06-16T10:56:22.580Z"}
+{"context":"InstanceLoader","level":"info","message":"MongooseCoreModule dependencies initialized","timestamp":"2021-06-16T10:56:22.600Z"}
+{"context":"InstanceLoader","level":"info","message":"MongooseModule dependencies initialized","timestamp":"2021-06-16T10:56:22.607Z"}
+{"context":"InstanceLoader","level":"info","message":"MongooseModule dependencies initialized","timestamp":"2021-06-16T10:56:22.607Z"}
+{"context":"InstanceLoader","level":"info","message":"MongooseModule dependencies initialized","timestamp":"2021-06-16T10:56:22.608Z"}
+{"context":"InstanceLoader","level":"info","message":"AppModule dependencies initialized","timestamp":"2021-06-16T10:56:22.608Z"}
+{"context":"InstanceLoader","level":"info","message":"ApartmentModule dependencies initialized","timestamp":"2021-06-16T10:56:22.608Z"}
+{"context":"InstanceLoader","level":"info","message":"TasksModule dependencies initialized","timestamp":"2021-06-16T10:56:22.608Z"}
+{"context":"InstanceLoader","level":"info","message":"FilterModule dependencies initialized","timestamp":"2021-06-16T10:56:22.609Z"}
+{"context":"InstanceLoader","level":"info","message":"MailerCoreModule dependencies initialized","timestamp":"2021-06-16T10:56:22.847Z"}
+{"context":"InstanceLoader","level":"info","message":"MailModule dependencies initialized","timestamp":"2021-06-16T10:56:22.848Z"}
+{"context":"InstanceLoader","level":"info","message":"UserModule dependencies initialized","timestamp":"2021-06-16T10:56:22.849Z"}
+{"context":"RoutesResolver","level":"info","message":"AppController {}:","timestamp":"2021-06-16T10:56:22.923Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {, GET} route","timestamp":"2021-06-16T10:56:22.926Z"}
+{"context":"RoutesResolver","level":"info","message":"ApartmentController {/apartments}:","timestamp":"2021-06-16T10:56:22.926Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/apartments, GET} route","timestamp":"2021-06-16T10:56:22.926Z"}
+{"context":"RoutesResolver","level":"info","message":"FilterController {/filters}:","timestamp":"2021-06-16T10:56:22.926Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/filters, POST} route","timestamp":"2021-06-16T10:56:22.927Z"}
+{"context":"RoutesResolver","level":"info","message":"UserController {/users}:","timestamp":"2021-06-16T10:56:22.927Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/users/verify/:token, GET} route","timestamp":"2021-06-16T10:56:22.927Z"}
+{"context":"NestApplication","level":"info","message":"Nest application successfully started","timestamp":"2021-06-16T10:56:22.939Z"}
+{"context":"bootstrap","level":"info","message":"Server is running on port 8080","timestamp":"2021-06-16T10:56:22.940Z"}
+{"context":"loggerMiddleware","level":"info","message":"GET /apartments 200 (914 length) (37.065 ms)\n","timestamp":"2021-06-16T10:57:09.663Z"}
+{"context":"AppModule","level":"info","message":"Detected signal: SIGINT","timestamp":"2021-06-16T10:57:35.017Z"}
+{"context":"AppModule","level":"info","message":"App is closed","timestamp":"2021-06-16T10:57:35.017Z"}
+{"context":"AppModule","level":"info","message":"Database connection is closed","timestamp":"2021-06-16T10:57:35.018Z"}

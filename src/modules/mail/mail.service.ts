@@ -1,14 +1,16 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { getTestMessageUrl } from 'nodemailer';
 import { isEnvironment } from 'common/utils';
 
 @Injectable()
 export class MailService {
+  private readonly logger = new Logger(MailService.name);
+
   constructor(private readonly mailerService: MailerService) {}
 
   async sendVerificationMail(email: string, token: string): Promise<void> {
-    const url = `http://172.19.241.201:8080/users/verify/${token}`;
+    const url = `http://172.26.203.64:8080/users/verify/${token}`; // TODO replace with client url
 
     const mailInfo = await this.mailerService.sendMail({
       to: email,
@@ -20,9 +22,9 @@ export class MailService {
     });
 
     if (!isEnvironment('production')) {
-      console.log(`Mail preview URL: ${getTestMessageUrl(mailInfo)}`);
+      this.logger.log(`Mail preview URL: ${getTestMessageUrl(mailInfo)}`);
     } else {
-      console.log('Mail is sent');
+      this.logger.log('Mail is sent');
     }
   }
 }
