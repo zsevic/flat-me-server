@@ -88,9 +88,9 @@ export class ApartmentService {
         $gte: filters.minPrice,
         $lte: filters.maxPrice,
       },
-      // municipality: {
-      //   $in: filters.municipalities,
-      // },
+      municipality: {
+        $in: filters.municipalities,
+      },
       rentOrSale: filters.rentOrSale,
       structure: {
         $in: filters.structures,

@@ -49,21 +49,36 @@ export class CetiriZidaProvider extends BaseProvider implements Provider {
     };
   }
 
-  parseApartmentInfo = apartmentInfo => ({
-    ...this.parseCommonApartmentInfo(apartmentInfo),
-    id: apartmentInfo.id,
-    ...(apartmentInfo.address && {
-      address: capitalizeWords(apartmentInfo.address),
-    }),
-    createdAt: apartmentInfo.createdAt,
-    description: apartmentInfo.description100,
-    ...(apartmentInfo.heatingType && {
-      heatingType: separateWords(apartmentInfo.heatingType),
-    }),
-    place: apartmentInfo?.placeNames?.[0],
-    rentOrSale: apartmentInfo.for,
-    size: apartmentInfo.m2,
-    structure: apartmentInfo.roomCount,
-    url: `https://4zida.rs${apartmentInfo.urlPath}`,
-  });
+  private getMunicipality = apartmentInfo => {
+    const municipalities = {
+      Vračar: 'Vračar',
+      'Zvezdara opština': 'Zvezdara',
+    };
+
+    const municipalityKey = apartmentInfo?.placeNames.find(placeName =>
+      Object.keys(municipalities).includes(placeName),
+    );
+    return municipalities[municipalityKey];
+  };
+
+  parseApartmentInfo = apartmentInfo => {
+    return {
+      ...this.parseCommonApartmentInfo(apartmentInfo),
+      id: apartmentInfo.id,
+      ...(apartmentInfo.address && {
+        address: capitalizeWords(apartmentInfo.address),
+      }),
+      createdAt: apartmentInfo.createdAt,
+      description: apartmentInfo.description100,
+      ...(apartmentInfo.heatingType && {
+        heatingType: separateWords(apartmentInfo.heatingType),
+      }),
+      municipality: this.getMunicipality(apartmentInfo),
+      place: apartmentInfo?.placeNames?.[0],
+      rentOrSale: apartmentInfo.for,
+      size: apartmentInfo.m2,
+      structure: apartmentInfo.roomCount,
+      url: `https://4zida.rs${apartmentInfo.urlPath}`,
+    };
+  };
 }

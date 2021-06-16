@@ -114,7 +114,7 @@ export class CityExpertProvider extends BaseProvider implements Provider {
         latitude,
         longitude,
       },
-      // municipality: apartmentInfo.municipality,
+      municipality: apartmentInfo.municipality,
       place: apartmentInfo?.polygons?.[0],
       rentOrSale: rentOrSaleField[apartmentInfo.rentOrSale],
       size: apartmentInfo.size,

@@ -47,8 +47,8 @@ export class Apartment {
   @Prop()
   location: LocationSchema;
 
-  // @Prop()
-  // municipality: string;
+  @Prop()
+  municipality: string;
 
   @Prop()
   place: string;

@@ -27,5 +27,6 @@ export class TasksService {
       FilterService.getInitialFilters(filters),
     );
     await this.apartmentService.saveApartmentList(apartmentList);
+    this.logger.log('Scraping finished...');
   }
 }
