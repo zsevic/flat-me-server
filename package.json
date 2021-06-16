@@ -13,7 +13,6 @@
     "start": "nest start",
     "start:dev": "NODE_ENV=development nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "prestart:prod": "npm run migrate",
     "start:prod": "NODE_PATH=./dist NODE_ENV=production node dist/src/main",
     "test": "jest",
     "test:watch": "jest --watch",
