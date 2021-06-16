@@ -1,13 +1,13 @@
 import { Type } from 'class-transformer';
-import { IsOptional } from 'class-validator';
+import { IsNotEmpty } from 'class-validator';
 import { FiltersDto } from 'modules/filter/dto/filters.dto';
 
 export class ApartmentListParamsDto extends FiltersDto {
   @Type(() => Number)
-  @IsOptional()
+  @IsNotEmpty()
   limitPerPage: number;
 
   @Type(() => Number)
-  @IsOptional()
+  @IsNotEmpty()
   pageNumber: number;
 }

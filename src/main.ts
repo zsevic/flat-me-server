@@ -24,7 +24,6 @@ async function bootstrap(): Promise<void> {
   const configService = app.get('configService');
 
   app.enableCors({
-    credentials: true,
     origin: configService.get('CLIENT_URL'),
   });
   app.enableShutdownHooks();
