@@ -77,7 +77,7 @@ export class CityExpertProvider extends BaseProvider implements Provider {
     };
   }
 
-  parseApartmentInfo = (apartmentInfo, filters: FiltersDto) => {
+  parseApartmentInfo = apartmentInfo => {
     const [latitude, longitude] = apartmentInfo.location.split(', ');
     const heatingTypes = {
       1: 'district',
@@ -87,6 +87,10 @@ export class CityExpertProvider extends BaseProvider implements Provider {
     const rentOrSale = {
       r: 'izdavanje',
       s: 'prodaja',
+    };
+    const rentOrSaleField = {
+      r: 'rent',
+      s: 'sale',
     };
     const structures = {
       '1.0': 'jednosoban',
@@ -110,8 +114,9 @@ export class CityExpertProvider extends BaseProvider implements Provider {
         latitude,
         longitude,
       },
+      // municipality: apartmentInfo.municipality,
       place: apartmentInfo?.polygons?.[0],
-      rentOrSale: filters.rentOrSale[0],
+      rentOrSale: rentOrSaleField[apartmentInfo.rentOrSale],
       size: apartmentInfo.size,
       structure: Number(structure),
       url: `https://cityexpert.rs/${

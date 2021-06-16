@@ -49,7 +49,7 @@ export class CetiriZidaProvider extends BaseProvider implements Provider {
     };
   }
 
-  parseApartmentInfo = (apartmentInfo, filters: FiltersDto) => ({
+  parseApartmentInfo = apartmentInfo => ({
     ...this.parseCommonApartmentInfo(apartmentInfo),
     id: apartmentInfo.id,
     ...(apartmentInfo.address && {
@@ -61,7 +61,7 @@ export class CetiriZidaProvider extends BaseProvider implements Provider {
       heatingType: separateWords(apartmentInfo.heatingType),
     }),
     place: apartmentInfo?.placeNames?.[0],
-    rentOrSale: filters.rentOrSale[0],
+    rentOrSale: apartmentInfo.for,
     size: apartmentInfo.m2,
     structure: apartmentInfo.roomCount,
     url: `https://4zida.rs${apartmentInfo.urlPath}`,
