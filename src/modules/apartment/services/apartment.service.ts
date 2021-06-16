@@ -42,7 +42,7 @@ export class ApartmentService {
 
         const apartmentInfo = new this.providers[
           providerName
-        ]().parseApartmentInfo(apartment);
+        ]().parseApartmentInfo(apartment, filters);
         foundApartments.push(apartmentInfo);
       });
       const hasNextPage = this.providers[providerName].hasNextPage(
@@ -88,6 +88,7 @@ export class ApartmentService {
         $gte: filters.minPrice,
         $lte: filters.maxPrice,
       },
+      rentOrSale: filters.rentOrSale,
       structure: {
         $in: filters.structures,
       },

@@ -54,6 +54,9 @@ export class Apartment {
   price: number;
 
   @Prop()
+  rentOrSale: string;
+
+  @Prop()
   size: number;
 
   @Prop()
