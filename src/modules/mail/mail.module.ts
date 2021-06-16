@@ -13,6 +13,7 @@ const createTestAccountAsync = promisify(createTestAccount);
 @Module({
   imports: [
     MailerModule.forRootAsync({
+      inject: [ConfigService],
       useFactory: async (
         configService: ConfigService,
       ): Promise<MailerOptions> => {
