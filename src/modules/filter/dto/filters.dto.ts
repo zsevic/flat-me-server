@@ -23,4 +23,6 @@ export class FiltersDto {
     structures.map((structure: string): number => Number(structure)),
   )
   structures: string[];
+
+  pageNumber: number;
 }

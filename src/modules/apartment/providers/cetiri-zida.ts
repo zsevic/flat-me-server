@@ -1,11 +1,17 @@
 import { capitalizeWords, separateWords } from 'common/utils';
 import { FiltersDto } from 'modules/filter/dto/filters.dto';
 import { BaseProvider } from './base-provider';
+import { Provider } from './provider.interface';
 
-export class CetiriZidaProvider extends BaseProvider {
+export class CetiriZidaProvider extends BaseProvider implements Provider {
   private readonly url = 'https://api.4zida.rs/v6/search/apartments';
 
   static getResults = results => results.data.ads;
+
+  static hasNextPage = (results, pageNumber: number) => {
+    const currentCount = results.data.ads.length * pageNumber;
+    return currentCount > 0 && results.data.total > currentCount;
+  };
 
   makeRequest(filters: FiltersDto) {
     const structures = {
@@ -27,7 +33,7 @@ export class CetiriZidaProvider extends BaseProvider {
       for: rentOrSale[filters.rentOrSale],
       priceFrom: filters.minPrice,
       priceTo: filters.maxPrice,
-      page: 1,
+      page: filters.pageNumber,
       placeIds: Object.keys(placesIds)
         .filter(place => filters.municipalities.includes(place))
         .map(place => placesIds[place]),

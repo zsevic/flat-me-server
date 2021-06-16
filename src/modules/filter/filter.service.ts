@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { getUniqueValuesQuery } from 'common/utils';
 import { Model } from 'mongoose';
+import { FiltersDto } from './dto/filters.dto';
 import { Filter } from './filter.interface';
 import { Filters, FiltersDocument } from './filter.schema';
 
@@ -48,6 +49,11 @@ export class FilterService {
       },
     ]);
   }
+
+  static getInitialFilters = (filters: FiltersDto): FiltersDto => ({
+    ...filters,
+    pageNumber: 1,
+  });
 
   async saveFilters(filters: Filter): Promise<Filters> {
     const createdFilters = new this.filtersModel(filters);

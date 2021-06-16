@@ -13,7 +13,7 @@ export class TasksService {
     private readonly filterService: FilterService,
   ) {}
 
-  @Cron(CronExpression.EVERY_10_SECONDS, {
+  @Cron(CronExpression.EVERY_HOUR, {
     name: SCRAPING_CRON_JOB,
   })
   async handleScraping() {
@@ -23,7 +23,9 @@ export class TasksService {
 
     if (!filters) return;
 
-    const apartmentList = await this.apartmentService.getApartmentList(filters);
+    const apartmentList = await this.apartmentService.getApartmentList(
+      FilterService.getInitialFilters(filters),
+    );
     console.log('apartment list', apartmentList);
   }
 }

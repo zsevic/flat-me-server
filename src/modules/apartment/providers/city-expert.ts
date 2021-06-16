@@ -1,11 +1,14 @@
 import { capitalizeWords } from 'common/utils';
 import { FiltersDto } from 'modules/filter/dto/filters.dto';
 import { BaseProvider } from './base-provider';
+import { Provider } from './provider.interface';
 
-export class CityExpertProvider extends BaseProvider {
+export class CityExpertProvider extends BaseProvider implements Provider {
   private readonly url = 'https://cityexpert.rs/api/Search/';
 
   static getResults = results => results.data.result;
+
+  static hasNextPage = results => results.data.info.hasNextPage;
 
   makeRequest(filters: FiltersDto) {
     const rentOrSale = {
@@ -17,7 +20,7 @@ export class CityExpertProvider extends BaseProvider {
       ptId: [],
       cityId: 1,
       rentOrSale: rentOrSale[filters.rentOrSale],
-      currentPage: 1,
+      currentPage: filters.pageNumber,
       resultsPerPage: 60,
       floor: [],
       avFrom: false,
