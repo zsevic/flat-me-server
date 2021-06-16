@@ -1,6 +1,5 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { FiltersDto } from 'modules/filter/dto/filters.dto';
-import { FilterService } from 'modules/filter/filter.service';
+import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
 import { ApartmentService } from './services';
 
 @Controller('apartments')
@@ -8,9 +7,11 @@ export class ApartmentController {
   constructor(private readonly apartmentService: ApartmentService) {}
 
   @Get()
-  async getApartmentList(@Query() filters: FiltersDto) {
+  async getApartmentList(
+    @Query() apartmentListParamsDto: ApartmentListParamsDto,
+  ) {
     return this.apartmentService.getApartmentListFromDatabase(
-      FilterService.getInitialFilters(filters),
+      apartmentListParamsDto,
     );
   }
 }

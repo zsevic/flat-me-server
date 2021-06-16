@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { FiltersDto } from 'modules/filter/dto/filters.dto';
 import { Apartment, ApartmentDocument } from '../apartment.schema';
+import { ApartmentListParamsDto } from '../dto/apartment-list-params.dto';
 import {
   BaseProvider,
   CetiriZidaProvider,
@@ -81,21 +82,27 @@ export class ApartmentService {
     }
   }
 
-  async getApartmentListFromDatabase(filters: FiltersDto) {
+  async getApartmentListFromDatabase(filters: ApartmentListParamsDto) {
+    const { limitPerPage = 10, pageNumber = 0 } = filters;
+
     // @ts-ignore
-    return this.apartmentModel.find({
-      price: {
-        $gte: filters.minPrice,
-        $lte: filters.maxPrice,
-      },
-      municipality: {
-        $in: filters.municipalities,
-      },
-      rentOrSale: filters.rentOrSale,
-      structure: {
-        $in: filters.structures,
-      },
-    });
+    return this.apartmentModel
+      .find({
+        price: {
+          $gte: filters.minPrice,
+          $lte: filters.maxPrice,
+        },
+        municipality: {
+          $in: filters.municipalities,
+        },
+        rentOrSale: filters.rentOrSale,
+        structure: {
+          $in: filters.structures,
+        },
+      })
+      .skip((pageNumber - 1) * limitPerPage)
+      .limit(limitPerPage)
+      .exec();
   }
 
   saveApartmentList = async (apartments): Promise<Apartment[]> =>
