@@ -83,7 +83,7 @@ export class ApartmentService {
   }
 
   async getApartmentListFromDatabase(filters: ApartmentListParamsDto) {
-    const { limitPerPage = 10, pageNumber = 0 } = filters;
+    const { limitPerPage = 10, pageNumber = 1 } = filters;
     const query = {
       price: {
         $gte: filters.minPrice,
