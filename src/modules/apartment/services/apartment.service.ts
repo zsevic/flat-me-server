@@ -84,25 +84,33 @@ export class ApartmentService {
 
   async getApartmentListFromDatabase(filters: ApartmentListParamsDto) {
     const { limitPerPage = 10, pageNumber = 0 } = filters;
+    const query = {
+      price: {
+        $gte: filters.minPrice,
+        $lte: filters.maxPrice,
+      },
+      municipality: {
+        $in: filters.municipalities,
+      },
+      rentOrSale: filters.rentOrSale,
+      structure: {
+        $in: filters.structures,
+      },
+    };
 
-    // @ts-ignore
-    return this.apartmentModel
-      .find({
-        price: {
-          $gte: filters.minPrice,
-          $lte: filters.maxPrice,
-        },
-        municipality: {
-          $in: filters.municipalities,
-        },
-        rentOrSale: filters.rentOrSale,
-        structure: {
-          $in: filters.structures,
-        },
-      })
+    const data = await this.apartmentModel
+      // @ts-ignore
+      .find(query)
       .skip((pageNumber - 1) * limitPerPage)
       .limit(limitPerPage)
       .exec();
+    // @ts-ignore
+    const total = await this.apartmentModel.countDocuments(query).exec();
+
+    return {
+      total,
+      data,
+    };
   }
 
   saveApartmentList = async (apartments): Promise<Apartment[]> =>
