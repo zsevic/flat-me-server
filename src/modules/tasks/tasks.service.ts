@@ -60,7 +60,9 @@ export class TasksService {
         // @ts-ignore
         receivedApartmentIds,
       );
-      // await this.mailService.sendUpdatesMail(filter.user.email); // populate user
+      const apartmentListLength = apartmentList.data.length;
+      if (apartmentListLength === 0) return;
+
       const newApartmentIds = apartmentList.data
         .map(apartment => apartment._id)
         .slice(0, RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION);
@@ -68,6 +70,12 @@ export class TasksService {
       await this.userService.insertReceivedApartmentIds(
         filter.user_id,
         newApartmentIds,
+      );
+      const populatedFilter = await this.filterService.populateUser(filter);
+      await this.mailService.sendUpdatesMail(
+        // @ts-ignore
+        populatedFilter.user_id.email,
+        newApartmentIds.length,
       );
     });
 

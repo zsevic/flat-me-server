@@ -88,6 +88,10 @@ export class FilterService {
     pageNumber: 1,
   });
 
+  async populateUser(filter) {
+    return this.filtersModel.populate(filter, { path: 'user_id' });
+  }
+
   async saveFilters(filters: Filter): Promise<Filters> {
     const createdFilters = new this.filtersModel(filters);
 

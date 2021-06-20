@@ -9,8 +9,13 @@ export class MailService {
 
   constructor(private readonly mailerService: MailerService) {}
 
-  async sendUpdatesMail(email: string): Promise<void> {
-    this.logger.log(`Sending updates to ${email}...`);
+  async sendUpdatesMail(
+    email: string,
+    apartmentListLength: number,
+  ): Promise<void> {
+    this.logger.log(
+      `Sending ${apartmentListLength} new apartment(s) to ${email}...`,
+    );
   }
 
   async sendVerificationMail(email: string, token: string): Promise<void> {
