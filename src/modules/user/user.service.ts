@@ -15,6 +15,21 @@ export class UserService {
     return expiresAt;
   };
 
+  async getReceivedApartmentIds(userId: string) {
+    return this.userModel.findById(userId).select('receivedApartments');
+  }
+
+  async insertReceivedApartmentIds(
+    userId: string,
+    apartmentIds: Types._ObjectId[],
+  ) {
+    return this.userModel.findByIdAndUpdate(userId, {
+      $push: {
+        receivedApartments: { $each: apartmentIds },
+      },
+    });
+  }
+
   async saveUser(email: string): Promise<User> {
     const token = await generateToken();
     const expiresAt = this.getExpiresAt();

@@ -12,6 +12,36 @@ export class FilterService {
     @InjectModel(Filters.name) private filtersModel: Model<FiltersDocument>,
   ) {}
 
+  async getFilterListForSubscription(subscriptionName: string) {
+    return this.filtersModel.aggregate([
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'user_id',
+          foreignField: '_id',
+          as: 'usersData',
+        },
+      },
+      {
+        $match: {
+          'usersData.is_verified': true,
+          'usersData.subscription': subscriptionName,
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          minPrice: 1,
+          maxPrice: 1,
+          municipalities: 1,
+          rentOrSale: 1,
+          structures: 1,
+          user_id: 1,
+        },
+      },
+    ]);
+  }
+
   async getUniqueFilters() {
     return this.filtersModel.aggregate([
       {

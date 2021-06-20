@@ -32,6 +32,7 @@ import { AppController } from './app.controller';
       useFactory: async (configService: ConfigService) => ({
         uri: configService.get('database.MONGODB_URL'),
         useCreateIndex: true,
+        useFindAndModify: false,
       }),
     }),
     ScheduleModule.forRoot(),

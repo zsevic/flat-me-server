@@ -9,6 +9,10 @@ export class MailService {
 
   constructor(private readonly mailerService: MailerService) {}
 
+  async sendUpdatesMail(email: string): Promise<void> {
+    this.logger.log(`Sending updates to ${email}...`);
+  }
+
   async sendVerificationMail(email: string, token: string): Promise<void> {
     const url = `https://flat-me.herokuapp.com/users/verify/${token}`; // TODO replace with client url
 

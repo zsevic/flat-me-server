@@ -82,9 +82,19 @@ export class ApartmentService {
     }
   }
 
-  async getApartmentListFromDatabase(filters: ApartmentListParamsDto) {
+  async getApartmentListFromDatabase(
+    filters: ApartmentListParamsDto,
+    skippedApartmentments?: string[],
+  ) {
     const { limitPerPage = 10, pageNumber = 1 } = filters;
     const query = {
+      ...(skippedApartmentments &&
+        Array.isArray(skippedApartmentments) &&
+        skippedApartmentments.length > 0 && {
+          _id: {
+            $nin: skippedApartmentments,
+          },
+        }),
       price: {
         $gte: filters.minPrice,
         $lte: filters.maxPrice,
