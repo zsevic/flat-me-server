@@ -63,10 +63,12 @@ export class TasksService {
       const apartmentListLength = apartmentList.data.length;
       if (apartmentListLength === 0) return;
 
-      const newApartmentIds = apartmentList.data
-        .map(apartment => apartment._id)
-        .slice(0, RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION);
+      const newApartments = apartmentList.data.slice(
+        0,
+        RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION,
+      );
       // @ts-ignore
+      const newApartmentIds = newApartments.map(apartment => apartment._id);
       await this.userService.insertReceivedApartmentIds(
         filter.user_id,
         newApartmentIds,
@@ -75,11 +77,11 @@ export class TasksService {
       await this.mailService.sendUpdatesMail(
         // @ts-ignore
         populatedFilter.user_id.email,
-        newApartmentIds.length,
+        newApartments,
+        filter,
       );
+      this.logCronJobFinished(SENDING_UPDATES_FREE_SUBSCRIPTION_CRON_JOB);
     });
-
-    this.logCronJobFinished(SENDING_UPDATES_FREE_SUBSCRIPTION_CRON_JOB);
   }
 
   private logCronJobFinished = (cronJobName: string): void => {
