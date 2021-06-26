@@ -2,7 +2,7 @@ import path from 'path';
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { MailerModule, MailerOptions } from '@nestjs-modules/mailer';
-import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
 import { createTestAccount } from 'nodemailer';
 import { isEnvironment } from 'common/utils';
 import { promisify } from 'util';
@@ -50,7 +50,7 @@ const createTestAccountAsync = promisify(createTestAccount);
           },
           template: {
             dir: path.join(__dirname, '../../../mail/templates'),
-            adapter: new HandlebarsAdapter(),
+            adapter: new PugAdapter(),
             options: {
               strict: true,
             },

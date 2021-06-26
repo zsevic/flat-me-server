@@ -30,11 +30,21 @@ export class TasksService {
     const [filters] = await this.filterService.getUniqueFilters();
     this.logger.log(`Filters: ${!filters ? '{}' : JSON.stringify(filters)}`);
 
-    if (!filters) return;
+    if (!filters) {
+      this.logger.log('There are no filters');
+      this.logCronJobFinished(SCRAPING_CRON_JOB);
+      return;
+    }
 
     const apartmentList = await this.apartmentService.getApartmentListFromProviders(
       FilterService.getInitialFilters(filters),
     );
+    if (apartmentList.length === 0) {
+      this.logger.log('There are no new apartments');
+      this.logCronJobFinished(SCRAPING_CRON_JOB);
+      return;
+    }
+    this.logger.log(`Found ${apartmentList.length} new apartment(s)`);
     await this.apartmentService.saveApartmentList(apartmentList);
     this.logCronJobFinished(SCRAPING_CRON_JOB);
   }
@@ -47,7 +57,11 @@ export class TasksService {
     const filters = await this.filterService.getFilterListForSubscription(
       Subscription.FREE,
     );
-    if (!filters) return;
+    if (!filters) {
+      this.logger.log('There are no filters');
+      this.logCronJobFinished(SENDING_UPDATES_FREE_SUBSCRIPTION_CRON_JOB);
+      return;
+    }
 
     filters.forEach(async filter => {
       this.logger.log(`Filters: ${!filters ? '{}' : JSON.stringify(filters)}`);
@@ -61,12 +75,17 @@ export class TasksService {
         receivedApartmentIds,
       );
       const apartmentListLength = apartmentList.data.length;
-      if (apartmentListLength === 0) return;
+      if (apartmentListLength === 0) {
+        this.logCronJobFinished(SENDING_UPDATES_FREE_SUBSCRIPTION_CRON_JOB);
+        return;
+      }
 
-      const newApartments = apartmentList.data.slice(
-        0,
-        RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION,
-      );
+      const newApartments = apartmentList.data
+        .slice(0, RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION)
+        .sort(
+          (firstApartment, secondApartment) =>
+            firstApartment.price - secondApartment.price,
+        );
       // @ts-ignore
       const newApartmentIds = newApartments.map(apartment => apartment._id);
       await this.userService.insertReceivedApartmentIds(

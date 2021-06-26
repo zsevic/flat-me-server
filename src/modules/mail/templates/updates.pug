@@ -1,0 +1,33 @@
+div Here is the list with #{apartmentList.length} apartment(s) for #{filters.rentOrSale}
+
+ul
+  for apartment in apartmentList 
+    li
+      span price: #{apartment.price}EUR, 
+      span structure: #{apartment.structure}, 
+      if apartment.address
+        span address: #{apartment.address}, 
+      if apartment.place && apartment.address && apartment.place !== apartment.address
+        span #{apartment.place}, 
+      else if apartment.place && !apartment.address
+        span place: #{apartment.place}, 
+      if apartment.floor
+        span floor: #{apartment.floor}, 
+      if apartment.isFurnished
+        span furnished, 
+      if apartment.heatingType
+        span heating type: #{apartment.heatingType}, 
+      span size: #{apartment.size}m
+      sup 2
+      span , 
+      if apartment.postedAt 
+        span posted at: #{new Date(apartment.postedAt).toDateString()} 
+      if apartment.availableFrom
+        if new Date(apartment.availableFrom) < new Date()
+          span now 
+        else
+          span #{new Date(apartment.availableFrom).toDateString()} 
+      if apartment.location
+        a(href='#{apartment.location}') location 
+      if apartment.url
+        a(href='#{apartment.url}') url 
