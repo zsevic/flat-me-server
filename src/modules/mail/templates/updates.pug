@@ -24,10 +24,10 @@ ul
         span posted at: #{new Date(apartment.postedAt).toDateString()} 
       if apartment.availableFrom
         if new Date(apartment.availableFrom) < new Date()
-          span now 
+          span available for moving in 
         else
-          span #{new Date(apartment.availableFrom).toDateString()} 
-      if apartment.location
-        a(href='#{apartment.location}') location 
+          span available for moving in from #{new Date(apartment.availableFrom).toDateString()} 
+      if apartment.locationUrl
+        a(href=`${apartment.locationUrl}`) location 
       if apartment.url
-        a(href='#{apartment.url}') url 
+        a(href=`${apartment.url}`) url 

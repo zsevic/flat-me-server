@@ -2,6 +2,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable, Logger } from '@nestjs/common';
 import { getTestMessageUrl } from 'nodemailer';
 import { isEnvironment } from 'common/utils';
+import { getLocationUrl } from 'common/utils/location';
 import { ApartmentDocument } from 'modules/apartment/apartment.schema';
 import { FiltersDto } from 'modules/filter/dto/filters.dto';
 
@@ -30,7 +31,11 @@ export class MailService {
       subject: this.getMailSubject(filters, apartmentList.length),
       template: './updates',
       context: {
-        apartmentList,
+        apartmentList: apartmentList.map(apartment =>
+          Object.assign(apartment, {
+            locationUrl: getLocationUrl(apartment?.location),
+          }),
+        ),
         filters,
       },
     });
