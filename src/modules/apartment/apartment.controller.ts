@@ -1,6 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common';
+import { ApartmentService } from './apartment.service';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
-import { ApartmentService } from './services';
 
 @Controller('apartments')
 export class ApartmentController {

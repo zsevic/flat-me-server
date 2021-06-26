@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { FiltersDto } from 'modules/filter/dto/filters.dto';
-import { Apartment, ApartmentDocument } from '../apartment.schema';
-import { ApartmentListParamsDto } from '../dto/apartment-list-params.dto';
+import { Apartment, ApartmentDocument } from './apartment.schema';
+import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
 import {
   BaseProvider,
   CetiriZidaProvider,
   CityExpertProvider,
-} from '../providers';
+} from './providers';
 
 @Injectable()
 export class ApartmentService {

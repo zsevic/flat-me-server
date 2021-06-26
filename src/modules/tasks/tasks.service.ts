@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION } from 'modules/apartment/apartment.constants';
-import { ApartmentService } from 'modules/apartment/services';
+import { ApartmentService } from 'modules/apartment/apartment.service';
 import { FilterService } from 'modules/filter/filter.service';
 import { MailService } from 'modules/mail/mail.service';
 import { Subscription } from 'modules/user/subscription.enum';
