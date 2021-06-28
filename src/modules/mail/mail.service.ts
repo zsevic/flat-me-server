@@ -37,6 +37,7 @@ export class MailService {
           }),
         ),
         filters,
+        name: 'user',
       },
     });
 
