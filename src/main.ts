@@ -1,13 +1,18 @@
+import path from 'path';
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import * as i18n from 'i18n';
 import { WinstonModule } from 'nest-winston';
 import { format, transports } from 'winston';
 import { setupApiDocs } from 'common/config/api-docs';
+import { i18nConfig } from 'common/config/i18n';
 import { AllExceptionsFilter } from 'common/filters';
 import { loggerMiddleware } from 'common/middlewares';
 import { CustomValidationPipe } from 'common/pipes';
 import { AppModule } from 'modules/app/app.module';
+
+i18n.configure(i18nConfig);
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -29,6 +34,8 @@ async function bootstrap(): Promise<void> {
   app.enableShutdownHooks();
   app.get(AppModule).subscribeToShutdown(() => app.close());
 
+  app.setViewEngine('pug');
+  app.use(i18n.init);
   app.use(loggerMiddleware);
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalPipes(

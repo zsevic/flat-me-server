@@ -49,7 +49,7 @@ const createTestAccountAsync = promisify(createTestAccount);
             from: 'zeljko@sevic.dev',
           },
           template: {
-            dir: path.join(__dirname, '../../../mail/templates'),
+            dir: path.join(process.cwd(), 'dist/assets/mail-templates'),
             adapter: new PugAdapter(),
             options: {
               strict: true,

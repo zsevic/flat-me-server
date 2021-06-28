@@ -1,9 +1,9 @@
 {
   "collection": "@nestjs/schematics",
   "entryFile": "src/main",
-  "sourceRoot": "src/modules",
+  "sourceRoot": "src",
   "compilerOptions": {
-    "assets": ["mail/templates/**/*"],
+    "assets": ["assets/**/*.{json,pug}"],
     "plugins": ["@nestjs/swagger/plugin"]
   }
 }
