@@ -7,7 +7,7 @@ export type UserDocument = User & Document;
 @Schema()
 class Token {
   @Prop()
-  expires_at: Date;
+  expiresAt: Date;
 
   @Prop()
   value: string;
