@@ -16,6 +16,7 @@ export class AppController {
   @Sse('sse')
   sse(): Observable<MessageEvent> {
     const subject$ = new Subject();
+
     this.eventService.on('user.verified', () => {
       subject$.next({ isVerifiedEmail: true });
     });

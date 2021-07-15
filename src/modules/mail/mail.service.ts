@@ -29,7 +29,7 @@ export class MailService {
     const mailInfo = await this.mailerService.sendMail({
       to: email,
       subject: this.getMailSubject(filters, apartmentList.length),
-      template: './updates',
+      template: './new-apartments',
       context: {
         apartmentList: apartmentList.map(apartment =>
           Object.assign(apartment, {
@@ -55,7 +55,7 @@ export class MailService {
     const mailInfo = await this.mailerService.sendMail({
       to: email,
       subject: 'Dobrodošli na FlatMe, potvrda mejl adrese',
-      template: './verification',
+      template: './user-verification',
       context: {
         url,
       },

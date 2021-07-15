@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { MailService } from 'modules/mail/mail.service';
 import { RegisterUserDto } from './dto/register-user.dto';
@@ -14,8 +21,13 @@ export class UserController {
   ) {}
 
   @Post()
-  async registerUser(@Body() user: RegisterUserDto): Promise<void> {
-    const { email } = user;
+  async registerUser(@Body() userDto: RegisterUserDto): Promise<void> {
+    const { email } = userDto;
+    const user = await this.userService.getByEmail(email);
+    if (user) {
+      throw new BadRequestException('User already exists');
+    }
+
     const token = await this.userService.createToken();
     await this.userService.saveUser(email, token);
     await this.mailService.sendVerificationMail(email, token.value);
