@@ -69,7 +69,7 @@ export class UserService {
     return user;
   }
 
-  async verifyUser(token: string): Promise<void> {
+  async verifyUser(token: string): Promise<User> {
     const user = await this.userModel.findOne({
       'token.value': token,
       'token.expiresAt': {
@@ -84,5 +84,7 @@ export class UserService {
       token: null,
     });
     await user.save();
+
+    return user;
   }
 }

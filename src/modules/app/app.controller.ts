@@ -1,8 +1,9 @@
-import { Controller, Get, Sse } from '@nestjs/common';
+import { Controller, Get, Query, Sse } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { MessageEvent, MessageEventData } from './message-event.interface';
+import { SseQueryDto } from './sse-query.dto';
 
 @Controller()
 export class AppController {
@@ -14,10 +15,12 @@ export class AppController {
   }
 
   @Sse('sse')
-  sse(): Observable<MessageEvent> {
+  sse(@Query() sseQuery: SseQueryDto): Observable<MessageEvent> {
     const subject$ = new Subject();
 
-    this.eventService.on('user.verified', () => {
+    this.eventService.on('user.verified', data => {
+      if (sseQuery.email !== data.email) return;
+
       subject$.next({ isVerifiedEmail: true });
     });
 

@@ -34,10 +34,11 @@ export class UserController {
 
   @Post('verify/:token')
   async verifyUser(@Param('token') token: string): Promise<void> {
-    await this.userService.verifyUser(token);
+    const user = await this.userService.verifyUser(token);
 
     const userVerifiedEvent = new UserVerifiedEvent();
     userVerifiedEvent.isVerified = true;
+    userVerifiedEvent.email = user.email;
     this.eventService.emit('user.verified', userVerifiedEvent);
   }
 }
