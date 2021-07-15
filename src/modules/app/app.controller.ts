@@ -1,6 +1,6 @@
 import { Controller, Get, Sse } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { interval, Observable, Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { MessageEvent, MessageEventData } from './message-event.interface';
 
