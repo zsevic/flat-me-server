@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Token } from 'modules/token/token.schema';
 import { Document, Schema as MongooseSchema } from 'mongoose';
 
 export type FiltersDocument = Filters & Document;
@@ -21,10 +22,18 @@ export class Filters {
   municipalities: string[];
 
   @Prop({
+    default: false,
+  })
+  isVerified: boolean;
+
+  @Prop({
     ref: 'User',
     type: MongooseSchema.Types.ObjectId,
   })
-  user_id: string;
+  userId: string;
+
+  @Prop()
+  token: Token;
 }
 
 export const FiltersSchema = SchemaFactory.createForClass(Filters);

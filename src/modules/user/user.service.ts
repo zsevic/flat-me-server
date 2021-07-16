@@ -1,34 +1,24 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { generateToken } from 'common/utils/token-generation';
 import { Model, Types } from 'mongoose';
-import { Token } from './token.interface';
+import { Token } from 'modules/token/token.interface';
+import { TokenService } from 'modules/token/token.service';
 import { User, UserDocument } from './user.schema';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(
+    private readonly tokenService: TokenService,
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
+  ) {}
 
-  async createToken(): Promise<Token> {
-    const token = await generateToken();
-    const expiresAt = this.getExpiresAt();
-
-    return {
-      expiresAt,
-      value: token,
-    };
+  async getById(id: string) {
+    return this.userModel.findById(id);
   }
 
   async getByEmail(email: string) {
     return this.userModel.findOne({ email });
   }
-
-  private getExpiresAt = (): Date => {
-    const expiresAt = new Date();
-    expiresAt.setHours(expiresAt.getHours() + 1);
-
-    return expiresAt;
-  };
 
   async getReceivedApartmentIds(userId: string) {
     return this.userModel.findById(userId).select('receivedApartments');
@@ -61,7 +51,7 @@ export class UserService {
     });
     if (!user) throw new BadRequestException('User is not found');
 
-    if (!user?.is_verified)
+    if (!user?.isVerified)
       throw new BadRequestException(
         'Email is not verified, check the verification email',
       );
@@ -75,12 +65,12 @@ export class UserService {
       'token.expiresAt': {
         $gt: new Date(),
       },
-      is_verified: false,
+      isVerified: false,
     });
     if (!user) throw new BadRequestException('Token is not valid');
 
     user.set({
-      is_verified: true,
+      isVerified: true,
       token: null,
     });
     await user.save();

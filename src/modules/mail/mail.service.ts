@@ -18,6 +18,29 @@ export class MailService {
   ): string =>
     `Found ${apartmentListLength} new apartment(s) for ${filters.rentOrSale}`;
 
+  async sendFilterVerificationMail(
+    email: string,
+    token: string,
+  ): Promise<void> {
+    const url = `${process.env.CLIENT_URL}/filters/verification/${token}`;
+    console.log('verfilurl', url);
+
+    const mailInfo = await this.mailerService.sendMail({
+      to: email,
+      subject: 'Potvrda pretrage',
+      template: './filter-verification',
+      context: {
+        url,
+      },
+    });
+
+    if (!isEnvironment('production')) {
+      this.logger.log(`Mail preview URL: ${getTestMessageUrl(mailInfo)}`);
+    } else {
+      this.logger.log('Mail is sent');
+    }
+  }
+
   async sendUpdatesMail(
     email: string,
     apartmentList: ApartmentDocument[],

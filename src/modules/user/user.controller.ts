@@ -6,7 +6,9 @@ import {
   Post,
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { USER_VERIFIED } from 'common/events/constants';
 import { MailService } from 'modules/mail/mail.service';
+import { TokenService } from 'modules/token/token.service';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { UserVerifiedEvent } from './events/user-verified.event';
 import { UserService } from './user.service';
@@ -16,6 +18,7 @@ export class UserController {
   constructor(
     private readonly eventService: EventEmitter2,
     private readonly mailService: MailService,
+    private readonly tokenService: TokenService,
     private readonly userService: UserService,
   ) {}
 
@@ -27,7 +30,7 @@ export class UserController {
       throw new BadRequestException('User already exists');
     }
 
-    const token = await this.userService.createToken();
+    const token = await this.tokenService.createToken();
     await this.userService.saveUser(email, token);
     await this.mailService.sendUserVerificationMail(email, token.value);
   }
@@ -39,6 +42,6 @@ export class UserController {
     const userVerifiedEvent = new UserVerifiedEvent();
     userVerifiedEvent.isVerified = true;
     userVerifiedEvent.email = user.email;
-    this.eventService.emit('user.verified', userVerifiedEvent);
+    this.eventService.emit(USER_VERIFIED, userVerifiedEvent);
   }
 }

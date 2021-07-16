@@ -1,6 +1,9 @@
+import { Token } from 'modules/token/token.interface';
 import { RentOrSale } from './filter.enums';
 
 export interface Filter {
+  isVerified: boolean;
+
   minPrice: number;
 
   maxPrice: number;
@@ -11,5 +14,7 @@ export interface Filter {
 
   structures: string[];
 
-  user_id: string;
+  token?: Token;
+
+  userId: string;
 }

@@ -1,17 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
+import { Token } from 'modules/token/token.schema';
 import { Subscription } from './subscription.enum';
 
 export type UserDocument = User & Document;
-
-@Schema()
-class Token {
-  @Prop()
-  expiresAt: Date;
-
-  @Prop()
-  value: string;
-}
 
 @Schema()
 export class User {
@@ -26,7 +18,7 @@ export class User {
   @Prop({
     default: false,
   })
-  is_verified: boolean;
+  isVerified: boolean;
 
   @Prop({
     ref: 'Apartment',

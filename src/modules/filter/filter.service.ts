@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { getUniqueValuesQuery } from 'common/utils';
 import { Model } from 'mongoose';
@@ -17,14 +17,14 @@ export class FilterService {
       {
         $lookup: {
           from: 'users',
-          localField: 'user_id',
+          localField: 'userId',
           foreignField: '_id',
           as: 'usersData',
         },
       },
       {
         $match: {
-          'usersData.is_verified': true,
+          'usersData.isVerified': true,
           'usersData.subscription': subscriptionName,
         },
       },
@@ -36,7 +36,7 @@ export class FilterService {
           municipalities: 1,
           rentOrSale: 1,
           structures: 1,
-          user_id: 1,
+          userId: 1,
         },
       },
     ]);
@@ -47,14 +47,14 @@ export class FilterService {
       {
         $lookup: {
           from: 'users',
-          localField: 'user_id',
+          localField: 'userId',
           foreignField: '_id',
           as: 'usersData',
         },
       },
       {
         $match: {
-          'usersData.is_verified': true,
+          'usersData.isVerified': true,
         },
       },
       {
@@ -89,12 +89,31 @@ export class FilterService {
   });
 
   async populateUser(filter) {
-    return this.filtersModel.populate(filter, { path: 'user_id' });
+    return this.filtersModel.populate(filter, { path: 'userId' });
   }
 
   async saveFilters(filters: Filter): Promise<Filters> {
     const createdFilters = new this.filtersModel(filters);
 
     return createdFilters.save();
+  }
+
+  async verifyFilter(token: string): Promise<Filters> {
+    const filter = await this.filtersModel.findOne({
+      'token.value': token,
+      'token.expiresAt': {
+        $gt: new Date(),
+      },
+      isVerified: false,
+    });
+    if (!filter) throw new BadRequestException('Token is not valid');
+
+    filter.set({
+      isVerified: true,
+      token: null,
+    });
+    await filter.save();
+
+    return filter;
   }
 }
