@@ -48,8 +48,8 @@ export class MailService {
     }
   }
 
-  async sendVerificationMail(email: string, token: string): Promise<void> {
-    const url = `${process.env.CLIENT_URL}/users/verify/${token}`;
+  async sendUserVerificationMail(email: string, token: string): Promise<void> {
+    const url = `${process.env.CLIENT_URL}/users/verification/${token}`;
     console.log('verurl', url);
 
     const mailInfo = await this.mailerService.sendMail({

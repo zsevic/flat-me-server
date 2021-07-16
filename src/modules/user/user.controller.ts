@@ -29,7 +29,7 @@ export class UserController {
 
     const token = await this.userService.createToken();
     await this.userService.saveUser(email, token);
-    await this.mailService.sendVerificationMail(email, token.value);
+    await this.mailService.sendUserVerificationMail(email, token.value);
   }
 
   @Post('verify/:token')
