@@ -93,10 +93,12 @@ export class CityExpertProvider extends BaseProvider implements Provider {
       s: 'sale',
     };
     const structures = {
+      '0.5': 'garsonjera',
       '1.0': 'jednosoban',
       1.5: 'jednoiposoban',
       '2.0': 'dvosoban',
       2.5: 'dvoiposoban',
+      '3.0': 'trosoban',
     };
 
     const { structure } = apartmentInfo;
