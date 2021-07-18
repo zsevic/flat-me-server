@@ -67,7 +67,7 @@ export class TasksService {
       this.logger.log(`Filter: ${JSON.stringify(filter)}`);
       const {
         receivedApartments: receivedApartmentIds,
-      } = await this.userService.getReceivedApartmentIds(filter.user_id);
+      } = await this.userService.getReceivedApartmentIds(filter.user);
 
       const apartmentList = await this.apartmentService.getApartmentListFromDatabase(
         filter,
@@ -89,13 +89,13 @@ export class TasksService {
       // @ts-ignore
       const newApartmentIds = newApartments.map(apartment => apartment._id);
       await this.userService.insertReceivedApartmentIds(
-        filter.user_id,
+        filter.user,
         newApartmentIds,
       );
       const populatedFilter = await this.filterService.populateUser(filter);
       await this.mailService.sendUpdatesMail(
         // @ts-ignore
-        populatedFilter.user_id.email,
+        populatedFilter.user.email,
         newApartments,
         filter,
       );
