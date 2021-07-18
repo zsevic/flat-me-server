@@ -16,11 +16,11 @@ export class CetiriZidaProvider extends BaseProvider implements Provider {
   makeRequest(filter: FilterDto) {
     const structures = {
       '0.5': 101,
-      '1.0': 102,
-      1.5: 103,
-      '2.0': 104,
-      2.5: 105,
-      '3.0': 106,
+      1: 102,
+      '1.5': 103,
+      2: 104,
+      '2.5': 105,
+      3: 106,
     };
     const placesIds = {
       Čukarica: 28267,
