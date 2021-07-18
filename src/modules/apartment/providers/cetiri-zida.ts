@@ -23,7 +23,14 @@ export class CetiriZidaProvider extends BaseProvider implements Provider {
       '3.0': 106,
     };
     const placesIds = {
+      Čukarica: 28267,
+      'Novi Beograd': 139,
+      Palilula: 28257,
+      'Savski venac': 213,
+      'Stari grad': 28261,
+      Voždovac: 28263,
       Vračar: 541,
+      Zemun: 28265,
       Zvezdara: 28266,
     };
     const rentOrSale = {
@@ -53,7 +60,14 @@ export class CetiriZidaProvider extends BaseProvider implements Provider {
 
   private getMunicipality = apartmentInfo => {
     const municipalities = {
+      Čukarica: 'Čukarica',
+      'Novi Beograd': 'Novi Beograd',
+      'Palilula opština': 'Palilula',
+      'Savski Venac': 'Savski venac',
+      'Stari Grad opština': 'Stari grad',
+      'Voždovac opština': 'Voždovac',
       Vračar: 'Vračar',
+      Zemun: 'Zemun',
       'Zvezdara opština': 'Zvezdara',
     };
 
