@@ -4,7 +4,7 @@ import { ArrayContainsValidator } from 'common/validators/array-contains.validat
 import { MUNICIPALITIES, STRUCTURES } from '../filter.constants';
 import { RentOrSale } from '../filter.enums';
 
-export class FiltersDto {
+export class FilterDto {
   @IsNotEmpty()
   minPrice: number;
 
@@ -20,7 +20,7 @@ export class FiltersDto {
 
   @Validate(ArrayContainsValidator, STRUCTURES)
   @Type(() => Number)
-  structures: string[];
+  structures: number[];
 
   pageNumber: number;
 }

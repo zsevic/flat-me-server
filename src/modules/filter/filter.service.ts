@@ -1,23 +1,22 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { getUniqueValuesQuery } from 'common/utils';
-import { Model } from 'mongoose';
-import { FiltersDto } from './dto/filters.dto';
-import { Filter } from './filter.interface';
-import { Filters, FiltersDocument } from './filter.schema';
+import { Model, Types } from 'mongoose';
+import { FilterDto } from './dto/filter.dto';
+import { Filter, FilterDocument } from './filter.schema';
 
 @Injectable()
 export class FilterService {
   constructor(
-    @InjectModel(Filters.name) private filtersModel: Model<FiltersDocument>,
+    @InjectModel(Filter.name) private filterModel: Model<FilterDocument>,
   ) {}
 
   async getFilterListForSubscription(subscriptionName: string) {
-    return this.filtersModel.aggregate([
+    return this.filterModel.aggregate([
       {
         $lookup: {
           from: 'users',
-          localField: 'userId',
+          localField: 'user',
           foreignField: '_id',
           as: 'usersData',
         },
@@ -36,18 +35,18 @@ export class FilterService {
           municipalities: 1,
           rentOrSale: 1,
           structures: 1,
-          userId: 1,
+          user: 1,
         },
       },
     ]);
   }
 
-  async getUniqueFilters() {
-    return this.filtersModel.aggregate([
+  async getUniqueFilter() {
+    return this.filterModel.aggregate([
       {
         $lookup: {
           from: 'users',
-          localField: 'userId',
+          localField: 'user',
           foreignField: '_id',
           as: 'usersData',
         },
@@ -80,37 +79,36 @@ export class FilterService {
     ]);
   }
 
-  static getInitialFilters = (filters: FiltersDto): FiltersDto => ({
-    ...filters,
-    ...(Array.isArray(filters.rentOrSale) && {
-      rentOrSale: filters.rentOrSale[0],
+  static getInitialFilter = (filter: FilterDto): FilterDto => ({
+    ...filter,
+    ...(Array.isArray(filter.rentOrSale) && {
+      rentOrSale: filter.rentOrSale[0],
     }),
     pageNumber: 1,
   });
 
   async populateUser(filter) {
-    return this.filtersModel.populate(filter, { path: 'userId' });
+    return this.filterModel.populate(filter, { path: 'user' });
   }
 
-  async saveFilters(filters: Filter): Promise<Filters> {
-    const createdFilters = new this.filtersModel(filters);
+  async saveFilter(filter: Filter): Promise<Filter> {
+    const createdFilter = new this.filterModel({
+      _id: Types.ObjectId(),
+      ...filter,
+    });
 
-    return createdFilters.save();
+    return createdFilter.save();
   }
 
-  async verifyFilter(token: string): Promise<Filters> {
-    const filter = await this.filtersModel.findOne({
-      'token.value': token,
-      'token.expiresAt': {
-        $gt: new Date(),
-      },
+  async verifyFilter(id: string): Promise<Filter> {
+    const filter = await this.filterModel.findOne({
+      _id: id,
       isVerified: false,
     });
-    if (!filter) throw new BadRequestException('Token is not valid');
+    if (!filter) throw new BadRequestException('Filter verification failed');
 
     filter.set({
       isVerified: true,
-      token: null,
     });
     await filter.save();
 

@@ -1,5 +1,5 @@
 import { capitalizeWords } from 'common/utils';
-import { FiltersDto } from 'modules/filter/dto/filters.dto';
+import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { BaseProvider } from './base-provider';
 import { Provider } from './provider.interface';
 
@@ -10,7 +10,7 @@ export class CityExpertProvider extends BaseProvider implements Provider {
 
   static hasNextPage = results => results.data.info.hasNextPage;
 
-  makeRequest(filters: FiltersDto) {
+  makeRequest(filter: FilterDto) {
     const rentOrSale = {
       rent: 'r',
       sale: 's',
@@ -19,8 +19,8 @@ export class CityExpertProvider extends BaseProvider implements Provider {
     const requestBody = {
       ptId: [],
       cityId: 1,
-      rentOrSale: rentOrSale[filters.rentOrSale],
-      currentPage: filters.pageNumber,
+      rentOrSale: rentOrSale[filter.rentOrSale],
+      currentPage: filter.pageNumber,
       resultsPerPage: 60,
       floor: [],
       avFrom: false,
@@ -30,16 +30,16 @@ export class CityExpertProvider extends BaseProvider implements Provider {
       heatingArray: [],
       parkingArray: [],
       petsArray: [],
-      minPrice: filters.minPrice,
-      maxPrice: filters.maxPrice,
+      minPrice: filter.minPrice,
+      maxPrice: filter.maxPrice,
       minSize: null,
       maxSize: null,
-      polygonsArray: filters.municipalities,
+      polygonsArray: filter.municipalities,
       searchSource: 'regular',
       sort: 'datedsc',
-      structure: filters.structures,
+      structure: filter.structures,
       propIds: [],
-      filed: filters.rentOrSale === 'sale' ? [2] : [],
+      filed: filter.rentOrSale === 'sale' ? [2] : [],
       ceiling: [],
       bldgOptsArray: [],
       joineryArray: [],

@@ -1,16 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { Token } from 'modules/token/token.interface';
-import { TokenService } from 'modules/token/token.service';
+import { Subscription } from './subscription.enum';
 import { User, UserDocument } from './user.schema';
 
 @Injectable()
 export class UserService {
-  constructor(
-    private readonly tokenService: TokenService,
-    @InjectModel(User.name) private userModel: Model<UserDocument>,
-  ) {}
+  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
   async getById(id: string) {
     return this.userModel.findById(id);
@@ -35,43 +31,38 @@ export class UserService {
     });
   }
 
-  async saveUser(email: string, token: Token): Promise<User> {
+  async saveUser(email: string): Promise<User> {
     const createdUser = new this.userModel({
       _id: Types.ObjectId(),
       email,
-      token,
     });
 
     return createdUser.save();
   }
 
-  async validateAndGetByEmail(email: string): Promise<User> {
+  async validateUserFromFilter(email: string): Promise<User> {
     const user = await this.userModel.findOne({
       email,
+      isVerified: true,
     });
-    if (!user) throw new BadRequestException('User is not found');
+    if (!user) return;
 
-    if (!user?.isVerified)
-      throw new BadRequestException(
-        'Email is not verified, check the verification email',
-      );
+    if (user.subscription === Subscription.FREE) {
+      throw new BadRequestException('User is already verified');
+    }
 
     return user;
   }
 
-  async verifyUser(token: string): Promise<User> {
+  async verifyUser(id: string): Promise<User> {
     const user = await this.userModel.findOne({
-      'token.value': token,
-      'token.expiresAt': {
-        $gt: new Date(),
-      },
+      _id: id,
       isVerified: false,
     });
-    if (!user) throw new BadRequestException('Token is not valid');
+    if (!user) throw new BadRequestException('User verification failed');
 
     user.set({
       isVerified: true,
-      token: null,
     });
     await user.save();
 

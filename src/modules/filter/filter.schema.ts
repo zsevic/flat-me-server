@@ -1,11 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Token } from 'modules/token/token.schema';
 import { Document, Schema as MongooseSchema } from 'mongoose';
 
-export type FiltersDocument = Filters & Document;
+export type FilterDocument = Filter & Document;
 
 @Schema()
-export class Filters {
+export class Filter {
+  @Prop()
+  _id?: string;
+
   @Prop()
   minPrice: number;
 
@@ -30,10 +32,7 @@ export class Filters {
     ref: 'User',
     type: MongooseSchema.Types.ObjectId,
   })
-  userId: string;
-
-  @Prop()
-  token: Token;
+  user: string;
 }
 
-export const FiltersSchema = SchemaFactory.createForClass(Filters);
+export const FilterSchema = SchemaFactory.createForClass(Filter);

@@ -1,8 +1,8 @@
 import { Type } from 'class-transformer';
 import { IsNotEmpty, Min } from 'class-validator';
-import { FiltersDto } from 'modules/filter/dto/filters.dto';
+import { FilterDto } from 'modules/filter/dto/filter.dto';
 
-export class ApartmentListParamsDto extends FiltersDto {
+export class ApartmentListParamsDto extends FilterDto {
   @Min(1)
   @Type(() => Number)
   @IsNotEmpty()

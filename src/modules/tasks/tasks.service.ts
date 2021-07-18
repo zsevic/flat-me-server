@@ -27,17 +27,17 @@ export class TasksService {
   })
   async handleScraping(): Promise<void> {
     this.logCronJobStarted(SCRAPING_CRON_JOB);
-    const [filters] = await this.filterService.getUniqueFilters();
-    this.logger.log(`Filters: ${!filters ? '{}' : JSON.stringify(filters)}`);
+    const [filter] = await this.filterService.getUniqueFilter();
+    this.logger.log(`Filter: ${!filter ? '{}' : JSON.stringify(filter)}`);
 
-    if (!filters) {
+    if (!filter) {
       this.logger.log('There are no filters');
       this.logCronJobFinished(SCRAPING_CRON_JOB);
       return;
     }
 
     const apartmentList = await this.apartmentService.getApartmentListFromProviders(
-      FilterService.getInitialFilters(filters),
+      FilterService.getInitialFilter(filter),
     );
     if (apartmentList.length === 0) {
       this.logger.log('There are no new apartments');
@@ -64,7 +64,7 @@ export class TasksService {
     }
 
     filters.forEach(async filter => {
-      this.logger.log(`Filters: ${!filters ? '{}' : JSON.stringify(filters)}`);
+      this.logger.log(`Filter: ${JSON.stringify(filter)}`);
       const {
         receivedApartments: receivedApartmentIds,
       } = await this.userService.getReceivedApartmentIds(filter.user_id);

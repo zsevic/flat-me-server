@@ -1,7 +1,7 @@
 import { IsEmail, IsNotEmpty } from 'class-validator';
-import { FiltersDto } from './filters.dto';
+import { FilterDto } from './filter.dto';
 
-export class SaveFiltersDto extends FiltersDto {
+export class SaveFilterDto extends FilterDto {
   @IsNotEmpty()
   @IsEmail()
   email: string;

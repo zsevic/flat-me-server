@@ -1,23 +1,21 @@
 import axios from 'axios';
-import { FiltersDto } from 'modules/filter/dto/filters.dto';
+import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { FURNISHED } from '../apartment.constants';
 
 export class BaseProvider {
-  getProviderRequests = (providers: any, filters: FiltersDto) =>
+  getProviderRequests = (providers: any, filter: FilterDto) =>
     Object.entries(providers).map(([providerName, provider]: [string, any]) =>
-      this.getProviderRequest(providerName, provider, filters),
+      this.getProviderRequest(providerName, provider, filter),
     );
 
-  getProviderRequest = (providerName, provider, filters: FiltersDto) => ({
-    request: axios(new provider().makeRequest(filters)),
+  getProviderRequest = (providerName, provider, filter: FilterDto) => ({
+    request: axios(new provider().makeRequest(filter)),
     providerName,
   });
 
-  parseCommonApartmentInfo = apartmentInfo => {
-    return {
-      floor: apartmentInfo.floor,
-      isFurnished: FURNISHED.includes(apartmentInfo.furnished),
-      price: apartmentInfo.price,
-    };
-  };
+  parseCommonApartmentInfo = apartmentInfo => ({
+    floor: apartmentInfo.floor,
+    isFurnished: FURNISHED.includes(apartmentInfo.furnished),
+    price: apartmentInfo.price,
+  });
 }

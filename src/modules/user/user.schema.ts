@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
-import { Token } from 'modules/token/token.schema';
 import { Subscription } from './subscription.enum';
 
 export type UserDocument = User & Document;
@@ -31,9 +30,6 @@ export class User {
     default: Subscription.FREE,
   })
   subscription: string;
-
-  @Prop()
-  token: Token;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

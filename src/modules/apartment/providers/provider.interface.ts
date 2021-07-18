@@ -1,6 +1,6 @@
-import { FiltersDto } from 'modules/filter/dto/filters.dto';
+import { FilterDto } from 'modules/filter/dto/filter.dto';
 
 export interface Provider {
-  makeRequest(filters: FiltersDto);
+  makeRequest(filter: FilterDto);
   parseApartmentInfo(apartmentInfo);
 }

@@ -1,5 +1,5 @@
 import { capitalizeWords, separateWords } from 'common/utils';
-import { FiltersDto } from 'modules/filter/dto/filters.dto';
+import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { BaseProvider } from './base-provider';
 import { Provider } from './provider.interface';
 
@@ -13,7 +13,7 @@ export class CetiriZidaProvider extends BaseProvider implements Provider {
     return currentCount > 0 && results.data.total > currentCount;
   };
 
-  makeRequest(filters: FiltersDto) {
+  makeRequest(filter: FilterDto) {
     const structures = {
       '0.5': 101,
       '1.0': 102,
@@ -39,16 +39,17 @@ export class CetiriZidaProvider extends BaseProvider implements Provider {
     };
 
     const params = {
-      for: rentOrSale[filters.rentOrSale],
-      priceFrom: filters.minPrice,
-      priceTo: filters.maxPrice,
-      page: filters.pageNumber,
+      for: rentOrSale[filter.rentOrSale],
+      priceFrom: filter.minPrice,
+      priceTo: filter.maxPrice,
+      page: filter.pageNumber,
       placeIds: Object.keys(placesIds)
-        .filter(place => filters.municipalities.includes(place))
+        .filter(place => filter.municipalities.includes(place))
         .map(place => placesIds[place]),
-      ...(filters.rentOrSale === 'sale' && { registered: 1 }),
+      ...(filter.rentOrSale === 'sale' && { registered: 1 }),
       structures: Object.keys(structures)
-        .filter(structure => filters.structures.includes(structure))
+        .map(structure => Number(structure))
+        .filter(structure => filter.structures.indexOf(structure) !== -1)
         .map(structure => structures[structure]),
     };
 

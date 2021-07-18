@@ -4,7 +4,7 @@ import { getTestMessageUrl } from 'nodemailer';
 import { isEnvironment } from 'common/utils';
 import { getLocationUrl } from 'common/utils/location';
 import { ApartmentDocument } from 'modules/apartment/apartment.schema';
-import { FiltersDto } from 'modules/filter/dto/filters.dto';
+import { FilterDto } from 'modules/filter/dto/filter.dto';
 
 @Injectable()
 export class MailService {
@@ -13,10 +13,10 @@ export class MailService {
   constructor(private readonly mailerService: MailerService) {}
 
   private getMailSubject = (
-    filters: FiltersDto,
+    filter: FilterDto,
     apartmentListLength: number,
   ): string =>
-    `Found ${apartmentListLength} new apartment(s) for ${filters.rentOrSale}`;
+    `Found ${apartmentListLength} new apartment(s) for ${filter.rentOrSale}`;
 
   async sendFilterVerificationMail(
     email: string,
@@ -44,14 +44,14 @@ export class MailService {
   async sendUpdatesMail(
     email: string,
     apartmentList: ApartmentDocument[],
-    filters: FiltersDto,
+    filter: FilterDto,
   ): Promise<void> {
     this.logger.log(
       `Sending ${apartmentList.length} new apartment(s) to ${email}...`,
     );
     const mailInfo = await this.mailerService.sendMail({
       to: email,
-      subject: this.getMailSubject(filters, apartmentList.length),
+      subject: this.getMailSubject(filter, apartmentList.length),
       template: './new-apartments',
       context: {
         apartmentList: apartmentList.map(apartment =>
@@ -59,7 +59,7 @@ export class MailService {
             locationUrl: getLocationUrl(apartment?.location),
           }),
         ),
-        filters,
+        filter,
         name: 'user',
       },
     });

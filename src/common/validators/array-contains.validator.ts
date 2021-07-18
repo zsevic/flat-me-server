@@ -6,11 +6,12 @@ import {
 
 @ValidatorConstraint({ name: 'customText', async: false })
 export class ArrayContainsValidator implements ValidatorConstraintInterface {
-  validate(elements: string[], args: ValidationArguments): boolean {
+  validate(elements: (string | number)[], args: ValidationArguments): boolean {
     return (
       Array.isArray(elements) &&
-      elements.filter((element: string): boolean =>
-        args.constraints.includes(element),
+      elements.filter(
+        (element: string | number): boolean =>
+          args.constraints.indexOf(element) !== -1,
       ).length > 0
     );
   }

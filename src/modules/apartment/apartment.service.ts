@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { FiltersDto } from 'modules/filter/dto/filters.dto';
+import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { Apartment, ApartmentDocument } from './apartment.schema';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
 import {
@@ -22,11 +22,11 @@ export class ApartmentService {
     private apartmentModel: Model<ApartmentDocument>,
   ) {}
 
-  async findApartments(providerRequests, filters: FiltersDto, foundApartments) {
+  async findApartments(providerRequests, filter: FilterDto, foundApartments) {
     const newRequests = [];
-    const filtersWithNextPage = {
-      ...filters,
-      pageNumber: filters.pageNumber + 1,
+    const filterWithNextPage = {
+      ...filter,
+      pageNumber: filter.pageNumber + 1,
     };
 
     const providerResults = await Promise.all(
@@ -43,12 +43,12 @@ export class ApartmentService {
 
         const apartmentInfo = new this.providers[
           providerName
-        ]().parseApartmentInfo(apartment, filters);
+        ]().parseApartmentInfo(apartment, filter);
         foundApartments.push(apartmentInfo);
       });
       const hasNextPage = this.providers[providerName].hasNextPage(
         providerResult,
-        filters.pageNumber,
+        filter.pageNumber,
       );
       if (hasNextPage) {
         newRequests.push(
@@ -56,8 +56,8 @@ export class ApartmentService {
             providerName,
             this.providers[providerName],
             {
-              ...filters,
-              pageNumber: filters.pageNumber + 1,
+              ...filter,
+              pageNumber: filter.pageNumber + 1,
             },
           ),
         );
@@ -65,28 +65,28 @@ export class ApartmentService {
     });
 
     return newRequests.length > 0
-      ? this.findApartments(newRequests, filtersWithNextPage, foundApartments)
+      ? this.findApartments(newRequests, filterWithNextPage, foundApartments)
       : foundApartments;
   }
 
-  async getApartmentListFromProviders(filters: FiltersDto) {
+  async getApartmentListFromProviders(filter: FilterDto) {
     try {
       const providerRequests = new BaseProvider().getProviderRequests(
         this.providers,
-        filters,
+        filter,
       );
 
-      return this.findApartments(providerRequests, filters, []);
+      return this.findApartments(providerRequests, filter, []);
     } catch (error) {
       console.error(error);
     }
   }
 
   async getApartmentListFromDatabase(
-    filters: ApartmentListParamsDto,
+    filter: ApartmentListParamsDto,
     skippedApartmentments?: string[],
   ) {
-    const { limitPerPage = 10, pageNumber = 1 } = filters;
+    const { limitPerPage = 10, pageNumber = 1 } = filter;
     const query = {
       ...(skippedApartmentments &&
         Array.isArray(skippedApartmentments) &&
@@ -96,15 +96,15 @@ export class ApartmentService {
           },
         }),
       price: {
-        $gte: filters.minPrice,
-        $lte: filters.maxPrice,
+        $gte: filter.minPrice,
+        $lte: filter.maxPrice,
       },
       municipality: {
-        $in: filters.municipalities,
+        $in: filter.municipalities,
       },
-      rentOrSale: filters.rentOrSale,
+      rentOrSale: filter.rentOrSale,
       structure: {
-        $in: filters.structures,
+        $in: filter.structures,
       },
     };
 
