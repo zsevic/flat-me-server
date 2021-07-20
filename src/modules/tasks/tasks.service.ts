@@ -38,16 +38,10 @@ export class TasksService {
       return;
     }
 
-    const apartmentList = await this.apartmentService.getApartmentListFromProviders(
+    await this.apartmentService.getApartmentListFromProviders(
       FilterService.getInitialFilter(filter),
     );
-    if (apartmentList.length === 0) {
-      this.logger.log('There are no new apartments');
-      this.logCronJobFinished(SCRAPING_CRON_JOB);
-      return;
-    }
-    this.logger.log(`Found ${apartmentList.length} new apartment(s)`);
-    await this.apartmentService.saveApartmentList(apartmentList);
+
     this.logCronJobFinished(SCRAPING_CRON_JOB);
   }
 
@@ -96,7 +90,7 @@ export class TasksService {
         newApartmentIds,
       );
       const populatedFilter = await this.filterService.populateUser(filter);
-      const deactivationToken = await this.tokenService.createToken(12);
+      const deactivationToken = await this.tokenService.createToken(24);
       Object.assign(deactivationToken, { filter: filter._id });
       await this.tokenService.saveToken(deactivationToken);
       const deactivationUrl = `${process.env.CLIENT_URL}/filters/deactivation/${deactivationToken.value}`;
