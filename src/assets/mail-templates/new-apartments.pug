@@ -13,8 +13,13 @@ ul
         span place: #{apartment.place}, 
       if apartment.floor
         span floor: #{apartment.floor}, 
-      if apartment.isFurnished
-        span furnished, 
+      case apartment.furnished
+        when 'furnished'
+          span namešteno, 
+        when 'semi-furnished'
+          span polunamešteno, 
+        when 'empty'
+          span prazno, 
       if apartment.heatingType
         span heating type: #{apartment.heatingType}, 
       span size: #{apartment.size}m

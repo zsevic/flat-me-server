@@ -105,12 +105,15 @@ export class ApartmentService {
             $nin: skippedApartmentments,
           },
         }),
-      price: {
-        $gte: filter.minPrice,
-        $lte: filter.maxPrice,
+      furnished: {
+        $in: filter.furnished,
       },
       municipality: {
         $in: filter.municipalities,
+      },
+      price: {
+        $gte: filter.minPrice,
+        $lte: filter.maxPrice,
       },
       rentOrSale: filter.rentOrSale,
       structure: {

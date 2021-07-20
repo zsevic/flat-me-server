@@ -44,6 +44,7 @@ export class FilterService {
       {
         $project: {
           _id: 1,
+          furnished: 1,
           minPrice: 1,
           maxPrice: 1,
           municipalities: 1,
@@ -73,6 +74,7 @@ export class FilterService {
       {
         $group: {
           _id: null,
+          uniqueFurnished: { $addToSet: '$furnished' },
           minPrice: { $min: '$minPrice' },
           maxPrice: { $max: '$maxPrice' },
           uniqueMunicipalities: { $addToSet: '$municipalities' },
@@ -83,6 +85,7 @@ export class FilterService {
       {
         $project: {
           _id: 0,
+          furnished: getUniqueValuesQuery('$uniqueFurnished'),
           minPrice: 1,
           maxPrice: 1,
           municipalities: getUniqueValuesQuery('$uniqueMunicipalities'),

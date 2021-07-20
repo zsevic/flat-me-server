@@ -1,14 +1,7 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Param,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, Param, Post } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { FILTER_VERIFIED } from 'common/events/constants';
 import { MailService } from 'modules/mail/mail.service';
-import { Token } from 'modules/token/token.interfaces';
 import { TokenService } from 'modules/token/token.service';
 import { UserService } from 'modules/user/user.service';
 import { SaveFilterDto } from './dto/save-filter.dto';

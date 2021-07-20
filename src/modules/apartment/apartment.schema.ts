@@ -41,7 +41,7 @@ export class Apartment {
   heatingType: string;
 
   @Prop()
-  isFurnished: boolean;
+  furnished: string;
 
   @Prop()
   location: LocationSchema;

@@ -15,6 +15,14 @@ export class CityExpertProvider extends BaseProvider implements Provider {
       rent: 'r',
       sale: 's',
     };
+    const furnished = {
+      furnished: 1,
+      'semi-furnished': 2,
+      empty: 3,
+    };
+    const furnishedFilter = filter.furnished.map(
+      (filter: string): number => furnished[filter],
+    );
 
     const requestBody = {
       ptId: [],
@@ -25,7 +33,7 @@ export class CityExpertProvider extends BaseProvider implements Provider {
       floor: [],
       avFrom: false,
       underConstruction: false,
-      furnished: [],
+      furnished: furnishedFilter,
       furnishingArray: [],
       heatingArray: [],
       parkingArray: [],
@@ -79,6 +87,11 @@ export class CityExpertProvider extends BaseProvider implements Provider {
 
   parseApartmentInfo = apartmentInfo => {
     const [latitude, longitude] = apartmentInfo.location.split(', ');
+    const furnished = {
+      1: 'furnished',
+      2: 'semi-furnished',
+      3: 'empty',
+    };
     const heatingTypes = {
       1: 'district',
       4: 'electricity',
@@ -111,6 +124,7 @@ export class CityExpertProvider extends BaseProvider implements Provider {
         address: capitalizeWords(apartmentInfo.street),
       }),
       availableFrom: apartmentInfo.availableFrom,
+      furnished: furnished[apartmentInfo.furnished],
       ...(heatingType && { heatingType }),
       location: {
         latitude,

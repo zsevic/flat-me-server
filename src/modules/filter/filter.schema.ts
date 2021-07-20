@@ -9,19 +9,22 @@ export class Filter {
   _id?: string;
 
   @Prop()
+  furnished: string[];
+
+  @Prop()
   minPrice: number;
 
   @Prop()
   maxPrice: number;
 
   @Prop()
+  municipalities: string[];
+
+  @Prop()
   rentOrSale: string;
 
   @Prop()
   structures: number[];
-
-  @Prop()
-  municipalities: string[];
 
   @Prop({
     default: false,

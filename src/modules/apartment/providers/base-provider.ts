@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
-import { FURNISHED } from '../apartment.constants';
 
 export class BaseProvider {
   getProviderRequests = (providers: any, filter: FilterDto) =>
@@ -15,7 +14,6 @@ export class BaseProvider {
 
   parseCommonApartmentInfo = apartmentInfo => ({
     floor: apartmentInfo.floor,
-    isFurnished: FURNISHED.includes(apartmentInfo.furnished),
     price: apartmentInfo.price,
   });
 }

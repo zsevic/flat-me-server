@@ -14,6 +14,14 @@ export class CetiriZidaProvider extends BaseProvider implements Provider {
   };
 
   makeRequest(filter: FilterDto) {
+    const furnished = {
+      empty: 'no',
+      furnished: 'yes',
+      'semi-furnished': 'semi',
+    };
+    const furnishedFilter = filter.furnished.map(
+      (filter: string): string => furnished[filter],
+    );
     const structures = {
       '0.5': 101,
       1: 102,
@@ -40,6 +48,7 @@ export class CetiriZidaProvider extends BaseProvider implements Provider {
 
     const params = {
       for: rentOrSale[filter.rentOrSale],
+      furnishedTypes: furnishedFilter,
       priceFrom: filter.minPrice,
       priceTo: filter.maxPrice,
       page: filter.pageNumber,
@@ -79,6 +88,12 @@ export class CetiriZidaProvider extends BaseProvider implements Provider {
   };
 
   parseApartmentInfo = apartmentInfo => {
+    const furnished = {
+      no: 'empty',
+      semi: 'semi-furnished',
+      yes: 'furnished',
+    };
+
     return {
       ...this.parseCommonApartmentInfo(apartmentInfo),
       id: apartmentInfo.id,
@@ -89,6 +104,7 @@ export class CetiriZidaProvider extends BaseProvider implements Provider {
       ...(apartmentInfo.heatingType && {
         heatingType: separateWords(apartmentInfo.heatingType),
       }),
+      furnished: furnished[apartmentInfo.furnished],
       municipality: this.getMunicipality(apartmentInfo),
       place: apartmentInfo?.placeNames?.[0],
       postedAt: apartmentInfo.createdAt,
