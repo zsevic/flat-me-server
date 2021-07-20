@@ -41,10 +41,11 @@ export class MailService {
     }
   }
 
-  async sendUpdatesMail(
+  async sendMailWithNewApartments(
     email: string,
     apartmentList: ApartmentDocument[],
     filter: FilterDto,
+    deactivationUrl: string,
   ): Promise<void> {
     this.logger.log(
       `Sending ${apartmentList.length} new apartment(s) to ${email}...`,
@@ -61,6 +62,7 @@ export class MailService {
         ),
         filter,
         name: 'user',
+        deactivationUrl,
       },
     });
 

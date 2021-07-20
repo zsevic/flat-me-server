@@ -3,6 +3,8 @@ import { RentOrSale } from './filter.enums';
 export interface Filter {
   _id?: string;
 
+  isActive: boolean;
+
   isVerified: boolean;
 
   minPrice: number;

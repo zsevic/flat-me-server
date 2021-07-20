@@ -11,6 +11,19 @@ export class FilterService {
     @InjectModel(Filter.name) private filterModel: Model<FilterDocument>,
   ) {}
 
+  async deactivateFilter(filterId: string): Promise<void> {
+    const filter = await this.filterModel.findById(filterId);
+    if (!filter) {
+      throw new BadRequestException('Filter is not valid');
+    }
+
+    filter.set({
+      isActive: false,
+    });
+
+    await filter.save();
+  }
+
   async getFilterListForSubscription(subscriptionName: string) {
     return this.filterModel.aggregate([
       {
@@ -23,13 +36,14 @@ export class FilterService {
       },
       {
         $match: {
+          isActive: true,
           'usersData.isVerified': true,
           'usersData.subscription': subscriptionName,
         },
       },
       {
         $project: {
-          _id: 0,
+          _id: 1,
           minPrice: 1,
           maxPrice: 1,
           municipalities: 1,
@@ -100,7 +114,7 @@ export class FilterService {
     return createdFilter.save();
   }
 
-  async verifyFilter(id: string): Promise<Filter> {
+  async verifyAndActivateFilter(id: string): Promise<Filter> {
     const filter = await this.filterModel.findOne({
       _id: id,
       isVerified: false,
@@ -109,6 +123,7 @@ export class FilterService {
 
     filter.set({
       isVerified: true,
+      isActive: true,
     });
     await filter.save();
 

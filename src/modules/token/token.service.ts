@@ -15,15 +15,23 @@ export class TokenService {
     @InjectModel(Token.name) private tokenModel: Model<TokenDocument>,
   ) {}
 
-  async createToken(): Promise<InitialToken> {
+  createToken = async (validHours = 1): Promise<InitialToken> => {
     const token = await this.generateToken();
-    const expiresAt = this.getExpiresAt();
+    const expiresAt = this.getExpiresAt(validHours);
 
     return {
       expiresAt,
       value: token,
     };
-  }
+  };
+
+  deactivateToken = async (token: TokenDocument): Promise<void> => {
+    token.set({
+      expiresAt: null,
+    });
+
+    await token.save();
+  };
 
   private generateToken = async (): Promise<string> => {
     return (await randomBytesAsync(TOKEN_LENGTH))
@@ -31,14 +39,14 @@ export class TokenService {
       .replace(/\W/g, '');
   };
 
-  private getExpiresAt = (): Date => {
+  private getExpiresAt = (validHours: number): Date => {
     const expiresAt = new Date();
-    expiresAt.setHours(expiresAt.getHours() + 1);
+    expiresAt.setHours(expiresAt.getHours() + validHours);
 
     return expiresAt;
   };
 
-  public getToken = async (token: string): Promise<Token> => {
+  public getToken = async (token: string): Promise<TokenDocument> => {
     const validToken = await this.tokenModel.findOne({
       value: token,
       expiresAt: {
@@ -48,6 +56,24 @@ export class TokenService {
     if (!validToken) throw new BadRequestException('Token is not valid');
 
     return validToken;
+  };
+
+  public deactivateTokenByFilterId = async (
+    filterId: string,
+  ): Promise<void> => {
+    const validToken = await this.tokenModel.findOne({
+      expiresAt: {
+        $gt: new Date(),
+      },
+      filter: filterId,
+    });
+    if (!validToken) return;
+
+    validToken.set({
+      expiresAt: null,
+    });
+
+    await validToken.save();
   };
 
   public saveToken = async (token: Token): Promise<Token> => {

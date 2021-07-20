@@ -4,6 +4,7 @@ import { RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION } from 'modules/apartment/ap
 import { ApartmentService } from 'modules/apartment/apartment.service';
 import { FilterService } from 'modules/filter/filter.service';
 import { MailService } from 'modules/mail/mail.service';
+import { TokenService } from 'modules/token/token.service';
 import { Subscription } from 'modules/user/subscription.enum';
 import { UserService } from 'modules/user/user.service';
 import {
@@ -19,6 +20,7 @@ export class TasksService {
     private readonly apartmentService: ApartmentService,
     private readonly filterService: FilterService,
     private readonly mailService: MailService,
+    private readonly tokenService: TokenService,
     private readonly userService: UserService,
   ) {}
 
@@ -57,13 +59,14 @@ export class TasksService {
     const filters = await this.filterService.getFilterListForSubscription(
       Subscription.FREE,
     );
-    if (!filters) {
+    if (!filters.length) {
       this.logger.log('There are no filters');
       this.logCronJobFinished(SENDING_UPDATES_FREE_SUBSCRIPTION_CRON_JOB);
       return;
     }
 
     filters.forEach(async filter => {
+      await this.tokenService.deactivateTokenByFilterId(filter._id);
       this.logger.log(`Filter: ${JSON.stringify(filter)}`);
       const {
         receivedApartments: receivedApartmentIds,
@@ -93,11 +96,16 @@ export class TasksService {
         newApartmentIds,
       );
       const populatedFilter = await this.filterService.populateUser(filter);
-      await this.mailService.sendUpdatesMail(
+      const deactivationToken = await this.tokenService.createToken(12);
+      Object.assign(deactivationToken, { filter: filter._id });
+      await this.tokenService.saveToken(deactivationToken);
+      const deactivationUrl = `${process.env.CLIENT_URL}/filters/deactivation/${deactivationToken.value}`;
+      await this.mailService.sendMailWithNewApartments(
         // @ts-ignore
         populatedFilter.user.email,
         newApartments,
         filter,
+        deactivationUrl,
       );
       this.logCronJobFinished(SENDING_UPDATES_FREE_SUBSCRIPTION_CRON_JOB);
     });

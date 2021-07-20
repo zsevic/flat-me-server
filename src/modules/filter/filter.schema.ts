@@ -26,6 +26,11 @@ export class Filter {
   @Prop({
     default: false,
   })
+  isActive: boolean;
+
+  @Prop({
+    default: false,
+  })
   isVerified: boolean;
 
   @Prop({

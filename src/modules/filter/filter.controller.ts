@@ -40,6 +40,7 @@ export class FilterController {
     const newFilter: Filter = {
       ...filter,
       user: user._id,
+      isActive: false,
       isVerified: false,
     };
     const savedFilter = await this.filterService.saveFilter(newFilter);
@@ -59,7 +60,7 @@ export class FilterController {
       filterVerifiedEvent.email = user.email;
     }
 
-    const filter = await this.filterService.verifyFilter(filterId);
+    const filter = await this.filterService.verifyAndActivateFilter(filterId);
     if (!userId) {
       const user = await this.userService.getById(filter.user);
       filterVerifiedEvent.email = user.email;
@@ -67,5 +68,13 @@ export class FilterController {
 
     filterVerifiedEvent.isVerified = true;
     this.eventService.emit(FILTER_VERIFIED, filterVerifiedEvent);
+  }
+
+  @Post('deactivate/:token')
+  async deactivateFilter(@Param('token') token: string): Promise<void> {
+    const validToken = await this.tokenService.getToken(token);
+
+    await this.filterService.deactivateFilter(validToken.filter);
+    await this.tokenService.deactivateToken(validToken);
   }
 }
