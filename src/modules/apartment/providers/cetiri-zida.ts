@@ -1,4 +1,4 @@
-import { capitalizeWords, separateWords } from 'common/utils';
+import { capitalizeWords } from 'common/utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { BaseProvider } from './base-provider';
 import { Provider } from './provider.interface';
@@ -114,7 +114,7 @@ export class CetiriZidaProvider extends BaseProvider implements Provider {
       floor: floor[apartmentInfo.floor] || apartmentInfo.floor,
       furnished: furnished[apartmentInfo.furnished],
       ...(apartmentInfo.heatingType && {
-        heatingType: separateWords(apartmentInfo.heatingType),
+        heatingTypes: [apartmentInfo.heatingType],
       }),
       municipality: this.getMunicipality(apartmentInfo),
       place: apartmentInfo?.placeNames?.[0],

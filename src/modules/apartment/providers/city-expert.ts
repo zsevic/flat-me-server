@@ -102,9 +102,12 @@ export class CityExpertProvider extends BaseProvider implements Provider {
       2: 'semi-furnished',
       3: 'empty',
     };
-    const heatingTypes = {
+    const heatingTypesMap = {
       1: 'district',
       4: 'electricity',
+      10: 'storageHeater',
+      21: 'underfloor',
+      26: 'thermalPump',
       99: 'central',
     };
     const rentOrSale = {
@@ -125,7 +128,13 @@ export class CityExpertProvider extends BaseProvider implements Provider {
     };
 
     const { structure } = apartmentInfo;
-    const heatingType = heatingTypes[apartmentInfo.heatingArray[0]];
+    const heatingTypes = [
+      ...new Set(
+        apartmentInfo.heatingArray.map(
+          heatingType => heatingTypesMap[heatingType],
+        ),
+      ),
+    ];
 
     return {
       ...this.parseCommonApartmentInfo(apartmentInfo),
@@ -137,7 +146,7 @@ export class CityExpertProvider extends BaseProvider implements Provider {
       coverPhotoUrl: `https://img.cityexpert.rs/sites/default/files/styles/1920x/public/image/${apartmentInfo.coverPhoto}`,
       floor: floor[apartmentInfo.floor],
       furnished: furnished[apartmentInfo.furnished],
-      ...(heatingType && { heatingType }),
+      heatingTypes,
       location: {
         latitude,
         longitude,

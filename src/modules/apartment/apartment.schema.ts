@@ -41,7 +41,7 @@ export class Apartment {
   floor: string;
 
   @Prop()
-  heatingType: string;
+  heatingTypes: string[];
 
   @Prop()
   furnished: string;
