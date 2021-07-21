@@ -103,6 +103,18 @@ export class CetiriZidaProvider extends BaseProvider implements Provider {
       yes: 'furnished',
     };
 
+    const heatingTypesMap = {
+      central: 'central',
+      district: 'district',
+      electricity: 'electricity',
+      gas: 'gas',
+      norwegianRadiators: 'norwegian radiators',
+      storageHeater: 'storage heater',
+      thermalPump: 'thermal pump',
+      tileStove: 'tile stove',
+      underfloor: 'underfloor',
+    };
+
     return {
       ...this.parseCommonApartmentInfo(apartmentInfo),
       id: apartmentInfo.id,
@@ -110,11 +122,10 @@ export class CetiriZidaProvider extends BaseProvider implements Provider {
         address: capitalizeWords(apartmentInfo.address),
       }),
       coverPhotoUrl: apartmentInfo?.image?.search['380x0_fill_0_webp'],
-      description: apartmentInfo.description100,
       floor: floor[apartmentInfo.floor] || apartmentInfo.floor,
       furnished: furnished[apartmentInfo.furnished],
-      ...(apartmentInfo.heatingType && {
-        heatingTypes: [apartmentInfo.heatingType],
+      ...(heatingTypesMap[apartmentInfo.heatingType] && {
+        heatingTypes: [heatingTypesMap[apartmentInfo.heatingType]],
       }),
       municipality: this.getMunicipality(apartmentInfo),
       place: apartmentInfo?.placeNames?.[0],

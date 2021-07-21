@@ -105,9 +105,9 @@ export class CityExpertProvider extends BaseProvider implements Provider {
     const heatingTypesMap = {
       1: 'district',
       4: 'electricity',
-      10: 'storageHeater',
+      10: 'storage heater',
       21: 'underfloor',
-      26: 'thermalPump',
+      26: 'thermal pump',
       99: 'central',
     };
     const rentOrSale = {

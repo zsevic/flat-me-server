@@ -25,5 +25,5 @@ export class FilterDto {
   @Type(() => Number)
   structures: number[];
 
-  pageNumber: number;
+  pageNumber?: number;
 }

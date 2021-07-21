@@ -35,9 +35,6 @@ export class Apartment {
   coverPhotoUrl: string;
 
   @Prop()
-  description: string;
-
-  @Prop()
   floor: string;
 
   @Prop()

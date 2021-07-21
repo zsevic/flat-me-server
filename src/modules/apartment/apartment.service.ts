@@ -25,56 +25,58 @@ export class ApartmentService {
 
   async findApartments(providerRequests, filter: FilterDto) {
     const newRequests = [];
-    const filterWithNextPage = {
-      ...filter,
-      pageNumber: filter.pageNumber + 1,
-    };
 
     const providerResults = await Promise.all(
       providerRequests.map(providerRequest => providerRequest.request),
     );
-    providerResults.forEach(
-      async (providerResult: any, index: number): Promise<void> => {
-        const foundApartments = [];
-        const { providerName } = providerRequests[index];
+    for (const [index, providerResult] of providerResults.entries()) {
+      const foundApartments = [];
+      const { providerName } = providerRequests[index];
 
-        const apartments = this.providers[providerName].getResults(
-          providerResult,
-        );
-        apartments.forEach(apartment => {
-          if (!apartment.price) return;
+      const apartments = this.providers[providerName].getResults(
+        providerResult,
+      );
+      apartments.forEach(apartment => {
+        if (!apartment.price) return;
 
-          const apartmentInfo = new this.providers[
-            providerName
-          ]().parseApartmentInfo(apartment, filter);
-          foundApartments.push(apartmentInfo);
-        });
+        const apartmentInfo = new this.providers[
+          providerName
+        ]().parseApartmentInfo(apartment, filter);
+        foundApartments.push(apartmentInfo);
+      });
 
-        this.logger.log(
-          `Found ${foundApartments.length} new apartment(s) from ${providerName}`,
-        );
+      this.logger.log(
+        `Found ${foundApartments.length} new apartment(s) from ${providerName} for ${filter.rentOrSale}, page ${filter.pageNumber}`,
+      );
+      try {
         await this.saveApartmentList(foundApartments);
+      } catch (err) {
+        this.logger.error("Couldn't save apartments");
+      }
 
-        const hasNextPage = this.providers[providerName].hasNextPage(
-          providerResult,
-          filter.pageNumber,
+      const hasNextPage = this.providers[providerName].hasNextPage(
+        providerResult,
+        filter.pageNumber,
+      );
+      if (hasNextPage) {
+        newRequests.push(
+          new BaseProvider().getProviderRequest(
+            providerName,
+            this.providers[providerName],
+            {
+              ...filter,
+              pageNumber: filter.pageNumber + 1,
+            },
+          ),
         );
-        if (hasNextPage) {
-          newRequests.push(
-            new BaseProvider().getProviderRequest(
-              providerName,
-              this.providers[providerName],
-              {
-                ...filter,
-                pageNumber: filter.pageNumber + 1,
-              },
-            ),
-          );
-        }
-      },
-    );
+      }
+    }
 
     if (newRequests.length > 0) {
+      const filterWithNextPage = {
+        ...filter,
+        pageNumber: filter.pageNumber + 1,
+      };
       return this.findApartments(newRequests, filterWithNextPage);
     }
   }

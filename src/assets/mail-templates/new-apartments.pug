@@ -20,8 +20,8 @@ ul
           span polunamešteno, 
         when 'empty'
           span prazno, 
-      if apartment.heatingTypes
-        span heating type: #{apartment.heatingType[0]}, 
+      if apartment.heatingTypes.length
+        span heating type: #{apartment.heatingTypes[0]}, 
       span size: #{apartment.size}m
       sup 2
       span , 

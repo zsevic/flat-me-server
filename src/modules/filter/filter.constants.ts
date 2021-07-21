@@ -1,3 +1,6 @@
+import { FilterDto } from './dto/filter.dto';
+import { RentOrSale } from './filter.enums';
+
 export const FURNISHED = ['empty', 'furnished', 'semi-furnished'];
 
 export const MUNICIPALITIES = [
@@ -13,3 +16,22 @@ export const MUNICIPALITIES = [
 ];
 
 export const STRUCTURES = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0];
+
+const baseFilter = {
+  minPrice: 0,
+  furnished: FURNISHED,
+  structures: STRUCTURES,
+  municipalities: MUNICIPALITIES,
+};
+
+export const rentFilter: FilterDto = {
+  ...baseFilter,
+  maxPrice: 500,
+  rentOrSale: RentOrSale.rent,
+};
+
+export const saleFilter: FilterDto = {
+  ...baseFilter,
+  maxPrice: 200000,
+  rentOrSale: RentOrSale.sale,
+};

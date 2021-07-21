@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION } from 'modules/apartment/apartment.constants';
 import { ApartmentService } from 'modules/apartment/apartment.service';
+import { rentFilter, saleFilter } from 'modules/filter/filter.constants';
 import { FilterService } from 'modules/filter/filter.service';
 import { MailService } from 'modules/mail/mail.service';
 import { TokenService } from 'modules/token/token.service';
@@ -9,7 +10,7 @@ import { Subscription } from 'modules/user/subscription.enum';
 import { UserService } from 'modules/user/user.service';
 import {
   SCRAPING_CRON_JOB,
-  SENDING_UPDATES_FREE_SUBSCRIPTION_CRON_JOB,
+  SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB,
 } from './tasks.constants';
 
 @Injectable()
@@ -29,34 +30,34 @@ export class TasksService {
   })
   async handleScraping(): Promise<void> {
     this.logCronJobStarted(SCRAPING_CRON_JOB);
-    const [filter] = await this.filterService.getUniqueFilter();
-    this.logger.log(`Filter: ${!filter ? '{}' : JSON.stringify(filter)}`);
-
-    if (!filter) {
-      this.logger.log('There are no filters');
-      this.logCronJobFinished(SCRAPING_CRON_JOB);
-      return;
+    const scrapeByFilters = [];
+    for (const filter of [rentFilter, saleFilter]) {
+      scrapeByFilters.push(
+        this.apartmentService.getApartmentListFromProviders(
+          FilterService.getInitialFilter(filter),
+        ),
+      );
     }
 
-    await this.apartmentService.getApartmentListFromProviders(
-      FilterService.getInitialFilter(filter),
-    );
+    await Promise.all(scrapeByFilters);
 
     this.logCronJobFinished(SCRAPING_CRON_JOB);
   }
 
   @Cron(CronExpression.EVERY_DAY_AT_1PM, {
-    name: SENDING_UPDATES_FREE_SUBSCRIPTION_CRON_JOB,
+    name: SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB,
     timeZone: 'Europe/Belgrade',
   })
-  async handleFreeSubscriptionSendingUpdates(): Promise<void> {
-    this.logCronJobStarted(SENDING_UPDATES_FREE_SUBSCRIPTION_CRON_JOB);
+  async handleSendingNewApartmentsForFreeSubscriptionUsers(): Promise<void> {
+    this.logCronJobStarted(SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB);
     const filters = await this.filterService.getFilterListForSubscription(
       Subscription.FREE,
     );
     if (!filters.length) {
       this.logger.log('There are no filters');
-      this.logCronJobFinished(SENDING_UPDATES_FREE_SUBSCRIPTION_CRON_JOB);
+      this.logCronJobFinished(
+        SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB,
+      );
       return;
     }
 
@@ -74,7 +75,9 @@ export class TasksService {
       );
       const apartmentListLength = apartmentList.data.length;
       if (apartmentListLength === 0) {
-        this.logCronJobFinished(SENDING_UPDATES_FREE_SUBSCRIPTION_CRON_JOB);
+        this.logCronJobFinished(
+          SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB,
+        );
         return;
       }
 
@@ -102,7 +105,9 @@ export class TasksService {
         filter,
         deactivationUrl,
       );
-      this.logCronJobFinished(SENDING_UPDATES_FREE_SUBSCRIPTION_CRON_JOB);
+      this.logCronJobFinished(
+        SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB,
+      );
     });
   }
 
