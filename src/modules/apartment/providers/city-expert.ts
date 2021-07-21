@@ -124,6 +124,7 @@ export class CityExpertProvider extends BaseProvider implements Provider {
         address: capitalizeWords(apartmentInfo.street),
       }),
       availableFrom: apartmentInfo.availableFrom,
+      coverPhotoUrl: `https://img.cityexpert.rs/sites/default/files/styles/1920x/public/image/${apartmentInfo.coverPhoto}`,
       furnished: furnished[apartmentInfo.furnished],
       ...(heatingType && { heatingType }),
       location: {

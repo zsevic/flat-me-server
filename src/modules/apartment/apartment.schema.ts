@@ -32,6 +32,9 @@ export class Apartment {
   availableFrom: string;
 
   @Prop()
+  coverPhotoUrl: string;
+
+  @Prop()
   description: string;
 
   @Prop()
