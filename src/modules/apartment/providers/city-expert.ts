@@ -87,6 +87,16 @@ export class CityExpertProvider extends BaseProvider implements Provider {
 
   parseApartmentInfo = apartmentInfo => {
     const [latitude, longitude] = apartmentInfo.location.split(', ');
+    const floor = {
+      SU: 'basement',
+      PR: 'ground floor',
+      NPR: 'low ground floor',
+      VPR: 'high ground floor',
+      '2_4': '2-4',
+      '5_10': '5-10',
+      '11+': '11+',
+      PTK: 'attic',
+    };
     const furnished = {
       1: 'furnished',
       2: 'semi-furnished',
@@ -125,6 +135,7 @@ export class CityExpertProvider extends BaseProvider implements Provider {
       }),
       availableFrom: apartmentInfo.availableFrom,
       coverPhotoUrl: `https://img.cityexpert.rs/sites/default/files/styles/1920x/public/image/${apartmentInfo.coverPhoto}`,
+      floor: floor[apartmentInfo.floor],
       furnished: furnished[apartmentInfo.furnished],
       ...(heatingType && { heatingType }),
       location: {

@@ -88,6 +88,15 @@ export class CetiriZidaProvider extends BaseProvider implements Provider {
   };
 
   parseApartmentInfo = apartmentInfo => {
+    const floor = {
+      '-4': 'cellar',
+      '-3': 'basement',
+      '-2': 'low ground floor',
+      '-1': 'ground floor',
+      '0': 'high ground floor',
+      100: 'attic',
+    };
+
     const furnished = {
       no: 'empty',
       semi: 'semi-furnished',
@@ -102,10 +111,11 @@ export class CetiriZidaProvider extends BaseProvider implements Provider {
       }),
       coverPhotoUrl: apartmentInfo?.image?.search['380x0_fill_0_webp'],
       description: apartmentInfo.description100,
+      floor: floor[apartmentInfo.floor] || apartmentInfo.floor,
+      furnished: furnished[apartmentInfo.furnished],
       ...(apartmentInfo.heatingType && {
         heatingType: separateWords(apartmentInfo.heatingType),
       }),
-      furnished: furnished[apartmentInfo.furnished],
       municipality: this.getMunicipality(apartmentInfo),
       place: apartmentInfo?.placeNames?.[0],
       postedAt: apartmentInfo.createdAt,

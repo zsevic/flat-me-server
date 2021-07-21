@@ -13,7 +13,6 @@ export class BaseProvider {
   });
 
   parseCommonApartmentInfo = apartmentInfo => ({
-    floor: apartmentInfo.floor,
     price: apartmentInfo.price,
   });
 }
