@@ -100,7 +100,7 @@ export class CetiriZidaProvider extends BaseProvider implements Provider {
       ...(apartmentInfo.address && {
         address: capitalizeWords(apartmentInfo.address),
       }),
-      coverPhotoUrl: apartmentInfo.image.search['380x0_fill_0_webp'],
+      coverPhotoUrl: apartmentInfo?.image?.search['380x0_fill_0_webp'],
       description: apartmentInfo.description100,
       ...(apartmentInfo.heatingType && {
         heatingType: separateWords(apartmentInfo.heatingType),
