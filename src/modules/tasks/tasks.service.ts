@@ -47,6 +47,7 @@ export class TasksService {
 
   @Cron(CronExpression.EVERY_DAY_AT_1PM, {
     name: SENDING_UPDATES_FREE_SUBSCRIPTION_CRON_JOB,
+    timeZone: 'Europe/Belgrade',
   })
   async handleFreeSubscriptionSendingUpdates(): Promise<void> {
     this.logCronJobStarted(SENDING_UPDATES_FREE_SUBSCRIPTION_CRON_JOB);
