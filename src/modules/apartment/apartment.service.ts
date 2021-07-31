@@ -52,6 +52,7 @@ export class ApartmentService {
         await this.saveApartmentList(foundApartments);
       } catch (err) {
         this.logger.error("Couldn't save apartments");
+        continue;
       }
 
       const hasNextPage = this.providers[providerName].hasNextPage(
