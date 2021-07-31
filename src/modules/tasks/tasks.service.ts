@@ -39,7 +39,11 @@ export class TasksService {
       );
     }
 
-    await Promise.all(scrapeByFilters);
+    try {
+      await Promise.all(scrapeByFilters);
+    } catch (error) {
+      this.logger.error(error);
+    }
 
     this.logCronJobFinished(SCRAPING_CRON_JOB);
   }
