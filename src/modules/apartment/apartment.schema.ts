@@ -18,12 +18,8 @@ class LocationSchema {
   timestamps: true,
 })
 export class Apartment {
-  @Prop({
-    index: {
-      unique: true,
-    },
-  })
-  id: string;
+  @Prop()
+  _id: string;
 
   @Prop()
   address: string;

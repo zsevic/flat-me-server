@@ -138,7 +138,7 @@ export class CityExpertProvider extends BaseProvider implements Provider {
 
     return {
       ...this.parseCommonApartmentInfo(apartmentInfo),
-      id: `cityExpert_${apartmentInfo.uniqueID}`,
+      _id: `cityExpert_${apartmentInfo.uniqueID}`,
       ...(apartmentInfo.street && {
         address: capitalizeWords(apartmentInfo.street),
       }),

@@ -117,7 +117,7 @@ export class CetiriZidaProvider extends BaseProvider implements Provider {
 
     return {
       ...this.parseCommonApartmentInfo(apartmentInfo),
-      id: `cetiriZida_${apartmentInfo.id}`,
+      _id: `cetiriZida_${apartmentInfo.id}`,
       ...(apartmentInfo.address && {
         address: capitalizeWords(apartmentInfo.address),
       }),
