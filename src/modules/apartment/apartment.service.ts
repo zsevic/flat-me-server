@@ -50,8 +50,10 @@ export class ApartmentService {
       );
       try {
         await this.saveApartmentList(foundApartments);
-      } catch (err) {
-        this.logger.error("Couldn't save apartments");
+      } catch (error) {
+        this.logger.error(
+          `Couldn't save apartments, error: ${JSON.stringify(error)}`,
+        );
         continue;
       }
 

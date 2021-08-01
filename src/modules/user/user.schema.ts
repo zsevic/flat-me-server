@@ -21,7 +21,7 @@ export class User {
 
   @Prop({
     ref: 'Apartment',
-    type: [MongooseSchema.Types.ObjectId],
+    type: [String],
   })
   receivedApartments: string[];
 
