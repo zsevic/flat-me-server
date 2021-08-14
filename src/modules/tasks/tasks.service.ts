@@ -1,5 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import axios from 'axios';
 import { RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION } from 'modules/apartment/apartment.constants';
 import { ApartmentService } from 'modules/apartment/apartment.service';
 import { ApartmentListParamsDto } from 'modules/apartment/dto/apartment-list-params.dto';
@@ -11,6 +12,7 @@ import { TokenService } from 'modules/token/token.service';
 import { Subscription } from 'modules/user/subscription.enum';
 import { UserService } from 'modules/user/user.service';
 import {
+  DELETING_INACTIVE_APARTMENTS,
   SCRAPING_CRON_JOB,
   SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB,
 } from './tasks.constants';
@@ -120,6 +122,39 @@ export class TasksService {
       );
     });
   }
+
+  @Cron(CronExpression.EVERY_12_HOURS, {
+    name: DELETING_INACTIVE_APARTMENTS,
+  })
+  async handleDeletingInactiveApartments(): Promise<void> {
+    this.logCronJobStarted(DELETING_INACTIVE_APARTMENTS);
+
+    const apartmentsIds = await this.apartmentService.getApartmentsIds();
+
+    try {
+      Promise.all(
+        apartmentsIds.map(id => this.handleDeletingInactiveApartment(id)),
+      );
+    } catch (error) {
+      this.logger.error(error);
+    }
+
+    this.logCronJobFinished(DELETING_INACTIVE_APARTMENTS);
+  }
+
+  private handleDeletingInactiveApartment = async _id => {
+    const [provider, id] = _id.split('_');
+    if (provider === 'cetiriZida') {
+      try {
+        await axios(`https://api.4zida.rs/v5/eds/${id}`);
+      } catch (error) {
+        if (error.response.status === HttpStatus.NOT_FOUND) {
+          this.logger.log(`Deleting apartment: ${_id}`);
+          await this.apartmentService.deleteApartment(_id);
+        }
+      }
+    }
+  };
 
   private logCronJobFinished = (cronJobName: string): void => {
     this.logger.log(`${cronJobName} cron job finished...`);

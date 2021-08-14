@@ -11,6 +11,10 @@ export class ApartmentRepository {
     private apartmentModel: Model<ApartmentDocument>,
   ) {}
 
+  async deleteApartment(id: string): Promise<void> {
+    await this.apartmentModel.findByIdAndDelete(id);
+  }
+
   async getApartmentList(
     filter: ApartmentListParamsDto,
     skippedApartmentments?: string[],
@@ -53,6 +57,12 @@ export class ApartmentRepository {
       data,
       total,
     };
+  }
+
+  async getApartmentsIds(): Promise<string[]> {
+    const apartmentList = await this.apartmentModel.find().select('_id');
+
+    return apartmentList.map(apartment => apartment._id);
   }
 
   async saveApartmentList(apartments: Apartment[]): Promise<Apartment[]> {

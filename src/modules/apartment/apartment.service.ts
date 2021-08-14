@@ -18,6 +18,10 @@ export class ApartmentService {
 
   constructor(private readonly apartmentRepository: ApartmentRepository) {}
 
+  async deleteApartment(id): Promise<void> {
+    return this.apartmentRepository.deleteApartment(id);
+  }
+
   async findApartments(providerRequests, filter: FilterDto) {
     const newRequests = [];
 
@@ -100,5 +104,9 @@ export class ApartmentService {
       filter,
       skippedApartmentments,
     );
+  }
+
+  async getApartmentsIds(): Promise<string[]> {
+    return this.apartmentRepository.getApartmentsIds();
   }
 }
