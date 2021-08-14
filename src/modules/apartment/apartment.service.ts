@@ -1,8 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
-import { Apartment, ApartmentDocument } from './apartment.schema';
+import { ApartmentRepository } from './apartment.repository';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
 import {
   BaseProvider,
@@ -18,10 +16,7 @@ export class ApartmentService {
   };
   private readonly logger = new Logger(ApartmentService.name);
 
-  constructor(
-    @InjectModel(Apartment.name)
-    private apartmentModel: Model<ApartmentDocument>,
-  ) {}
+  constructor(private readonly apartmentRepository: ApartmentRepository) {}
 
   async findApartments(providerRequests, filter: FilterDto) {
     const newRequests = [];
@@ -49,7 +44,7 @@ export class ApartmentService {
         `Found ${foundApartments.length} new apartment(s) from ${providerName} for ${filter.rentOrSale}, page ${filter.pageNumber}`,
       );
       try {
-        await this.saveApartmentList(foundApartments);
+        await this.apartmentRepository.saveApartmentList(foundApartments);
       } catch (error) {
         this.logger.error(
           `Couldn't save apartments, error: ${JSON.stringify(error)}`,
@@ -101,48 +96,9 @@ export class ApartmentService {
     filter: ApartmentListParamsDto,
     skippedApartmentments?: string[],
   ) {
-    const { limitPerPage = 10, pageNumber = 1 } = filter;
-    const query = {
-      ...(skippedApartmentments &&
-        Array.isArray(skippedApartmentments) &&
-        skippedApartmentments.length > 0 && {
-          _id: {
-            $nin: skippedApartmentments,
-          },
-        }),
-      furnished: {
-        $in: filter.furnished,
-      },
-      municipality: {
-        $in: filter.municipalities,
-      },
-      price: {
-        $gte: filter.minPrice,
-        $lte: filter.maxPrice,
-      },
-      rentOrSale: filter.rentOrSale,
-      structure: {
-        $in: filter.structures,
-      },
-    };
-
-    const data = await this.apartmentModel
-      // @ts-ignore
-      .find(query)
-      .skip((pageNumber - 1) * limitPerPage)
-      .limit(limitPerPage)
-      .exec();
-    // @ts-ignore
-    const total = await this.apartmentModel.countDocuments(query).exec();
-
-    return {
-      total,
-      data,
-    };
+    return this.apartmentRepository.getApartmentList(
+      filter,
+      skippedApartmentments,
+    );
   }
-
-  saveApartmentList = async (apartments): Promise<Apartment[]> =>
-    this.apartmentModel.insertMany(apartments, {
-      ordered: false,
-    });
 }

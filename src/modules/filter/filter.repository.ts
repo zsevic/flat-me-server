@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { getUniqueValuesQuery } from 'common/utils';
 import { Model, Types } from 'mongoose';
 import { Filter, FilterDocument } from './filter.schema';
 

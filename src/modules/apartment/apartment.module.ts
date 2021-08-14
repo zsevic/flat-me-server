@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ApartmentController } from './apartment.controller';
+import { ApartmentRepository } from './apartment.repository';
 import { Apartment, ApartmentSchema } from './apartment.schema';
 import { ApartmentService } from './apartment.service';
 
@@ -10,7 +11,7 @@ import { ApartmentService } from './apartment.service';
       { name: Apartment.name, schema: ApartmentSchema },
     ]),
   ],
-  providers: [ApartmentService],
+  providers: [ApartmentRepository, ApartmentService],
   controllers: [ApartmentController],
   exports: [ApartmentService],
 })
