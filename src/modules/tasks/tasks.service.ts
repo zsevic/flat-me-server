@@ -85,6 +85,7 @@ export class TasksService {
       );
       const apartmentListLength = apartmentList.data.length;
       if (apartmentListLength === 0) {
+        this.logger.log('There are no apartments to send to the user');
         this.logCronJobFinished(
           SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB,
         );
