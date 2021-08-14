@@ -52,20 +52,18 @@ export class FilterController {
       filter: filterId,
       user: userId,
     } = await this.tokenService.getValidToken(token);
-    const filterVerifiedEvent = new FilterVerifiedEvent();
-    if (userId) {
-      const user = await this.userService.verifyUser(userId);
-      filterVerifiedEvent.email = user.email;
-    }
 
     const filter = await this.filterService.verifyAndActivateFilter(filterId);
-    if (!userId) {
-      const user = await this.userService.getById(filter.user);
-      filterVerifiedEvent.email = user.email;
-    }
+    const user = userId
+      ? await this.userService.verifyUser(userId)
+      : await this.userService.getById(filter.user);
 
-    filterVerifiedEvent.isVerified = true;
-    this.eventService.emit(FILTER_VERIFIED, filterVerifiedEvent);
+    if (user) {
+      const filterVerifiedEvent = new FilterVerifiedEvent();
+      filterVerifiedEvent.email = user.email;
+      filterVerifiedEvent.isVerified = true;
+      this.eventService.emit(FILTER_VERIFIED, filterVerifiedEvent);
+    }
   }
 
   @Post('deactivate/:token')
