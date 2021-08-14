@@ -1,134 +1,45 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { getUniqueValuesQuery } from 'common/utils';
-import { Model, Types } from 'mongoose';
+import { Injectable } from '@nestjs/common';
 import { FilterDto } from './dto/filter.dto';
+import { FilterRepository } from './filter.repository';
 import { Filter, FilterDocument } from './filter.schema';
 
 @Injectable()
 export class FilterService {
-  constructor(
-    @InjectModel(Filter.name) private filterModel: Model<FilterDocument>,
-  ) {}
+  constructor(private readonly filterRepository: FilterRepository) {}
 
   async deactivateFilter(filterId: string): Promise<void> {
-    const filter = await this.filterModel.findById(filterId);
-    if (!filter) {
-      throw new BadRequestException('Filter is not valid');
-    }
+    const filter = await this.filterRepository.findFilterById(filterId);
 
-    filter.set({
-      isActive: false,
-    });
-
-    await filter.save();
+    return this.filterRepository.deactivateFilter(filter);
   }
 
-  async getFilterListForSubscription(subscriptionName: string) {
-    return this.filterModel.aggregate([
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'user',
-          foreignField: '_id',
-          as: 'usersData',
-        },
-      },
-      {
-        $match: {
-          isActive: true,
-          'usersData.isVerified': true,
-          'usersData.subscription': subscriptionName,
-        },
-      },
-      {
-        $project: {
-          _id: 1,
-          furnished: 1,
-          minPrice: 1,
-          maxPrice: 1,
-          municipalities: 1,
-          rentOrSale: 1,
-          structures: 1,
-          user: 1,
-        },
-      },
-    ]);
+  async getFilterListBySubscriptionName(
+    subscriptionName: string,
+  ): Promise<FilterDocument[]> {
+    return this.filterRepository.getFilterListBySubscriptionName(
+      subscriptionName,
+    );
   }
 
-  async getUniqueFilter() {
-    return this.filterModel.aggregate([
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'user',
-          foreignField: '_id',
-          as: 'usersData',
-        },
-      },
-      {
-        $match: {
-          'usersData.isVerified': true,
-        },
-      },
-      {
-        $group: {
-          _id: null,
-          uniqueFurnished: { $addToSet: '$furnished' },
-          minPrice: { $min: '$minPrice' },
-          maxPrice: { $max: '$maxPrice' },
-          uniqueMunicipalities: { $addToSet: '$municipalities' },
-          rentOrSale: { $addToSet: '$rentOrSale' },
-          uniqueStructures: { $addToSet: '$structures' },
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          furnished: getUniqueValuesQuery('$uniqueFurnished'),
-          minPrice: 1,
-          maxPrice: 1,
-          municipalities: getUniqueValuesQuery('$uniqueMunicipalities'),
-          rentOrSale: 1,
-          structures: getUniqueValuesQuery('$uniqueStructures'),
-        },
-      },
-    ]);
+  static getInitialFilter(filter: FilterDto): FilterDto {
+    return {
+      ...filter,
+      pageNumber: 1,
+    };
   }
 
-  static getInitialFilter = (filter: FilterDto): FilterDto => ({
-    ...filter,
-    ...(Array.isArray(filter.rentOrSale) && {
-      rentOrSale: filter.rentOrSale[0],
-    }),
-    pageNumber: 1,
-  });
-
-  async populateUser(filter) {
-    return this.filterModel.populate(filter, { path: 'user' });
+  async populateUser(filter: FilterDocument): Promise<FilterDocument> {
+    return this.filterRepository.populateUser(filter);
   }
 
   async saveFilter(filter: Filter): Promise<Filter> {
-    const createdFilter = new this.filterModel({
-      _id: Types.ObjectId(),
-      ...filter,
-    });
-
-    return createdFilter.save();
+    return this.filterRepository.saveFilter(filter);
   }
 
   async verifyAndActivateFilter(id: string): Promise<Filter> {
-    const filter = await this.filterModel.findOne({
-      _id: id,
-      isVerified: false,
-    });
-    if (!filter) throw new BadRequestException('Filter verification failed');
+    const filter = await this.filterRepository.findUnverifiedFilter(id);
 
-    filter.set({
-      isVerified: true,
-      isActive: true,
-    });
-    await filter.save();
+    await this.filterRepository.verifyAndActivateFilter(filter);
 
     return filter;
   }

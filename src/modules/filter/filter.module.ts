@@ -4,6 +4,7 @@ import { MailModule } from 'modules/mail/mail.module';
 import { TokenModule } from 'modules/token/token.module';
 import { UserModule } from 'modules/user/user.module';
 import { FilterController } from './filter.controller';
+import { FilterRepository } from './filter.repository';
 import { Filter, FilterSchema } from './filter.schema';
 import { FilterService } from './filter.service';
 
@@ -15,7 +16,7 @@ import { FilterService } from './filter.service';
     UserModule,
   ],
   controllers: [FilterController],
-  providers: [FilterService],
+  providers: [FilterRepository, FilterService],
   exports: [FilterService],
 })
 export class FilterModule {}
