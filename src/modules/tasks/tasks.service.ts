@@ -76,7 +76,7 @@ export class TasksService {
 
       const apartmentListParams = {
         ...filter,
-        limitPerPage: 10,
+        limitPerPage: RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION,
         pageNumber: 1,
       };
       const apartmentList = await this.apartmentService.getApartmentListFromDatabase(
@@ -91,23 +91,15 @@ export class TasksService {
         return;
       }
 
-      const newApartments = apartmentList.data
-        .slice(0, RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION)
-        .sort(
-          (firstApartment, secondApartment) =>
-            firstApartment.price - secondApartment.price,
-        );
-      // @ts-ignore
-      const newApartmentIds = newApartments.map(apartment => apartment._id);
-      await this.userService.insertReceivedApartmentIds(
-        filter.user,
-        newApartmentIds,
-      );
-      const populatedFilter = await this.filterService.populateUser(filter);
       const deactivationToken = await this.tokenService.createToken(24);
       Object.assign(deactivationToken, { filter: filter._id });
       await this.tokenService.saveToken(deactivationToken);
       const deactivationUrl = `${process.env.CLIENT_URL}/filters/deactivation/${deactivationToken.value}`;
+      const newApartments = apartmentList.data.sort(
+        (firstApartment, secondApartment) =>
+          firstApartment.price - secondApartment.price,
+      );
+      const populatedFilter = await this.filterService.populateUser(filter);
       await this.mailService.sendMailWithNewApartments(
         // @ts-ignore
         populatedFilter.user.email,
@@ -115,6 +107,13 @@ export class TasksService {
         filter as FilterDto,
         deactivationUrl,
       );
+
+      const newApartmentIds = newApartments.map(apartment => apartment._id);
+      await this.userService.insertReceivedApartmentIds(
+        filter.user,
+        newApartmentIds,
+      );
+
       this.logCronJobFinished(
         SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB,
       );
