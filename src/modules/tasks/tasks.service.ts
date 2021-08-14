@@ -132,7 +132,7 @@ export class TasksService {
     const apartmentsIds = await this.apartmentService.getApartmentsIds();
 
     try {
-      Promise.all(
+      await Promise.all(
         apartmentsIds.map(id => this.handleDeletingInactiveApartment(id)),
       );
     } catch (error) {
