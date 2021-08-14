@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { HttpModule, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ApartmentController } from './apartment.controller';
 import { ApartmentRepository } from './apartment.repository';
@@ -10,6 +10,7 @@ import { ApartmentService } from './apartment.service';
     MongooseModule.forFeature([
       { name: Apartment.name, schema: ApartmentSchema },
     ]),
+    HttpModule,
   ],
   providers: [ApartmentRepository, ApartmentService],
   controllers: [ApartmentController],

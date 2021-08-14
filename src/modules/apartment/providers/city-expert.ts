@@ -4,6 +4,7 @@ import { BaseProvider } from './base-provider';
 import { Provider } from './provider.interface';
 
 export class CityExpertProvider extends BaseProvider implements Provider {
+  private readonly providerName = 'cityExpert';
   private readonly url = 'https://cityexpert.rs/api/Search/';
 
   static getResults = results => results.data.result;
@@ -25,7 +26,7 @@ export class CityExpertProvider extends BaseProvider implements Provider {
     );
 
     const requestBody = {
-      ptId: [],
+      ptId: [1],
       cityId: 1,
       rentOrSale: rentOrSale[filter.rentOrSale],
       currentPage: filter.pageNumber,
@@ -138,7 +139,9 @@ export class CityExpertProvider extends BaseProvider implements Provider {
 
     return {
       ...this.parseCommonApartmentInfo(apartmentInfo),
-      _id: `cityExpert_${apartmentInfo.uniqueID}`,
+      _id: `${this.providerName}_${apartmentInfo.uniqueID}`,
+      apartmentId: apartmentInfo.propId,
+      providerName: this.providerName,
       ...(apartmentInfo.street && {
         address: capitalizeWords(apartmentInfo.street),
       }),

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { HttpService, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { ApartmentRepository } from './apartment.repository';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
@@ -16,7 +16,10 @@ export class ApartmentService {
   };
   private readonly logger = new Logger(ApartmentService.name);
 
-  constructor(private readonly apartmentRepository: ApartmentRepository) {}
+  constructor(
+    private readonly apartmentRepository: ApartmentRepository,
+    private readonly httpService: HttpService,
+  ) {}
 
   async deleteApartment(id): Promise<void> {
     return this.apartmentRepository.deleteApartment(id);
@@ -108,5 +111,41 @@ export class ApartmentService {
 
   async getApartmentsIds(): Promise<string[]> {
     return this.apartmentRepository.getApartmentsIds();
+  }
+
+  async handleDeletingInactiveApartmentsFromCetiriZida(
+    id: string,
+  ): Promise<void> {
+    const [providerName, apartmentId] = id.split('_');
+    try {
+      await this.httpService
+        .get(`https://api.4zida.rs/v5/eds/${apartmentId}`)
+        .toPromise();
+    } catch (error) {
+      if (error.response.status === HttpStatus.NOT_FOUND) {
+        this.logger.log(`Deleting apartment: ${id} for ${providerName}`);
+        await this.deleteApartment(id);
+      }
+    }
+  }
+
+  async handleDeletingInactiveApartmentsFromCityExpert(
+    id: string,
+  ): Promise<void> {
+    try {
+      const [providerName, apartmentId] = id.split('_');
+      const [propertyId] = apartmentId.split('-');
+      const response = await this.httpService
+        .get(`https://cityexpert.rs/api/PropertyView/${propertyId}/r`)
+        .toPromise();
+      if (['FINISHED', 'NOT-AVAILABLE'].includes(response.data.status)) {
+        this.logger.log(
+          `Deleting apartment: ${id} for provider ${providerName}`,
+        );
+        await this.deleteApartment(id);
+      }
+    } catch (error) {
+      this.logger.error(error);
+    }
   }
 }

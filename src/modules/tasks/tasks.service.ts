@@ -1,4 +1,4 @@
-import { HttpService, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION } from 'modules/apartment/apartment.constants';
 import { ApartmentService } from 'modules/apartment/apartment.service';
@@ -23,7 +23,6 @@ export class TasksService {
   constructor(
     private readonly apartmentService: ApartmentService,
     private readonly filterService: FilterService,
-    private readonly httpService: HttpService,
     private readonly mailService: MailService,
     private readonly tokenService: TokenService,
     private readonly userService: UserService,
@@ -143,16 +142,22 @@ export class TasksService {
   }
 
   private handleDeletingInactiveApartment = async _id => {
-    const [provider, id] = _id.split('_');
-    if (provider === 'cetiriZida') {
-      try {
-        await this.httpService.get(`https://api.4zida.rs/v5/eds/${id}`);
-      } catch (error) {
-        if (error.response.status === HttpStatus.NOT_FOUND) {
-          this.logger.log(`Deleting apartment: ${_id}`);
-          await this.apartmentService.deleteApartment(_id);
-        }
+    const [providerName] = _id.split('_');
+    switch (providerName) {
+      case 'cetiriZida': {
+        await this.apartmentService.handleDeletingInactiveApartmentsFromCetiriZida(
+          _id,
+        );
+        break;
       }
+      case 'cityExpert': {
+        await this.apartmentService.handleDeletingInactiveApartmentsFromCityExpert(
+          _id,
+        );
+        break;
+      }
+      default:
+        break;
     }
   };
 

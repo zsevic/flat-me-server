@@ -22,6 +22,12 @@ export class Apartment {
   _id: string;
 
   @Prop()
+  apartmentId: string;
+
+  @Prop()
+  providerName: string;
+
+  @Prop()
   address: string;
 
   @Prop()

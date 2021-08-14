@@ -4,6 +4,7 @@ import { BaseProvider } from './base-provider';
 import { Provider } from './provider.interface';
 
 export class CetiriZidaProvider extends BaseProvider implements Provider {
+  private readonly providerName = 'cetiriZida';
   private readonly url = 'https://api.4zida.rs/v6/search/apartments';
 
   static getResults = results => results.data.ads;
@@ -117,7 +118,9 @@ export class CetiriZidaProvider extends BaseProvider implements Provider {
 
     return {
       ...this.parseCommonApartmentInfo(apartmentInfo),
-      _id: `cetiriZida_${apartmentInfo.id}`,
+      _id: `${this.providerName}_${apartmentInfo.id}`,
+      apartmentId: apartmentInfo.id,
+      providerName: this.providerName,
       ...(apartmentInfo.address && {
         address: capitalizeWords(apartmentInfo.address),
       }),
