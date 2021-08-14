@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { TokenRepository } from './token.repository';
 import { Token, TokenSchema } from './token.schema';
 import { TokenService } from './token.service';
 
@@ -7,7 +8,7 @@ import { TokenService } from './token.service';
   imports: [
     MongooseModule.forFeature([{ name: Token.name, schema: TokenSchema }]),
   ],
-  providers: [TokenService],
+  providers: [TokenRepository, TokenService],
   exports: [TokenService],
 })
 export class TokenModule {}

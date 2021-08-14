@@ -44,9 +44,10 @@ export class FilterController {
 
   @Post('verify/:token')
   async verifyFilter(@Param('token') token: string): Promise<void> {
-    const { filter: filterId, user: userId } = await this.tokenService.getToken(
-      token,
-    );
+    const {
+      filter: filterId,
+      user: userId,
+    } = await this.tokenService.getValidToken(token);
     const filterVerifiedEvent = new FilterVerifiedEvent();
     if (userId) {
       const user = await this.userService.verifyUser(userId);
@@ -65,7 +66,7 @@ export class FilterController {
 
   @Post('deactivate/:token')
   async deactivateFilter(@Param('token') token: string): Promise<void> {
-    const validToken = await this.tokenService.getToken(token);
+    const validToken = await this.tokenService.getValidToken(token);
 
     await this.filterService.deactivateFilter(validToken.filter);
     await this.tokenService.deactivateToken(validToken);
