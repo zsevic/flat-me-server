@@ -126,6 +126,7 @@ export class ApartmentService {
         this.logger.log(`Deleting apartment: ${id} for ${providerName}`);
         return this.deleteApartment(id);
       }
+      this.logger.error(error);
     }
   }
 
@@ -140,13 +141,15 @@ export class ApartmentService {
         .toPromise();
       if (['FINISHED', 'NOT-AVAILABLE'].includes(response.data.status)) {
         this.logger.log(
-          `Deleting apartment: ${id} for provider ${providerName}`,
+          `Deleting apartment: ${id} for provider ${providerName}, status: ${response.data.status}`,
         );
         await this.deleteApartment(id);
       }
     } catch (error) {
       if (error.response.status === HttpStatus.NOT_FOUND) {
-        this.logger.log(`Deleting apartment: ${id} for ${providerName}`);
+        this.logger.log(
+          `Deleting apartment: ${id} for ${providerName}, status: NOT_FOUND`,
+        );
         return this.deleteApartment(id);
       }
       this.logger.error(error);
