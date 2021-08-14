@@ -16,17 +16,15 @@ export class UserService {
     return this.userRepository.getReceivedApartmentsIds(userId);
   }
 
-  async getVerifiedUserByEmailAndValidateFilters(
-    email: string,
-  ): Promise<UserDocument> {
+  async getVerifiedUserByEmailAndValidateFilters(email: string): Promise<User> {
     const user = await this.userRepository.getVerifiedUserByEmail(email);
     if (!user) return;
 
     if (user.subscription !== Subscription.FREE) return;
 
-    if (user.filters.length > 1) {
+    if (user.filters.length >= 1) {
       throw new BadRequestException(
-        `Filter limit is filled for ${Subscription.FREE} subscription`,
+        `Filter limit is already filled for ${Subscription.FREE} subscription`,
       );
     }
 
@@ -43,14 +41,12 @@ export class UserService {
     );
   }
 
-  async saveUser(email: string): Promise<UserDocument> {
+  async saveUser(email: string): Promise<User> {
     return this.userRepository.saveUser(email);
   }
 
-  async saveFilter(user: UserDocument, filterId: string): Promise<void> {
-    user.filters.push(filterId);
-
-    await user.save();
+  async saveFilter(userId: string, filterId: string) {
+    return this.userRepository.addFilter(userId, filterId);
   }
 
   async verifyUser(id: string): Promise<UserDocument> {

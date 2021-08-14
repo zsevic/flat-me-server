@@ -7,6 +7,14 @@ import { User, UserDocument } from './user.schema';
 export class UserRepository {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
+  async addFilter(userId: string, filterId: string) {
+    return this.userModel.findByIdAndUpdate(userId, {
+      $push: {
+        filters: filterId,
+      },
+    });
+  }
+
   async getById(id: string): Promise<UserDocument> {
     return this.userModel.findById(id);
   }
@@ -21,7 +29,7 @@ export class UserRepository {
     return user.receivedApartments;
   }
 
-  async getVerifiedUserByEmail(email: string): Promise<UserDocument> {
+  async getVerifiedUserByEmail(email: string): Promise<User> {
     return this.userModel.findOne({
       email,
       isVerified: true,
@@ -39,7 +47,7 @@ export class UserRepository {
     });
   }
 
-  async saveUser(email: string): Promise<UserDocument> {
+  async saveUser(email: string): Promise<User> {
     const createdUser = new this.userModel({
       _id: Types.ObjectId(),
       email,

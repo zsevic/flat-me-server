@@ -39,7 +39,7 @@ export class FilterController {
       isVerified: false,
     };
     const savedFilter = await this.filterService.saveFilter(newFilter);
-    await this.userService.saveFilter(user, savedFilter._id);
+    await this.userService.saveFilter(user._id, savedFilter._id);
 
     Object.assign(token, { filter: savedFilter._id });
     await this.tokenService.saveToken(token);
