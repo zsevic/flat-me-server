@@ -1,6 +1,5 @@
-import { HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { HttpService, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import axios from 'axios';
 import { RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION } from 'modules/apartment/apartment.constants';
 import { ApartmentService } from 'modules/apartment/apartment.service';
 import { ApartmentListParamsDto } from 'modules/apartment/dto/apartment-list-params.dto';
@@ -24,6 +23,7 @@ export class TasksService {
   constructor(
     private readonly apartmentService: ApartmentService,
     private readonly filterService: FilterService,
+    private readonly httpService: HttpService,
     private readonly mailService: MailService,
     private readonly tokenService: TokenService,
     private readonly userService: UserService,
@@ -146,7 +146,7 @@ export class TasksService {
     const [provider, id] = _id.split('_');
     if (provider === 'cetiriZida') {
       try {
-        await axios(`https://api.4zida.rs/v5/eds/${id}`);
+        await this.httpService.get(`https://api.4zida.rs/v5/eds/${id}`);
       } catch (error) {
         if (error.response.status === HttpStatus.NOT_FOUND) {
           this.logger.log(`Deleting apartment: ${_id}`);
