@@ -145,13 +145,13 @@ export class TasksService {
     const [providerName] = _id.split('_');
     switch (providerName) {
       case 'cetiriZida': {
-        await this.apartmentService.handleDeletingInactiveApartmentsFromCetiriZida(
+        await this.apartmentService.handleDeletingInactiveApartmentFromCetiriZida(
           _id,
         );
         break;
       }
       case 'cityExpert': {
-        await this.apartmentService.handleDeletingInactiveApartmentsFromCityExpert(
+        await this.apartmentService.handleDeletingInactiveApartmentFromCityExpert(
           _id,
         );
         break;

@@ -113,7 +113,7 @@ export class ApartmentService {
     return this.apartmentRepository.getApartmentsIds();
   }
 
-  async handleDeletingInactiveApartmentsFromCetiriZida(
+  async handleDeletingInactiveApartmentFromCetiriZida(
     id: string,
   ): Promise<void> {
     const [providerName, apartmentId] = id.split('_');
@@ -124,16 +124,16 @@ export class ApartmentService {
     } catch (error) {
       if (error.response.status === HttpStatus.NOT_FOUND) {
         this.logger.log(`Deleting apartment: ${id} for ${providerName}`);
-        await this.deleteApartment(id);
+        return this.deleteApartment(id);
       }
     }
   }
 
-  async handleDeletingInactiveApartmentsFromCityExpert(
+  async handleDeletingInactiveApartmentFromCityExpert(
     id: string,
   ): Promise<void> {
+    const [providerName, apartmentId] = id.split('_');
     try {
-      const [providerName, apartmentId] = id.split('_');
       const [propertyId] = apartmentId.split('-');
       const response = await this.httpService
         .get(`https://cityexpert.rs/api/PropertyView/${propertyId}/r`)
@@ -145,6 +145,10 @@ export class ApartmentService {
         await this.deleteApartment(id);
       }
     } catch (error) {
+      if (error.response.status === HttpStatus.NOT_FOUND) {
+        this.logger.log(`Deleting apartment: ${id} for ${providerName}`);
+        return this.deleteApartment(id);
+      }
       this.logger.error(error);
     }
   }
