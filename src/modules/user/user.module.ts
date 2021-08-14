@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MailModule } from 'modules/mail/mail.module';
 import { TokenModule } from 'modules/token/token.module';
+import { UserRepository } from './user.repository';
 import { User, UserSchema } from './user.schema';
 import { UserService } from './user.service';
 
@@ -11,7 +12,7 @@ import { UserService } from './user.service';
     MailModule,
     TokenModule,
   ],
-  providers: [UserService],
+  providers: [UserRepository, UserService],
   exports: [UserService],
 })
 export class UserModule {}

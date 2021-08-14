@@ -1,71 +1,65 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Types } from 'mongoose';
 import { Subscription } from './subscription.enum';
+import { UserRepository } from './user.repository';
 import { User, UserDocument } from './user.schema';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(private readonly userRepository: UserRepository) {}
 
-  async getById(id: string) {
-    return this.userModel.findById(id);
+  async getById(id: string): Promise<User> {
+    return this.userRepository.getById(id);
   }
 
-  async getByEmail(email: string) {
-    return this.userModel.findOne({ email });
+  async getReceivedApartmentsIds(userId: string): Promise<string[]> {
+    return this.userRepository.getReceivedApartmentsIds(userId);
   }
 
-  async getReceivedApartmentIds(userId: string) {
-    return this.userModel.findById(userId).select('receivedApartments');
-  }
-
-  async insertReceivedApartmentIds(
-    userId: string,
-    apartmentIds: Types._ObjectId[],
-  ) {
-    return this.userModel.findByIdAndUpdate(userId, {
-      $push: {
-        receivedApartments: { $each: apartmentIds },
-      },
-    });
-  }
-
-  async saveUser(email: string): Promise<User> {
-    const createdUser = new this.userModel({
-      _id: Types.ObjectId(),
-      email,
-    });
-
-    return createdUser.save();
-  }
-
-  async validateUserFromFilter(email: string): Promise<User> {
-    const user = await this.userModel.findOne({
-      email,
-      isVerified: true,
-    });
+  async getVerifiedUserByEmailAndValidateFilters(
+    email: string,
+  ): Promise<UserDocument> {
+    const user = await this.userRepository.getVerifiedUserByEmail(email);
     if (!user) return;
 
-    if (user.subscription === Subscription.FREE) {
-      throw new BadRequestException('User is already verified');
+    if (user.subscription !== Subscription.FREE) return;
+
+    if (user.filters.length > 1) {
+      throw new BadRequestException(
+        `Filter limit is filled for ${Subscription.FREE} subscription`,
+      );
     }
 
     return user;
   }
 
-  async verifyUser(id: string): Promise<User> {
-    const user = await this.userModel.findOne({
-      _id: id,
-      isVerified: false,
-    });
-    if (!user) throw new BadRequestException('User verification failed');
+  async insertReceivedApartmentsIds(
+    userId: string,
+    apartmentsIds: Types._ObjectId[],
+  ) {
+    return this.userRepository.insertReceivedApartmentsIds(
+      userId,
+      apartmentsIds,
+    );
+  }
 
-    user.set({
-      isVerified: true,
-    });
+  async saveUser(email: string): Promise<UserDocument> {
+    return this.userRepository.saveUser(email);
+  }
+
+  async saveFilter(user: UserDocument, filterId: string): Promise<void> {
+    user.filters.push(filterId);
+
     await user.save();
+  }
 
+  async verifyUser(id: string): Promise<UserDocument> {
+    const user = await this.userRepository.getById(id);
+    if (!user) throw new BadRequestException('User is not found');
+
+    if (user.isVerified) return user;
+
+    await this.userRepository.verifyUser(user);
     return user;
   }
 }

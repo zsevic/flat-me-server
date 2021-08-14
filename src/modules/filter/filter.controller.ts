@@ -24,7 +24,9 @@ export class FilterController {
     const { email, ...filter } = saveFilterDto;
     const token = await this.tokenService.createToken();
 
-    let user = await this.userService.validateUserFromFilter(email);
+    let user = await this.userService.getVerifiedUserByEmailAndValidateFilters(
+      email,
+    );
     if (!user) {
       user = await this.userService.saveUser(email);
       Object.assign(token, { user: user._id });
@@ -37,6 +39,8 @@ export class FilterController {
       isVerified: false,
     };
     const savedFilter = await this.filterService.saveFilter(newFilter);
+    await this.userService.saveFilter(user, savedFilter._id);
+
     Object.assign(token, { filter: savedFilter._id });
     await this.tokenService.saveToken(token);
     await this.mailService.sendFilterVerificationMail(email, token.value);

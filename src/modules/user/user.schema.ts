@@ -20,6 +20,12 @@ export class User {
   isVerified: boolean;
 
   @Prop({
+    ref: 'Filter',
+    type: [MongooseSchema.Types.ObjectId],
+  })
+  filters: string[];
+
+  @Prop({
     ref: 'Apartment',
     type: [String],
   })

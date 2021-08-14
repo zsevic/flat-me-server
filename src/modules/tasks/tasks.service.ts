@@ -70,9 +70,9 @@ export class TasksService {
     filters.forEach(async filter => {
       await this.tokenService.deactivateTokenByFilterId(filter._id);
       this.logger.log(`Filter: ${JSON.stringify(filter)}`);
-      const {
-        receivedApartments: receivedApartmentIds,
-      } = await this.userService.getReceivedApartmentIds(filter.user);
+      const receivedApartmentsIds = await this.userService.getReceivedApartmentsIds(
+        filter.user,
+      );
 
       const apartmentListParams = {
         ...filter,
@@ -81,7 +81,7 @@ export class TasksService {
       };
       const apartmentList = await this.apartmentService.getApartmentListFromDatabase(
         apartmentListParams as ApartmentListParamsDto,
-        receivedApartmentIds,
+        receivedApartmentsIds,
       );
       const apartmentListLength = apartmentList.data.length;
       if (apartmentListLength === 0) {
@@ -109,10 +109,10 @@ export class TasksService {
         deactivationUrl,
       );
 
-      const newApartmentIds = newApartments.map(apartment => apartment._id);
-      await this.userService.insertReceivedApartmentIds(
+      const newApartmentsIds = newApartments.map(apartment => apartment._id);
+      await this.userService.insertReceivedApartmentsIds(
         filter.user,
-        newApartmentIds,
+        newApartmentsIds,
       );
 
       this.logCronJobFinished(
