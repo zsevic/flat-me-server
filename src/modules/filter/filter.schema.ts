@@ -3,7 +3,9 @@ import { Document, Schema as MongooseSchema } from 'mongoose';
 
 export type FilterDocument = Filter & Document;
 
-@Schema()
+@Schema({
+  timestamps: true,
+})
 export class Filter {
   @Prop()
   _id?: string;
@@ -41,6 +43,12 @@ export class Filter {
     type: MongooseSchema.Types.ObjectId,
   })
   user: string;
+
+  @Prop()
+  createdAt?: Date;
+
+  @Prop()
+  updatedAt?: Date;
 }
 
 export const FilterSchema = SchemaFactory.createForClass(Filter);

@@ -104,10 +104,12 @@ export class ApartmentService {
   async getApartmentListFromDatabase(
     filter: ApartmentListParamsDto,
     skippedApartmentments?: string[],
+    dateFilter?: Date,
   ) {
     return this.apartmentRepository.getApartmentList(
       filter,
       skippedApartmentments,
+      dateFilter,
     );
   }
 

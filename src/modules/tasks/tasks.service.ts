@@ -83,6 +83,7 @@ export class TasksService {
       const apartmentList = await this.apartmentService.getApartmentListFromDatabase(
         apartmentListParams as ApartmentListParamsDto,
         receivedApartmentsIds,
+        filter.createdAt,
       );
       const apartmentListLength = apartmentList.data.length;
       if (apartmentListLength === 0) {

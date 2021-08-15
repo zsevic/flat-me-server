@@ -65,6 +65,7 @@ export class FilterRepository {
           rentOrSale: 1,
           structures: 1,
           user: 1,
+          createdAt: 1,
         },
       },
     ]);

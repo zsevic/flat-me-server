@@ -18,6 +18,7 @@ export class ApartmentRepository {
   async getApartmentList(
     filter: ApartmentListParamsDto,
     skippedApartmentments?: string[],
+    dateFilter?: Date,
   ) {
     const { limitPerPage = 10, pageNumber = 1 } = filter;
     const query = {
@@ -28,6 +29,11 @@ export class ApartmentRepository {
             $nin: skippedApartmentments,
           },
         }),
+      ...(dateFilter && {
+        createdAt: {
+          $gte: dateFilter,
+        },
+      }),
       furnished: {
         $in: filter.furnished,
       },
