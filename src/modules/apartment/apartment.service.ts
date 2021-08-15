@@ -44,7 +44,7 @@ export class ApartmentService {
         const apartmentInfo = new this.providers[
           providerName
         ]().parseApartmentInfo(apartment, filter);
-        if (!apartmentInfo.coverPhotoUrl) return;
+        if (!apartmentInfo.coverPhotoUrl || !apartmentInfo.floor) return;
 
         foundApartments.push(apartmentInfo);
       });

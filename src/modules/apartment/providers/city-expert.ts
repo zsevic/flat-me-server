@@ -147,7 +147,7 @@ export class CityExpertProvider extends BaseProvider implements Provider {
       }),
       availableFrom: apartmentInfo.availableFrom,
       coverPhotoUrl: `https://img.cityexpert.rs/sites/default/files/styles/1920x/public/image/${apartmentInfo.coverPhoto}`,
-      floor: floor[apartmentInfo.floor],
+      floor: floor[apartmentInfo.floor] || apartmentInfo.floor,
       furnished: furnished[apartmentInfo.furnished],
       heatingTypes,
       location: {
