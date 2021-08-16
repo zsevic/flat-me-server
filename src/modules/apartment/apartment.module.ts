@@ -7,8 +7,17 @@ import { ApartmentService } from './apartment.service';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      { name: Apartment.name, schema: ApartmentSchema },
+    MongooseModule.forFeatureAsync([
+      {
+        name: Apartment.name,
+        useFactory: () => {
+          const schema = ApartmentSchema;
+          schema.post('save', function(next) {
+            return next();
+          });
+          return schema;
+        },
+      },
     ]),
     HttpModule,
   ],
