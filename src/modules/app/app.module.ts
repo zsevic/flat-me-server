@@ -5,7 +5,6 @@ import {
   OnApplicationShutdown,
 } from '@nestjs/common';
 import { ConfigService, ConfigModule } from '@nestjs/config';
-import { EventEmitterModule } from '@nestjs/event-emitter';
 import { InjectConnection, MongooseModule } from '@nestjs/mongoose';
 import { ScheduleModule, SchedulerRegistry } from '@nestjs/schedule';
 import { Connection } from 'mongoose';
@@ -18,7 +17,6 @@ import { AppController } from './app.controller';
 
 @Module({
   imports: [
-    EventEmitterModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
