@@ -19,6 +19,10 @@ export class UserRepository {
     return this.userModel.findById(id);
   }
 
+  async getByEmail(email: string): Promise<User> {
+    return this.userModel.findOne({ email });
+  }
+
   async getReceivedApartmentsIds(userId: string): Promise<string[]> {
     const user = await this.userModel
       .findById(userId)
@@ -27,13 +31,6 @@ export class UserRepository {
     if (!user) return [];
 
     return user.receivedApartments;
-  }
-
-  async getVerifiedUserByEmail(email: string): Promise<User> {
-    return this.userModel.findOne({
-      email,
-      isVerified: true,
-    });
   }
 
   async insertReceivedApartmentsIds(

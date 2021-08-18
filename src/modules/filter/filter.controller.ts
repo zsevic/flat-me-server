@@ -18,7 +18,6 @@ export class FilterController {
   @Post()
   async saveFilters(@Body() saveFilterDto: SaveFilterDto): Promise<void> {
     const { email, ...filter } = saveFilterDto;
-    const token = await this.tokenService.createToken();
 
     let user = await this.userService.getVerifiedUserByEmailAndValidateFilters(
       email,
@@ -36,6 +35,7 @@ export class FilterController {
     const savedFilter = await this.filterService.saveFilter(newFilter);
     await this.userService.saveFilter(user._id, savedFilter._id);
 
+    const token = await this.tokenService.createToken();
     Object.assign(token, { filter: savedFilter._id, user: user._id });
     await this.tokenService.saveToken(token);
     await this.mailService.sendFilterVerificationMail(email, token.value);

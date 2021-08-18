@@ -17,8 +17,12 @@ export class UserService {
   }
 
   async getVerifiedUserByEmailAndValidateFilters(email: string): Promise<User> {
-    const user = await this.userRepository.getVerifiedUserByEmail(email);
+    const user = await this.userRepository.getByEmail(email);
     if (!user) return;
+
+    if (!user.isVerified) {
+      throw new BadRequestException('User is not verified');
+    }
 
     if (user.subscription !== Subscription.FREE) return;
 
