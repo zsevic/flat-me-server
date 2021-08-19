@@ -2,10 +2,11 @@ import { capitalizeWords } from 'common/utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { BaseProvider } from './base-provider';
 import { Provider } from './provider.interface';
+import { CETIRI_ZIDA_API_BASE_URL } from '../apartment.constants';
 
 export class CetiriZidaProvider extends BaseProvider implements Provider {
   private readonly providerName = 'cetiriZida';
-  private readonly url = 'https://api.4zida.rs/v6/search/apartments';
+  private readonly url = `${CETIRI_ZIDA_API_BASE_URL}/v6/search/apartments`;
 
   static getResults = results => results.data.ads;
 

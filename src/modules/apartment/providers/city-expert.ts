@@ -2,10 +2,11 @@ import { capitalizeWords } from 'common/utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { BaseProvider } from './base-provider';
 import { Provider } from './provider.interface';
+import { CITY_EXPERT_API_BASE_URL } from '../apartment.constants';
 
 export class CityExpertProvider extends BaseProvider implements Provider {
   private readonly providerName = 'cityExpert';
-  private readonly url = 'https://cityexpert.rs/api/Search/';
+  private readonly url = `${CITY_EXPERT_API_BASE_URL}/Search/`;
 
   static getResults = results => results.data.result;
 

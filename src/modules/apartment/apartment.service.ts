@@ -1,5 +1,11 @@
 import { HttpService, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
+import {
+  apartmentActivityBaseUrlForCetiriZida,
+  apartmentActivityBaseUrlForCityExpert,
+  apartmentStatusFinished,
+  apartmentStatusNotAvailable,
+} from './apartment.constants';
 import { ApartmentRepository } from './apartment.repository';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
 import {
@@ -123,7 +129,7 @@ export class ApartmentService {
     const [providerName, apartmentId] = id.split('_');
     try {
       await this.httpService
-        .get(`https://api.4zida.rs/v5/eds/${apartmentId}`)
+        .get(`${apartmentActivityBaseUrlForCetiriZida}/${apartmentId}`)
         .toPromise();
     } catch (error) {
       if (error.response.status === HttpStatus.NOT_FOUND) {
@@ -141,9 +147,13 @@ export class ApartmentService {
     try {
       const [propertyId] = apartmentId.split('-');
       const response = await this.httpService
-        .get(`https://cityexpert.rs/api/PropertyView/${propertyId}/r`)
+        .get(`${apartmentActivityBaseUrlForCityExpert}/${propertyId}/r`)
         .toPromise();
-      if (['FINISHED', 'NOT-AVAILABLE'].includes(response.data.status)) {
+      if (
+        [apartmentStatusFinished, apartmentStatusNotAvailable].includes(
+          response.data.status,
+        )
+      ) {
         this.logger.log(
           `Deleting apartment: ${id} for provider ${providerName}, status: ${response.data.status}`,
         );
