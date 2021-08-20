@@ -4,6 +4,7 @@ import { ApartmentController } from './apartment.controller';
 import { ApartmentRepository } from './apartment.repository';
 import { Apartment, ApartmentSchema } from './apartment.schema';
 import { ApartmentService } from './apartment.service';
+import { BaseProvider } from './providers';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { ApartmentService } from './apartment.service';
     ]),
     HttpModule,
   ],
-  providers: [ApartmentRepository, ApartmentService],
+  providers: [ApartmentRepository, ApartmentService, BaseProvider],
   controllers: [ApartmentController],
   exports: [ApartmentService],
 })

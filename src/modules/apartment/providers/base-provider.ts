@@ -12,6 +12,11 @@ export class BaseProvider {
     providerName,
   });
 
+  getProviderResults = async (providerRequests): Promise<any[]> =>
+    Promise.all(
+      providerRequests.map(providerRequest => providerRequest.request),
+    );
+
   parseCommonApartmentInfo = apartmentInfo => ({
     price: apartmentInfo.price,
   });

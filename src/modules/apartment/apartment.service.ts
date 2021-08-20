@@ -24,6 +24,7 @@ export class ApartmentService {
 
   constructor(
     private readonly apartmentRepository: ApartmentRepository,
+    private readonly baseProvider: BaseProvider,
     private readonly httpService: HttpService,
   ) {}
 
@@ -31,79 +32,76 @@ export class ApartmentService {
     return this.apartmentRepository.deleteApartment(id);
   }
 
-  async findApartments(providerRequests, filter: FilterDto) {
+  async findAndSaveApartmentsFromProviders(
+    providerRequests,
+    filter: FilterDto,
+  ) {
     const newRequests = [];
 
-    const providerResults = await Promise.all(
-      providerRequests.map(providerRequest => providerRequest.request),
-    );
-    for (const [index, providerResult] of providerResults.entries()) {
-      const foundApartments = [];
-      const { providerName } = providerRequests[index];
-
-      const apartments = this.providers[providerName].getResults(
-        providerResult,
-      );
-      apartments.forEach(apartment => {
-        if (!apartment.price) return;
-
-        const apartmentInfo = new this.providers[
-          providerName
-        ]().parseApartmentInfo(apartment, filter);
-        if (!apartmentInfo.coverPhotoUrl || !apartmentInfo.floor) return;
-
-        foundApartments.push(apartmentInfo);
-      });
-
-      this.logger.log(
-        `Found ${foundApartments.length} new apartment(s) from ${providerName} for ${filter.rentOrSale}, page ${filter.pageNumber}`,
-      );
-      try {
-        await this.apartmentRepository.saveApartmentList(foundApartments);
-      } catch (error) {
-        this.logger.error(
-          `Couldn't save apartments, error: ${JSON.stringify(error)}`,
-        );
-        continue;
-      }
-
-      const hasNextPage = this.providers[providerName].hasNextPage(
-        providerResult,
-        filter.pageNumber,
-      );
-      if (hasNextPage) {
-        newRequests.push(
-          new BaseProvider().getProviderRequest(
-            providerName,
-            this.providers[providerName],
-            {
-              ...filter,
-              pageNumber: filter.pageNumber + 1,
-            },
-          ),
-        );
-      }
-    }
-
-    if (newRequests.length > 0) {
-      const filterWithNextPage = {
-        ...filter,
-        pageNumber: filter.pageNumber + 1,
-      };
-      return this.findApartments(newRequests, filterWithNextPage);
-    }
-  }
-
-  async getApartmentListFromProviders(filter: FilterDto) {
     try {
-      const providerRequests = new BaseProvider().getProviderRequests(
-        this.providers,
-        filter,
+      const providerResults = await this.baseProvider.getProviderResults(
+        providerRequests,
       );
+      for (const [index, providerResult] of providerResults.entries()) {
+        const foundApartments = [];
+        const { providerName } = providerRequests[index];
 
-      return this.findApartments(providerRequests, filter);
+        const apartments = this.providers[providerName].getResults(
+          providerResult,
+        );
+        apartments.forEach(apartment => {
+          if (!apartment.price) return;
+
+          const apartmentInfo = new this.providers[
+            providerName
+          ]().parseApartmentInfo(apartment, filter);
+          if (!apartmentInfo.coverPhotoUrl || !apartmentInfo.floor) return;
+
+          foundApartments.push(apartmentInfo);
+        });
+
+        this.logger.log(
+          `Found ${foundApartments.length} new apartment(s) from ${providerName} for ${filter.rentOrSale}, page ${filter.pageNumber}`,
+        );
+        try {
+          await this.apartmentRepository.saveApartmentList(foundApartments);
+        } catch (error) {
+          this.logger.error(
+            `Couldn't save apartments, error: ${JSON.stringify(error)}`,
+          );
+          continue;
+        }
+
+        const hasNextPage = this.providers[providerName].hasNextPage(
+          providerResult,
+          filter.pageNumber,
+        );
+        if (hasNextPage) {
+          newRequests.push(
+            this.baseProvider.getProviderRequest(
+              providerName,
+              this.providers[providerName],
+              {
+                ...filter,
+                pageNumber: filter.pageNumber + 1,
+              },
+            ),
+          );
+        }
+      }
+
+      if (newRequests.length > 0) {
+        const filterWithNextPage = {
+          ...filter,
+          pageNumber: filter.pageNumber + 1,
+        };
+        return this.findAndSaveApartmentsFromProviders(
+          newRequests,
+          filterWithNextPage,
+        );
+      }
     } catch (error) {
-      console.error(error);
+      this.logger.error(error);
     }
   }
 
@@ -167,6 +165,19 @@ export class ApartmentService {
         return this.deleteApartment(id);
       }
       this.logger.error(error);
+    }
+  }
+
+  async saveApartmentListFromProviders(filter: FilterDto) {
+    try {
+      const providerRequests = this.baseProvider.getProviderRequests(
+        this.providers,
+        filter,
+      );
+
+      return this.findAndSaveApartmentsFromProviders(providerRequests, filter);
+    } catch (error) {
+      console.error(error);
     }
   }
 }

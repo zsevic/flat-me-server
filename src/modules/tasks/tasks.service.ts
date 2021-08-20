@@ -33,17 +33,17 @@ export class TasksService {
   })
   async handleScraping(): Promise<void> {
     this.logCronJobStarted(SCRAPING_CRON_JOB);
-    const scrapeByFilters = [];
+    const saveApartmentListFromProviders = [];
     for (const filter of [rentFilter, saleFilter]) {
-      scrapeByFilters.push(
-        this.apartmentService.getApartmentListFromProviders(
+      saveApartmentListFromProviders.push(
+        this.apartmentService.saveApartmentListFromProviders(
           FilterService.getInitialFilter(filter),
         ),
       );
     }
 
     try {
-      await Promise.all(scrapeByFilters);
+      await Promise.all(saveApartmentListFromProviders);
     } catch (error) {
       this.logger.error(error);
     }
