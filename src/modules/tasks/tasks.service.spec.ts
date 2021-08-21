@@ -97,6 +97,10 @@ describe('TasksService', () => {
   });
 
   describe('handleSendingNewApartmentsForFreeSubscriptionUsers', () => {
+    afterEach(() => {
+      tokenService.deleteTokenByFilterId.mockClear();
+    });
+
     it('should not send any new apartments to the users when there are no saved filters', async () => {
       jest
         .spyOn(filterService, 'getFilterListBySubscriptionName')
@@ -145,6 +149,65 @@ describe('TasksService', () => {
       );
       expect(userService.getReceivedApartmentsIds).toHaveBeenCalledWith(
         foundFilter.user,
+      );
+      expect(mailService.sendMailWithNewApartments).not.toHaveBeenCalled();
+    });
+
+    it('should continue handling filters when one of the filter handler fails', async () => {
+      const foundFilters = [
+        {
+          _id: '611c5642c653f746ea0560a3',
+          structures: [1, 2],
+          municipalities: ['Savski venac', 'Zemun'],
+          furnished: ['semi-furnished'],
+          rentOrSale: 'rent',
+          minPrice: 120,
+          maxPrice: 370,
+          user: '611c5641c653f746ea0560a2',
+          createdAt: '2021-08-18T00:37:22.039Z',
+        },
+        {
+          _id: '611c59c26962b452247b9432',
+          structures: [1, 2, 0.5, 1.5],
+          municipalities: ['Savski venac', 'Zemun'],
+          furnished: ['semi-furnished'],
+          rentOrSale: 'rent',
+          minPrice: 120,
+          maxPrice: 370,
+          user: '611c59c26962b452247b9431',
+          createdAt: '2021-08-18T00:52:18.296Z',
+        },
+      ];
+      const receivedApartmentsIds = ['id1'];
+      jest
+        .spyOn(filterService, 'getFilterListBySubscriptionName')
+        .mockResolvedValue(foundFilters);
+      jest
+        .spyOn(tokenService, 'deleteTokenByFilterId')
+        .mockRejectedValueOnce(new Error());
+      jest
+        .spyOn(tokenService, 'deleteTokenByFilterId')
+        .mockResolvedValue(undefined);
+      jest
+        .spyOn(userService, 'getReceivedApartmentsIds')
+        .mockResolvedValue(receivedApartmentsIds);
+      jest
+        .spyOn(apartmentService, 'getApartmentListFromDatabase')
+        .mockResolvedValue({ data: [] });
+
+      await tasksService.handleSendingNewApartmentsForFreeSubscriptionUsers();
+
+      expect(
+        filterService.getFilterListBySubscriptionName,
+      ).toHaveBeenCalledWith(Subscription.FREE);
+      foundFilters.forEach(filter => {
+        expect(tokenService.deleteTokenByFilterId).toHaveBeenCalledWith(
+          filter._id,
+        );
+      });
+      expect(tokenService.deleteTokenByFilterId).toHaveBeenCalledTimes(2);
+      expect(userService.getReceivedApartmentsIds).toHaveBeenCalledWith(
+        foundFilters[1].user,
       );
       expect(mailService.sendMailWithNewApartments).not.toHaveBeenCalled();
     });
