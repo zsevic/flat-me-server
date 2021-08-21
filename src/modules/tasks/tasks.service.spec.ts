@@ -70,34 +70,38 @@ describe('TasksService', () => {
     tasksService = module.get<TasksService>(TasksService);
   });
 
-  it('should handle scraping data from providers', async () => {
-    await tasksService.handleScraping();
+  describe('handleScraping', () => {
+    it('should handle scraping data from providers', async () => {
+      await tasksService.handleScraping();
 
-    filters.forEach((filter, index) => {
-      expect(
-        apartmentService.saveApartmentListFromProviders,
-      ).toHaveBeenNthCalledWith(
-        index + 1,
-        filterService.getInitialFilter(filter),
-      );
+      filters.forEach((filter, index) => {
+        expect(
+          apartmentService.saveApartmentListFromProviders,
+        ).toHaveBeenNthCalledWith(
+          index + 1,
+          filterService.getInitialFilter(filter),
+        );
+      });
     });
   });
 
-  it('should handle deleting inactive apartments', async () => {
-    const cetiriZidaApartmentId = 'cetiriZida_23';
-    const cityExpertApartmentId = 'cityExpert_12-BR';
-    jest
-      .spyOn(apartmentService, 'getApartmentsIds')
-      .mockResolvedValue([cetiriZidaApartmentId, cityExpertApartmentId]);
+  describe('handleDeletingInactiveApartments', () => {
+    it('should handle deleting inactive apartments', async () => {
+      const cetiriZidaApartmentId = 'cetiriZida_23';
+      const cityExpertApartmentId = 'cityExpert_12-BR';
+      jest
+        .spyOn(apartmentService, 'getApartmentsIds')
+        .mockResolvedValue([cetiriZidaApartmentId, cityExpertApartmentId]);
 
-    await tasksService.handleDeletingInactiveApartments();
+      await tasksService.handleDeletingInactiveApartments();
 
-    expect(
-      apartmentService.handleDeletingInactiveApartmentFromCetiriZida,
-    ).toHaveBeenCalledWith(cetiriZidaApartmentId);
-    expect(
-      apartmentService.handleDeletingInactiveApartmentFromCityExpert,
-    ).toHaveBeenCalledWith(cityExpertApartmentId);
+      expect(
+        apartmentService.handleDeletingInactiveApartmentFromCetiriZida,
+      ).toHaveBeenCalledWith(cetiriZidaApartmentId);
+      expect(
+        apartmentService.handleDeletingInactiveApartmentFromCityExpert,
+      ).toHaveBeenCalledWith(cityExpertApartmentId);
+    });
   });
 
   describe('handleSendingNewApartmentsForFreeSubscriptionUsers', () => {
