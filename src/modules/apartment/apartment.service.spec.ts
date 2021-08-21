@@ -339,9 +339,10 @@ describe('ApartmentService', () => {
     });
 
     savedApartmentLists.forEach((savedApartmentList, index) => {
-      expect(
-        apartmentRepository.saveApartmentList.mock.calls[index][0],
-      ).toMatchObject(savedApartmentList);
+      expect(apartmentRepository.saveApartmentList).toHaveBeenNthCalledWith(
+        index + 1,
+        savedApartmentList,
+      );
     });
   });
 
