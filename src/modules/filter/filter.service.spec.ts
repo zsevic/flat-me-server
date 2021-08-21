@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TokenService } from 'modules/token/token.service';
+import { RentOrSale } from './filter.enums';
 import { FilterRepository } from './filter.repository';
 import { FilterService } from './filter.service';
 
@@ -54,5 +55,19 @@ describe('FilterService', () => {
       { filter: filterId },
       expirationHours,
     );
+  });
+
+  it('should return initial filter', () => {
+    const filter = {
+      structures: [1, 2, 0.5, 1.5],
+      municipalities: ['Savski venac', 'Zemun'],
+      furnished: ['semi-furnished'],
+      rentOrSale: RentOrSale.rent,
+      minPrice: 120,
+      maxPrice: 370,
+    };
+    const initialFilter = filterService.getInitialFilter(filter);
+
+    expect(initialFilter).toEqual({ ...filter, pageNumber: 1 });
   });
 });
