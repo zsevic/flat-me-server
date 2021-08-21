@@ -26,7 +26,7 @@ export class FilterService {
       expirationHours,
     );
 
-    return `${process.env.CLIENT_URL}/filters/deactivation/${deactivationToken}`;
+    return `${process.env.CLIENT_URL}/filters/deactivation/${deactivationToken.value}`;
   }
 
   async getFilterListBySubscriptionName(
