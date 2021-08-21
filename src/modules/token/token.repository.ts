@@ -9,12 +9,8 @@ export class TokenRepository {
     @InjectModel(Token.name) private tokenModel: Model<TokenDocument>,
   ) {}
 
-  async deactivateToken(token: TokenDocument): Promise<void> {
-    token.set({
-      expiresAt: null,
-    });
-
-    await token.save();
+  async deleteToken(token: TokenDocument): Promise<void> {
+    await token.remove();
   }
 
   async getUnexpiredToken(token: string): Promise<TokenDocument> {

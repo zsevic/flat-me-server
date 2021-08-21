@@ -58,6 +58,6 @@ export class FilterController {
     const validToken = await this.tokenService.getValidToken(token);
 
     await this.filterService.deactivateFilter(validToken.filter);
-    await this.tokenService.deactivateToken(validToken);
+    await this.tokenService.deleteToken(validToken);
   }
 }

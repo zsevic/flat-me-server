@@ -70,7 +70,7 @@ export class TasksService {
     }
 
     filters.forEach(async filter => {
-      await this.tokenService.deactivateTokenByFilterId(filter._id);
+      await this.tokenService.deleteTokenByFilterId(filter._id);
       this.logger.log(`Filter: ${JSON.stringify(filter)}`);
 
       const apartmentListParams = {
