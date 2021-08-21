@@ -52,7 +52,7 @@ export class TasksService {
     this.logCronJobFinished(SCRAPING_CRON_JOB);
   }
 
-  @Cron(CronExpression.EVERY_10_SECONDS, {
+  @Cron(CronExpression.EVERY_DAY_AT_1PM, {
     name: SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB,
     timeZone: 'Europe/Belgrade',
   })
