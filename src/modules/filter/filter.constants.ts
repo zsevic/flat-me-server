@@ -24,14 +24,16 @@ const baseFilter = {
   municipalities: MUNICIPALITIES,
 };
 
-export const rentFilter: FilterDto = {
+const rentFilter: FilterDto = {
   ...baseFilter,
   maxPrice: 500,
   rentOrSale: RentOrSale.rent,
 };
 
-export const saleFilter: FilterDto = {
+const saleFilter: FilterDto = {
   ...baseFilter,
   maxPrice: 200000,
   rentOrSale: RentOrSale.sale,
 };
+
+export const filters = [rentFilter, saleFilter];

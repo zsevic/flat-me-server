@@ -21,12 +21,10 @@ export class FilterService {
     );
   }
 
-  static getInitialFilter(filter: FilterDto): FilterDto {
-    return {
-      ...filter,
-      pageNumber: 1,
-    };
-  }
+  getInitialFilter = (filter: FilterDto): FilterDto => ({
+    ...filter,
+    pageNumber: 1,
+  });
 
   async populateUser(filter: FilterDocument): Promise<FilterDocument> {
     return this.filterRepository.populateUser(filter);

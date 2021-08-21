@@ -4,7 +4,7 @@ import { RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION } from 'modules/apartment/ap
 import { ApartmentService } from 'modules/apartment/apartment.service';
 import { ApartmentListParamsDto } from 'modules/apartment/dto/apartment-list-params.dto';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
-import { rentFilter, saleFilter } from 'modules/filter/filter.constants';
+import { filters } from 'modules/filter/filter.constants';
 import { FilterService } from 'modules/filter/filter.service';
 import { MailService } from 'modules/mail/mail.service';
 import { TokenService } from 'modules/token/token.service';
@@ -34,10 +34,10 @@ export class TasksService {
   async handleScraping(): Promise<void> {
     this.logCronJobStarted(SCRAPING_CRON_JOB);
     const saveApartmentListFromProviders = [];
-    for (const filter of [rentFilter, saleFilter]) {
+    for (const filter of filters) {
       saveApartmentListFromProviders.push(
         this.apartmentService.saveApartmentListFromProviders(
-          FilterService.getInitialFilter(filter),
+          this.filterService.getInitialFilter(filter),
         ),
       );
     }
