@@ -13,6 +13,9 @@ export class FilterService {
     return this.filterRepository.deactivateFilter(filter);
   }
 
+  getDeactivationUrl = (deactivationToken: string): string =>
+    `${process.env.CLIENT_URL}/filters/deactivation/${deactivationToken}`;
+
   async getFilterListBySubscriptionName(
     subscriptionName: string,
   ): Promise<FilterDocument[]> {
@@ -25,10 +28,6 @@ export class FilterService {
     ...filter,
     pageNumber: 1,
   });
-
-  async populateUser(filter: FilterDocument): Promise<FilterDocument> {
-    return this.filterRepository.populateUser(filter);
-  }
 
   async saveFilter(filter: Filter): Promise<Filter> {
     return this.filterRepository.saveFilter(filter);

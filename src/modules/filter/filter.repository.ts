@@ -71,10 +71,6 @@ export class FilterRepository {
     ]);
   }
 
-  async populateUser(filter: FilterDocument): Promise<FilterDocument> {
-    return this.filterModel.populate(filter, { path: 'user' });
-  }
-
   async saveFilter(filter: Filter): Promise<Filter> {
     const createdFilter = new this.filterModel({
       _id: Types.ObjectId(),

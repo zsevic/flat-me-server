@@ -5,6 +5,7 @@ import { ApartmentService } from 'modules/apartment/apartment.service';
 import { ApartmentListParamsDto } from 'modules/apartment/dto/apartment-list-params.dto';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { filters } from 'modules/filter/filter.constants';
+import { FilterDocument } from 'modules/filter/filter.schema';
 import { FilterService } from 'modules/filter/filter.service';
 import { MailService } from 'modules/mail/mail.service';
 import { FILTER_DEACTIVATION_TOKEN_EXPIRATION_HOURS } from 'modules/token/token.constants';
@@ -69,63 +70,67 @@ export class TasksService {
       return;
     }
 
-    filters.forEach(async filter => {
-      try {
-        await this.tokenService.deleteTokenByFilterId(filter._id);
-        this.logger.log(`Filter: ${JSON.stringify(filter)}`);
+    try {
+      await Promise.all(
+        filters.map(filter => this.sendNewApartmentsByFilter(filter)),
+      );
+    } catch (error) {
+      this.logger.error(error);
+    }
 
-        const apartmentListParams = {
-          ...filter,
-          limitPerPage: RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION,
-          pageNumber: 1,
-        };
-        const receivedApartmentsIds = await this.userService.getReceivedApartmentsIds(
-          filter.user,
-        );
-        const apartmentList = await this.apartmentService.getApartmentListFromDatabase(
-          apartmentListParams as ApartmentListParamsDto,
-          receivedApartmentsIds,
-          filter.createdAt,
-        );
-        if (apartmentList.data.length === 0) {
-          this.logger.log('There are no apartments to send to the user');
-          this.logCronJobFinished(
-            SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB,
-          );
-          return;
-        }
+    this.logCronJobFinished(SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB);
+  }
 
-        const deactivationToken = await this.tokenService.createAndSaveToken(
-          { filter: filter._id },
-          FILTER_DEACTIVATION_TOKEN_EXPIRATION_HOURS,
-        );
-        const filterDeactivationUrl = `${process.env.CLIENT_URL}/filters/deactivation/${deactivationToken.value}`;
-        const newApartments = apartmentList.data.sort(
-          (firstApartment, secondApartment) =>
-            firstApartment.price - secondApartment.price,
-        );
-        const populatedFilter = await this.filterService.populateUser(filter);
-        await this.mailService.sendMailWithNewApartments(
-          // @ts-ignore
-          populatedFilter.user.email,
-          newApartments,
-          filter as FilterDto,
-          filterDeactivationUrl,
-        );
+  async sendNewApartmentsByFilter(filter: FilterDocument): Promise<void> {
+    try {
+      await this.tokenService.deleteTokenByFilterId(filter._id);
+      this.logger.log(`Filter: ${JSON.stringify(filter)}`);
 
-        const newApartmentsIds = newApartments.map(apartment => apartment._id);
-        await this.userService.insertReceivedApartmentsIds(
-          filter.user,
-          newApartmentsIds,
-        );
-
-        this.logCronJobFinished(
-          SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB,
-        );
-      } catch (error) {
-        this.logger.error(error);
+      const apartmentListParams = {
+        ...filter,
+        limitPerPage: RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION,
+        pageNumber: 1,
+      };
+      const receivedApartmentsIds = await this.userService.getReceivedApartmentsIds(
+        filter.user,
+      );
+      const apartmentList = await this.apartmentService.getApartmentListFromDatabase(
+        apartmentListParams as ApartmentListParamsDto,
+        receivedApartmentsIds,
+        filter.createdAt,
+      );
+      if (apartmentList.data.length === 0) {
+        this.logger.log('There are no apartments to send to the user');
+        return;
       }
-    });
+
+      const deactivationToken = await this.tokenService.createAndSaveToken(
+        { filter: filter._id },
+        FILTER_DEACTIVATION_TOKEN_EXPIRATION_HOURS,
+      );
+      const filterDeactivationUrl = this.filterService.getDeactivationUrl(
+        deactivationToken.value,
+      );
+      const newApartments = [...apartmentList.data].sort(
+        (firstApartment, secondApartment) =>
+          firstApartment.price - secondApartment.price,
+      );
+      const userEmail = await this.userService.getUserEmail(filter.user);
+      await this.mailService.sendMailWithNewApartments(
+        userEmail,
+        newApartments,
+        filter as FilterDto,
+        filterDeactivationUrl,
+      );
+
+      const newApartmentsIds = newApartments.map(apartment => apartment._id);
+      await this.userService.insertReceivedApartmentsIds(
+        filter.user,
+        newApartmentsIds,
+      );
+    } catch (error) {
+      this.logger.error(error);
+    }
   }
 
   @Cron(CronExpression.EVERY_12_HOURS, {

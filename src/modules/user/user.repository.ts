@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { User, UserDocument } from './user.schema';
@@ -31,6 +31,13 @@ export class UserRepository {
     if (!user) return [];
 
     return user.receivedApartments;
+  }
+
+  async getUserEmail(userId: string): Promise<string> {
+    const user = await this.getById(userId);
+    if (!user) throw new BadRequestException('User is not valid');
+
+    return user.email;
   }
 
   async insertReceivedApartmentsIds(

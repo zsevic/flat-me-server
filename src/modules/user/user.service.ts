@@ -16,6 +16,10 @@ export class UserService {
     return this.userRepository.getReceivedApartmentsIds(userId);
   }
 
+  async getUserEmail(userId: string): Promise<string> {
+    return this.userRepository.getUserEmail(userId);
+  }
+
   async getVerifiedUserByEmailAndValidateFilters(email: string): Promise<User> {
     const user = await this.userRepository.getByEmail(email);
     if (!user) return;
