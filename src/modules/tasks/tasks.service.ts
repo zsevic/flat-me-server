@@ -81,23 +81,34 @@ export class TasksService {
     this.logCronJobFinished(SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB);
   }
 
+  async getApartmentListFromDatabaseByFilter(
+    filter: FilterDocument,
+    limitPerPage: number,
+  ) {
+    const apartmentListParams = {
+      ...filter,
+      limitPerPage,
+      pageNumber: 1,
+    };
+    const receivedApartmentsIds = await this.userService.getReceivedApartmentsIds(
+      filter.user,
+    );
+
+    return this.apartmentService.getApartmentListFromDatabase(
+      apartmentListParams as ApartmentListParamsDto,
+      receivedApartmentsIds,
+      filter.createdAt,
+    );
+  }
+
   async sendNewApartmentsByFilter(filter: FilterDocument): Promise<void> {
     try {
       await this.tokenService.deleteTokenByFilterId(filter._id);
       this.logger.log(`Filter: ${JSON.stringify(filter)}`);
 
-      const apartmentListParams = {
-        ...filter,
-        limitPerPage: RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION,
-        pageNumber: 1,
-      };
-      const receivedApartmentsIds = await this.userService.getReceivedApartmentsIds(
-        filter.user,
-      );
-      const apartmentList = await this.apartmentService.getApartmentListFromDatabase(
-        apartmentListParams as ApartmentListParamsDto,
-        receivedApartmentsIds,
-        filter.createdAt,
+      const apartmentList = await this.getApartmentListFromDatabaseByFilter(
+        filter,
+        RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION,
       );
       if (apartmentList.data.length === 0) {
         this.logger.log('There are no apartments to send to the user');
