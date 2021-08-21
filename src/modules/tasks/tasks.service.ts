@@ -52,7 +52,7 @@ export class TasksService {
     this.logCronJobFinished(SCRAPING_CRON_JOB);
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_1PM, {
+  @Cron(CronExpression.EVERY_10_SECONDS, {
     name: SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB,
     timeZone: 'Europe/Belgrade',
   })
@@ -70,57 +70,61 @@ export class TasksService {
     }
 
     filters.forEach(async filter => {
-      await this.tokenService.deleteTokenByFilterId(filter._id);
-      this.logger.log(`Filter: ${JSON.stringify(filter)}`);
+      try {
+        await this.tokenService.deleteTokenByFilterId(filter._id);
+        this.logger.log(`Filter: ${JSON.stringify(filter)}`);
 
-      const apartmentListParams = {
-        ...filter,
-        limitPerPage: RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION,
-        pageNumber: 1,
-      };
-      const receivedApartmentsIds = await this.userService.getReceivedApartmentsIds(
-        filter.user,
-      );
-      const apartmentList = await this.apartmentService.getApartmentListFromDatabase(
-        apartmentListParams as ApartmentListParamsDto,
-        receivedApartmentsIds,
-        filter.createdAt,
-      );
-      if (apartmentList.data.length === 0) {
-        this.logger.log('There are no apartments to send to the user');
+        const apartmentListParams = {
+          ...filter,
+          limitPerPage: RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION,
+          pageNumber: 1,
+        };
+        const receivedApartmentsIds = await this.userService.getReceivedApartmentsIds(
+          filter.user,
+        );
+        const apartmentList = await this.apartmentService.getApartmentListFromDatabase(
+          apartmentListParams as ApartmentListParamsDto,
+          receivedApartmentsIds,
+          filter.createdAt,
+        );
+        if (apartmentList.data.length === 0) {
+          this.logger.log('There are no apartments to send to the user');
+          this.logCronJobFinished(
+            SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB,
+          );
+          return;
+        }
+
+        const deactivationToken = await this.tokenService.createAndSaveToken(
+          { filter: filter._id },
+          FILTER_DEACTIVATION_TOKEN_EXPIRATION_HOURS,
+        );
+        const filterDeactivationUrl = `${process.env.CLIENT_URL}/filters/deactivation/${deactivationToken.value}`;
+        const newApartments = apartmentList.data.sort(
+          (firstApartment, secondApartment) =>
+            firstApartment.price - secondApartment.price,
+        );
+        const populatedFilter = await this.filterService.populateUser(filter);
+        await this.mailService.sendMailWithNewApartments(
+          // @ts-ignore
+          populatedFilter.user.email,
+          newApartments,
+          filter as FilterDto,
+          filterDeactivationUrl,
+        );
+
+        const newApartmentsIds = newApartments.map(apartment => apartment._id);
+        await this.userService.insertReceivedApartmentsIds(
+          filter.user,
+          newApartmentsIds,
+        );
+
         this.logCronJobFinished(
           SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB,
         );
-        return;
+      } catch (error) {
+        this.logger.error(error);
       }
-
-      const deactivationToken = await this.tokenService.createAndSaveToken(
-        { filter: filter._id },
-        FILTER_DEACTIVATION_TOKEN_EXPIRATION_HOURS,
-      );
-      const filterDeactivationUrl = `${process.env.CLIENT_URL}/filters/deactivation/${deactivationToken.value}`;
-      const newApartments = apartmentList.data.sort(
-        (firstApartment, secondApartment) =>
-          firstApartment.price - secondApartment.price,
-      );
-      const populatedFilter = await this.filterService.populateUser(filter);
-      await this.mailService.sendMailWithNewApartments(
-        // @ts-ignore
-        populatedFilter.user.email,
-        newApartments,
-        filter as FilterDto,
-        filterDeactivationUrl,
-      );
-
-      const newApartmentsIds = newApartments.map(apartment => apartment._id);
-      await this.userService.insertReceivedApartmentsIds(
-        filter.user,
-        newApartmentsIds,
-      );
-
-      this.logCronJobFinished(
-        SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB,
-      );
     });
   }
 
