@@ -72,22 +72,21 @@ export class TasksService {
     filters.forEach(async filter => {
       await this.tokenService.deactivateTokenByFilterId(filter._id);
       this.logger.log(`Filter: ${JSON.stringify(filter)}`);
-      const receivedApartmentsIds = await this.userService.getReceivedApartmentsIds(
-        filter.user,
-      );
 
       const apartmentListParams = {
         ...filter,
         limitPerPage: RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION,
         pageNumber: 1,
       };
+      const receivedApartmentsIds = await this.userService.getReceivedApartmentsIds(
+        filter.user,
+      );
       const apartmentList = await this.apartmentService.getApartmentListFromDatabase(
         apartmentListParams as ApartmentListParamsDto,
         receivedApartmentsIds,
         filter.createdAt,
       );
-      const apartmentListLength = apartmentList.data.length;
-      if (apartmentListLength === 0) {
+      if (apartmentList.data.length === 0) {
         this.logger.log('There are no apartments to send to the user');
         this.logCronJobFinished(
           SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB,
