@@ -10,7 +10,7 @@ import { UserService } from 'modules/user/user.service';
 import { TasksService } from './tasks.service';
 
 const apartmentService = {
-  getApartmentListFromDatabase: jest.fn(),
+  getApartmentListFromDatabaseByFilter: jest.fn(),
   getApartmentsIds: jest.fn(),
   handleDeletingInactiveApartmentFromCetiriZida: jest.fn(),
   handleDeletingInactiveApartmentFromCityExpert: jest.fn(),
@@ -33,7 +33,6 @@ const tokenService = {
 };
 
 const userService = {
-  getReceivedApartmentsIds: jest.fn(),
   getUserEmail: jest.fn(),
   insertReceivedApartmentsIds: jest.fn(),
 };
@@ -118,7 +117,7 @@ describe('TasksService', () => {
         filterService.getFilterListBySubscriptionName,
       ).toHaveBeenCalledWith(Subscription.FREE);
       expect(
-        apartmentService.getApartmentListFromDatabase,
+        apartmentService.getApartmentListFromDatabaseByFilter,
       ).not.toHaveBeenCalled();
     });
 
@@ -134,15 +133,11 @@ describe('TasksService', () => {
         user: '611c59c26962b452247b9431',
         createdAt: '2021-08-18T00:52:18.296Z',
       };
-      const receivedApartmentsIds = ['id1'];
       jest
         .spyOn(filterService, 'getFilterListBySubscriptionName')
         .mockResolvedValue([foundFilter]);
       jest
-        .spyOn(userService, 'getReceivedApartmentsIds')
-        .mockResolvedValue(receivedApartmentsIds);
-      jest
-        .spyOn(apartmentService, 'getApartmentListFromDatabase')
+        .spyOn(apartmentService, 'getApartmentListFromDatabaseByFilter')
         .mockResolvedValue({ data: [] });
 
       await tasksService.handleSendingNewApartmentsForFreeSubscriptionUsers();
@@ -152,9 +147,6 @@ describe('TasksService', () => {
       ).toHaveBeenCalledWith(Subscription.FREE);
       expect(tokenService.deleteTokenByFilterId).toHaveBeenCalledWith(
         foundFilter._id,
-      );
-      expect(userService.getReceivedApartmentsIds).toHaveBeenCalledWith(
-        foundFilter.user,
       );
       expect(mailService.sendMailWithNewApartments).not.toHaveBeenCalled();
     });
@@ -171,7 +163,6 @@ describe('TasksService', () => {
         user: '611c59c26962b452247b9431',
         createdAt: '2021-08-18T00:52:18.296Z',
       };
-      const receivedApartmentsIds = ['id1'];
       const apartmentList = [
         {
           heatingTypes: ['central'],
@@ -223,10 +214,7 @@ describe('TasksService', () => {
         .spyOn(filterService, 'getFilterListBySubscriptionName')
         .mockResolvedValue([foundFilter]);
       jest
-        .spyOn(userService, 'getReceivedApartmentsIds')
-        .mockResolvedValue(receivedApartmentsIds);
-      jest
-        .spyOn(apartmentService, 'getApartmentListFromDatabase')
+        .spyOn(apartmentService, 'getApartmentListFromDatabaseByFilter')
         .mockResolvedValue({
           data: apartmentList,
         });
@@ -245,9 +233,6 @@ describe('TasksService', () => {
       ).toHaveBeenCalledWith(Subscription.FREE);
       expect(tokenService.deleteTokenByFilterId).toHaveBeenCalledWith(
         foundFilter._id,
-      );
-      expect(userService.getReceivedApartmentsIds).toHaveBeenCalledWith(
-        foundFilter.user,
       );
       expect(tokenService.createAndSaveToken).toHaveBeenCalledWith(
         { filter: foundFilter._id },
@@ -294,7 +279,6 @@ describe('TasksService', () => {
           createdAt: '2021-08-18T00:52:18.296Z',
         },
       ];
-      const receivedApartmentsIds = ['id1'];
       jest
         .spyOn(filterService, 'getFilterListBySubscriptionName')
         .mockResolvedValue(foundFilters);
@@ -305,10 +289,7 @@ describe('TasksService', () => {
         .spyOn(tokenService, 'deleteTokenByFilterId')
         .mockResolvedValue(undefined);
       jest
-        .spyOn(userService, 'getReceivedApartmentsIds')
-        .mockResolvedValue(receivedApartmentsIds);
-      jest
-        .spyOn(apartmentService, 'getApartmentListFromDatabase')
+        .spyOn(apartmentService, 'getApartmentListFromDatabaseByFilter')
         .mockResolvedValue({ data: [] });
 
       await tasksService.handleSendingNewApartmentsForFreeSubscriptionUsers();
@@ -322,9 +303,6 @@ describe('TasksService', () => {
         );
       });
       expect(tokenService.deleteTokenByFilterId).toHaveBeenCalledTimes(2);
-      expect(userService.getReceivedApartmentsIds).toHaveBeenCalledWith(
-        foundFilters[1].user,
-      );
       expect(mailService.sendMailWithNewApartments).not.toHaveBeenCalled();
     });
   });

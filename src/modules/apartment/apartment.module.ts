@@ -1,5 +1,6 @@
 import { HttpModule, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { UserModule } from 'modules/user/user.module';
 import { ApartmentController } from './apartment.controller';
 import { ApartmentRepository } from './apartment.repository';
 import { Apartment, ApartmentSchema } from './apartment.schema';
@@ -21,6 +22,7 @@ import { BaseProvider } from './providers';
       },
     ]),
     HttpModule,
+    UserModule,
   ],
   providers: [ApartmentRepository, ApartmentService, BaseProvider],
   controllers: [ApartmentController],

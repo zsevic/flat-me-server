@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION } from 'modules/apartment/apartment.constants';
 import { ApartmentService } from 'modules/apartment/apartment.service';
-import { ApartmentListParamsDto } from 'modules/apartment/dto/apartment-list-params.dto';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { filters } from 'modules/filter/filter.constants';
 import { FilterDocument } from 'modules/filter/filter.schema';
@@ -81,32 +80,12 @@ export class TasksService {
     this.logCronJobFinished(SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB);
   }
 
-  async getApartmentListFromDatabaseByFilter(
-    filter: FilterDocument,
-    limitPerPage: number,
-  ) {
-    const apartmentListParams = {
-      ...filter,
-      limitPerPage,
-      pageNumber: 1,
-    };
-    const receivedApartmentsIds = await this.userService.getReceivedApartmentsIds(
-      filter.user,
-    );
-
-    return this.apartmentService.getApartmentListFromDatabase(
-      apartmentListParams as ApartmentListParamsDto,
-      receivedApartmentsIds,
-      filter.createdAt,
-    );
-  }
-
   async sendNewApartmentsByFilter(filter: FilterDocument): Promise<void> {
     try {
       await this.tokenService.deleteTokenByFilterId(filter._id);
       this.logger.log(`Filter: ${JSON.stringify(filter)}`);
 
-      const apartmentList = await this.getApartmentListFromDatabaseByFilter(
+      const apartmentList = await this.apartmentService.getApartmentListFromDatabaseByFilter(
         filter,
         RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION,
       );

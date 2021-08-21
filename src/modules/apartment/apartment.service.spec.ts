@@ -1,6 +1,7 @@
 import { HttpService, HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { RentOrSale } from 'modules/filter/filter.enums';
+import { UserService } from 'modules/user/user.service';
 import {
   apartmentActivityBaseUrlForCetiriZida,
   apartmentActivityBaseUrlForCityExpert,
@@ -27,6 +28,10 @@ const httpService = {
   toPromise: jest.fn(),
 };
 
+const userService = {
+  getReceivedApartmentsIds: jest.fn(),
+};
+
 describe('ApartmentService', () => {
   let apartmentService: ApartmentService;
 
@@ -45,6 +50,10 @@ describe('ApartmentService', () => {
         {
           provide: HttpService,
           useValue: httpService,
+        },
+        {
+          provide: UserService,
+          useValue: userService,
         },
       ],
     }).compile();

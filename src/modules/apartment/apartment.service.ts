@@ -1,5 +1,7 @@
 import { HttpService, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
+import { FilterDocument } from 'modules/filter/filter.schema';
+import { UserService } from 'modules/user/user.service';
 import {
   apartmentActivityBaseUrlForCetiriZida,
   apartmentActivityBaseUrlForCityExpert,
@@ -26,6 +28,7 @@ export class ApartmentService {
     private readonly apartmentRepository: ApartmentRepository,
     private readonly baseProvider: BaseProvider,
     private readonly httpService: HttpService,
+    private readonly userService: UserService,
   ) {}
 
   async deleteApartment(id): Promise<void> {
@@ -106,6 +109,26 @@ export class ApartmentService {
     } catch (error) {
       this.logger.error(error);
     }
+  }
+
+  async getApartmentListFromDatabaseByFilter(
+    filter: FilterDocument,
+    limitPerPage: number,
+  ) {
+    const apartmentListParams = {
+      ...filter,
+      limitPerPage,
+      pageNumber: 1,
+    };
+    const receivedApartmentsIds = await this.userService.getReceivedApartmentsIds(
+      filter.user,
+    );
+
+    return this.getApartmentListFromDatabase(
+      apartmentListParams as ApartmentListParamsDto,
+      receivedApartmentsIds,
+      filter.createdAt,
+    );
   }
 
   async getApartmentListFromDatabase(
