@@ -52,7 +52,7 @@ describe('ApartmentService', () => {
     apartmentService = module.get<ApartmentService>(ApartmentService);
   });
 
-  it('should find and save apartments from providers', async () => {
+  it('should find, paginate and save apartments from providers', async () => {
     const firstProviderResults = [
       {
         total: 2,
@@ -336,6 +336,94 @@ describe('ApartmentService', () => {
         savedApartmentList,
       );
     });
+  });
+
+  it('should handle failed requests from providers', async () => {
+    const providerResults = [
+      {
+        total: 1,
+        ads: [
+          {
+            m2: 69,
+            floor: 1,
+            totalFloors: 3,
+            furnished: 'yes',
+            heatingType: 'district',
+            id: '60993e3e7906cd3a4c6832fd',
+            for: 'rent',
+            price: 420,
+            previousPrice: 300,
+            bookmarkCount: 3,
+            registered: 'yes',
+            address: 'Dalmatinska',
+            allowedVirtualSightseeing: false,
+            featuredExpiresAt: '2021-08-25T19:01:41+02:00',
+            featuredCounter: 5,
+            authorId: 57,
+            createdAt: '2021-05-10T16:07:58+02:00',
+            roomCount: 3,
+            description100: 'description',
+            type: 'apartment',
+            structureName: 'Trosoban stan',
+            structureAbbreviation: '3.0 stan',
+            title: 'Dalmatinska',
+            urlPath: '/url',
+            placeNames: ['Zvezdara opština'],
+            agencyAvatarUrlTemplate: 'url',
+            agencyUrl: 'url',
+            image: { search: { '380x0_fill_0_webp': 'cover-photo-url' } },
+            imageCount: 15,
+          },
+        ],
+      },
+      {},
+    ];
+    const savedApartmentList = [
+      {
+        price: 420,
+        _id: 'cetiriZida_60993e3e7906cd3a4c6832fd',
+        apartmentId: '60993e3e7906cd3a4c6832fd',
+        providerName: 'cetiriZida',
+        address: 'Dalmatinska',
+        coverPhotoUrl: 'cover-photo-url',
+        floor: 1,
+        furnished: 'furnished',
+        heatingTypes: ['district'],
+        municipality: 'Zvezdara',
+        place: 'Zvezdara opština',
+        postedAt: '2021-05-10T16:07:58+02:00',
+        rentOrSale: 'rent',
+        size: 69,
+        structure: 3,
+        url: 'https://4zida.rs/url',
+      },
+    ];
+    const cetiriZida = 'cetiriZida';
+    const cityExpert = 'cityExpert';
+    jest.spyOn(baseProvider, 'getProviderRequests').mockReturnValue([
+      // @ts-ignore
+      { request: {}, providerName: cetiriZida },
+      // @ts-ignore
+      { request: {}, providerName: cityExpert },
+    ]);
+
+    jest
+      .spyOn(baseProvider, 'getProviderResults')
+      .mockResolvedValueOnce(providerResults);
+
+    await apartmentService.saveApartmentListFromProviders({
+      furnished: ['furnished'],
+      municipalities: ['Vračar', 'Zvezdara'],
+      minPrice: 400,
+      maxPrice: 500,
+      structures: [1.5, 3.0],
+      rentOrSale: RentOrSale.rent,
+      pageNumber: 1,
+    });
+
+    expect(apartmentRepository.saveApartmentList).toHaveBeenCalledWith(
+      savedApartmentList,
+    );
   });
 
   describe('cetiriZida', () => {
