@@ -9,15 +9,20 @@ import { UserService } from 'modules/user/user.service';
 import { TasksService } from './tasks.service';
 
 const apartmentService = {
+  getApartmentListFromDatabase: jest.fn(),
   getApartmentsIds: jest.fn(),
   handleDeletingInactiveApartmentFromCetiriZida: jest.fn(),
   handleDeletingInactiveApartmentFromCityExpert: jest.fn(),
   saveApartmentListFromProviders: jest.fn(),
 };
 
+const filterService = {
+  getFilterListBySubscriptionName: jest.fn(),
+  getInitialFilter: filters => ({ ...filters, pageNumber: 1 }),
+};
+
 describe('TasksService', () => {
   let tasksService: TasksService;
-  let filterService: FilterService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -27,7 +32,10 @@ describe('TasksService', () => {
           provide: ApartmentService,
           useValue: apartmentService,
         },
-        FilterService,
+        {
+          provide: FilterService,
+          useValue: filterService,
+        },
         {
           provide: FilterRepository,
           useValue: {},
@@ -48,7 +56,6 @@ describe('TasksService', () => {
     }).compile();
 
     tasksService = module.get<TasksService>(TasksService);
-    filterService = module.get<FilterService>(FilterService);
   });
 
   it('should handle scraping data from providers', async () => {
@@ -79,5 +86,19 @@ describe('TasksService', () => {
     expect(
       apartmentService.handleDeletingInactiveApartmentFromCityExpert,
     ).toHaveBeenCalledWith(cityExpertApartmentId);
+  });
+
+  describe('handleSendingNewApartmentsForFreeSubscriptionUsers', () => {
+    it('should not send any new apartments to the users when there are no saved filters', async () => {
+      jest
+        .spyOn(filterService, 'getFilterListBySubscriptionName')
+        .mockResolvedValue([]);
+
+      await tasksService.handleSendingNewApartmentsForFreeSubscriptionUsers();
+
+      expect(
+        apartmentService.getApartmentListFromDatabase,
+      ).not.toHaveBeenCalled();
+    });
   });
 });
