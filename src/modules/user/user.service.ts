@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { Types } from 'mongoose';
+import { ApartmentDocument } from 'modules/apartment/apartment.schema';
 import { Subscription } from './subscription.enum';
 import { UserRepository } from './user.repository';
 import { User, UserDocument } from './user.schema';
@@ -41,8 +41,10 @@ export class UserService {
 
   async insertReceivedApartmentsIds(
     userId: string,
-    apartmentsIds: Types._ObjectId[],
+    apartments: ApartmentDocument[],
   ) {
+    const apartmentsIds = apartments.map(apartment => apartment._id);
+
     return this.userRepository.insertReceivedApartmentsIds(
       userId,
       apartmentsIds,

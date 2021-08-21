@@ -249,8 +249,8 @@ describe('TasksService', () => {
       expect(
         userService.insertReceivedApartmentsIds,
       ).toHaveBeenCalledWith(foundFilter.user, [
-        apartmentList[1]._id,
-        apartmentList[0]._id,
+        apartmentList[1],
+        apartmentList[0],
       ]);
     });
 

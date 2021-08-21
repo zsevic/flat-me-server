@@ -113,10 +113,9 @@ export class TasksService {
         filterDeactivationUrl,
       );
 
-      const newApartmentsIds = newApartments.map(apartment => apartment._id);
       await this.userService.insertReceivedApartmentsIds(
         filter.user,
-        newApartmentsIds,
+        newApartments,
       );
     } catch (error) {
       this.logger.error(error);
