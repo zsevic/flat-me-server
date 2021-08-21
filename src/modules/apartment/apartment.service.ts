@@ -46,9 +46,10 @@ export class ApartmentService {
         const foundApartments = [];
         const { providerName } = providerRequests[index];
 
-        const apartments = this.providers[providerName].getResults(
-          providerResult,
-        );
+        const apartments =
+          this.providers[providerName].getResults(providerResult) || [];
+        if (apartments.length === 0) continue;
+
         apartments.forEach(apartment => {
           if (!apartment.price) return;
 
@@ -64,7 +65,9 @@ export class ApartmentService {
           `Found ${foundApartments.length} new apartment(s) from ${providerName} for ${filter.rentOrSale}, page ${filter.pageNumber}`,
         );
         try {
-          await this.apartmentRepository.saveApartmentList(foundApartments);
+          if (foundApartments.length > 0) {
+            await this.apartmentRepository.saveApartmentList(foundApartments);
+          }
         } catch (error) {
           this.logger.error(
             `Couldn't save apartments, error: ${JSON.stringify(error)}`,

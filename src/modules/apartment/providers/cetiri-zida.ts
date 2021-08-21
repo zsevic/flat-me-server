@@ -8,11 +8,11 @@ export class CetiriZidaProvider extends BaseProvider implements Provider {
   private readonly providerName = 'cetiriZida';
   private readonly url = `${CETIRI_ZIDA_API_BASE_URL}/v6/search/apartments`;
 
-  static getResults = results => results.data.ads;
+  static getResults = data => data?.ads;
 
-  static hasNextPage = (results, pageNumber: number) => {
-    const currentCount = results.data.ads.length * pageNumber;
-    return currentCount > 0 && results.data.total > currentCount;
+  static hasNextPage = (data, pageNumber: number) => {
+    const currentCount = data.ads.length * pageNumber;
+    return currentCount > 0 && data.total > currentCount;
   };
 
   makeRequest(filter: FilterDto) {

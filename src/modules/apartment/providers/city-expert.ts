@@ -8,9 +8,9 @@ export class CityExpertProvider extends BaseProvider implements Provider {
   private readonly providerName = 'cityExpert';
   private readonly url = `${CITY_EXPERT_API_BASE_URL}/Search/`;
 
-  static getResults = results => results.data.result;
+  static getResults = data => data?.result;
 
-  static hasNextPage = results => results.data.info.hasNextPage;
+  static hasNextPage = data => data.info.hasNextPage;
 
   makeRequest(filter: FilterDto) {
     const rentOrSale = {
