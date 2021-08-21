@@ -1,6 +1,7 @@
 import { HttpService, HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { RentOrSale } from 'modules/filter/filter.enums';
+import { FilterDocument } from 'modules/filter/filter.schema';
 import { UserService } from 'modules/user/user.service';
 import {
   apartmentActivityBaseUrlForCetiriZida,
@@ -14,6 +15,7 @@ import { BaseProvider } from './providers';
 
 const apartmentRepository = {
   deleteApartment: jest.fn(),
+  getApartmentList: jest.fn(),
   saveApartmentList: jest.fn(),
 };
 
@@ -59,6 +61,74 @@ describe('ApartmentService', () => {
     }).compile();
 
     apartmentService = module.get<ApartmentService>(ApartmentService);
+  });
+
+  describe('getApartmentListFromDatabaseByFilter', () => {
+    it('should get apartment list from the database by given filter', async () => {
+      const filter = {
+        _id: '611c59c26962b452247b9432',
+        structures: [1, 2, 0.5, 1.5],
+        municipalities: ['Savski venac', 'Zemun'],
+        furnished: ['semi-furnished'],
+        rentOrSale: 'rent',
+        minPrice: 120,
+        maxPrice: 370,
+        user: '611c59c26962b452247b9431',
+        createdAt: new Date('2021-08-18T00:52:18.296Z'),
+        isActive: true,
+        isVerified: true,
+      };
+      const apartmentList = [
+        {
+          heatingTypes: ['central'],
+          _id: 'cetiriZida_id1',
+          price: 350,
+          apartmentId: 'id',
+          providerName: 'cetiriZida',
+          address: 'street',
+          coverPhotoUrl: 'url',
+          floor: 'ground floor',
+          furnished: 'semi-furnished',
+          municipality: 'Savski venac',
+          place: 'Sarajevska',
+          postedAt: '2021-06-23T13:38:19+02:00',
+          rentOrSale: 'rent',
+          size: 41,
+          structure: 3,
+          url: 'url',
+          __v: 0,
+          createdAt: '2021-08-14T18:12:32.133Z',
+          updatedAt: '2021-08-14T18:12:32.133Z',
+        },
+      ];
+      const apartmentsIds = ['id1'];
+      const limitPerPage = 5;
+      const apartmentListParams = {
+        ...filter,
+        limitPerPage,
+        pageNumber: 1,
+      };
+      jest
+        .spyOn(userService, 'getReceivedApartmentsIds')
+        .mockResolvedValue(apartmentsIds);
+      jest
+        .spyOn(apartmentRepository, 'getApartmentList')
+        .mockResolvedValue(apartmentList);
+
+      await apartmentService.getApartmentListFromDatabaseByFilter(
+        filter as FilterDocument,
+        limitPerPage,
+      );
+
+      expect(userService.getReceivedApartmentsIds).toHaveBeenCalledWith(
+        filter.user,
+      );
+      expect(apartmentRepository.getApartmentList).toHaveBeenCalledWith(
+        apartmentListParams,
+        apartmentsIds,
+        filter.createdAt,
+      );
+    });
   });
 
   describe('saveApartmentListFromProviders', () => {
