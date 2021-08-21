@@ -28,7 +28,6 @@ const mailService = {
 };
 
 const tokenService = {
-  createAndSaveToken: jest.fn(),
   deleteTokenByFilterId: jest.fn(),
 };
 
@@ -70,9 +69,9 @@ describe('TasksService', () => {
     tasksService = module.get<TasksService>(TasksService);
   });
 
-  describe('handleScraping', () => {
-    it('should handle scraping data from providers', async () => {
-      await tasksService.handleScraping();
+  describe('handleSavingApartmentListFromProviders', () => {
+    it('should handle saving apartment list from providers', async () => {
+      await tasksService.handleSavingApartmentListFromProviders();
 
       filters.forEach((filter, index) => {
         expect(
@@ -213,7 +212,6 @@ describe('TasksService', () => {
       ];
       const email = 'test@example.com';
       const filterDeactivationUrl = 'url';
-      const token = 'token';
       jest
         .spyOn(filterService, 'getFilterListBySubscriptionName')
         .mockResolvedValue([foundFilter]);
@@ -222,13 +220,10 @@ describe('TasksService', () => {
         .mockResolvedValue({
           data: apartmentList,
         });
-      jest.spyOn(tokenService, 'createAndSaveToken').mockResolvedValue({
-        value: token,
-      });
       jest.spyOn(userService, 'getUserEmail').mockResolvedValue(email);
       jest
         .spyOn(filterService, 'getDeactivationUrl')
-        .mockReturnValue(filterDeactivationUrl);
+        .mockResolvedValue(filterDeactivationUrl);
 
       await tasksService.handleSendingNewApartmentsForFreeSubscriptionUsers();
 
@@ -238,11 +233,10 @@ describe('TasksService', () => {
       expect(tokenService.deleteTokenByFilterId).toHaveBeenCalledWith(
         foundFilter._id,
       );
-      expect(tokenService.createAndSaveToken).toHaveBeenCalledWith(
-        { filter: foundFilter._id },
+      expect(filterService.getDeactivationUrl).toHaveBeenCalledWith(
+        foundFilter._id,
         FILTER_DEACTIVATION_TOKEN_EXPIRATION_HOURS,
       );
-      expect(filterService.getDeactivationUrl).toHaveBeenCalledWith(token);
       expect(userService.getUserEmail).toHaveBeenCalledWith(foundFilter.user);
       expect(mailService.sendMailWithNewApartments).toHaveBeenCalledWith(
         email,

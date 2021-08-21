@@ -13,7 +13,7 @@ import { Subscription } from 'modules/user/subscription.enum';
 import { UserService } from 'modules/user/user.service';
 import {
   DELETING_INACTIVE_APARTMENTS,
-  SCRAPING_CRON_JOB,
+  SAVING_APARTMENT_LIST_FROM_PROVIDERS_CRON_JOB,
   SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB,
 } from './tasks.constants';
 
@@ -30,10 +30,10 @@ export class TasksService {
   ) {}
 
   @Cron(CronExpression.EVERY_HOUR, {
-    name: SCRAPING_CRON_JOB,
+    name: SAVING_APARTMENT_LIST_FROM_PROVIDERS_CRON_JOB,
   })
-  async handleScraping(): Promise<void> {
-    this.logCronJobStarted(SCRAPING_CRON_JOB);
+  async handleSavingApartmentListFromProviders(): Promise<void> {
+    this.logCronJobStarted(SAVING_APARTMENT_LIST_FROM_PROVIDERS_CRON_JOB);
     const saveApartmentListFromProviders = [];
     for (const filter of filters) {
       saveApartmentListFromProviders.push(
@@ -49,7 +49,7 @@ export class TasksService {
       this.logger.error(error);
     }
 
-    this.logCronJobFinished(SCRAPING_CRON_JOB);
+    this.logCronJobFinished(SAVING_APARTMENT_LIST_FROM_PROVIDERS_CRON_JOB);
   }
 
   @Cron(CronExpression.EVERY_DAY_AT_1PM, {
@@ -94,16 +94,14 @@ export class TasksService {
         return;
       }
 
-      const deactivationToken = await this.tokenService.createAndSaveToken(
-        { filter: filter._id },
-        FILTER_DEACTIVATION_TOKEN_EXPIRATION_HOURS,
-      );
-      const filterDeactivationUrl = this.filterService.getDeactivationUrl(
-        deactivationToken.value,
-      );
       const newApartments = [...apartmentList.data].sort(
         (firstApartment, secondApartment) =>
           firstApartment.price - secondApartment.price,
+      );
+
+      const filterDeactivationUrl = await this.filterService.getDeactivationUrl(
+        filter._id,
+        FILTER_DEACTIVATION_TOKEN_EXPIRATION_HOURS,
       );
       const userEmail = await this.userService.getUserEmail(filter.user);
       await this.mailService.sendMailWithNewApartments(

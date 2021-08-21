@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import { TokenService } from 'modules/token/token.service';
 import { FilterDto } from './dto/filter.dto';
 import { FilterRepository } from './filter.repository';
 import { Filter, FilterDocument } from './filter.schema';
 
 @Injectable()
 export class FilterService {
-  constructor(private readonly filterRepository: FilterRepository) {}
+  constructor(
+    private readonly filterRepository: FilterRepository,
+    private readonly tokenService: TokenService,
+  ) {}
 
   async deactivateFilter(filterId: string): Promise<void> {
     const filter = await this.filterRepository.findFilterById(filterId);
@@ -13,8 +17,17 @@ export class FilterService {
     return this.filterRepository.deactivateFilter(filter);
   }
 
-  getDeactivationUrl = (deactivationToken: string): string =>
-    `${process.env.CLIENT_URL}/filters/deactivation/${deactivationToken}`;
+  async getDeactivationUrl(
+    filterId: string,
+    expirationHours: number,
+  ): Promise<string> {
+    const deactivationToken = await this.tokenService.createAndSaveToken(
+      { filter: filterId },
+      expirationHours,
+    );
+
+    return `${process.env.CLIENT_URL}/filters/deactivation/${deactivationToken}`;
+  }
 
   async getFilterListBySubscriptionName(
     subscriptionName: string,
