@@ -1,1 +1,3 @@
 export const TOKEN_LENGTH = 24;
+
+export const FILTER_DEACTIVATION_TOKEN_EXPIRATION_HOURS = 24;

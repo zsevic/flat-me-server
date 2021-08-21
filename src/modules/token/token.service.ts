@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { randomBytes } from 'crypto';
 import { promisify } from 'util';
 import { TOKEN_LENGTH } from './token.constants';
-import { InitialToken } from './token.interfaces';
 import { TokenRepository } from './token.repository';
 import { Token, TokenDocument } from './token.schema';
 
@@ -12,14 +11,18 @@ const randomBytesAsync = promisify(randomBytes);
 export class TokenService {
   constructor(private readonly tokenRepository: TokenRepository) {}
 
-  async createToken(validHours = 1): Promise<InitialToken> {
-    const token = await this.generateToken();
+  async createAndSaveToken(
+    token: Partial<Token>,
+    validHours = 1,
+  ): Promise<Token> {
+    const generatedToken = await this.generateToken();
     const expiresAt = this.generateExpiresAt(validHours);
 
-    return {
+    return this.tokenRepository.saveToken({
       expiresAt,
-      value: token,
-    };
+      value: generatedToken,
+      ...token,
+    });
   }
 
   async deactivateToken(token: TokenDocument): Promise<void> {
@@ -53,8 +56,4 @@ export class TokenService {
 
     return this.tokenRepository.deactivateToken(validToken);
   };
-
-  public async saveToken(token: Token): Promise<Token> {
-    return this.tokenRepository.saveToken(token);
-  }
 }

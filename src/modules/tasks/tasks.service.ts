@@ -7,6 +7,7 @@ import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { filters } from 'modules/filter/filter.constants';
 import { FilterService } from 'modules/filter/filter.service';
 import { MailService } from 'modules/mail/mail.service';
+import { FILTER_DEACTIVATION_TOKEN_EXPIRATION_HOURS } from 'modules/token/token.constants';
 import { TokenService } from 'modules/token/token.service';
 import { Subscription } from 'modules/user/subscription.enum';
 import { UserService } from 'modules/user/user.service';
@@ -94,10 +95,11 @@ export class TasksService {
         return;
       }
 
-      const deactivationToken = await this.tokenService.createToken(24);
-      Object.assign(deactivationToken, { filter: filter._id });
-      await this.tokenService.saveToken(deactivationToken);
-      const deactivationUrl = `${process.env.CLIENT_URL}/filters/deactivation/${deactivationToken.value}`;
+      const deactivationToken = await this.tokenService.createAndSaveToken(
+        { filter: filter._id },
+        FILTER_DEACTIVATION_TOKEN_EXPIRATION_HOURS,
+      );
+      const filterDeactivationUrl = `${process.env.CLIENT_URL}/filters/deactivation/${deactivationToken.value}`;
       const newApartments = apartmentList.data.sort(
         (firstApartment, secondApartment) =>
           firstApartment.price - secondApartment.price,
@@ -108,7 +110,7 @@ export class TasksService {
         populatedFilter.user.email,
         newApartments,
         filter as FilterDto,
-        deactivationUrl,
+        filterDeactivationUrl,
       );
 
       const newApartmentsIds = newApartments.map(apartment => apartment._id);

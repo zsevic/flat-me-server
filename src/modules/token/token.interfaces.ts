@@ -1,10 +1,8 @@
-export interface InitialToken {
+export interface Token {
   expiresAt: Date;
 
   value: string;
-}
 
-export interface Token extends InitialToken {
   filter?: string;
 
   user?: string;
