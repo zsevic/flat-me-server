@@ -9,6 +9,9 @@ import { UserService } from 'modules/user/user.service';
 import { TasksService } from './tasks.service';
 
 const apartmentService = {
+  getApartmentsIds: jest.fn(),
+  handleDeletingInactiveApartmentFromCetiriZida: jest.fn(),
+  handleDeletingInactiveApartmentFromCityExpert: jest.fn(),
   saveApartmentListFromProviders: jest.fn(),
 };
 
@@ -59,5 +62,22 @@ describe('TasksService', () => {
         filterService.getInitialFilter(filter),
       );
     });
+  });
+
+  it('should handle deleting inactive apartments', async () => {
+    const cetiriZidaApartmentId = 'cetiriZida_23';
+    const cityExpertApartmentId = 'cityExpert_12-BR';
+    jest
+      .spyOn(apartmentService, 'getApartmentsIds')
+      .mockResolvedValue([cetiriZidaApartmentId, cityExpertApartmentId]);
+
+    await tasksService.handleDeletingInactiveApartments();
+
+    expect(
+      apartmentService.handleDeletingInactiveApartmentFromCetiriZida,
+    ).toHaveBeenCalledWith(cetiriZidaApartmentId);
+    expect(
+      apartmentService.handleDeletingInactiveApartmentFromCityExpert,
+    ).toHaveBeenCalledWith(cityExpertApartmentId);
   });
 });
