@@ -6,6 +6,8 @@ import { FilterRepository } from './filter.repository';
 import { FilterService } from './filter.service';
 
 const filterRepository = {
+  deactivateFilter: jest.fn(),
+  findFilterById: jest.fn(),
   findUnverifiedFilter: jest.fn(),
   verifyAndActivateFilter: jest.fn(),
 };
@@ -77,6 +79,44 @@ describe('FilterService', () => {
       const initialFilter = filterService.getInitialFilter(filter);
 
       expect(initialFilter).toEqual({ ...filter, pageNumber: 1 });
+    });
+  });
+
+  describe('deactivateFilter', () => {
+    it('should throw an error when filter is not found', async () => {
+      const filterId = 'id1';
+      jest
+        .spyOn(filterRepository, 'findFilterById')
+        .mockRejectedValue(new BadRequestException());
+
+      await expect(
+        filterService.deactivateFilter(filterId),
+      ).rejects.toBeInstanceOf(BadRequestException);
+      expect(filterRepository.deactivateFilter).not.toHaveBeenCalled();
+    });
+
+    it('should deactivate found filter', async () => {
+      const filterId = '611c59c26962b452247b9432';
+      const foundFilter = {
+        _id: filterId,
+        structures: [1, 2, 0.5, 1.5],
+        municipalities: ['Savski venac', 'Zemun'],
+        furnished: ['semi-furnished'],
+        rentOrSale: 'rent',
+        minPrice: 120,
+        maxPrice: 370,
+        user: '611c59c26962b452247b9431',
+        createdAt: '2021-08-18T00:52:18.296Z',
+      };
+      jest
+        .spyOn(filterRepository, 'findFilterById')
+        .mockResolvedValue(foundFilter);
+
+      await filterService.deactivateFilter(filterId);
+
+      expect(filterRepository.deactivateFilter).toHaveBeenCalledWith(
+        foundFilter,
+      );
     });
   });
 
