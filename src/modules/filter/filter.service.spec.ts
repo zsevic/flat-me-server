@@ -16,6 +16,11 @@ const filterRepository = {
 
 const tokenService = {
   createAndSaveToken: jest.fn(),
+  getValidToken: jest.fn(),
+};
+
+const userService = {
+  verifyUser: jest.fn(),
 };
 
 describe('FilterService', () => {
@@ -44,7 +49,7 @@ describe('FilterService', () => {
         },
         {
           provide: UserService,
-          useValue: {},
+          useValue: userService,
         },
       ],
     }).compile();
@@ -130,20 +135,44 @@ describe('FilterService', () => {
     });
   });
 
-  describe('verifyAndActivateFilter', () => {
-    it('should throw an error if unverified filter is not found', async () => {
+  describe('verifyFilter', () => {
+    it('should throw an error when token is not found', async () => {
+      const token = 'token';
+      jest
+        .spyOn(tokenService, 'getValidToken')
+        .mockRejectedValue(new BadRequestException());
+
+      await expect(filterService.verifyFilter(token)).rejects.toBeInstanceOf(
+        BadRequestException,
+      );
+    });
+
+    it('should throw an error when unverified filter is not found', async () => {
       const filterId = 'id1';
+      const userId = 'user1';
+      const token = {
+        filter: filterId,
+        user: userId,
+        value: 'token',
+      };
+      jest.spyOn(tokenService, 'getValidToken').mockResolvedValue(token);
       jest
         .spyOn(filterRepository, 'findUnverifiedFilter')
         .mockRejectedValue(new BadRequestException());
 
       await expect(
-        filterService.verifyAndActivateFilter(filterId),
+        filterService.verifyFilter(token.value),
       ).rejects.toBeInstanceOf(BadRequestException);
     });
 
-    it('should verify and activate found filter', async () => {
-      const filterId = '611c59c26962b452247b9432';
+    it("should throw an error when filter's user is not found", async () => {
+      const filterId = 'id1';
+      const userId = 'user1';
+      const token = {
+        filter: filterId,
+        user: userId,
+        value: 'token',
+      };
       const foundFilter = {
         _id: filterId,
         structures: [1, 2, 0.5, 1.5],
@@ -154,35 +183,58 @@ describe('FilterService', () => {
         maxPrice: 370,
         user: '611c59c26962b452247b9431',
         createdAt: '2021-08-18T00:52:18.296Z',
-        set: function(values) {
-          Object.assign(this, values);
-        },
-        save: jest.fn(),
       };
-      const updatedFilter = {
-        ...foundFilter,
-        isActive: true,
-        isVerified: true,
-      };
+      jest.spyOn(tokenService, 'getValidToken').mockResolvedValue(token);
       jest
         .spyOn(filterRepository, 'findUnverifiedFilter')
         .mockResolvedValue(foundFilter);
       jest
-        .spyOn(filterRepository, 'verifyAndActivateFilter')
-        .mockImplementation(async () => {
-          foundFilter.set({
-            isActive: true,
-            isVerified: true,
-          });
-          await foundFilter.save();
-        });
+        .spyOn(userService, 'verifyUser')
+        .mockRejectedValue(new BadRequestException());
 
-      const filter = await filterService.verifyAndActivateFilter(filterId);
+      await expect(
+        filterService.verifyFilter(token.value),
+      ).rejects.toBeInstanceOf(BadRequestException);
 
-      expect(filter).toMatchObject(updatedFilter);
+      expect(tokenService.getValidToken).toHaveBeenCalledWith(token.value);
       expect(filterRepository.verifyAndActivateFilter).toHaveBeenCalledWith(
         foundFilter,
       );
+      expect(userService.verifyUser).toHaveBeenCalledWith(token.user);
+    });
+
+    it('should verify and activate found filter', async () => {
+      const filterId = 'id1';
+      const userId = 'user1';
+      const token = {
+        filter: filterId,
+        user: userId,
+        value: 'token',
+      };
+      const foundFilter = {
+        _id: filterId,
+        structures: [1, 2, 0.5, 1.5],
+        municipalities: ['Savski venac', 'Zemun'],
+        furnished: ['semi-furnished'],
+        rentOrSale: 'rent',
+        minPrice: 120,
+        maxPrice: 370,
+        user: '611c59c26962b452247b9431',
+        createdAt: '2021-08-18T00:52:18.296Z',
+      };
+      jest.spyOn(tokenService, 'getValidToken').mockResolvedValue(token);
+      jest
+        .spyOn(filterRepository, 'findUnverifiedFilter')
+        .mockResolvedValue(foundFilter);
+      jest.spyOn(userService, 'verifyUser').mockResolvedValue(undefined);
+
+      await filterService.verifyFilter(token.value);
+
+      expect(tokenService.getValidToken).toHaveBeenCalledWith(token.value);
+      expect(filterRepository.verifyAndActivateFilter).toHaveBeenCalledWith(
+        foundFilter,
+      );
+      expect(userService.verifyUser).toHaveBeenCalledWith(token.user);
     });
   });
 });

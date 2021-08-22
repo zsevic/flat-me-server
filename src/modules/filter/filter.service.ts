@@ -91,11 +91,9 @@ export class FilterService {
     await this.userService.verifyUser(userId);
   }
 
-  async verifyAndActivateFilter(id: string): Promise<Filter> {
+  private async verifyAndActivateFilter(id: string): Promise<void> {
     const filter = await this.filterRepository.findUnverifiedFilter(id);
 
-    await this.filterRepository.verifyAndActivateFilter(filter);
-
-    return filter;
+    return this.filterRepository.verifyAndActivateFilter(filter);
   }
 }
