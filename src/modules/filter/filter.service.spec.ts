@@ -1,6 +1,8 @@
 import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { MailService } from 'modules/mail/mail.service';
 import { TokenService } from 'modules/token/token.service';
+import { UserService } from 'modules/user/user.service';
 import { RentOrSale } from './filter.enums';
 import { FilterRepository } from './filter.repository';
 import { FilterService } from './filter.service';
@@ -33,8 +35,16 @@ describe('FilterService', () => {
           useValue: filterRepository,
         },
         {
+          provide: MailService,
+          useValue: {},
+        },
+        {
           provide: TokenService,
           useValue: tokenService,
+        },
+        {
+          provide: UserService,
+          useValue: {},
         },
       ],
     }).compile();

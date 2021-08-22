@@ -16,7 +16,7 @@ export class UserService {
     return this.userRepository.getReceivedApartmentsIds(userId);
   }
 
-  async getVerifiedOrNewUser(email: string): Promise<User> {
+  async getVerifiedOrCreateNewUser(email: string): Promise<User> {
     const user = await this.getVerifiedUserByEmailAndValidateFilters(email);
     if (!user) return this.saveUser(email);
 
