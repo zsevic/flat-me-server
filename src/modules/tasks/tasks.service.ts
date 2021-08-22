@@ -29,6 +29,45 @@ export class TasksService {
     private readonly userService: UserService,
   ) {}
 
+  @Cron(CronExpression.EVERY_12_HOURS, {
+    name: DELETING_INACTIVE_APARTMENTS,
+  })
+  async handleDeletingInactiveApartments(): Promise<void> {
+    this.logCronJobStarted(DELETING_INACTIVE_APARTMENTS);
+
+    const apartmentsIds = await this.apartmentService.getApartmentsIds();
+
+    try {
+      await Promise.all(
+        apartmentsIds.map(id => this.handleDeletingInactiveApartment(id)),
+      );
+    } catch (error) {
+      this.logger.error(error);
+    }
+
+    this.logCronJobFinished(DELETING_INACTIVE_APARTMENTS);
+  }
+
+  private async handleDeletingInactiveApartment(_id: string): Promise<void> {
+    const [providerName] = _id.split('_');
+    switch (providerName) {
+      case 'cetiriZida': {
+        await this.apartmentService.handleDeletingInactiveApartmentFromCetiriZida(
+          _id,
+        );
+        break;
+      }
+      case 'cityExpert': {
+        await this.apartmentService.handleDeletingInactiveApartmentFromCityExpert(
+          _id,
+        );
+        break;
+      }
+      default:
+        break;
+    }
+  }
+
   @Cron(CronExpression.EVERY_HOUR, {
     name: SAVING_APARTMENT_LIST_FROM_PROVIDERS_CRON_JOB,
   })
@@ -80,7 +119,9 @@ export class TasksService {
     this.logCronJobFinished(SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB);
   }
 
-  async sendNewApartmentsByFilter(filter: FilterDocument): Promise<void> {
+  private async sendNewApartmentsByFilter(
+    filter: FilterDocument,
+  ): Promise<void> {
     try {
       await this.tokenService.deleteTokenByFilterId(filter._id);
       this.logger.log(`Filter: ${JSON.stringify(filter)}`);
@@ -119,45 +160,6 @@ export class TasksService {
       this.logger.error(error);
     }
   }
-
-  @Cron(CronExpression.EVERY_12_HOURS, {
-    name: DELETING_INACTIVE_APARTMENTS,
-  })
-  async handleDeletingInactiveApartments(): Promise<void> {
-    this.logCronJobStarted(DELETING_INACTIVE_APARTMENTS);
-
-    const apartmentsIds = await this.apartmentService.getApartmentsIds();
-
-    try {
-      await Promise.all(
-        apartmentsIds.map(id => this.handleDeletingInactiveApartment(id)),
-      );
-    } catch (error) {
-      this.logger.error(error);
-    }
-
-    this.logCronJobFinished(DELETING_INACTIVE_APARTMENTS);
-  }
-
-  private handleDeletingInactiveApartment = async _id => {
-    const [providerName] = _id.split('_');
-    switch (providerName) {
-      case 'cetiriZida': {
-        await this.apartmentService.handleDeletingInactiveApartmentFromCetiriZida(
-          _id,
-        );
-        break;
-      }
-      case 'cityExpert': {
-        await this.apartmentService.handleDeletingInactiveApartmentFromCityExpert(
-          _id,
-        );
-        break;
-      }
-      default:
-        break;
-    }
-  };
 
   private logCronJobFinished = (cronJobName: string): void => {
     this.logger.log(`${cronJobName} cron job finished...`);

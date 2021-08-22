@@ -69,21 +69,6 @@ describe('TasksService', () => {
     tasksService = module.get<TasksService>(TasksService);
   });
 
-  describe('handleSavingApartmentListFromProviders', () => {
-    it('should handle saving apartment list from providers', async () => {
-      await tasksService.handleSavingApartmentListFromProviders();
-
-      filters.forEach((filter, index) => {
-        expect(
-          apartmentService.saveApartmentListFromProviders,
-        ).toHaveBeenNthCalledWith(
-          index + 1,
-          filterService.getInitialFilter(filter),
-        );
-      });
-    });
-  });
-
   describe('handleDeletingInactiveApartments', () => {
     it('should handle deleting inactive apartments', async () => {
       const cetiriZidaApartmentId = 'cetiriZida_23';
@@ -100,6 +85,21 @@ describe('TasksService', () => {
       expect(
         apartmentService.handleDeletingInactiveApartmentFromCityExpert,
       ).toHaveBeenCalledWith(cityExpertApartmentId);
+    });
+  });
+
+  describe('handleSavingApartmentListFromProviders', () => {
+    it('should handle saving apartment list from providers', async () => {
+      await tasksService.handleSavingApartmentListFromProviders();
+
+      filters.forEach((filter, index) => {
+        expect(
+          apartmentService.saveApartmentListFromProviders,
+        ).toHaveBeenNthCalledWith(
+          index + 1,
+          filterService.getInitialFilter(filter),
+        );
+      });
     });
   });
 

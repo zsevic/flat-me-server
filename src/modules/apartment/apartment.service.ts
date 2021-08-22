@@ -35,7 +35,7 @@ export class ApartmentService {
     return this.apartmentRepository.deleteApartment(id);
   }
 
-  async findAndSaveApartmentsFromProviders(
+  private async findAndSaveApartmentsFromProviders(
     providerRequests,
     filter: FilterDto,
   ) {

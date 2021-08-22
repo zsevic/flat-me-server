@@ -131,6 +131,101 @@ describe('ApartmentService', () => {
     });
   });
 
+  describe('handleDeletingInactiveApartmentFromCetiriZida', () => {
+    it('should skip deleting inactive apartment', async () => {
+      const apartmentId = '1234';
+      const id = `cetiriZida_${apartmentId}`;
+      const url = `${apartmentActivityBaseUrlForCetiriZida}/${apartmentId}`;
+      jest.spyOn(httpService, 'get').mockReturnThis();
+
+      await apartmentService.handleDeletingInactiveApartmentFromCetiriZida(id);
+
+      expect(httpService.get).toHaveBeenCalledWith(url);
+    });
+
+    it('should delete inactive apartment', async () => {
+      const apartmentId = '1234';
+      const id = `cetiriZida_${apartmentId}`;
+      const url = `${apartmentActivityBaseUrlForCetiriZida}/${apartmentId}`;
+      jest.spyOn(httpService, 'get').mockReturnThis();
+      jest
+        .spyOn(httpService, 'toPromise')
+        .mockRejectedValue({ response: { status: HttpStatus.NOT_FOUND } });
+
+      await apartmentService.handleDeletingInactiveApartmentFromCetiriZida(id);
+
+      expect(httpService.get).toHaveBeenCalledWith(url);
+      expect(apartmentRepository.deleteApartment).toHaveBeenCalledWith(id);
+    });
+  });
+
+  describe('handleDeletingInactiveApartmentFromCityExpert', () => {
+    it('should skip deleting inactive apartment', async () => {
+      const apartmentId = '1234';
+      const id = `cityExpert_${apartmentId}-BR`;
+      const url = `${apartmentActivityBaseUrlForCityExpert}/${apartmentId}/r`;
+      jest.spyOn(httpService, 'get').mockReturnThis();
+      jest.spyOn(httpService, 'toPromise').mockResolvedValue({
+        data: {
+          status: 'ACTIVE',
+        },
+      });
+
+      await apartmentService.handleDeletingInactiveApartmentFromCityExpert(id);
+
+      expect(httpService.get).toHaveBeenCalledWith(url);
+    });
+
+    it(`should delete an apartment when status is ${apartmentStatusNotAvailable}`, async () => {
+      const apartmentId = '1234';
+      const id = `cityExpert_${apartmentId}-BR`;
+      const url = `${apartmentActivityBaseUrlForCityExpert}/${apartmentId}/r`;
+      jest.spyOn(httpService, 'get').mockReturnThis();
+      jest.spyOn(httpService, 'toPromise').mockResolvedValue({
+        data: {
+          status: apartmentStatusNotAvailable,
+        },
+      });
+
+      await apartmentService.handleDeletingInactiveApartmentFromCityExpert(id);
+
+      expect(httpService.get).toHaveBeenCalledWith(url);
+      expect(apartmentRepository.deleteApartment).toHaveBeenCalledWith(id);
+    });
+
+    it(`should delete an apartment when status is ${apartmentStatusFinished}`, async () => {
+      const apartmentId = '1234';
+      const id = `cityExpert_${apartmentId}-BR`;
+      const url = `${apartmentActivityBaseUrlForCityExpert}/${apartmentId}/r`;
+      jest.spyOn(httpService, 'get').mockReturnThis();
+      jest.spyOn(httpService, 'toPromise').mockResolvedValue({
+        data: {
+          status: apartmentStatusFinished,
+        },
+      });
+
+      await apartmentService.handleDeletingInactiveApartmentFromCityExpert(id);
+
+      expect(httpService.get).toHaveBeenCalledWith(url);
+      expect(apartmentRepository.deleteApartment).toHaveBeenCalledWith(id);
+    });
+
+    it(`should delete an apartment when apartment is not found`, async () => {
+      const apartmentId = '1234';
+      const id = `cityExpert_${apartmentId}-BR`;
+      const url = `${apartmentActivityBaseUrlForCityExpert}/${apartmentId}/r`;
+      jest.spyOn(httpService, 'get').mockReturnThis();
+      jest
+        .spyOn(httpService, 'toPromise')
+        .mockRejectedValue({ response: { status: HttpStatus.NOT_FOUND } });
+
+      await apartmentService.handleDeletingInactiveApartmentFromCityExpert(id);
+
+      expect(httpService.get).toHaveBeenCalledWith(url);
+      expect(apartmentRepository.deleteApartment).toHaveBeenCalledWith(id);
+    });
+  });
+
   describe('saveApartmentListFromProviders', () => {
     it('should find, paginate and save apartments from providers', async () => {
       const firstProviderResults = [
@@ -504,101 +599,6 @@ describe('ApartmentService', () => {
       expect(apartmentRepository.saveApartmentList).toHaveBeenCalledWith(
         savedApartmentList,
       );
-    });
-  });
-
-  describe('cetiriZida', () => {
-    it('should skip deleting inactive apartment', async () => {
-      const apartmentId = '1234';
-      const id = `cetiriZida_${apartmentId}`;
-      const url = `${apartmentActivityBaseUrlForCetiriZida}/${apartmentId}`;
-      jest.spyOn(httpService, 'get').mockReturnThis();
-
-      await apartmentService.handleDeletingInactiveApartmentFromCetiriZida(id);
-
-      expect(httpService.get).toHaveBeenCalledWith(url);
-    });
-
-    it('should delete inactive apartment', async () => {
-      const apartmentId = '1234';
-      const id = `cetiriZida_${apartmentId}`;
-      const url = `${apartmentActivityBaseUrlForCetiriZida}/${apartmentId}`;
-      jest.spyOn(httpService, 'get').mockReturnThis();
-      jest
-        .spyOn(httpService, 'toPromise')
-        .mockRejectedValue({ response: { status: HttpStatus.NOT_FOUND } });
-
-      await apartmentService.handleDeletingInactiveApartmentFromCetiriZida(id);
-
-      expect(httpService.get).toHaveBeenCalledWith(url);
-      expect(apartmentRepository.deleteApartment).toHaveBeenCalledWith(id);
-    });
-  });
-
-  describe('cityExpert', () => {
-    it('should skip deleting inactive apartment', async () => {
-      const apartmentId = '1234';
-      const id = `cityExpert_${apartmentId}-BR`;
-      const url = `${apartmentActivityBaseUrlForCityExpert}/${apartmentId}/r`;
-      jest.spyOn(httpService, 'get').mockReturnThis();
-      jest.spyOn(httpService, 'toPromise').mockResolvedValue({
-        data: {
-          status: 'ACTIVE',
-        },
-      });
-
-      await apartmentService.handleDeletingInactiveApartmentFromCityExpert(id);
-
-      expect(httpService.get).toHaveBeenCalledWith(url);
-    });
-
-    it(`should delete an apartment when status is ${apartmentStatusNotAvailable}`, async () => {
-      const apartmentId = '1234';
-      const id = `cityExpert_${apartmentId}-BR`;
-      const url = `${apartmentActivityBaseUrlForCityExpert}/${apartmentId}/r`;
-      jest.spyOn(httpService, 'get').mockReturnThis();
-      jest.spyOn(httpService, 'toPromise').mockResolvedValue({
-        data: {
-          status: apartmentStatusNotAvailable,
-        },
-      });
-
-      await apartmentService.handleDeletingInactiveApartmentFromCityExpert(id);
-
-      expect(httpService.get).toHaveBeenCalledWith(url);
-      expect(apartmentRepository.deleteApartment).toHaveBeenCalledWith(id);
-    });
-
-    it(`should delete an apartment when status is ${apartmentStatusFinished}`, async () => {
-      const apartmentId = '1234';
-      const id = `cityExpert_${apartmentId}-BR`;
-      const url = `${apartmentActivityBaseUrlForCityExpert}/${apartmentId}/r`;
-      jest.spyOn(httpService, 'get').mockReturnThis();
-      jest.spyOn(httpService, 'toPromise').mockResolvedValue({
-        data: {
-          status: apartmentStatusFinished,
-        },
-      });
-
-      await apartmentService.handleDeletingInactiveApartmentFromCityExpert(id);
-
-      expect(httpService.get).toHaveBeenCalledWith(url);
-      expect(apartmentRepository.deleteApartment).toHaveBeenCalledWith(id);
-    });
-
-    it(`should delete an apartment when apartment is not found`, async () => {
-      const apartmentId = '1234';
-      const id = `cityExpert_${apartmentId}-BR`;
-      const url = `${apartmentActivityBaseUrlForCityExpert}/${apartmentId}/r`;
-      jest.spyOn(httpService, 'get').mockReturnThis();
-      jest
-        .spyOn(httpService, 'toPromise')
-        .mockRejectedValue({ response: { status: HttpStatus.NOT_FOUND } });
-
-      await apartmentService.handleDeletingInactiveApartmentFromCityExpert(id);
-
-      expect(httpService.get).toHaveBeenCalledWith(url);
-      expect(apartmentRepository.deleteApartment).toHaveBeenCalledWith(id);
     });
   });
 });
