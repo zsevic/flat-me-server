@@ -7,6 +7,7 @@ import { FilterService } from './filter.service';
 
 const filterRepository = {
   findUnverifiedFilter: jest.fn(),
+  verifyAndActivateFilter: jest.fn(),
 };
 
 const tokenService = {
@@ -89,6 +90,49 @@ describe('FilterService', () => {
       await expect(
         filterService.verifyAndActivateFilter(filterId),
       ).rejects.toBeInstanceOf(BadRequestException);
+    });
+
+    it('should verify and activate found filter', async () => {
+      const filterId = '611c59c26962b452247b9432';
+      const foundFilter = {
+        _id: filterId,
+        structures: [1, 2, 0.5, 1.5],
+        municipalities: ['Savski venac', 'Zemun'],
+        furnished: ['semi-furnished'],
+        rentOrSale: 'rent',
+        minPrice: 120,
+        maxPrice: 370,
+        user: '611c59c26962b452247b9431',
+        createdAt: '2021-08-18T00:52:18.296Z',
+        set: function(values) {
+          Object.assign(this, values);
+        },
+        save: jest.fn(),
+      };
+      const updatedFilter = {
+        ...foundFilter,
+        isActive: true,
+        isVerified: true,
+      };
+      jest
+        .spyOn(filterRepository, 'findUnverifiedFilter')
+        .mockResolvedValue(foundFilter);
+      jest
+        .spyOn(filterRepository, 'verifyAndActivateFilter')
+        .mockImplementation(async () => {
+          foundFilter.set({
+            isActive: true,
+            isVerified: true,
+          });
+          await foundFilter.save();
+        });
+
+      const filter = await filterService.verifyAndActivateFilter(filterId);
+
+      expect(filter).toMatchObject(updatedFilter);
+      expect(filterRepository.verifyAndActivateFilter).toHaveBeenCalledWith(
+        foundFilter,
+      );
     });
   });
 });
