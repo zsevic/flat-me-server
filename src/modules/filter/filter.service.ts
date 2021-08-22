@@ -29,7 +29,7 @@ export class FilterService {
       isActive: false,
       isVerified: false,
     };
-    const savedFilter = await this.saveFilter(newFilter);
+    const savedFilter = await this.filterRepository.saveFilter(newFilter);
     await this.userService.saveFilter(user._id, savedFilter._id);
 
     const token = await this.tokenService.createAndSaveToken({
@@ -76,10 +76,6 @@ export class FilterService {
     ...filter,
     pageNumber: 1,
   });
-
-  async saveFilter(filter: Filter): Promise<Filter> {
-    return this.filterRepository.saveFilter(filter);
-  }
 
   async verifyFilter(token: string): Promise<void> {
     const {

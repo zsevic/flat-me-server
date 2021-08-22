@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MailService } from 'modules/mail/mail.service';
 import { TokenService } from 'modules/token/token.service';
 import { UserService } from 'modules/user/user.service';
+import { SaveFilterDto } from './dto/save-filter.dto';
 import { RentOrSale } from './filter.enums';
 import { FilterRepository } from './filter.repository';
 import { FilterService } from './filter.service';
@@ -11,7 +12,12 @@ const filterRepository = {
   deactivateFilter: jest.fn(),
   findFilterById: jest.fn(),
   findUnverifiedFilter: jest.fn(),
+  saveFilter: jest.fn(),
   verifyAndActivateFilter: jest.fn(),
+};
+
+const mailService = {
+  sendFilterVerificationMail: jest.fn(),
 };
 
 const tokenService = {
@@ -21,6 +27,8 @@ const tokenService = {
 };
 
 const userService = {
+  getVerifiedOrCreateNewUser: jest.fn(),
+  saveFilter: jest.fn(),
   verifyUser: jest.fn(),
 };
 
@@ -42,7 +50,7 @@ describe('FilterService', () => {
         },
         {
           provide: MailService,
-          useValue: {},
+          useValue: mailService,
         },
         {
           provide: TokenService,
@@ -56,6 +64,74 @@ describe('FilterService', () => {
     }).compile();
 
     filterService = module.get<FilterService>(FilterService);
+  });
+
+  describe('createFilterAndSendVerificationMail', () => {
+    it('should create filter and send verification mail', async () => {
+      const userId = 'userid';
+      const filterId = 'id1';
+      const email = 'email@email.com';
+      const filter = {
+        rentOrSale: 'rent',
+        municipalities: ['Palilula'],
+        structures: [1, 1.5],
+        furnished: ['semi-furnished'],
+        minPrice: 200,
+        maxPrice: 300,
+      };
+      const filterDto = {
+        ...filter,
+        email,
+      };
+      const newFilter = {
+        ...filter,
+        user: userId,
+        isActive: false,
+        isVerified: false,
+      };
+      const savedFilter = {
+        ...newFilter,
+        _id: filterId,
+        createdAt: '2021-08-22T20:59:57.918Z',
+        updatedAt: '2021-08-22T20:59:57.918Z',
+        __v: 0,
+      };
+      const user = {
+        subscription: 'FREE',
+        receivedApartments: [],
+        filters: [],
+        isVerified: false,
+        _id: userId,
+        email: 'test@example.com',
+        __v: 0,
+      };
+      const token = 'token';
+      jest
+        .spyOn(userService, 'getVerifiedOrCreateNewUser')
+        .mockResolvedValue(user);
+      jest.spyOn(filterRepository, 'saveFilter').mockResolvedValue(savedFilter);
+      jest
+        .spyOn(tokenService, 'createAndSaveToken')
+        .mockResolvedValue({ value: token });
+
+      await filterService.createFilterAndSendVerificationMail(
+        filterDto as SaveFilterDto,
+      );
+
+      expect(userService.getVerifiedOrCreateNewUser).toHaveBeenCalledWith(
+        email,
+      );
+      expect(filterRepository.saveFilter).toHaveBeenCalledWith(newFilter);
+      expect(userService.saveFilter).toHaveBeenCalledWith(userId, filterId);
+      expect(tokenService.createAndSaveToken).toHaveBeenCalledWith({
+        filter: filterId,
+        user: userId,
+      });
+      expect(mailService.sendFilterVerificationMail).toHaveBeenCalledWith(
+        email,
+        token,
+      );
+    });
   });
 
   describe('deactivateFilterByToken', () => {
