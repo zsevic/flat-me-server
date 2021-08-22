@@ -156,7 +156,7 @@ export class ApartmentService {
         .get(`${apartmentActivityBaseUrlForCetiriZida}/${apartmentId}`)
         .toPromise();
     } catch (error) {
-      if (error.response.status === HttpStatus.NOT_FOUND) {
+      if (error.response?.status === HttpStatus.NOT_FOUND) {
         this.logger.log(`Deleting apartment: ${id} for ${providerName}`);
         return this.deleteApartment(id);
       }
