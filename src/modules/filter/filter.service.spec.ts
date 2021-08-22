@@ -16,6 +16,7 @@ const filterRepository = {
 
 const tokenService = {
   createAndSaveToken: jest.fn(),
+  deleteToken: jest.fn(),
   getValidToken: jest.fn(),
 };
 
@@ -57,6 +58,69 @@ describe('FilterService', () => {
     filterService = module.get<FilterService>(FilterService);
   });
 
+  describe('deactivateFilterByToken', () => {
+    it('should throw an error when token is not found', async () => {
+      const token = 'token';
+      jest
+        .spyOn(tokenService, 'getValidToken')
+        .mockRejectedValue(new BadRequestException());
+
+      await expect(
+        filterService.deactivateFilterByToken(token),
+      ).rejects.toBeInstanceOf(BadRequestException);
+      expect(tokenService.getValidToken).toHaveBeenCalledWith(token);
+    });
+
+    it('should throw an error when filter is not found', async () => {
+      const filterId = 'id1';
+      const token = {
+        filter: filterId,
+        value: 'token',
+      };
+      jest.spyOn(tokenService, 'getValidToken').mockResolvedValue(token);
+      jest
+        .spyOn(filterRepository, 'findFilterById')
+        .mockRejectedValue(new BadRequestException());
+
+      await expect(
+        filterService.deactivateFilterByToken(token.value),
+      ).rejects.toBeInstanceOf(BadRequestException);
+      expect(tokenService.getValidToken).toHaveBeenCalledWith(token.value);
+      expect(filterRepository.deactivateFilter).not.toHaveBeenCalled();
+    });
+
+    it('should deactivate found filter', async () => {
+      const filterId = '611c59c26962b452247b9432';
+      const foundFilter = {
+        _id: filterId,
+        structures: [1, 2, 0.5, 1.5],
+        municipalities: ['Savski venac', 'Zemun'],
+        furnished: ['semi-furnished'],
+        rentOrSale: 'rent',
+        minPrice: 120,
+        maxPrice: 370,
+        user: '611c59c26962b452247b9431',
+        createdAt: '2021-08-18T00:52:18.296Z',
+      };
+      const token = {
+        filter: filterId,
+        value: 'token',
+      };
+      jest.spyOn(tokenService, 'getValidToken').mockResolvedValue(token);
+      jest
+        .spyOn(filterRepository, 'findFilterById')
+        .mockResolvedValue(foundFilter);
+
+      await filterService.deactivateFilterByToken(token.value);
+
+      expect(tokenService.getValidToken).toHaveBeenCalledWith(token.value);
+      expect(filterRepository.deactivateFilter).toHaveBeenCalledWith(
+        foundFilter,
+      );
+      expect(tokenService.deleteToken).toHaveBeenCalledWith(token);
+    });
+  });
+
   describe('getDeactivationUrl', () => {
     it('should return deactivation url by given filter', async () => {
       const tokenValue = 'token';
@@ -94,44 +158,6 @@ describe('FilterService', () => {
       const initialFilter = filterService.getInitialFilter(filter);
 
       expect(initialFilter).toEqual({ ...filter, pageNumber: 1 });
-    });
-  });
-
-  describe('deactivateFilter', () => {
-    it('should throw an error when filter is not found', async () => {
-      const filterId = 'id1';
-      jest
-        .spyOn(filterRepository, 'findFilterById')
-        .mockRejectedValue(new BadRequestException());
-
-      await expect(
-        filterService.deactivateFilter(filterId),
-      ).rejects.toBeInstanceOf(BadRequestException);
-      expect(filterRepository.deactivateFilter).not.toHaveBeenCalled();
-    });
-
-    it('should deactivate found filter', async () => {
-      const filterId = '611c59c26962b452247b9432';
-      const foundFilter = {
-        _id: filterId,
-        structures: [1, 2, 0.5, 1.5],
-        municipalities: ['Savski venac', 'Zemun'],
-        furnished: ['semi-furnished'],
-        rentOrSale: 'rent',
-        minPrice: 120,
-        maxPrice: 370,
-        user: '611c59c26962b452247b9431',
-        createdAt: '2021-08-18T00:52:18.296Z',
-      };
-      jest
-        .spyOn(filterRepository, 'findFilterById')
-        .mockResolvedValue(foundFilter);
-
-      await filterService.deactivateFilter(filterId);
-
-      expect(filterRepository.deactivateFilter).toHaveBeenCalledWith(
-        foundFilter,
-      );
     });
   });
 
