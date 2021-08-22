@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION } from 'modules/apartment/apartment.constants';
 import { ApartmentService } from 'modules/apartment/apartment.service';
 import { filters } from 'modules/filter/filter.constants';
 import { FilterService } from 'modules/filter/filter.service';
@@ -301,6 +302,18 @@ describe('TasksService', () => {
         );
       });
       expect(tokenService.deleteTokenByFilterId).toHaveBeenCalledTimes(2);
+      expect(
+        apartmentService.getApartmentListFromDatabaseByFilter,
+      ).not.toHaveBeenCalledWith(
+        foundFilters[0],
+        RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION,
+      );
+      expect(
+        apartmentService.getApartmentListFromDatabaseByFilter,
+      ).toHaveBeenCalledWith(
+        foundFilters[1],
+        RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION,
+      );
       expect(mailService.sendMailWithNewApartments).not.toHaveBeenCalled();
     });
   });
