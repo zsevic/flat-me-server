@@ -19,12 +19,7 @@ export class FilterController {
   async saveFilters(@Body() saveFilterDto: SaveFilterDto): Promise<void> {
     const { email, ...filter } = saveFilterDto;
 
-    let user = await this.userService.getVerifiedUserByEmailAndValidateFilters(
-      email,
-    );
-    if (!user) {
-      user = await this.userService.saveUser(email);
-    }
+    const user = await this.userService.getVerifiedOrNewUser(email);
 
     const newFilter: Filter = {
       ...filter,
