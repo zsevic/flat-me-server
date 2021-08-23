@@ -55,34 +55,15 @@ export class MailService {
       subject: this.getMailSubject(filter, apartmentList.length),
       template: './new-apartments',
       context: {
-        apartmentList: apartmentList.map(apartment =>
-          Object.assign(apartment, {
-            locationUrl: getLocationUrl(apartment?.location),
+        apartmentList: apartmentList.map(apartment => ({
+          ...apartment,
+          ...(apartment.location && {
+            locationUrl: getLocationUrl(apartment.location),
           }),
-        ),
+        })),
         filter,
         name: 'user',
         deactivationUrl,
-      },
-    });
-
-    if (!isEnvironment('production')) {
-      this.logger.log(`Mail preview URL: ${getTestMessageUrl(mailInfo)}`);
-    } else {
-      this.logger.log('Mail is sent');
-    }
-  }
-
-  async sendUserVerificationMail(email: string, token: string): Promise<void> {
-    const url = `${process.env.CLIENT_URL}/users/verification/${token}`;
-    console.log('verurl', url);
-
-    const mailInfo = await this.mailerService.sendMail({
-      to: email,
-      subject: 'Dobrodošli na FlatMe, potvrda mejl adrese',
-      template: './user-verification',
-      context: {
-        url,
       },
     });
 

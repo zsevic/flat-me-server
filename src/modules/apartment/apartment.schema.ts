@@ -31,7 +31,7 @@ export class Apartment {
   address: string;
 
   @Prop()
-  availableFrom: string;
+  availableFrom?: string;
 
   @Prop()
   coverPhotoUrl: string;
@@ -46,7 +46,7 @@ export class Apartment {
   furnished: string;
 
   @Prop()
-  location: LocationSchema;
+  location?: LocationSchema;
 
   @Prop()
   municipality: string;
