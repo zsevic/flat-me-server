@@ -46,12 +46,12 @@ export class TokenService {
     return this.tokenRepository.getUnexpiredToken(token);
   }
 
-  public deleteTokenByFilterId = async (filterId: string): Promise<void> => {
+  public async deleteTokenByFilterId(filterId: string): Promise<void> {
     const validToken = await this.tokenRepository.getUnexpiredTokenByFilterId(
       filterId,
     );
     if (!validToken) return;
 
-    return this.tokenRepository.deleteToken(validToken);
-  };
+    return this.deleteToken(validToken);
+  }
 }
