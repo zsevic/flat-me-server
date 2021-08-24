@@ -7,6 +7,7 @@ import {
 import { ConfigService, ConfigModule } from '@nestjs/config';
 import { InjectConnection, MongooseModule } from '@nestjs/mongoose';
 import { ScheduleModule, SchedulerRegistry } from '@nestjs/schedule';
+import * as Joi from 'joi';
 import { Connection } from 'mongoose';
 import { Subject } from 'rxjs';
 import databaseConfig from 'common/config/database';
@@ -19,6 +20,20 @@ import { AppController } from './app.controller';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      validationSchema: Joi.object({
+        CLIENT_URL: Joi.string()
+          .uri()
+          .required(),
+        MONGODB_URL: Joi.string()
+          .uri()
+          .required(),
+        NODE_ENV: Joi.string()
+          .valid('production', 'development', 'test')
+          .default('development')
+          .required(),
+        PORT: Joi.number().required(),
+        SENDGRID_API_KEY: Joi.string().required(),
+      }),
     }),
     MongooseModule.forRootAsync({
       imports: [

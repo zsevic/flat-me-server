@@ -1,4 +1,3 @@
-import { BadRequestException } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ApartmentRepository } from './apartment.repository';
