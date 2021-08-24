@@ -4,7 +4,7 @@ import request from 'supertest';
 import { CustomValidationPipe } from 'common/pipes';
 import { AppModule } from 'modules/app/app.module';
 
-describe('ApartmentController (e2e)', () => {
+describe('FilterController (e2e)', () => {
   let app: INestApplication;
 
   beforeEach(async () => {
@@ -27,43 +27,51 @@ describe('ApartmentController (e2e)', () => {
     await app.close();
   });
 
-  describe('/apartments (GET)', () => {
-    it('should return 400 status code when params are missing', () => {
+  describe('/filters/verify/:token (POST)', () => {
+    it('should return 400 status code when token is not valid', () => {
       return request(app.getHttpServer())
-        .get('/apartments')
+        .post('/filters/verify/token')
         .expect(HttpStatus.BAD_REQUEST);
     });
+  });
 
-    it("should return 400 status code when params don't have valid values", () => {
+  describe('/filters/deactivate/:token (POST)', () => {
+    it('should return 400 status code when token is not valid', () => {
       return request(app.getHttpServer())
-        .get('/apartments')
-        .query({
+        .post('/filters/deactivate/token')
+        .expect(HttpStatus.BAD_REQUEST);
+    });
+  });
+
+  describe('/filters (POST)', () => {
+    it('should return 400 status code when filters are not valid', () => {
+      return request(app.getHttpServer())
+        .post('/filters')
+        .send({
           minPrice: 200,
-          furnished: ['test'],
+          furnished: ['furnished'],
           structures: [2.5],
-          municipalities: ['Zvezdara', 'test'],
+          municipalities: ['test'],
           maxPrice: 300,
           rentOrSale: 'rent',
-          limitPerPage: 2,
-          pageNumber: 1,
+          email: `test-${Math.random() * 1000}@example.com`,
         })
         .expect(HttpStatus.BAD_REQUEST);
     });
 
-    it('should return apartment list based on given params', () => {
+    it('should create a new filter', () => {
       return request(app.getHttpServer())
-        .get('/apartments')
-        .query({
+        .post('/filters')
+        .send({
           minPrice: 200,
           furnished: ['furnished'],
           structures: [2.5],
           municipalities: ['Zvezdara', 'Palilula'],
           maxPrice: 300,
           rentOrSale: 'rent',
-          limitPerPage: 2,
-          pageNumber: 1,
+          email: `test-${Math.random() * 1000}@example.com`,
         })
-        .expect(HttpStatus.OK);
+        .expect(HttpStatus.CREATED);
     });
   });
 });
