@@ -143,7 +143,7 @@ describe('FilterService', () => {
 
       await expect(
         filterService.deactivateFilterByToken(token),
-      ).rejects.toBeInstanceOf(BadRequestException);
+      ).rejects.toThrowError(BadRequestException);
       expect(tokenService.getValidToken).toHaveBeenCalledWith(token);
     });
 
@@ -160,7 +160,7 @@ describe('FilterService', () => {
 
       await expect(
         filterService.deactivateFilterByToken(token.value),
-      ).rejects.toBeInstanceOf(BadRequestException);
+      ).rejects.toThrowError(BadRequestException);
       expect(tokenService.getValidToken).toHaveBeenCalledWith(token.value);
       expect(filterRepository.deactivateFilter).not.toHaveBeenCalled();
     });
@@ -244,7 +244,7 @@ describe('FilterService', () => {
         .spyOn(tokenService, 'getValidToken')
         .mockRejectedValue(new BadRequestException());
 
-      await expect(filterService.verifyFilter(token)).rejects.toBeInstanceOf(
+      await expect(filterService.verifyFilter(token)).rejects.toThrowError(
         BadRequestException,
       );
     });
@@ -264,7 +264,7 @@ describe('FilterService', () => {
 
       await expect(
         filterService.verifyFilter(token.value),
-      ).rejects.toBeInstanceOf(BadRequestException);
+      ).rejects.toThrowError(BadRequestException);
     });
 
     it("should throw an error when filter's user is not found", async () => {
@@ -296,7 +296,7 @@ describe('FilterService', () => {
 
       await expect(
         filterService.verifyFilter(token.value),
-      ).rejects.toBeInstanceOf(BadRequestException);
+      ).rejects.toThrowError(BadRequestException);
 
       expect(tokenService.getValidToken).toHaveBeenCalledWith(token.value);
       expect(filterRepository.verifyAndActivateFilter).toHaveBeenCalledWith(

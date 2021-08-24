@@ -27,7 +27,9 @@ export class UserService {
     return this.userRepository.getUserEmail(userId);
   }
 
-  async getVerifiedUserByEmailAndValidateFilters(email: string): Promise<User> {
+  private async getVerifiedUserByEmailAndValidateFilters(
+    email: string,
+  ): Promise<User> {
     const user = await this.userRepository.getByEmail(email);
     if (!user) return;
 
@@ -35,7 +37,11 @@ export class UserService {
       throw new BadRequestException('User is not verified');
     }
 
-    if (user.subscription !== Subscription.FREE) return;
+    if (user.subscription !== Subscription.FREE) {
+      throw new BadRequestException(
+        `Subscription ${user.subscription} is not allowed`,
+      );
+    }
 
     if (user.filters.length >= 1) {
       throw new BadRequestException(
