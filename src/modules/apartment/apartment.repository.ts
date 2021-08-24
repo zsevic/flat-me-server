@@ -17,16 +17,16 @@ export class ApartmentRepository {
 
   async getApartmentList(
     filter: ApartmentListParamsDto,
-    skippedApartmentments?: string[],
+    skippedApartments?: string[],
     dateFilter?: Date,
   ) {
     const { limitPerPage = 10, pageNumber = 1 } = filter;
     const query = {
-      ...(skippedApartmentments &&
-        Array.isArray(skippedApartmentments) &&
-        skippedApartmentments.length > 0 && {
+      ...(skippedApartments &&
+        Array.isArray(skippedApartments) &&
+        skippedApartments.length > 0 && {
           _id: {
-            $nin: skippedApartmentments,
+            $nin: skippedApartments,
           },
         }),
       ...(dateFilter && {
