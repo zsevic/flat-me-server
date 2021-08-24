@@ -64,12 +64,12 @@ export class UserService {
     );
   }
 
-  async saveUser(email: string): Promise<User> {
-    return this.userRepository.saveUser(email);
-  }
-
   async saveFilter(userId: string, filterId: string) {
     return this.userRepository.addFilter(userId, filterId);
+  }
+
+  async saveUser(email: string): Promise<User> {
+    return this.userRepository.saveUser(email);
   }
 
   async verifyUser(id: string): Promise<UserDocument> {

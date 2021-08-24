@@ -6,10 +6,12 @@ import { UserService } from './user.service';
 
 const userRepository = {
   getByEmail: jest.fn(),
+  getById: jest.fn(),
   getReceivedApartmentsIds: jest.fn(),
   getUserEmail: jest.fn(),
   insertReceivedApartmentsIds: jest.fn(),
   saveUser: jest.fn(),
+  verifyUser: jest.fn(),
 };
 
 describe('UserService', () => {
@@ -218,6 +220,63 @@ describe('UserService', () => {
         userId,
         apartmentsIds,
       );
+    });
+  });
+
+  describe('verifyUser', () => {
+    it('should throw an error when user is not found', async () => {
+      const userId = 'id1';
+      jest.spyOn(userRepository, 'getById').mockResolvedValue(null);
+
+      await expect(userService.verifyUser(userId)).rejects.toThrowError(
+        BadRequestException,
+      );
+
+      expect(userRepository.getById).toHaveBeenCalledWith(userId);
+    });
+
+    it('should return found user when found user is already verified', async () => {
+      const userId = 'id1';
+      const userData = {
+        subscription: 'FREE',
+        receivedApartments: [],
+        filters: [],
+        isVerified: true,
+        _id: userId,
+        email: 'test@example.com',
+        __v: 0,
+      };
+      jest.spyOn(userRepository, 'getById').mockResolvedValue(userData);
+
+      const verifiedUser = await userService.verifyUser(userId);
+
+      expect(verifiedUser).toEqual(userData);
+      expect(userRepository.getById).toHaveBeenCalledWith(userId);
+    });
+
+    it('should verify found user', async () => {
+      const userId = 'id1';
+      const userData = {
+        subscription: 'FREE',
+        receivedApartments: [],
+        filters: [],
+        isVerified: false,
+        _id: userId,
+        email: 'test@example.com',
+        __v: 0,
+      };
+      jest.spyOn(userRepository, 'getById').mockResolvedValue(userData);
+      jest.spyOn(userRepository, 'verifyUser').mockImplementation(user =>
+        Object.assign(user, {
+          isVerified: true,
+        }),
+      );
+
+      const verifiedUser = await userService.verifyUser(userId);
+
+      expect(verifiedUser).toEqual(userData);
+      expect(userRepository.getById).toHaveBeenCalledWith(userId);
+      expect(userRepository.verifyUser).toHaveBeenCalled();
     });
   });
 });
