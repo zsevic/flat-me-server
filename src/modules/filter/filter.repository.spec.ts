@@ -4,6 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { FilterRepository } from './filter.repository';
 
 const filterModel = {
+  findById: jest.fn(),
   findOne: jest.fn(),
 };
 
@@ -65,6 +66,43 @@ describe('FilterRepository', () => {
         _id: filterId,
         isVerified: false,
       });
+    });
+  });
+
+  describe('findFilterById', () => {
+    it('should throw an error when filter is not found', async () => {
+      const filterId = 'filterid';
+      jest.spyOn(filterModel, 'findById').mockResolvedValue(null);
+
+      await expect(
+        filterRepository.findFilterById(filterId),
+      ).rejects.toThrowError(BadRequestException);
+
+      expect(filterModel.findById).toHaveBeenCalledWith(filterId);
+    });
+
+    it('should return found filter', async () => {
+      const filterId = 'filterid';
+      const filter = {
+        _id: filterId,
+        structures: [1, 2, 0.5, 1.5],
+        municipalities: ['Savski venac', 'Zemun'],
+        furnished: ['semi-furnished'],
+        rentOrSale: 'rent',
+        minPrice: 120,
+        maxPrice: 370,
+        user: '611c59c26962b452247b9431',
+        createdAt: new Date('2021-08-18T00:52:18.296Z'),
+        isActive: false,
+        isVerified: false,
+      };
+
+      jest.spyOn(filterModel, 'findById').mockResolvedValue(filter);
+
+      const foundFilter = await filterRepository.findFilterById(filterId);
+
+      expect(foundFilter).toEqual(filter);
+      expect(filterModel.findById).toHaveBeenCalledWith(filterId);
     });
   });
 });
