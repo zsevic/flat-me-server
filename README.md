@@ -32,6 +32,7 @@ npm run lint:fix
 
 ```bash
 npm test
+npm run test:e2e
 ```
 
 ### Migrations

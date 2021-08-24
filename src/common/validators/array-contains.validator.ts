@@ -7,12 +7,15 @@ import {
 @ValidatorConstraint({ name: 'customText', async: false })
 export class ArrayContainsValidator implements ValidatorConstraintInterface {
   validate(elements: (string | number)[], args: ValidationArguments): boolean {
+    if (!Array.isArray(elements)) {
+      return args.constraints.indexOf(elements) !== -1;
+    }
+
     return (
-      Array.isArray(elements) &&
       elements.filter(
         (element: string | number): boolean =>
           args.constraints.indexOf(element) !== -1,
-      ).length > 0
+      ).length === elements.length
     );
   }
 
