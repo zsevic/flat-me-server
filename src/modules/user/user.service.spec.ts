@@ -35,7 +35,7 @@ describe('UserService', () => {
       );
     });
 
-    it('should throw an error if user is not found', async () => {
+    it("should return user's email", async () => {
       const email = 'test@example.com';
       jest.spyOn(userRepository, 'getUserEmail').mockResolvedValue(email);
 
