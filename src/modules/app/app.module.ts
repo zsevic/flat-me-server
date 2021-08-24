@@ -11,6 +11,7 @@ import * as Joi from 'joi';
 import { Connection } from 'mongoose';
 import { Subject } from 'rxjs';
 import databaseConfig from 'common/config/database';
+import { isEnvironment } from 'common/utils';
 import { ApartmentModule } from 'modules/apartment/apartment.module';
 import { FilterModule } from 'modules/filter/filter.module';
 import { TasksModule } from 'modules/tasks/tasks.module';
@@ -20,19 +21,21 @@ import { AppController } from './app.controller';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      validationSchema: Joi.object({
-        CLIENT_URL: Joi.string()
-          .uri()
-          .required(),
-        MONGODB_URL: Joi.string()
-          .uri()
-          .required(),
-        NODE_ENV: Joi.string()
-          .valid('production', 'development', 'test')
-          .default('development')
-          .required(),
-        PORT: Joi.number().required(),
-        SENDGRID_API_KEY: Joi.string().required(),
+      ...(!isEnvironment('test') && {
+        validationSchema: Joi.object({
+          CLIENT_URL: Joi.string()
+            .uri()
+            .required(),
+          MONGODB_URL: Joi.string()
+            .uri()
+            .required(),
+          NODE_ENV: Joi.string()
+            .valid('production', 'development', 'test')
+            .default('development')
+            .required(),
+          PORT: Joi.number().required(),
+          SENDGRID_API_KEY: Joi.string().required(),
+        }),
       }),
     }),
     MongooseModule.forRootAsync({
