@@ -1,5 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { ApartmentDocument } from 'modules/apartment/apartment.schema';
 import { UserRepository } from './user.repository';
 import { UserService } from './user.service';
 
@@ -7,6 +8,7 @@ const userRepository = {
   getByEmail: jest.fn(),
   getReceivedApartmentsIds: jest.fn(),
   getUserEmail: jest.fn(),
+  insertReceivedApartmentsIds: jest.fn(),
   saveUser: jest.fn(),
 };
 
@@ -51,6 +53,27 @@ describe('UserService', () => {
       );
 
       expect(apartmentsIds).toEqual(ids);
+    });
+  });
+
+  describe('getUserByEmail', () => {
+    it('should throw an error if user is not found', async () => {
+      jest
+        .spyOn(userRepository, 'getUserEmail')
+        .mockRejectedValue(new BadRequestException());
+
+      await expect(userService.getUserEmail('userId')).rejects.toThrowError(
+        BadRequestException,
+      );
+    });
+
+    it("should return user's email", async () => {
+      const email = 'test@example.com';
+      jest.spyOn(userRepository, 'getUserEmail').mockResolvedValue(email);
+
+      const userEmail = await userService.getUserEmail('userId');
+
+      expect(userEmail).toEqual(email);
     });
   });
 
@@ -161,24 +184,40 @@ describe('UserService', () => {
     });
   });
 
-  describe('getUserByEmail', () => {
-    it('should throw an error if user is not found', async () => {
-      jest
-        .spyOn(userRepository, 'getUserEmail')
-        .mockRejectedValue(new BadRequestException());
-
-      await expect(userService.getUserEmail('userId')).rejects.toThrowError(
-        BadRequestException,
+  describe('insertReceivedApartmentsIds', () => {
+    it('should insert apartments ids into user document', async () => {
+      const apartmentList = [
+        {
+          heatingTypes: ['central'],
+          _id: 'id1',
+          price: 350,
+          apartmentId: 'id1',
+          providerName: 'cetiriZida',
+          address: 'street',
+          coverPhotoUrl: 'url',
+          floor: 'ground floor',
+          furnished: 'semi-furnished',
+          municipality: 'Savski venac',
+          place: 'Sarajevska',
+          postedAt: '2021-06-23T13:38:19+02:00',
+          rentOrSale: 'rent',
+          size: 41,
+          structure: 3,
+          url: 'url',
+          __v: 0,
+        },
+      ];
+      const apartmentsIds = ['id1'];
+      const userId = 'id1';
+      await userService.insertReceivedApartmentsIds(
+        userId,
+        apartmentList as ApartmentDocument[],
       );
-    });
 
-    it("should return user's email", async () => {
-      const email = 'test@example.com';
-      jest.spyOn(userRepository, 'getUserEmail').mockResolvedValue(email);
-
-      const userEmail = await userService.getUserEmail('userId');
-
-      expect(userEmail).toEqual(email);
+      expect(userRepository.insertReceivedApartmentsIds).toHaveBeenCalledWith(
+        userId,
+        apartmentsIds,
+      );
     });
   });
 });
