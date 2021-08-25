@@ -21,7 +21,9 @@ import { BaseProvider } from './providers';
         },
       },
     ]),
-    HttpModule,
+    HttpModule.register({
+      timeout: 5000,
+    }),
     UserModule,
   ],
   providers: [ApartmentRepository, ApartmentService, BaseProvider],
