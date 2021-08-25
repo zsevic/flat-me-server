@@ -186,7 +186,7 @@ export class ApartmentService {
 
       return this.findAndSaveApartmentsFromProviders(providerRequests, filter);
     } catch (error) {
-      console.error(error);
+      this.logger.error(error);
     }
   }
 }
