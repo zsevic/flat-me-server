@@ -6,6 +6,10 @@ export function capitalizeWords(words: string): string {
     .join(' ');
 }
 
+export function getSkip(pageNumber: number, limitPerPage: number): number {
+  return (pageNumber - 1) * limitPerPage;
+}
+
 export function isEnvironment(environment: string): boolean {
   return process.env.NODE_ENV === environment;
 }

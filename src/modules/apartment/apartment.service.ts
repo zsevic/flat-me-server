@@ -129,8 +129,11 @@ export class ApartmentService {
     );
   }
 
-  async getApartmentsIds(): Promise<string[]> {
-    return this.apartmentRepository.getApartmentsIds();
+  async getApartmentsIds(
+    pageNumber?: number,
+    limitPerPage?: number,
+  ): Promise<string[]> {
+    return this.apartmentRepository.getApartmentsIds(pageNumber, limitPerPage);
   }
 
   async handleDeletingInactiveApartmentFromCetiriZida(

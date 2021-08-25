@@ -29,6 +29,10 @@ describe('ApartmentRepository', () => {
     apartmentRepository = module.get<ApartmentRepository>(ApartmentRepository);
   });
 
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
   describe('getApartmentsIds', () => {
     it('should return list of found apartments ids', async () => {
       const apartmentList = [
@@ -41,21 +45,22 @@ describe('ApartmentRepository', () => {
       ];
       const apartmentsIds = ['id1', 'id2'];
       jest.spyOn(apartmentModel, 'find').mockReturnThis();
-      jest.spyOn(apartmentModel, 'select').mockResolvedValue(apartmentList);
+      jest.spyOn(apartmentModel, 'select').mockReturnThis();
+      jest.spyOn(apartmentModel, 'skip').mockReturnThis();
+      jest.spyOn(apartmentModel, 'limit').mockReturnThis();
+      jest.spyOn(apartmentModel, 'exec').mockResolvedValue(apartmentList);
 
       const ids = await apartmentRepository.getApartmentsIds();
 
       expect(ids).toEqual(apartmentsIds);
       expect(apartmentModel.find).toHaveBeenCalled();
       expect(apartmentModel.select).toHaveBeenCalledWith('_id');
+      expect(apartmentModel.skip).toHaveBeenCalledWith(0);
+      expect(apartmentModel.limit).toHaveBeenCalledWith(50);
     });
   });
 
   describe('getApartmentList', () => {
-    afterEach(() => {
-      jest.resetAllMocks();
-    });
-
     it('should return apartment list', async () => {
       const filter = {
         rentOrSale: 'rent',

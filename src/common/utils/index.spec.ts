@@ -1,4 +1,4 @@
-import { capitalizeWords, isEnvironment } from '.';
+import { capitalizeWords, getSkip, isEnvironment } from '.';
 
 describe('utils', () => {
   describe('capitalizeWords', () => {
@@ -6,6 +6,14 @@ describe('utils', () => {
       const capitalizedWords = capitalizeWords('two words');
 
       expect(capitalizedWords).toEqual('Two Words');
+    });
+  });
+
+  describe('getSkip', () => {
+    it('should return skip number for given page number and limit per page', () => {
+      const skip = getSkip(10, 20);
+
+      expect(skip).toEqual(180);
     });
   });
 

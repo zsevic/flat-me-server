@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { getSkip } from 'common/utils';
 import { Apartment, ApartmentDocument } from './apartment.schema';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
 
@@ -53,7 +54,7 @@ export class ApartmentRepository {
     const data = await this.apartmentModel
       // @ts-ignore
       .find(query)
-      .skip((pageNumber - 1) * limitPerPage)
+      .skip(getSkip(pageNumber, limitPerPage))
       .limit(limitPerPage)
       .exec();
     // @ts-ignore
@@ -65,8 +66,13 @@ export class ApartmentRepository {
     };
   }
 
-  async getApartmentsIds(): Promise<string[]> {
-    const apartmentList = await this.apartmentModel.find().select('_id');
+  async getApartmentsIds(pageNumber = 1, limitPerPage = 50): Promise<string[]> {
+    const apartmentList = await this.apartmentModel
+      .find()
+      .select('_id')
+      .skip(getSkip(pageNumber, limitPerPage))
+      .limit(limitPerPage)
+      .exec();
 
     return apartmentList.map(apartment => apartment._id);
   }
