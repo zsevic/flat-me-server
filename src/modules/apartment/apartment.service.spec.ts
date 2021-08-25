@@ -11,7 +11,11 @@ import {
 } from './apartment.constants';
 import { ApartmentRepository } from './apartment.repository';
 import { ApartmentService } from './apartment.service';
-import { BaseProvider } from './providers';
+import {
+  BaseProvider,
+  CetiriZidaProvider,
+  CityExpertProvider,
+} from './providers';
 
 const apartmentRepository = {
   deleteApartment: jest.fn(),
@@ -20,6 +24,13 @@ const apartmentRepository = {
 };
 
 const baseProvider = {
+  providers: {
+    cetiriZida: CetiriZidaProvider,
+    cityExpert: CityExpertProvider,
+  },
+  createProvider: function(providerName) {
+    return new this.providers[providerName]();
+  },
   getProviderRequest: jest.fn(),
   getProviderRequests: jest.fn(),
   getProviderResults: jest.fn(),

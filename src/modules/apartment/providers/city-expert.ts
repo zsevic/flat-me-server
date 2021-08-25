@@ -1,16 +1,15 @@
 import { capitalizeWords } from 'common/utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
-import { BaseProvider } from './base-provider';
 import { Provider } from './provider.interface';
 import { CITY_EXPERT_API_BASE_URL } from '../apartment.constants';
 
-export class CityExpertProvider extends BaseProvider implements Provider {
+export class CityExpertProvider implements Provider {
   private readonly providerName = 'cityExpert';
   private readonly url = `${CITY_EXPERT_API_BASE_URL}/Search/`;
 
-  static getResults = data => data?.result;
+  getResults = data => data?.result;
 
-  static hasNextPage = data => data.info.hasNextPage;
+  hasNextPage = data => data.info.hasNextPage;
 
   makeRequest(filter: FilterDto) {
     const rentOrSale = {
@@ -139,7 +138,6 @@ export class CityExpertProvider extends BaseProvider implements Provider {
     ];
 
     return {
-      ...this.parseCommonApartmentInfo(apartmentInfo),
       _id: `${this.providerName}_${apartmentInfo.uniqueID}`,
       apartmentId: apartmentInfo.propId,
       providerName: this.providerName,
@@ -157,6 +155,7 @@ export class CityExpertProvider extends BaseProvider implements Provider {
       },
       municipality: apartmentInfo.municipality,
       place: apartmentInfo?.polygons?.[0],
+      price: apartmentInfo.price,
       rentOrSale: rentOrSaleField[apartmentInfo.rentOrSale],
       size: apartmentInfo.size,
       structure: Number(structure),

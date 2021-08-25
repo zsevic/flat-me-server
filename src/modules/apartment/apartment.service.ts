@@ -10,18 +10,10 @@ import {
 } from './apartment.constants';
 import { ApartmentRepository } from './apartment.repository';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
-import {
-  BaseProvider,
-  CetiriZidaProvider,
-  CityExpertProvider,
-} from './providers';
+import { BaseProvider } from './providers';
 
 @Injectable()
 export class ApartmentService {
-  private readonly providers = {
-    cetiriZida: CetiriZidaProvider,
-    cityExpert: CityExpertProvider,
-  };
   private readonly logger = new Logger(ApartmentService.name);
 
   constructor(
@@ -49,16 +41,14 @@ export class ApartmentService {
         const foundApartments = [];
         const { providerName } = providerRequests[index];
 
-        const apartments =
-          this.providers[providerName].getResults(providerResult) || [];
+        const provider = this.baseProvider.createProvider(providerName);
+        const apartments = provider.getResults(providerResult) || [];
         if (apartments.length === 0) continue;
 
         apartments.forEach(apartment => {
           if (!apartment.price) return;
 
-          const apartmentInfo = new this.providers[
-            providerName
-          ]().parseApartmentInfo(apartment, filter);
+          const apartmentInfo = provider.parseApartmentInfo(apartment);
           if (!apartmentInfo.coverPhotoUrl || !apartmentInfo.floor) return;
 
           foundApartments.push(apartmentInfo);
@@ -78,20 +68,16 @@ export class ApartmentService {
           continue;
         }
 
-        const hasNextPage = this.providers[providerName].hasNextPage(
+        const hasNextPage = provider.hasNextPage(
           providerResult,
           filter.pageNumber,
         );
         if (hasNextPage) {
           newRequests.push(
-            this.baseProvider.getProviderRequest(
-              providerName,
-              this.providers[providerName],
-              {
-                ...filter,
-                pageNumber: filter.pageNumber + 1,
-              },
-            ),
+            this.baseProvider.getProviderRequest(providerName, provider, {
+              ...filter,
+              pageNumber: filter.pageNumber + 1,
+            }),
           );
         }
       }
@@ -196,10 +182,7 @@ export class ApartmentService {
 
   async saveApartmentListFromProviders(filter: FilterDto) {
     try {
-      const providerRequests = this.baseProvider.getProviderRequests(
-        this.providers,
-        filter,
-      );
+      const providerRequests = this.baseProvider.getProviderRequests(filter);
 
       return this.findAndSaveApartmentsFromProviders(providerRequests, filter);
     } catch (error) {

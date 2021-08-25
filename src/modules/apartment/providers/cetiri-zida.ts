@@ -1,16 +1,15 @@
 import { capitalizeWords } from 'common/utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
-import { BaseProvider } from './base-provider';
 import { Provider } from './provider.interface';
 import { CETIRI_ZIDA_API_BASE_URL } from '../apartment.constants';
 
-export class CetiriZidaProvider extends BaseProvider implements Provider {
+export class CetiriZidaProvider implements Provider {
   private readonly providerName = 'cetiriZida';
   private readonly url = `${CETIRI_ZIDA_API_BASE_URL}/v6/search/apartments`;
 
-  static getResults = data => data?.ads;
+  getResults = data => data?.ads;
 
-  static hasNextPage = (data, pageNumber: number) => {
+  hasNextPage = (data, pageNumber: number) => {
     const currentCount = data.ads.length * pageNumber;
     return currentCount > 0 && data.total > currentCount;
   };
@@ -118,7 +117,6 @@ export class CetiriZidaProvider extends BaseProvider implements Provider {
     };
 
     return {
-      ...this.parseCommonApartmentInfo(apartmentInfo),
       _id: `${this.providerName}_${apartmentInfo.id}`,
       apartmentId: apartmentInfo.id,
       providerName: this.providerName,
@@ -134,6 +132,7 @@ export class CetiriZidaProvider extends BaseProvider implements Provider {
       municipality: this.getMunicipality(apartmentInfo),
       place: apartmentInfo?.placeNames?.[0],
       postedAt: apartmentInfo.createdAt,
+      price: apartmentInfo.price,
       rentOrSale: apartmentInfo.for,
       size: apartmentInfo.m2,
       structure: apartmentInfo.roomCount,
