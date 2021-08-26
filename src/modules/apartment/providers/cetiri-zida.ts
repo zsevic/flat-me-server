@@ -1,3 +1,5 @@
+import { Logger } from '@nestjs/common';
+import axios, { AxiosRequestConfig } from 'axios';
 import { capitalizeWords } from 'common/utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { Provider } from './provider.interface';
@@ -6,15 +8,21 @@ import { CETIRI_ZIDA_API_BASE_URL } from '../apartment.constants';
 export class CetiriZidaProvider implements Provider {
   private readonly providerName = 'cetiriZida';
   private readonly url = `${CETIRI_ZIDA_API_BASE_URL}/v6/search/apartments`;
+  private readonly logger = new Logger(CetiriZidaProvider.name);
 
-  getResults = data => data?.ads;
+  createRequest(filter: FilterDto) {
+    return {
+      request: axios(this.createRequestConfig(filter))
+        .then(response => response.data)
+        .catch(error => {
+          this.logger.error(`Request failed for ${this.providerName}`, error);
+          return {};
+        }),
+      provider: this as Provider,
+    };
+  }
 
-  hasNextPage = (data, pageNumber: number) => {
-    const currentCount = data.ads.length * pageNumber;
-    return currentCount > 0 && data.total > currentCount;
-  };
-
-  makeRequest(filter: FilterDto) {
+  createRequestConfig(filter: FilterDto): AxiosRequestConfig {
     const furnished = {
       empty: 'no',
       furnished: 'yes',
@@ -68,6 +76,13 @@ export class CetiriZidaProvider implements Provider {
       params,
     };
   }
+
+  getResults = data => data?.ads;
+
+  hasNextPage = (data, pageNumber: number) => {
+    const currentCount = data.ads.length * pageNumber;
+    return currentCount > 0 && data.total > currentCount;
+  };
 
   private getMunicipality = apartmentInfo => {
     const municipalities = {

@@ -20,24 +20,8 @@ export class BaseProvider {
   getProviderRequests(filter: FilterDto) {
     return Object.keys(this.providers).map((providerName: string) => {
       const provider = this.createProvider(providerName);
-      return this.getProviderRequest(providerName, provider, filter);
+      return provider.createRequest(filter);
     });
-  }
-
-  getProviderRequest(
-    providerName: string,
-    provider: Provider,
-    filter: FilterDto,
-  ) {
-    return {
-      request: axios(provider.makeRequest(filter))
-        .then(response => response.data)
-        .catch(error => {
-          this.logger.error(`Request failed for ${providerName}`, error);
-          return {};
-        }),
-      providerName,
-    };
   }
 
   getProviderResults = async (providerRequests): Promise<any[]> =>

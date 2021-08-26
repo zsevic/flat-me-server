@@ -1,3 +1,5 @@
+import { Logger } from '@nestjs/common';
+import axios, { AxiosRequestConfig } from 'axios';
 import { capitalizeWords } from 'common/utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { Provider } from './provider.interface';
@@ -6,12 +8,21 @@ import { CITY_EXPERT_API_BASE_URL } from '../apartment.constants';
 export class CityExpertProvider implements Provider {
   private readonly providerName = 'cityExpert';
   private readonly url = `${CITY_EXPERT_API_BASE_URL}/Search/`;
+  private readonly logger = new Logger(CityExpertProvider.name);
 
-  getResults = data => data?.result;
+  createRequest(filter: FilterDto) {
+    return {
+      request: axios(this.createRequestConfig(filter))
+        .then(response => response.data)
+        .catch(error => {
+          this.logger.error(`Request failed for ${this.providerName}`, error);
+          return {};
+        }),
+      provider: this as Provider,
+    };
+  }
 
-  hasNextPage = data => data.info.hasNextPage;
-
-  makeRequest(filter: FilterDto) {
+  createRequestConfig(filter: FilterDto): AxiosRequestConfig {
     const rentOrSale = {
       rent: 'r',
       sale: 's',
@@ -85,6 +96,10 @@ export class CityExpertProvider implements Provider {
       method: 'POST',
     };
   }
+
+  getResults = data => data?.result;
+
+  hasNextPage = data => data.info.hasNextPage;
 
   parseApartmentInfo = apartmentInfo => {
     const [latitude, longitude] = apartmentInfo.location.split(', ');

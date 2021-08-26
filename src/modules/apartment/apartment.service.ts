@@ -39,9 +39,8 @@ export class ApartmentService {
       );
       for (const [index, providerResult] of providerResults.entries()) {
         const foundApartments = [];
-        const { providerName } = providerRequests[index];
+        const { provider } = providerRequests[index];
 
-        const provider = this.baseProvider.createProvider(providerName);
         const apartments = provider.getResults(providerResult) || [];
         if (apartments.length === 0) continue;
 
@@ -55,7 +54,7 @@ export class ApartmentService {
         });
 
         this.logger.log(
-          `Found ${foundApartments.length} new apartment(s) from ${providerName} for ${filter.rentOrSale}, page ${filter.pageNumber}`,
+          `Found ${foundApartments.length} new apartment(s) from ${provider.providerName} for ${filter.rentOrSale}, page ${filter.pageNumber}`,
         );
         try {
           if (foundApartments.length > 0) {
@@ -74,7 +73,7 @@ export class ApartmentService {
         );
         if (hasNextPage) {
           newRequests.push(
-            this.baseProvider.getProviderRequest(providerName, provider, {
+            provider.createRequest({
               ...filter,
               pageNumber: filter.pageNumber + 1,
             }),
