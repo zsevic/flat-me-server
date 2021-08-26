@@ -169,7 +169,7 @@ describe('TasksService', () => {
       expect(mailService.sendMailWithNewApartments).not.toHaveBeenCalled();
     });
 
-    it('should not send any apartments to the users when there are no new apartments by found filters', async () => {
+    it('should send new apartments by found filters', async () => {
       const foundFilter = {
         _id: '611c59c26962b452247b9432',
         structures: [1, 2, 0.5, 1.5],
