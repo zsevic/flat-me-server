@@ -1,5 +1,6 @@
 import { HttpStatus, Logger } from '@nestjs/common';
 import axios, { AxiosRequestConfig } from 'axios';
+import { DEFAULT_TIMEOUT } from 'common/constants';
 import { capitalizeWords } from 'common/utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { Provider } from './provider.interface';
@@ -85,6 +86,9 @@ export class CetiriZidaProvider implements Provider {
     try {
       await axios.get(
         `${apartmentActivityBaseUrlForCetiriZida}/${apartmentId}`,
+        {
+          timeout: DEFAULT_TIMEOUT,
+        },
       );
     } catch (error) {
       if (error.response?.status === HttpStatus.NOT_FOUND) {

@@ -10,9 +10,15 @@ import {
   apartmentStatusNotAvailable,
   CITY_EXPERT_API_BASE_URL,
 } from '../apartment.constants';
+import { DEFAULT_TIMEOUT } from 'common/constants';
 
 export class CityExpertProvider implements Provider {
   private readonly providerName = 'cityExpert';
+  private readonly propertyTypes = {
+    BR: 'r',
+    BS: 's',
+  };
+
   private readonly url = `${CITY_EXPERT_API_BASE_URL}/Search/`;
   private readonly logger = new Logger(CityExpertProvider.name);
 
@@ -102,9 +108,12 @@ export class CityExpertProvider implements Provider {
   async isApartmentInactive(id: string): Promise<boolean> {
     try {
       const [, apartmentId] = id.split('_');
-      const [propertyId] = apartmentId.split('-');
+      const [propertyId, propertyType] = apartmentId.split('-');
       const response = await axios.get(
-        `${apartmentActivityBaseUrlForCityExpert}/${propertyId}/r`,
+        `${apartmentActivityBaseUrlForCityExpert}/${propertyId}/${this.propertyTypes[propertyType]}`,
+        {
+          timeout: DEFAULT_TIMEOUT,
+        },
       );
       if (
         [apartmentStatusFinished, apartmentStatusNotAvailable].includes(
@@ -117,7 +126,7 @@ export class CityExpertProvider implements Provider {
         return true;
       }
     } catch (error) {
-      if (error.response.status === HttpStatus.NOT_FOUND) {
+      if (error.response?.status === HttpStatus.NOT_FOUND) {
         this.logger.log(
           `Deleting apartment: ${id} for ${this.providerName}, status: NOT_FOUND`,
         );
