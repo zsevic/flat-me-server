@@ -3,6 +3,7 @@ import axios, { AxiosRequestConfig } from 'axios';
 import { capitalizeWords } from 'common/utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { Provider } from './provider.interface';
+import { createRequest } from './utils';
 import {
   apartmentActivityBaseUrlForCityExpert,
   apartmentStatusFinished,
@@ -16,15 +17,7 @@ export class CityExpertProvider implements Provider {
   private readonly logger = new Logger(CityExpertProvider.name);
 
   createRequest(filter: FilterDto) {
-    return {
-      request: axios(this.createRequestConfig(filter))
-        .then(response => response.data)
-        .catch(error => {
-          this.logger.error(`Request failed for ${this.providerName}`, error);
-          return {};
-        }),
-      provider: this as Provider,
-    };
+    return createRequest.call(this, filter);
   }
 
   createRequestConfig(filter: FilterDto): AxiosRequestConfig {
