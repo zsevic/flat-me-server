@@ -48,13 +48,15 @@ export class TasksService {
     this.logCronJobFinished(DELETING_INACTIVE_APARTMENTS);
   }
 
-  private async handleDeletingInactiveApartment(_id: string): Promise<void> {
+  private async handleDeletingInactiveApartment(
+    apartmentId: string,
+  ): Promise<void> {
     const isApartmentInactive = await this.apartmentService.isApartmentInactive(
-      _id,
+      apartmentId,
     );
     if (!isApartmentInactive) return;
 
-    return this.apartmentService.deleteApartment(_id);
+    return this.apartmentService.deleteApartment(apartmentId);
   }
 
   @Cron(CronExpression.EVERY_HOUR, {
