@@ -18,13 +18,13 @@ describe('utils', () => {
   });
 
   describe('isEnvironment', () => {
-    it('should return boolean value if the current environment is test', () => {
+    it('should return true for test environment when the current environment is test', () => {
       const isTestEnvironment = isEnvironment('test');
 
       expect(isTestEnvironment).toEqual(true);
     });
 
-    it('should return boolean value if the current environment is dev', () => {
+    it('should return false for dev environment when the current environment is test', () => {
       const isDevEnvironment = isEnvironment('dev');
 
       expect(isDevEnvironment).toEqual(false);
