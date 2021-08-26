@@ -1,4 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
+import {
+  PaginatedResponse,
+  PaginationParams,
+} from 'common/interfaces/pagination';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { FilterDocument } from 'modules/filter/filter.schema';
 import { UserService } from 'modules/user/user.service';
@@ -121,8 +125,10 @@ export class ApartmentService {
     );
   }
 
-  async getApartmentsIds(): Promise<string[]> {
-    return this.apartmentRepository.getApartmentsIds();
+  async getApartmentsIds(
+    paginationParams: PaginationParams,
+  ): Promise<PaginatedResponse<string>> {
+    return this.apartmentRepository.getApartmentsIds(paginationParams);
   }
 
   async isApartmentInactive(id: string): Promise<boolean> {

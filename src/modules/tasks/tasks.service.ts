@@ -37,12 +37,25 @@ export class TasksService {
   async handleDeletingInactiveApartments(): Promise<void> {
     this.logCronJobStarted(DELETING_INACTIVE_APARTMENTS);
 
-    const apartmentsIds = await this.apartmentService.getApartmentsIds();
-
     try {
-      await Promise.all(
-        apartmentsIds.map(id => this.handleDeletingInactiveApartment(id)),
-      );
+      const limitPerPage = defaultPaginationParams.limitPerPage;
+      let pageNumber = defaultPaginationParams.pageNumber;
+      let apartmentsIds;
+      let total;
+
+      do {
+        ({
+          data: apartmentsIds,
+          total,
+        } = await this.apartmentService.getApartmentsIds({
+          limitPerPage,
+          pageNumber,
+        }));
+        await Promise.all(
+          apartmentsIds.map(id => this.handleDeletingInactiveApartment(id)),
+        );
+        pageNumber++;
+      } while (total >= getSkip({ limitPerPage, pageNumber }));
     } catch (error) {
       this.logger.error(error);
     }
@@ -105,13 +118,6 @@ export class TasksService {
           Subscription.FREE,
           { limitPerPage, pageNumber },
         ));
-        if (!filters.length) {
-          this.logger.log('There are no filters');
-          this.logCronJobFinished(
-            SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB,
-          );
-          return;
-        }
         await Promise.all(
           filters.map(filter => this.sendNewApartmentsByFilter(filter)),
         );
