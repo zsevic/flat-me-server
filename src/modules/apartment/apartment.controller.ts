@@ -1,4 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common';
+import { PaginatedResponse } from 'common/interfaces/pagination';
+import { ApartmentDocument } from './apartment.schema';
 import { ApartmentService } from './apartment.service';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
 
@@ -9,7 +11,7 @@ export class ApartmentController {
   @Get()
   async getApartmentList(
     @Query() apartmentListParamsDto: ApartmentListParamsDto,
-  ) {
+  ): Promise<PaginatedResponse<ApartmentDocument>> {
     return this.apartmentService.getApartmentListFromDatabase(
       apartmentListParamsDto,
     );

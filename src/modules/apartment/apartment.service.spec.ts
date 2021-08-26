@@ -419,9 +419,7 @@ describe('ApartmentService', () => {
 
       jest
         .spyOn(baseProvider, 'getProviderResults')
-        .mockResolvedValueOnce(firstProviderResults);
-      jest
-        .spyOn(baseProvider, 'getProviderResults')
+        .mockResolvedValueOnce(firstProviderResults)
         .mockResolvedValueOnce(secondProviderResults);
 
       await apartmentService.saveApartmentListFromProviders({

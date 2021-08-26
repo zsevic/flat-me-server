@@ -7,6 +7,7 @@ import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { FilterDocument } from 'modules/filter/filter.schema';
 import { UserService } from 'modules/user/user.service';
 import { ApartmentRepository } from './apartment.repository';
+import { ApartmentDocument } from './apartment.schema';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
 import { BaseProvider } from './providers';
 
@@ -117,7 +118,7 @@ export class ApartmentService {
     filter: ApartmentListParamsDto,
     skippedApartmentments?: string[],
     dateFilter?: Date,
-  ) {
+  ): Promise<PaginatedResponse<ApartmentDocument>> {
     return this.apartmentRepository.getApartmentList(
       filter,
       skippedApartmentments,

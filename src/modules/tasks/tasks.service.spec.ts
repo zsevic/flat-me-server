@@ -74,17 +74,20 @@ describe('TasksService', () => {
   });
 
   describe('handleDeletingInactiveApartments', () => {
+    beforeEach(() => {
+      jest.resetAllMocks();
+    });
+
     it('should handle deleting inactive apartments', async () => {
       const cetiriZidaApartmentId = 'cetiriZida_23';
       const cityExpertApartmentId = 'cityExpert_12-BR';
-      jest
-        .spyOn(apartmentService, 'getApartmentsIds')
-        .mockResolvedValue([cetiriZidaApartmentId, cityExpertApartmentId]);
-      jest
-        .spyOn(apartmentService, 'isApartmentInactive')
-        .mockResolvedValueOnce(true);
+      jest.spyOn(apartmentService, 'getApartmentsIds').mockResolvedValue({
+        data: [cetiriZidaApartmentId, cityExpertApartmentId],
+        total: 2,
+      });
       jest
         .spyOn(apartmentService, 'isApartmentInactive')
+        .mockResolvedValueOnce(true)
         .mockResolvedValueOnce(false);
 
       await tasksService.handleDeletingInactiveApartments();
@@ -101,6 +104,29 @@ describe('TasksService', () => {
       expect(apartmentService.deleteApartment).not.toHaveBeenCalledWith(
         cityExpertApartmentId,
       );
+    });
+
+    it('should paginate over apartments ids', async () => {
+      const cetiriZidaApartmentId = 'cetiriZida_23';
+      const cityExpertApartmentId = 'cityExpert_12-BR';
+      jest.spyOn(apartmentService, 'getApartmentsIds').mockResolvedValue({
+        data: [cetiriZidaApartmentId, cityExpertApartmentId],
+        total: 51,
+      });
+      jest
+        .spyOn(apartmentService, 'isApartmentInactive')
+        .mockResolvedValue(false);
+
+      await tasksService.handleDeletingInactiveApartments();
+
+      expect(apartmentService.isApartmentInactive).toHaveBeenCalledWith(
+        cetiriZidaApartmentId,
+      );
+      expect(apartmentService.isApartmentInactive).toHaveBeenCalledWith(
+        cityExpertApartmentId,
+      );
+      expect(apartmentService.isApartmentInactive).toHaveBeenCalledTimes(4);
+      expect(apartmentService.deleteApartment).not.toHaveBeenCalled();
     });
   });
 
@@ -332,9 +358,7 @@ describe('TasksService', () => {
         .mockResolvedValue({ data: foundFilters, total: foundFilters.length });
       jest
         .spyOn(tokenService, 'deleteTokenByFilterId')
-        .mockRejectedValueOnce(new Error());
-      jest
-        .spyOn(tokenService, 'deleteTokenByFilterId')
+        .mockRejectedValueOnce(new Error())
         .mockResolvedValue(undefined);
       jest
         .spyOn(apartmentService, 'getApartmentListFromDatabaseByFilter')

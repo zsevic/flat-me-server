@@ -24,7 +24,7 @@ export class ApartmentRepository {
     filter: ApartmentListParamsDto,
     skippedApartments?: string[],
     dateFilter?: Date,
-  ) {
+  ): Promise<PaginatedResponse<ApartmentDocument>> {
     const { limitPerPage = 10, pageNumber = 1 } = filter;
     const query = {
       ...(skippedApartments &&

@@ -1,5 +1,7 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
+import { getSkip } from 'common/utils';
+import { defaultPaginationParams } from 'modules/tasks/tasks.constants';
 import { ApartmentRepository } from './apartment.repository';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
 
@@ -45,13 +47,33 @@ describe('ApartmentRepository', () => {
       ];
       const apartmentsIds = ['id1', 'id2'];
       jest.spyOn(apartmentModel, 'find').mockReturnThis();
-      jest.spyOn(apartmentModel, 'select').mockResolvedValue(apartmentList);
+      jest.spyOn(apartmentModel, 'select').mockReturnThis();
+      jest.spyOn(apartmentModel, 'limit').mockReturnThis();
+      jest.spyOn(apartmentModel, 'skip').mockReturnThis();
+      jest
+        .spyOn(apartmentModel, 'exec')
+        .mockResolvedValueOnce(apartmentList)
+        .mockResolvedValueOnce(apartmentList.length);
 
-      const ids = await apartmentRepository.getApartmentsIds();
+      jest.spyOn(apartmentModel, 'countDocuments').mockReturnThis();
 
-      expect(ids).toEqual(apartmentsIds);
+      const response = await apartmentRepository.getApartmentsIds(
+        defaultPaginationParams,
+      );
+
+      expect(response).toEqual({
+        data: apartmentsIds,
+        total: apartmentsIds.length,
+      });
       expect(apartmentModel.find).toHaveBeenCalled();
       expect(apartmentModel.select).toHaveBeenCalledWith('_id');
+      expect(apartmentModel.limit).toHaveBeenCalledWith(
+        defaultPaginationParams.limitPerPage,
+      );
+      expect(apartmentModel.skip).toHaveBeenCalledWith(
+        getSkip(defaultPaginationParams),
+      );
+      expect(apartmentModel.exec).toHaveBeenCalledTimes(2);
     });
   });
 
