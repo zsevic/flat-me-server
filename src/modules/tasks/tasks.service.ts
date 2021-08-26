@@ -14,6 +14,7 @@ import { TokenService } from 'modules/token/token.service';
 import { Subscription } from 'modules/user/subscription.enum';
 import { UserService } from 'modules/user/user.service';
 import {
+  defaultPaginationParams,
   DELETING_INACTIVE_APARTMENTS,
   SAVING_APARTMENT_LIST_FROM_PROVIDERS_CRON_JOB,
   SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB,
@@ -92,10 +93,8 @@ export class TasksService {
     this.logCronJobStarted(SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB);
 
     try {
-      const paginationParams: PaginationParams = {
-        limitPerPage: 50,
-        pageNumber: 1,
-      };
+      const limitPerPage = defaultPaginationParams.limitPerPage;
+      let pageNumber = defaultPaginationParams.pageNumber;
       let filters;
       let total;
 
@@ -105,7 +104,7 @@ export class TasksService {
           total,
         } = await this.filterService.getFilterListBySubscriptionName(
           Subscription.FREE,
-          paginationParams,
+          { limitPerPage, pageNumber },
         ));
         if (!filters.length) {
           this.logger.log('There are no filters');
@@ -117,10 +116,8 @@ export class TasksService {
         await Promise.all(
           filters.map(filter => this.sendNewApartmentsByFilter(filter)),
         );
-        Object.assign(paginationParams, {
-          pageNumber: paginationParams.pageNumber + 1,
-        });
-      } while (total >= getSkip(paginationParams));
+        pageNumber++;
+      } while (total >= getSkip({ limitPerPage, pageNumber }));
     } catch (error) {
       this.logger.error(error);
     }
