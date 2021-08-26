@@ -238,6 +238,9 @@ describe('ApartmentService', () => {
   });
 
   describe('saveApartmentListFromProviders', () => {
+    const cetiriZidaProvider = new CetiriZidaProvider();
+    const cityExpertProvider = new CityExpertProvider();
+
     it('should find, paginate and save apartments from providers', async () => {
       const firstProviderResults = [
         {
@@ -482,22 +485,12 @@ describe('ApartmentService', () => {
           },
         ],
       ];
-      const cetiriZida = 'cetiriZida';
-      const cityExpert = 'cityExpert';
       jest.spyOn(baseProvider, 'getProviderRequests').mockReturnValue([
         // @ts-ignore
-        { request: {}, providerName: cetiriZida },
+        { request: {}, provider: cetiriZidaProvider },
         // @ts-ignore
-        { request: {}, providerName: cityExpert },
+        { request: {}, provider: cityExpertProvider },
       ]);
-      jest.spyOn(baseProvider, 'getProviderRequest').mockReturnValueOnce(
-        // @ts-ignore
-        { request: {}, providerName: cetiriZida },
-      );
-      jest.spyOn(baseProvider, 'getProviderRequest').mockReturnValueOnce(
-        // @ts-ignore
-        { request: {}, providerName: cityExpert },
-      );
 
       jest
         .spyOn(baseProvider, 'getProviderResults')
@@ -584,13 +577,11 @@ describe('ApartmentService', () => {
           url: 'https://4zida.rs/url',
         },
       ];
-      const cetiriZida = 'cetiriZida';
-      const cityExpert = 'cityExpert';
       jest.spyOn(baseProvider, 'getProviderRequests').mockReturnValue([
         // @ts-ignore
-        { request: {}, providerName: cetiriZida },
+        { request: {}, provider: cetiriZidaProvider },
         // @ts-ignore
-        { request: {}, providerName: cityExpert },
+        { request: {}, provider: cityExpertProvider },
       ]);
 
       jest
