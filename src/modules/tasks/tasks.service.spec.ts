@@ -11,10 +11,12 @@ import { UserService } from 'modules/user/user.service';
 import { TasksService } from './tasks.service';
 
 const apartmentService = {
+  deleteApartment: jest.fn(),
   getApartmentListFromDatabaseByFilter: jest.fn(),
   getApartmentsIds: jest.fn(),
   handleDeletingInactiveApartmentFromCetiriZida: jest.fn(),
   handleDeletingInactiveApartmentFromCityExpert: jest.fn(),
+  isApartmentInactive: jest.fn(),
   saveApartmentListFromProviders: jest.fn(),
 };
 
@@ -77,15 +79,27 @@ describe('TasksService', () => {
       jest
         .spyOn(apartmentService, 'getApartmentsIds')
         .mockResolvedValue([cetiriZidaApartmentId, cityExpertApartmentId]);
+      jest
+        .spyOn(apartmentService, 'isApartmentInactive')
+        .mockResolvedValueOnce(true);
+      jest
+        .spyOn(apartmentService, 'isApartmentInactive')
+        .mockResolvedValueOnce(false);
 
       await tasksService.handleDeletingInactiveApartments();
 
-      expect(
-        apartmentService.handleDeletingInactiveApartmentFromCetiriZida,
-      ).toHaveBeenCalledWith(cetiriZidaApartmentId);
-      expect(
-        apartmentService.handleDeletingInactiveApartmentFromCityExpert,
-      ).toHaveBeenCalledWith(cityExpertApartmentId);
+      expect(apartmentService.isApartmentInactive).toHaveBeenCalledWith(
+        cetiriZidaApartmentId,
+      );
+      expect(apartmentService.isApartmentInactive).toHaveBeenCalledWith(
+        cityExpertApartmentId,
+      );
+      expect(apartmentService.deleteApartment).toHaveBeenCalledWith(
+        cetiriZidaApartmentId,
+      );
+      expect(apartmentService.deleteApartment).not.toHaveBeenCalledWith(
+        cityExpertApartmentId,
+      );
     });
   });
 

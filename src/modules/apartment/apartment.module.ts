@@ -1,4 +1,4 @@
-import { HttpModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from 'modules/user/user.module';
 import { ApartmentController } from './apartment.controller';
@@ -21,9 +21,6 @@ import { BaseProvider } from './providers';
         },
       },
     ]),
-    HttpModule.register({
-      timeout: 5000,
-    }),
     UserModule,
   ],
   providers: [ApartmentRepository, ApartmentService, BaseProvider],

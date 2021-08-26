@@ -1,14 +1,7 @@
-import { HttpService, HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { RentOrSale } from 'modules/filter/filter.enums';
 import { FilterDocument } from 'modules/filter/filter.schema';
 import { UserService } from 'modules/user/user.service';
-import {
-  apartmentActivityBaseUrlForCetiriZida,
-  apartmentActivityBaseUrlForCityExpert,
-  apartmentStatusFinished,
-  apartmentStatusNotAvailable,
-} from './apartment.constants';
 import { ApartmentRepository } from './apartment.repository';
 import { ApartmentService } from './apartment.service';
 import {
@@ -23,22 +16,13 @@ const apartmentRepository = {
   saveApartmentList: jest.fn(),
 };
 
+const cetiriZidaProvider = new CetiriZidaProvider();
+
 const baseProvider = {
-  providers: {
-    cetiriZida: CetiriZidaProvider,
-    cityExpert: CityExpertProvider,
-  },
-  createProvider: function(providerName) {
-    return new this.providers[providerName]();
-  },
+  createProvider: jest.fn(),
   getProviderRequest: jest.fn(),
   getProviderRequests: jest.fn(),
   getProviderResults: jest.fn(),
-};
-
-const httpService = {
-  get: jest.fn(),
-  toPromise: jest.fn(),
 };
 
 const userService = {
@@ -59,10 +43,6 @@ describe('ApartmentService', () => {
         {
           provide: ApartmentRepository,
           useValue: apartmentRepository,
-        },
-        {
-          provide: HttpService,
-          useValue: httpService,
         },
         {
           provide: UserService,
@@ -142,98 +122,43 @@ describe('ApartmentService', () => {
     });
   });
 
-  describe('handleDeletingInactiveApartmentFromCetiriZida', () => {
+  describe('isApartmentInactive', () => {
     it('should skip deleting inactive apartment', async () => {
       const apartmentId = '1234';
-      const id = `cetiriZida_${apartmentId}`;
-      const url = `${apartmentActivityBaseUrlForCetiriZida}/${apartmentId}`;
-      jest.spyOn(httpService, 'get').mockReturnThis();
+      const providerName = 'cetiriZida';
+      const id = `${providerName}_${apartmentId}`;
+      jest
+        .spyOn(baseProvider, 'createProvider')
+        .mockReturnValue(cetiriZidaProvider);
+      jest
+        .spyOn(cetiriZidaProvider, 'isApartmentInactive')
+        .mockResolvedValue(false);
 
-      await apartmentService.handleDeletingInactiveApartmentFromCetiriZida(id);
+      const isApartmentInactive = await apartmentService.isApartmentInactive(
+        id,
+      );
 
-      expect(httpService.get).toHaveBeenCalledWith(url);
+      expect(isApartmentInactive).toEqual(false);
+      expect(baseProvider.createProvider).toHaveBeenCalledWith(providerName);
     });
 
     it('should delete inactive apartment', async () => {
       const apartmentId = '1234';
-      const id = `cetiriZida_${apartmentId}`;
-      const url = `${apartmentActivityBaseUrlForCetiriZida}/${apartmentId}`;
-      jest.spyOn(httpService, 'get').mockReturnThis();
+      const providerName = 'cetiriZida';
+      const id = `${providerName}_${apartmentId}`;
       jest
-        .spyOn(httpService, 'toPromise')
-        .mockRejectedValue({ response: { status: HttpStatus.NOT_FOUND } });
-
-      await apartmentService.handleDeletingInactiveApartmentFromCetiriZida(id);
-
-      expect(httpService.get).toHaveBeenCalledWith(url);
-      expect(apartmentRepository.deleteApartment).toHaveBeenCalledWith(id);
-    });
-  });
-
-  describe('handleDeletingInactiveApartmentFromCityExpert', () => {
-    it('should skip deleting inactive apartment', async () => {
-      const apartmentId = '1234';
-      const id = `cityExpert_${apartmentId}-BR`;
-      const url = `${apartmentActivityBaseUrlForCityExpert}/${apartmentId}/r`;
-      jest.spyOn(httpService, 'get').mockReturnThis();
-      jest.spyOn(httpService, 'toPromise').mockResolvedValue({
-        data: {
-          status: 'ACTIVE',
-        },
-      });
-
-      await apartmentService.handleDeletingInactiveApartmentFromCityExpert(id);
-
-      expect(httpService.get).toHaveBeenCalledWith(url);
-    });
-
-    it(`should delete an apartment when status is ${apartmentStatusNotAvailable}`, async () => {
-      const apartmentId = '1234';
-      const id = `cityExpert_${apartmentId}-BR`;
-      const url = `${apartmentActivityBaseUrlForCityExpert}/${apartmentId}/r`;
-      jest.spyOn(httpService, 'get').mockReturnThis();
-      jest.spyOn(httpService, 'toPromise').mockResolvedValue({
-        data: {
-          status: apartmentStatusNotAvailable,
-        },
-      });
-
-      await apartmentService.handleDeletingInactiveApartmentFromCityExpert(id);
-
-      expect(httpService.get).toHaveBeenCalledWith(url);
-      expect(apartmentRepository.deleteApartment).toHaveBeenCalledWith(id);
-    });
-
-    it(`should delete an apartment when status is ${apartmentStatusFinished}`, async () => {
-      const apartmentId = '1234';
-      const id = `cityExpert_${apartmentId}-BR`;
-      const url = `${apartmentActivityBaseUrlForCityExpert}/${apartmentId}/r`;
-      jest.spyOn(httpService, 'get').mockReturnThis();
-      jest.spyOn(httpService, 'toPromise').mockResolvedValue({
-        data: {
-          status: apartmentStatusFinished,
-        },
-      });
-
-      await apartmentService.handleDeletingInactiveApartmentFromCityExpert(id);
-
-      expect(httpService.get).toHaveBeenCalledWith(url);
-      expect(apartmentRepository.deleteApartment).toHaveBeenCalledWith(id);
-    });
-
-    it(`should delete an apartment when apartment is not found`, async () => {
-      const apartmentId = '1234';
-      const id = `cityExpert_${apartmentId}-BR`;
-      const url = `${apartmentActivityBaseUrlForCityExpert}/${apartmentId}/r`;
-      jest.spyOn(httpService, 'get').mockReturnThis();
+        .spyOn(baseProvider, 'createProvider')
+        .mockReturnValue(cetiriZidaProvider);
       jest
-        .spyOn(httpService, 'toPromise')
-        .mockRejectedValue({ response: { status: HttpStatus.NOT_FOUND } });
+        .spyOn(cetiriZidaProvider, 'isApartmentInactive')
+        .mockResolvedValue(true);
 
-      await apartmentService.handleDeletingInactiveApartmentFromCityExpert(id);
+      const isApartmentInactive = await apartmentService.isApartmentInactive(
+        id,
+      );
 
-      expect(httpService.get).toHaveBeenCalledWith(url);
-      expect(apartmentRepository.deleteApartment).toHaveBeenCalledWith(id);
+      expect(isApartmentInactive).toEqual(true);
+      expect(baseProvider.createProvider).toHaveBeenCalledWith(providerName);
     });
   });
 

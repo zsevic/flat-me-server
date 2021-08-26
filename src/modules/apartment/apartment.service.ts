@@ -1,4 +1,4 @@
-import { HttpService, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { FilterDocument } from 'modules/filter/filter.schema';
 import { UserService } from 'modules/user/user.service';
@@ -13,7 +13,6 @@ export class ApartmentService {
   constructor(
     private readonly apartmentRepository: ApartmentRepository,
     private readonly baseProvider: BaseProvider,
-    private readonly httpService: HttpService,
     private readonly userService: UserService,
   ) {}
 
