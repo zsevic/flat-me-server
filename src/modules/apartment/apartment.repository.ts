@@ -66,7 +66,7 @@ export class ApartmentRepository {
     };
   }
 
-  async getApartmentsIds(pageNumber = 1, limitPerPage = 50): Promise<string[]> {
+  async getApartmentsIds(): Promise<string[]> {
     const apartmentList = await this.apartmentModel.find().select('_id');
 
     return apartmentList.map(apartment => apartment._id);

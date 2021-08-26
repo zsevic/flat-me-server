@@ -1,5 +1,4 @@
 import { Logger } from '@nestjs/common';
-import axios from 'axios';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { CetiriZidaProvider } from './cetiri-zida';
 import { CityExpertProvider } from './city-expert';
