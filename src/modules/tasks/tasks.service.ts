@@ -49,23 +49,12 @@ export class TasksService {
   }
 
   private async handleDeletingInactiveApartment(_id: string): Promise<void> {
-    const [providerName] = _id.split('_');
-    switch (providerName) {
-      case 'cetiriZida': {
-        await this.apartmentService.handleDeletingInactiveApartmentFromCetiriZida(
-          _id,
-        );
-        break;
-      }
-      case 'cityExpert': {
-        await this.apartmentService.handleDeletingInactiveApartmentFromCityExpert(
-          _id,
-        );
-        break;
-      }
-      default:
-        break;
-    }
+    const isApartmentInactive = await this.apartmentService.isApartmentInactive(
+      _id,
+    );
+    if (!isApartmentInactive) return;
+
+    return this.apartmentService.deleteApartment(_id);
   }
 
   @Cron(CronExpression.EVERY_HOUR, {

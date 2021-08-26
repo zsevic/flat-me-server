@@ -1,9 +1,12 @@
-import { Logger } from '@nestjs/common';
+import { HttpStatus, Logger } from '@nestjs/common';
 import axios, { AxiosRequestConfig } from 'axios';
 import { capitalizeWords } from 'common/utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { Provider } from './provider.interface';
-import { CETIRI_ZIDA_API_BASE_URL } from '../apartment.constants';
+import {
+  apartmentActivityBaseUrlForCetiriZida,
+  CETIRI_ZIDA_API_BASE_URL,
+} from '../apartment.constants';
 
 export class CetiriZidaProvider implements Provider {
   private readonly providerName = 'cetiriZida';
@@ -83,6 +86,21 @@ export class CetiriZidaProvider implements Provider {
     const currentCount = data.ads.length * pageNumber;
     return currentCount > 0 && data.total > currentCount;
   };
+
+  async isApartmentInactive(id: string): Promise<boolean> {
+    const [, apartmentId] = id.split('_');
+    try {
+      await axios.get(
+        `${apartmentActivityBaseUrlForCetiriZida}/${apartmentId}`,
+      );
+    } catch (error) {
+      if (error.response?.status === HttpStatus.NOT_FOUND) {
+        this.logger.log(`Deleting apartment: ${id} for ${this.providerName}`);
+        return true;
+      }
+      this.logger.error(error);
+    }
+  }
 
   private getMunicipality = apartmentInfo => {
     const municipalities = {

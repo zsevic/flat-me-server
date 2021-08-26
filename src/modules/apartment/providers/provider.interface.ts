@@ -6,4 +6,5 @@ export interface Provider {
   getResults(data);
   hasNextPage(data, pageNumber?: number): boolean;
   parseApartmentInfo(apartmentInfo);
+  isApartmentInactive(id: string): Promise<boolean>;
 }

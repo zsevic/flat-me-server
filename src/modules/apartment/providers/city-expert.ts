@@ -1,9 +1,14 @@
-import { Logger } from '@nestjs/common';
+import { HttpStatus, Logger } from '@nestjs/common';
 import axios, { AxiosRequestConfig } from 'axios';
 import { capitalizeWords } from 'common/utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { Provider } from './provider.interface';
-import { CITY_EXPERT_API_BASE_URL } from '../apartment.constants';
+import {
+  apartmentActivityBaseUrlForCityExpert,
+  apartmentStatusFinished,
+  apartmentStatusNotAvailable,
+  CITY_EXPERT_API_BASE_URL,
+} from '../apartment.constants';
 
 export class CityExpertProvider implements Provider {
   private readonly providerName = 'cityExpert';
@@ -100,6 +105,34 @@ export class CityExpertProvider implements Provider {
   getResults = data => data?.result;
 
   hasNextPage = data => data.info.hasNextPage;
+
+  async isApartmentInactive(id: string): Promise<boolean> {
+    try {
+      const [, apartmentId] = id.split('_');
+      const [propertyId] = apartmentId.split('-');
+      const response = await axios.get(
+        `${apartmentActivityBaseUrlForCityExpert}/${propertyId}/r`,
+      );
+      if (
+        [apartmentStatusFinished, apartmentStatusNotAvailable].includes(
+          response.data.status,
+        )
+      ) {
+        this.logger.log(
+          `Deleting apartment: ${id} for provider ${this.providerName}, status: ${response.data.status}`,
+        );
+        return true;
+      }
+    } catch (error) {
+      if (error.response.status === HttpStatus.NOT_FOUND) {
+        this.logger.log(
+          `Deleting apartment: ${id} for ${this.providerName}, status: NOT_FOUND`,
+        );
+        return true;
+      }
+      this.logger.error(error);
+    }
+  }
 
   parseApartmentInfo = apartmentInfo => {
     const [latitude, longitude] = apartmentInfo.location.split(', ');

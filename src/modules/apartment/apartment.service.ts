@@ -1,13 +1,7 @@
-import { HttpService, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { HttpService, Injectable, Logger } from '@nestjs/common';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { FilterDocument } from 'modules/filter/filter.schema';
 import { UserService } from 'modules/user/user.service';
-import {
-  apartmentActivityBaseUrlForCetiriZida,
-  apartmentActivityBaseUrlForCityExpert,
-  apartmentStatusFinished,
-  apartmentStatusNotAvailable,
-} from './apartment.constants';
 import { ApartmentRepository } from './apartment.repository';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
 import { BaseProvider } from './providers';
@@ -132,51 +126,10 @@ export class ApartmentService {
     return this.apartmentRepository.getApartmentsIds();
   }
 
-  async handleDeletingInactiveApartmentFromCetiriZida(
-    id: string,
-  ): Promise<void> {
-    const [providerName, apartmentId] = id.split('_');
-    try {
-      await this.httpService
-        .get(`${apartmentActivityBaseUrlForCetiriZida}/${apartmentId}`)
-        .toPromise();
-    } catch (error) {
-      if (error.response?.status === HttpStatus.NOT_FOUND) {
-        this.logger.log(`Deleting apartment: ${id} for ${providerName}`);
-        return this.deleteApartment(id);
-      }
-      this.logger.error(error);
-    }
-  }
-
-  async handleDeletingInactiveApartmentFromCityExpert(
-    id: string,
-  ): Promise<void> {
-    const [providerName, apartmentId] = id.split('_');
-    try {
-      const [propertyId] = apartmentId.split('-');
-      const response = await this.httpService
-        .get(`${apartmentActivityBaseUrlForCityExpert}/${propertyId}/r`)
-        .toPromise();
-      if (
-        [apartmentStatusFinished, apartmentStatusNotAvailable].includes(
-          response.data.status,
-        )
-      ) {
-        this.logger.log(
-          `Deleting apartment: ${id} for provider ${providerName}, status: ${response.data.status}`,
-        );
-        await this.deleteApartment(id);
-      }
-    } catch (error) {
-      if (error.response.status === HttpStatus.NOT_FOUND) {
-        this.logger.log(
-          `Deleting apartment: ${id} for ${providerName}, status: NOT_FOUND`,
-        );
-        return this.deleteApartment(id);
-      }
-      this.logger.error(error);
-    }
+  async isApartmentInactive(id: string): Promise<boolean> {
+    const [providerName] = id.split('_');
+    const provider = this.baseProvider.createProvider(providerName);
+    return provider.isApartmentInactive(id);
   }
 
   async saveApartmentListFromProviders(filter: FilterDto) {
