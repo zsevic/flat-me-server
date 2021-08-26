@@ -1,6 +1,6 @@
 import { HttpStatus, Logger } from '@nestjs/common';
 import axios, { AxiosRequestConfig } from 'axios';
-import { DEFAULT_TIMEOUT } from 'common/constants';
+import { DEFAULT_TIMEOUT, ECONNABORTED } from 'common/constants';
 import { capitalizeWords } from 'common/utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { Provider } from './provider.interface';
@@ -95,7 +95,13 @@ export class CetiriZidaProvider implements Provider {
         this.logger.log(`Deleting apartment: ${id} for ${this.providerName}`);
         return true;
       }
-      this.logger.error(error);
+      if (error.code === ECONNABORTED) {
+        this.logger.error(
+          `Connection aborted for apartment id ${id}, provider ${this.providerName}`,
+        );
+      } else {
+        this.logger.error(error);
+      }
     }
   }
 

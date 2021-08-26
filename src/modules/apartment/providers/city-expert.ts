@@ -1,5 +1,6 @@
 import { HttpStatus, Logger } from '@nestjs/common';
 import axios, { AxiosRequestConfig } from 'axios';
+import { DEFAULT_TIMEOUT, ECONNABORTED } from 'common/constants';
 import { capitalizeWords } from 'common/utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { Provider } from './provider.interface';
@@ -10,7 +11,6 @@ import {
   apartmentStatusNotAvailable,
   CITY_EXPERT_API_BASE_URL,
 } from '../apartment.constants';
-import { DEFAULT_TIMEOUT } from 'common/constants';
 
 export class CityExpertProvider implements Provider {
   private readonly providerName = 'cityExpert';
@@ -132,7 +132,13 @@ export class CityExpertProvider implements Provider {
         );
         return true;
       }
-      this.logger.error(error);
+      if (error.code === ECONNABORTED) {
+        this.logger.error(
+          `Connection aborted for apartment id ${id}, provider ${this.providerName}`,
+        );
+      } else {
+        this.logger.error(error);
+      }
     }
   }
 
