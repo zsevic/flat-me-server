@@ -1,4 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import {
+  PaginatedResponse,
+  PaginationParams,
+} from 'common/interfaces/pagination';
 import { MailService } from 'modules/mail/mail.service';
 import { TokenService } from 'modules/token/token.service';
 import { UserService } from 'modules/user/user.service';
@@ -66,9 +70,11 @@ export class FilterService {
 
   async getFilterListBySubscriptionName(
     subscriptionName: string,
-  ): Promise<FilterDocument[]> {
+    paginationParams: PaginationParams,
+  ): Promise<PaginatedResponse<FilterDocument>> {
     return this.filterRepository.getFilterListBySubscriptionName(
       subscriptionName,
+      paginationParams,
     );
   }
 

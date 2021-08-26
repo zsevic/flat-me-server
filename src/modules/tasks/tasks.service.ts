@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { PaginationParams } from 'common/interfaces/pagination';
+import { getSkip } from 'common/utils';
 import { RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION } from 'modules/apartment/apartment.constants';
 import { ApartmentService } from 'modules/apartment/apartment.service';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
@@ -88,21 +90,37 @@ export class TasksService {
   })
   async handleSendingNewApartmentsForFreeSubscriptionUsers(): Promise<void> {
     this.logCronJobStarted(SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB);
-    const filters = await this.filterService.getFilterListBySubscriptionName(
-      Subscription.FREE,
-    );
-    if (!filters.length) {
-      this.logger.log('There are no filters');
-      this.logCronJobFinished(
-        SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB,
-      );
-      return;
-    }
 
     try {
-      await Promise.all(
-        filters.map(filter => this.sendNewApartmentsByFilter(filter)),
-      );
+      const paginationParams: PaginationParams = {
+        limitPerPage: 50,
+        pageNumber: 1,
+      };
+      let filters;
+      let total;
+
+      do {
+        ({
+          data: filters,
+          total,
+        } = await this.filterService.getFilterListBySubscriptionName(
+          Subscription.FREE,
+          paginationParams,
+        ));
+        if (!filters.length) {
+          this.logger.log('There are no filters');
+          this.logCronJobFinished(
+            SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB,
+          );
+          return;
+        }
+        await Promise.all(
+          filters.map(filter => this.sendNewApartmentsByFilter(filter)),
+        );
+        Object.assign(paginationParams, {
+          pageNumber: paginationParams.pageNumber + 1,
+        });
+      } while (total >= getSkip(paginationParams));
     } catch (error) {
       this.logger.error(error);
     }

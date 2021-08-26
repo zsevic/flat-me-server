@@ -54,7 +54,7 @@ export class ApartmentRepository {
     const data = await this.apartmentModel
       // @ts-ignore
       .find(query)
-      .skip(getSkip(pageNumber, limitPerPage))
+      .skip(getSkip({ pageNumber, limitPerPage }))
       .limit(limitPerPage)
       .exec();
     // @ts-ignore

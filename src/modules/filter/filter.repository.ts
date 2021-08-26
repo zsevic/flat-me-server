@@ -1,5 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import {
+  PaginatedResponse,
+  PaginationParams,
+} from 'common/interfaces/pagination';
+import { getSkip } from 'common/utils';
 import { Model, Types } from 'mongoose';
 import { Filter, FilterDocument } from './filter.schema';
 
@@ -38,8 +43,10 @@ export class FilterRepository {
 
   async getFilterListBySubscriptionName(
     subscriptionName: string,
-  ): Promise<FilterDocument[]> {
-    return this.filterModel.aggregate([
+    paginationParams: PaginationParams,
+  ): Promise<PaginatedResponse<FilterDocument>> {
+    const skip = getSkip(paginationParams);
+    const [response] = await this.filterModel.aggregate([
       {
         $lookup: {
           from: 'users',
@@ -68,7 +75,22 @@ export class FilterRepository {
           createdAt: 1,
         },
       },
+      {
+        $facet: {
+          data: [{ $skip: skip }, { $limit: paginationParams.limitPerPage }],
+          total: [
+            {
+              $count: 'count',
+            },
+          ],
+        },
+      },
     ]);
+
+    return {
+      data: response.data,
+      total: response.total[0].count,
+    };
   }
 
   async saveFilter(filter: Filter): Promise<Filter> {

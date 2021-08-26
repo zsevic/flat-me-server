@@ -1,3 +1,5 @@
+import { PaginationParams } from 'common/interfaces/pagination';
+
 export function capitalizeWords(words: string): string {
   return words
     .split(' ')
@@ -6,8 +8,8 @@ export function capitalizeWords(words: string): string {
     .join(' ');
 }
 
-export function getSkip(pageNumber: number, limitPerPage: number): number {
-  return (pageNumber - 1) * limitPerPage;
+export function getSkip(paginationParams: PaginationParams): number {
+  return (paginationParams.pageNumber - 1) * paginationParams.limitPerPage;
 }
 
 export function isEnvironment(environment: string): boolean {
