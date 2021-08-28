@@ -103,7 +103,7 @@ export class CityExpertProvider implements Provider {
 
   getResults = data => data?.result;
 
-  hasNextPage = data => data.info.hasNextPage;
+  hasNextPage = (data): boolean => data.info.hasNextPage;
 
   async isApartmentInactive(id: string): Promise<boolean> {
     try {

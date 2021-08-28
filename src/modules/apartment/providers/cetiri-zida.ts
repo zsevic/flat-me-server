@@ -76,7 +76,7 @@ export class CetiriZidaProvider implements Provider {
 
   getResults = data => data?.ads;
 
-  hasNextPage = (data, pageNumber: number) => {
+  hasNextPage = (data, pageNumber: number): boolean => {
     const currentCount = data.ads.length * pageNumber;
     return currentCount > 0 && data.total > currentCount;
   };
