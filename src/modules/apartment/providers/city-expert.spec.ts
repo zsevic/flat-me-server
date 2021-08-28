@@ -5,7 +5,7 @@ describe('CityExpert', () => {
     it('should return the results from the provider', () => {
       const result = [];
       const data = {
-        result: [],
+        result,
       };
       const provider = new CityExpertProvider();
 
