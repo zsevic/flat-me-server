@@ -1,6 +1,20 @@
 import { CetiriZidaProvider } from './cetiri-zida';
 
 describe('CetiriZida', () => {
+  describe('getResults', () => {
+    it('should return the results from the provider', () => {
+      const ads = [];
+      const data = {
+        ads,
+      };
+      const provider = new CetiriZidaProvider();
+
+      const results = provider.getResults(data);
+
+      expect(results).toEqual(ads);
+    });
+  });
+
   describe('hasNextPage', () => {
     it('should return true when provider has next page', () => {
       const pageNumber = 2;

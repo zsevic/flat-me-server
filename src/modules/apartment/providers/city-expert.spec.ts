@@ -1,6 +1,20 @@
 import { CityExpertProvider } from './city-expert';
 
 describe('CityExpert', () => {
+  describe('getResults', () => {
+    it('should return the results from the provider', () => {
+      const result = [];
+      const data = {
+        result: [],
+      };
+      const provider = new CityExpertProvider();
+
+      const results = provider.getResults(data);
+
+      expect(results).toEqual(result);
+    });
+  });
+
   describe('hasNextPage', () => {
     it('should return true when provider has next page', () => {
       const data = {
