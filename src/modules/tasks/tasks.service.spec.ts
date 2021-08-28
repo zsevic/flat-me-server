@@ -4,11 +4,14 @@ import { ApartmentService } from 'modules/apartment/apartment.service';
 import { filters } from 'modules/filter/filter.constants';
 import { FilterService } from 'modules/filter/filter.service';
 import { MailService } from 'modules/mail/mail.service';
+import {
+  defaultPaginationParams,
+  emptyPaginatedResponse,
+} from 'modules/pagination/pagination.constants';
 import { FILTER_DEACTIVATION_TOKEN_EXPIRATION_HOURS } from 'modules/token/token.constants';
 import { TokenService } from 'modules/token/token.service';
 import { Subscription } from 'modules/user/subscription.enum';
 import { UserService } from 'modules/user/user.service';
-import { defaultPaginationParams, emptyResponse } from './tasks.constants';
 import { TasksService } from './tasks.service';
 
 const apartmentService = {
@@ -153,7 +156,7 @@ describe('TasksService', () => {
     it('should not send any new apartments to the users when there are no saved filters', async () => {
       jest
         .spyOn(filterService, 'getFilterListBySubscriptionName')
-        .mockResolvedValue(emptyResponse);
+        .mockResolvedValue(emptyPaginatedResponse);
 
       await tasksService.handleSendingNewApartmentsForFreeSubscriptionUsers();
 

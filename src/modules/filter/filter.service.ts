@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import {
   PaginatedResponse,
   PaginationParams,
-} from 'common/interfaces/pagination';
+} from 'modules/pagination/pagination.interfaces';
 import { MailService } from 'modules/mail/mail.service';
 import { TokenService } from 'modules/token/token.service';
 import { UserService } from 'modules/user/user.service';

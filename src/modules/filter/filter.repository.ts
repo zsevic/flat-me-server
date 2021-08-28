@@ -1,11 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { Model, Types } from 'mongoose';
 import {
   PaginatedResponse,
   PaginationParams,
-} from 'common/interfaces/pagination';
-import { getSkip } from 'common/utils';
-import { Model, Types } from 'mongoose';
+} from 'modules/pagination/pagination.interfaces';
+import { getSkip } from 'modules/pagination/pagination.utils';
 import { Filter, FilterDocument } from './filter.schema';
 
 @Injectable()

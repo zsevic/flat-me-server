@@ -1,7 +1,7 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { getSkip } from 'common/utils';
-import { defaultPaginationParams } from 'modules/tasks/tasks.constants';
+import { defaultPaginationParams } from 'modules/pagination/pagination.constants';
+import { getSkip } from 'modules/pagination/pagination.utils';
 import { ApartmentRepository } from './apartment.repository';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
 

@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { getSkip } from 'common/utils';
 import { RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION } from 'modules/apartment/apartment.constants';
 import { ApartmentService } from 'modules/apartment/apartment.service';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
@@ -8,12 +7,13 @@ import { filters } from 'modules/filter/filter.constants';
 import { FilterDocument } from 'modules/filter/filter.schema';
 import { FilterService } from 'modules/filter/filter.service';
 import { MailService } from 'modules/mail/mail.service';
+import { defaultPaginationParams } from 'modules/pagination/pagination.constants';
+import { getSkip } from 'modules/pagination/pagination.utils';
 import { FILTER_DEACTIVATION_TOKEN_EXPIRATION_HOURS } from 'modules/token/token.constants';
 import { TokenService } from 'modules/token/token.service';
 import { Subscription } from 'modules/user/subscription.enum';
 import { UserService } from 'modules/user/user.service';
 import {
-  defaultPaginationParams,
   DELETING_INACTIVE_APARTMENTS,
   SAVING_APARTMENT_LIST_FROM_PROVIDERS_CRON_JOB,
   SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB,

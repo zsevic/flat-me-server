@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { FilterDto } from 'modules/filter/dto/filter.dto';
+import { FilterDocument } from 'modules/filter/filter.schema';
 import {
   PaginatedResponse,
   PaginationParams,
-} from 'common/interfaces/pagination';
-import { FilterDto } from 'modules/filter/dto/filter.dto';
-import { FilterDocument } from 'modules/filter/filter.schema';
+} from 'modules/pagination/pagination.interfaces';
 import { UserService } from 'modules/user/user.service';
 import { ApartmentRepository } from './apartment.repository';
 import { ApartmentDocument } from './apartment.schema';

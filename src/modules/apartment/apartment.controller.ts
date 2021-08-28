@@ -1,5 +1,5 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { PaginatedResponse } from 'common/interfaces/pagination';
+import { PaginatedResponse } from 'modules/pagination/pagination.interfaces';
 import { ApartmentDocument } from './apartment.schema';
 import { ApartmentService } from './apartment.service';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';

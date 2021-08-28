@@ -4,8 +4,8 @@ import { Model } from 'mongoose';
 import {
   PaginatedResponse,
   PaginationParams,
-} from 'common/interfaces/pagination';
-import { getSkip } from 'common/utils';
+} from 'modules/pagination/pagination.interfaces';
+import { getSkip } from 'modules/pagination/pagination.utils';
 import { Apartment, ApartmentDocument } from './apartment.schema';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
 
