@@ -119,7 +119,7 @@ export class CetiriZidaProvider implements Provider {
     };
 
     const municipalityKey = apartmentInfo?.placeNames.find(placeName =>
-      Object.keys(municipalities).includes(placeName),
+      Object.hasOwnProperty.call(municipalities, placeName),
     );
     return municipalities[municipalityKey];
   };
