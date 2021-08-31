@@ -1,5 +1,11 @@
+import { HttpStatus } from '@nestjs/common';
+import axios from 'axios';
+import { DEFAULT_TIMEOUT, ECONNABORTED } from 'common/constants';
 import { RentOrSale } from 'modules/filter/filter.enums';
+import { apartmentActivityBaseUrlForCetiriZida } from '../apartment.constants';
 import { CetiriZidaProvider } from './cetiri-zida';
+
+jest.mock('axios');
 
 describe('CetiriZida', () => {
   describe('createRequestConfig', () => {
@@ -102,6 +108,96 @@ describe('CetiriZida', () => {
       const hasNextPage = provider.hasNextPage(data, pageNumber);
 
       expect(hasNextPage).toEqual(false);
+    });
+  });
+
+  describe('isApartmentInactive', () => {
+    it('should return undefined for invalid id', async () => {
+      const provider = new CetiriZidaProvider();
+      // @ts-ignore
+      axios.get.mockRejectedValue('not valid');
+
+      const isApartmentInactive = await provider.isApartmentInactive('id');
+
+      expect(isApartmentInactive).toEqual(undefined);
+    });
+
+    it('should return true when apartment is not found', async () => {
+      const provider = new CetiriZidaProvider();
+      // @ts-ignore
+      axios.get.mockRejectedValue({
+        response: {
+          status: HttpStatus.NOT_FOUND,
+        },
+      });
+
+      const isApartmentInactive = await provider.isApartmentInactive(
+        'cetiriZida_id',
+      );
+
+      expect(isApartmentInactive).toEqual(true);
+      expect(axios.get).toHaveBeenCalledWith(
+        `${apartmentActivityBaseUrlForCetiriZida}/id`,
+        {
+          timeout: DEFAULT_TIMEOUT,
+        },
+      );
+    });
+
+    it('should return undefined when connection is aborted', async () => {
+      const provider = new CetiriZidaProvider();
+      // @ts-ignore
+      axios.get.mockRejectedValue({
+        code: ECONNABORTED,
+      });
+
+      const isApartmentInactive = await provider.isApartmentInactive(
+        'cetiriZida_id',
+      );
+
+      expect(isApartmentInactive).toEqual(undefined);
+      expect(axios.get).toHaveBeenCalledWith(
+        `${apartmentActivityBaseUrlForCetiriZida}/id`,
+        {
+          timeout: DEFAULT_TIMEOUT,
+        },
+      );
+    });
+
+    it('should return undefined when connection is aborted', async () => {
+      const provider = new CetiriZidaProvider();
+      // @ts-ignore
+      axios.get.mockRejectedValue(new Error('error'));
+
+      const isApartmentInactive = await provider.isApartmentInactive(
+        'cetiriZida_id',
+      );
+
+      expect(isApartmentInactive).toEqual(undefined);
+      expect(axios.get).toHaveBeenCalledWith(
+        `${apartmentActivityBaseUrlForCetiriZida}/id`,
+        {
+          timeout: DEFAULT_TIMEOUT,
+        },
+      );
+    });
+
+    it('should return undefined when apartment is active', async () => {
+      const provider = new CetiriZidaProvider();
+      // @ts-ignore
+      axios.get.mockResolvedValue(undefined);
+
+      const isApartmentInactive = await provider.isApartmentInactive(
+        'cetiriZida_id',
+      );
+
+      expect(isApartmentInactive).toEqual(undefined);
+      expect(axios.get).toHaveBeenCalledWith(
+        `${apartmentActivityBaseUrlForCetiriZida}/id`,
+        {
+          timeout: DEFAULT_TIMEOUT,
+        },
+      );
     });
   });
 });

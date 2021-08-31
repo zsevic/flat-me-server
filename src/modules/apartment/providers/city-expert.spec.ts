@@ -1,5 +1,15 @@
+import { HttpStatus } from '@nestjs/common';
+import axios from 'axios';
+import { DEFAULT_TIMEOUT, ECONNABORTED } from 'common/constants';
 import { RentOrSale } from 'modules/filter/filter.enums';
+import {
+  apartmentActivityBaseUrlForCityExpert,
+  apartmentStatusFinished,
+  apartmentStatusNotAvailable,
+} from '../apartment.constants';
 import { CityExpertProvider } from './city-expert';
+
+jest.mock('axios');
 
 describe('CityExpert', () => {
   describe('createRequestConfig', () => {
@@ -191,6 +201,141 @@ describe('CityExpert', () => {
       const hasNextPage = provider.hasNextPage(data);
 
       expect(hasNextPage).toEqual(false);
+    });
+  });
+
+  describe('isApartmentInactive', () => {
+    it('should return undefined for invalid id', async () => {
+      const provider = new CityExpertProvider();
+      const isApartmentInactive = await provider.isApartmentInactive('id');
+
+      expect(isApartmentInactive).toEqual(undefined);
+    });
+
+    it('should return true for inactive apartment', async () => {
+      const provider = new CityExpertProvider();
+      // @ts-ignore
+      axios.get.mockResolvedValue({
+        data: {
+          status: apartmentStatusFinished,
+        },
+      });
+
+      const isApartmentInactive = await provider.isApartmentInactive(
+        'cityExpert_3546-BR',
+      );
+
+      expect(isApartmentInactive).toEqual(true);
+      expect(axios.get).toHaveBeenCalledWith(
+        `${apartmentActivityBaseUrlForCityExpert}/3546/r`,
+        {
+          timeout: DEFAULT_TIMEOUT,
+        },
+      );
+    });
+
+    it('should return undefined when response status is not valid', async () => {
+      const provider = new CityExpertProvider();
+      // @ts-ignore
+      axios.get.mockResolvedValue({
+        data: {
+          status: 'status',
+        },
+      });
+
+      const isApartmentInactive = await provider.isApartmentInactive(
+        'cityExpert_3546-BR',
+      );
+
+      expect(isApartmentInactive).toEqual(undefined);
+      expect(axios.get).toHaveBeenCalledWith(
+        `${apartmentActivityBaseUrlForCityExpert}/3546/r`,
+        {
+          timeout: DEFAULT_TIMEOUT,
+        },
+      );
+    });
+
+    it('should return undefined when error is thrown', async () => {
+      const provider = new CityExpertProvider();
+      // @ts-ignore
+      axios.get.mockRejectedValue(new Error('test'));
+
+      const isApartmentInactive = await provider.isApartmentInactive(
+        'cityExpert_3546-BZ',
+      );
+
+      expect(isApartmentInactive).toEqual(undefined);
+      expect(axios.get).toHaveBeenCalledWith(
+        `${apartmentActivityBaseUrlForCityExpert}/3546/r`,
+        {
+          timeout: DEFAULT_TIMEOUT,
+        },
+      );
+    });
+
+    it('should return true for inactive apartment', async () => {
+      const provider = new CityExpertProvider();
+      // @ts-ignore
+      axios.get.mockResolvedValue({
+        data: {
+          status: apartmentStatusNotAvailable,
+        },
+      });
+
+      const isApartmentInactive = await provider.isApartmentInactive(
+        'cityExpert_3546-BR',
+      );
+
+      expect(isApartmentInactive).toEqual(true);
+      expect(axios.get).toHaveBeenCalledWith(
+        `${apartmentActivityBaseUrlForCityExpert}/3546/r`,
+        {
+          timeout: DEFAULT_TIMEOUT,
+        },
+      );
+    });
+
+    it('should return true for inactive apartment', async () => {
+      const provider = new CityExpertProvider();
+      // @ts-ignore
+      axios.get.mockRejectedValue({
+        response: {
+          status: HttpStatus.NOT_FOUND,
+        },
+      });
+
+      const isApartmentInactive = await provider.isApartmentInactive(
+        'cityExpert_3546-BR',
+      );
+
+      expect(isApartmentInactive).toEqual(true);
+      expect(axios.get).toHaveBeenCalledWith(
+        `${apartmentActivityBaseUrlForCityExpert}/3546/r`,
+        {
+          timeout: DEFAULT_TIMEOUT,
+        },
+      );
+    });
+
+    it('should return undefined when request connection is aborted', async () => {
+      const provider = new CityExpertProvider();
+      // @ts-ignore
+      axios.get.mockRejectedValue({
+        code: ECONNABORTED,
+      });
+
+      const isApartmentInactive = await provider.isApartmentInactive(
+        'cityExpert_3546-BR',
+      );
+
+      expect(isApartmentInactive).toEqual(undefined);
+      expect(axios.get).toHaveBeenCalledWith(
+        `${apartmentActivityBaseUrlForCityExpert}/3546/r`,
+        {
+          timeout: DEFAULT_TIMEOUT,
+        },
+      );
     });
   });
 });
