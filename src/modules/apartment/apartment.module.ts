@@ -9,16 +9,10 @@ import { BaseProvider } from './providers';
 
 @Module({
   imports: [
-    MongooseModule.forFeatureAsync([
+    MongooseModule.forFeature([
       {
         name: Apartment.name,
-        useFactory: () => {
-          const schema = ApartmentSchema;
-          schema.post('save', function(next) {
-            return next();
-          });
-          return schema;
-        },
+        schema: ApartmentSchema,
       },
     ]),
     UserModule,
