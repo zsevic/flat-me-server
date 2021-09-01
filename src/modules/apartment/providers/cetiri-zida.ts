@@ -91,10 +91,7 @@ export class CetiriZidaProvider implements Provider {
         },
       );
     } catch (error) {
-      if (error.response?.status === HttpStatus.NOT_FOUND) {
-        this.logger.log(`Deleting apartment: ${id} for ${this.providerName}`);
-        return true;
-      }
+      if (error.response?.status === HttpStatus.NOT_FOUND) return true;
       if (error.code === ECONNABORTED) {
         this.logger.error(
           `Connection aborted for apartment id ${id}, provider ${this.providerName}`,

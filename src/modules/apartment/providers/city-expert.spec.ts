@@ -338,4 +338,69 @@ describe('CityExpert', () => {
       );
     });
   });
+
+  describe('parseApartmentInfo', () => {
+    it('should return parsed apartment info', () => {
+      const apartmentInfo = {
+        uniqueID: '123-BS',
+        propId: 123,
+        statusId: 51,
+        cityId: 1,
+        location: '44.79498, 20.47002',
+        street: 'Internacionalnih brigada',
+        floor: 'VPR',
+        size: 37,
+        structure: '1.5',
+        municipality: 'Vračar',
+        polygons: ['Vračar'],
+        ptId: 1,
+        price: 450,
+        coverPhoto: 'cover.jpg',
+        rentOrSale: 's',
+        caseId: 56305,
+        caseType: 'BS',
+        underConstruction: false,
+        filed: 2,
+        furnished: 2,
+        ceiling: 2,
+        furnishingArray: [],
+        bldgOptsArray: [],
+        heatingArray: [21],
+        parkingArray: [5],
+        yearOfConstruction: 1,
+        joineryArray: [2],
+        petsArray: [],
+        otherArray: [],
+        availableFrom: '0001-01-01T00:00:00Z',
+        firstPublished: '2021-06-28T17:20:08Z',
+        pricePerSize: 12.16,
+      };
+      const parsedApartmentInfo = {
+        price: 450,
+        _id: 'cityExpert_123-BS',
+        apartmentId: 123,
+        providerName: 'cityExpert',
+        address: 'Internacionalnih Brigada',
+        availableFrom: '0001-01-01T00:00:00Z',
+        coverPhotoUrl:
+          'https://img.cityexpert.rs/sites/default/files/styles/1920x/public/image/cover.jpg',
+        floor: 'high ground floor',
+        furnished: 'semi-furnished',
+        heatingTypes: ['underfloor'],
+        location: { latitude: '44.79498', longitude: '20.47002' },
+        municipality: 'Vračar',
+        place: 'Vračar',
+        rentOrSale: 'sale',
+        size: 37,
+        structure: 1.5,
+        url:
+          'https://cityexpert.rs/prodaja/stan/123/jednoiposoban-internacionalnih-brigada-vračar',
+      };
+      const provider = new CityExpertProvider();
+
+      const result = provider.parseApartmentInfo(apartmentInfo);
+
+      expect(result).toEqual(parsedApartmentInfo);
+    });
+  });
 });

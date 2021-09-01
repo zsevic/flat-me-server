@@ -103,6 +103,35 @@ export class CityExpertProvider implements Provider {
 
   getResults = data => data?.result;
 
+  private getValueForUrl = string =>
+    string
+      .split(' ')
+      .join('-')
+      .toLowerCase();
+
+  private getUrlFromApartmentInfo = apartmentInfo => {
+    const rentOrSale = {
+      r: 'izdavanje',
+      s: 'prodaja',
+    };
+    const structures = {
+      '0.5': 'garsonjera',
+      '1.0': 'jednosoban',
+      1.5: 'jednoiposoban',
+      '2.0': 'dvosoban',
+      2.5: 'dvoiposoban',
+      '3.0': 'trosoban',
+    };
+
+    return `https://cityexpert.rs/${
+      rentOrSale[apartmentInfo.rentOrSale]
+    }/stan/${apartmentInfo.propId}/${
+      structures[apartmentInfo.structure]
+    }-${this.getValueForUrl(apartmentInfo.street)}-${this.getValueForUrl(
+      apartmentInfo.municipality,
+    )}`;
+  };
+
   hasNextPage = (data): boolean => data.info.hasNextPage;
 
   async isApartmentInactive(id: string): Promise<boolean> {
@@ -120,18 +149,10 @@ export class CityExpertProvider implements Provider {
           response.data.status,
         )
       ) {
-        this.logger.log(
-          `Deleting apartment: ${id} for provider ${this.providerName}, status: ${response.data.status}`,
-        );
         return true;
       }
     } catch (error) {
-      if (error.response?.status === HttpStatus.NOT_FOUND) {
-        this.logger.log(
-          `Deleting apartment: ${id} for ${this.providerName}, status: NOT_FOUND`,
-        );
-        return true;
-      }
+      if (error.response?.status === HttpStatus.NOT_FOUND) return true;
       if (error.code === ECONNABORTED) {
         this.logger.error(
           `Connection aborted for apartment id ${id}, provider ${this.providerName}`,
@@ -167,21 +188,9 @@ export class CityExpertProvider implements Provider {
       26: 'thermal pump',
       99: 'central',
     };
-    const rentOrSale = {
-      r: 'izdavanje',
-      s: 'prodaja',
-    };
     const rentOrSaleField = {
       r: 'rent',
       s: 'sale',
-    };
-    const structures = {
-      '0.5': 'garsonjera',
-      '1.0': 'jednosoban',
-      1.5: 'jednoiposoban',
-      '2.0': 'dvosoban',
-      2.5: 'dvoiposoban',
-      '3.0': 'trosoban',
     };
 
     const { structure } = apartmentInfo;
@@ -215,17 +224,7 @@ export class CityExpertProvider implements Provider {
       rentOrSale: rentOrSaleField[apartmentInfo.rentOrSale],
       size: apartmentInfo.size,
       structure: Number(structure),
-      url: `https://cityexpert.rs/${
-        rentOrSale[apartmentInfo.rentOrSale]
-      }/stan/${apartmentInfo.propId}/${
-        structures[structure]
-      }-${apartmentInfo.street
-        .split(' ')
-        .join('-')
-        .toLowerCase()}-${apartmentInfo.municipality
-        .split(' ')
-        .join('-')
-        .toLowerCase()}`,
+      url: this.getUrlFromApartmentInfo(apartmentInfo),
     };
   };
 }

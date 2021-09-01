@@ -200,4 +200,64 @@ describe('CetiriZida', () => {
       );
     });
   });
+
+  describe('parseApartmentInfo', () => {
+    it('should return parsed apartment info', () => {
+      const apartmentInfo = {
+        m2: 69,
+        floor: -3,
+        totalFloors: 3,
+        furnished: 'yes',
+        heatingType: 'thermalPump',
+        id: 'id',
+        for: 'rent',
+        price: 420,
+        previousPrice: 300,
+        bookmarkCount: 3,
+        registered: 'yes',
+        address: 'Dalmatinska',
+        allowedVirtualSightseeing: false,
+        featuredExpiresAt: '2021-08-25T19:01:41+02:00',
+        featuredCounter: 5,
+        authorId: 57,
+        createdAt: '2021-05-10T16:07:58+02:00',
+        roomCount: 3,
+        description100: 'description',
+        type: 'apartment',
+        structureName: 'Trosoban stan',
+        structureAbbreviation: '3.0 stan',
+        title: 'Dalmatinska',
+        urlPath: '/url',
+        placeNames: ['Zvezdara opština'],
+        agencyAvatarUrlTemplate: 'url',
+        agencyUrl: 'url',
+        image: { search: { '380x0_fill_0_webp': 'cover-photo-url' } },
+        imageCount: 15,
+      };
+      const parsedApartmentInfo = {
+        price: 420,
+        _id: 'cetiriZida_id',
+        apartmentId: 'id',
+        providerName: 'cetiriZida',
+        address: 'Dalmatinska',
+        coverPhotoUrl: 'cover-photo-url',
+        floor: 'basement',
+        furnished: 'furnished',
+        heatingTypes: ['thermal pump'],
+        municipality: 'Zvezdara',
+        place: 'Zvezdara opština',
+        postedAt: '2021-05-10T16:07:58+02:00',
+        rentOrSale: 'rent',
+        size: 69,
+        structure: 3,
+        url: 'https://4zida.rs/url',
+      };
+
+      const provider = new CetiriZidaProvider();
+
+      const result = provider.parseApartmentInfo(apartmentInfo);
+
+      expect(result).toEqual(parsedApartmentInfo);
+    });
+  });
 });

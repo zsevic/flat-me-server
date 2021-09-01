@@ -71,6 +71,7 @@ export class TasksService {
     );
     if (!isApartmentInactive) return;
 
+    this.logger.log(`Deleting apartment: ${apartmentId}`);
     return this.apartmentService.deleteApartment(apartmentId);
   }
 
