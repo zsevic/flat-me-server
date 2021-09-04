@@ -133,9 +133,14 @@ export class ApartmentService {
   }
 
   async isApartmentInactive(id: string): Promise<boolean> {
-    const [providerName] = id.split('_');
-    const provider = this.baseProvider.createProvider(providerName);
-    return provider.isApartmentInactive(id);
+    try {
+      const [providerName] = id.split('_');
+      const provider = this.baseProvider.createProvider(providerName);
+      return provider.isApartmentInactive(id);
+    } catch (error) {
+      this.logger.error(error);
+      return false;
+    }
   }
 
   async saveApartmentListFromProviders(filter: FilterDto) {

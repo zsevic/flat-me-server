@@ -19,6 +19,10 @@ const apartmentRepository = {
 const cetiriZidaProvider = new CetiriZidaProvider();
 
 const baseProvider = {
+  providers: {
+    cetiriZida: CetiriZidaProvider,
+    cityExpert: CityExpertProvider,
+  },
   createProvider: jest.fn(),
   getProviderRequest: jest.fn(),
   getProviderRequests: jest.fn(),
@@ -123,7 +127,7 @@ describe('ApartmentService', () => {
   });
 
   describe('isApartmentInactive', () => {
-    it('should skip deleting inactive apartment', async () => {
+    it('should skip deleting apartment when apartment is active', async () => {
       const apartmentId = '1234';
       const providerName = 'cetiriZida';
       const id = `${providerName}_${apartmentId}`;
@@ -133,6 +137,22 @@ describe('ApartmentService', () => {
       jest
         .spyOn(cetiriZidaProvider, 'isApartmentInactive')
         .mockResolvedValue(false);
+
+      const isApartmentInactive = await apartmentService.isApartmentInactive(
+        id,
+      );
+
+      expect(isApartmentInactive).toEqual(false);
+      expect(baseProvider.createProvider).toHaveBeenCalledWith(providerName);
+    });
+
+    it('should skip deleting inactive apartment when provider name is not valid', async () => {
+      const apartmentId = '1234';
+      const providerName = 'testProvider';
+      const id = `${providerName}_${apartmentId}`;
+      jest
+        .spyOn(baseProvider, 'createProvider')
+        .mockImplementation(new BaseProvider().createProvider);
 
       const isApartmentInactive = await apartmentService.isApartmentInactive(
         id,
