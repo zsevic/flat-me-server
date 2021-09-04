@@ -7,10 +7,12 @@ import {
 import { ConfigService, ConfigModule } from '@nestjs/config';
 import { InjectConnection, MongooseModule } from '@nestjs/mongoose';
 import { ScheduleModule, SchedulerRegistry } from '@nestjs/schedule';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import * as Joi from 'joi';
 import { Connection } from 'mongoose';
 import { Subject } from 'rxjs';
 import databaseConfig from 'common/config/database';
+import { MongoDBConfigService } from 'common/config/mongodb-config.service';
 import { isEnvironment } from 'common/utils';
 import { ApartmentModule } from 'modules/apartment/apartment.module';
 import { FilterModule } from 'modules/filter/filter.module';
@@ -38,6 +40,10 @@ import { AppController } from './app.controller';
         }),
       }),
     }),
+    TypeOrmModule.forRootAsync({
+      useClass: MongoDBConfigService,
+      inject: [MongoDBConfigService],
+    }),
     MongooseModule.forRootAsync({
       imports: [
         ConfigModule.forRoot({
@@ -62,6 +68,7 @@ import { AppController } from './app.controller';
       provide: 'configService',
       useFactory: () => new ConfigService(),
     },
+    MongoDBConfigService,
   ],
 })
 @Injectable()
