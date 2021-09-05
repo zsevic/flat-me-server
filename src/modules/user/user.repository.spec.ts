@@ -1,13 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
-import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoRepository } from 'typeorm';
 import { UserRepository } from './user.repository';
-
-const userModel = {
-  findById: jest.fn(),
-  select: jest.fn(),
-};
 
 describe('UserRepository', () => {
   let userRepository: UserRepository;
