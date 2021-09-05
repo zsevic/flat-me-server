@@ -33,6 +33,15 @@ export class TokenService {
     return this.tokenRepository.deleteToken(id);
   }
 
+  public async deleteTokenByFilterId(filterId: string): Promise<void> {
+    const validToken = await this.tokenRepository.getUnexpiredTokenByFilterId(
+      filterId,
+    );
+    if (!validToken) return;
+
+    return this.deleteToken(validToken._id);
+  }
+
   private generateToken = async (): Promise<string> => {
     return (await randomBytesAsync(TOKEN_LENGTH))
       .toString('base64')
@@ -48,14 +57,5 @@ export class TokenService {
 
   public async getValidToken(token: string): Promise<Token> {
     return this.tokenRepository.getUnexpiredToken(token);
-  }
-
-  public async deleteTokenByFilterId(filterId: string): Promise<void> {
-    const validToken = await this.tokenRepository.getUnexpiredTokenByFilterId(
-      filterId,
-    );
-    if (!validToken) return;
-
-    return this.deleteToken(validToken._id);
   }
 }
