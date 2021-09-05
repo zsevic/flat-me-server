@@ -73,7 +73,7 @@ export class UserService {
     return this.userRepository.saveUser(email);
   }
 
-  async verifyUser(id: string): Promise<User> {
+  async verifyUser(id: string): Promise<void> {
     const user = await this.userRepository.getById(id);
     if (!user) throw new BadRequestException('User is not found');
 
