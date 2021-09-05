@@ -1,31 +1,19 @@
-import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { defaultPaginationParams } from 'modules/pagination/pagination.constants';
+import {
+  defaultPaginationParams,
+  DEFAULT_LIMIT_PER_PAGE,
+} from 'modules/pagination/pagination.constants';
 import { getSkip } from 'modules/pagination/pagination.utils';
+import { MongoRepository } from 'typeorm';
 import { ApartmentRepository } from './apartment.repository';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
-
-const apartmentModel = {
-  countDocuments: jest.fn(),
-  exec: jest.fn(),
-  find: jest.fn(),
-  limit: jest.fn(),
-  select: jest.fn(),
-  skip: jest.fn(),
-};
 
 describe('ApartmentRepository', () => {
   let apartmentRepository: ApartmentRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        ApartmentRepository,
-        {
-          provide: getModelToken('Apartment'),
-          useValue: apartmentModel,
-        },
-      ],
+      providers: [ApartmentRepository],
     }).compile();
 
     apartmentRepository = module.get<ApartmentRepository>(ApartmentRepository);
@@ -46,16 +34,9 @@ describe('ApartmentRepository', () => {
         },
       ];
       const apartmentsIds = ['id1', 'id2'];
-      jest.spyOn(apartmentModel, 'find').mockReturnThis();
-      jest.spyOn(apartmentModel, 'select').mockReturnThis();
-      jest.spyOn(apartmentModel, 'limit').mockReturnThis();
-      jest.spyOn(apartmentModel, 'skip').mockReturnThis();
-      jest
-        .spyOn(apartmentModel, 'exec')
-        .mockResolvedValueOnce(apartmentList)
-        .mockResolvedValueOnce(apartmentList.length);
-
-      jest.spyOn(apartmentModel, 'countDocuments').mockReturnThis();
+      const findAndCountSpy = jest
+        .spyOn(MongoRepository.prototype, 'findAndCount')
+        .mockResolvedValue([apartmentList, apartmentList.length]);
 
       const response = await apartmentRepository.getApartmentsIds(
         defaultPaginationParams,
@@ -65,15 +46,11 @@ describe('ApartmentRepository', () => {
         data: apartmentsIds,
         total: apartmentsIds.length,
       });
-      expect(apartmentModel.find).toHaveBeenCalled();
-      expect(apartmentModel.select).toHaveBeenCalledWith('_id');
-      expect(apartmentModel.limit).toHaveBeenCalledWith(
-        defaultPaginationParams.limitPerPage,
-      );
-      expect(apartmentModel.skip).toHaveBeenCalledWith(
-        getSkip(defaultPaginationParams),
-      );
-      expect(apartmentModel.exec).toHaveBeenCalledTimes(2);
+      expect(findAndCountSpy).toHaveBeenCalledWith({
+        select: ['_id'],
+        skip: getSkip(defaultPaginationParams),
+        take: defaultPaginationParams.limitPerPage,
+      });
     });
   });
 
@@ -126,25 +103,20 @@ describe('ApartmentRepository', () => {
           $in: filter.structures,
         },
       };
-      jest.spyOn(apartmentModel, 'find').mockReturnThis();
-      jest.spyOn(apartmentModel, 'skip').mockReturnThis();
-      jest.spyOn(apartmentModel, 'limit').mockReturnThis();
-      jest
-        .spyOn(apartmentModel, 'exec')
-        .mockResolvedValueOnce(apartmentList)
-        .mockResolvedValue(1);
-      jest.spyOn(apartmentModel, 'countDocuments').mockReturnThis();
+      const findAndCountSpy = jest
+        .spyOn(MongoRepository.prototype, 'findAndCount')
+        .mockResolvedValue([apartmentList, 1]);
 
       const result = await apartmentRepository.getApartmentList(
         filter as ApartmentListParamsDto,
       );
 
       expect(result).toEqual({ total: 1, data: apartmentList });
-      expect(apartmentModel.find).toHaveBeenCalledWith(query);
-      expect(apartmentModel.limit).toHaveBeenCalledWith(10);
-      expect(apartmentModel.skip).toHaveBeenCalledWith(0);
-      expect(apartmentModel.countDocuments).toHaveBeenCalledWith(query);
-      expect(apartmentModel.exec).toHaveBeenCalledTimes(2);
+      expect(findAndCountSpy).toHaveBeenCalledWith({
+        where: query,
+        skip: getSkip(defaultPaginationParams),
+        take: DEFAULT_LIMIT_PER_PAGE,
+      });
     });
 
     it('should return new apartments', async () => {
@@ -203,14 +175,9 @@ describe('ApartmentRepository', () => {
           $in: filter.structures,
         },
       };
-      jest.spyOn(apartmentModel, 'find').mockReturnThis();
-      jest.spyOn(apartmentModel, 'skip').mockReturnThis();
-      jest.spyOn(apartmentModel, 'limit').mockReturnThis();
-      jest
-        .spyOn(apartmentModel, 'exec')
-        .mockResolvedValueOnce(apartmentList)
-        .mockResolvedValue(1);
-      jest.spyOn(apartmentModel, 'countDocuments').mockReturnThis();
+      const findAndCountSpy = jest
+        .spyOn(MongoRepository.prototype, 'findAndCount')
+        .mockResolvedValue([apartmentList, 1]);
 
       const result = await apartmentRepository.getApartmentList(
         filter as ApartmentListParamsDto,
@@ -219,11 +186,11 @@ describe('ApartmentRepository', () => {
       );
 
       expect(result).toEqual({ total: 1, data: apartmentList });
-      expect(apartmentModel.find).toHaveBeenCalledWith(query);
-      expect(apartmentModel.limit).toHaveBeenCalledWith(10);
-      expect(apartmentModel.skip).toHaveBeenCalledWith(0);
-      expect(apartmentModel.countDocuments).toHaveBeenCalledWith(query);
-      expect(apartmentModel.exec).toHaveBeenCalledTimes(2);
+      expect(findAndCountSpy).toHaveBeenCalledWith({
+        where: query,
+        skip: getSkip(defaultPaginationParams),
+        take: DEFAULT_LIMIT_PER_PAGE,
+      });
     });
   });
 });
