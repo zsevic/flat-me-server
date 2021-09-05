@@ -27,7 +27,7 @@ export class FilterService {
   ): Promise<void> {
     const { email, ...filter } = saveFilterDto;
 
-    const user = await this.userService.getVerifiedOrCreateNewUser(email);
+    const user = await this.userService.getVerifiedUserOrCreateNewUser(email);
 
     const newFilter: Filter = {
       ...filter,
@@ -89,10 +89,12 @@ export class FilterService {
     const {
       filter: filterId,
       user: userId,
+      _id: tokenId,
     } = await this.tokenService.getValidToken(token);
 
     await this.verifyAndActivateFilter(filterId);
     await this.userService.verifyUser(userId);
+    await this.tokenService.deleteToken(tokenId);
   }
 
   private async verifyAndActivateFilter(id: string): Promise<void> {

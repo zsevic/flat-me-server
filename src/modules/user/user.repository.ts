@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { EntityRepository, MongoRepository } from 'typeorm';
+import { Subscription } from './subscription.enum';
 import { UserEntity } from './user.entity';
 import { User } from './user.interface';
 
@@ -56,8 +57,16 @@ export class UserRepository extends MongoRepository<UserEntity> {
     });
   }
 
-  async saveUser(email: string): Promise<User> {
-    return this.save({ email, filters: [] });
+  async saveUser(
+    email: string,
+    subscription = Subscription.FREE,
+  ): Promise<User> {
+    return this.save({
+      email,
+      subscription,
+      filters: [],
+      receivedApartments: [],
+    });
   }
 
   async verifyUser(user: User): Promise<void> {

@@ -87,7 +87,7 @@ export class FilterRepository extends MongoRepository<FilterEntity> {
 
     return {
       data: response.data,
-      total: 0,
+      total: response.total.length === 0 ? 0 : response.total[0].count,
     };
   }
 

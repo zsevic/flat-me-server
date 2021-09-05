@@ -18,7 +18,6 @@ export class UserEntity {
   isVerified: boolean;
 
   @Column({
-    enum: Subscription,
     default: Subscription.FREE,
   })
   subscription: string;
