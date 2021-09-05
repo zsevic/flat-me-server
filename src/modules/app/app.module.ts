@@ -41,6 +41,11 @@ import { AppController } from './app.controller';
       }),
     }),
     TypeOrmModule.forRootAsync({
+      imports: [
+        ConfigModule.forRoot({
+          load: [databaseConfig],
+        }),
+      ],
       useClass: MongoDBConfigService,
       inject: [MongoDBConfigService],
     }),

@@ -8,8 +8,8 @@ import { TokenService } from 'modules/token/token.service';
 import { UserService } from 'modules/user/user.service';
 import { FilterDto } from './dto/filter.dto';
 import { SaveFilterDto } from './dto/save-filter.dto';
+import { Filter } from './filter.interface';
 import { FilterRepository } from './filter.repository';
-import { Filter, FilterDocument } from './filter.schema';
 
 @Injectable()
 export class FilterService {
@@ -47,7 +47,7 @@ export class FilterService {
     const validToken = await this.tokenService.getValidToken(token);
 
     await this.deactivateFilter(validToken.filter);
-    await this.tokenService.deleteToken(validToken);
+    await this.tokenService.deleteToken(validToken._id);
   }
 
   private async deactivateFilter(filterId: string): Promise<void> {
@@ -68,15 +68,15 @@ export class FilterService {
     return `${process.env.CLIENT_URL}/filters/deactivation/${deactivationToken.value}`;
   }
 
-  async getFilterListBySubscriptionName(
-    subscriptionName: string,
-    paginationParams: PaginationParams,
-  ): Promise<PaginatedResponse<FilterDocument>> {
-    return this.filterRepository.getFilterListBySubscriptionName(
-      subscriptionName,
-      paginationParams,
-    );
-  }
+  // async getFilterListBySubscriptionName(
+  //   subscriptionName: string,
+  //   paginationParams: PaginationParams,
+  // ): Promise<PaginatedResponse<Filter>> {
+  //   return this.filterRepository.getFilterListBySubscriptionName(
+  //     subscriptionName,
+  //     paginationParams,
+  //   );
+  // }
 
   getInitialFilter = (filter: FilterDto): FilterDto => ({
     ...filter,

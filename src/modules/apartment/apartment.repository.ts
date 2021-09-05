@@ -1,30 +1,27 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { EntityRepository, Repository } from 'typeorm';
 import {
   PaginatedResponse,
   PaginationParams,
 } from 'modules/pagination/pagination.interfaces';
 import { getSkip } from 'modules/pagination/pagination.utils';
-import { Apartment, ApartmentDocument } from './apartment.schema';
+import { ApartmentEntity } from './apartment.entity';
+import { Apartment } from './apartment.interface';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class ApartmentRepository {
-  constructor(
-    @InjectModel(Apartment.name)
-    private apartmentModel: Model<ApartmentDocument>,
-  ) {}
-
+@EntityRepository(ApartmentEntity)
+export class ApartmentRepository extends Repository<ApartmentEntity> {
   async deleteApartment(id: string): Promise<void> {
-    await this.apartmentModel.findByIdAndDelete(id);
+    await this.delete({ _id: id });
   }
 
   async getApartmentList(
     filter: ApartmentListParamsDto,
     skippedApartments?: string[],
     dateFilter?: Date,
-  ): Promise<PaginatedResponse<ApartmentDocument>> {
+  ): Promise<PaginatedResponse<Apartment>> {
+    console.log(this);
     const { limitPerPage = 10, pageNumber = 1 } = filter;
     const query = {
       ...(skippedApartments &&
@@ -55,14 +52,11 @@ export class ApartmentRepository {
       },
     };
 
-    const data = await this.apartmentModel
-      // @ts-ignore
-      .find(query)
-      .skip(getSkip({ pageNumber, limitPerPage }))
-      .limit(limitPerPage)
-      .exec();
-    // @ts-ignore
-    const total = await this.apartmentModel.countDocuments(query).exec();
+    const [data, total] = await this.findAndCount({
+      where: query,
+      skip: getSkip({ pageNumber, limitPerPage }),
+      take: limitPerPage,
+    });
 
     return {
       data,
@@ -73,19 +67,16 @@ export class ApartmentRepository {
   async getApartmentsIds(
     paginationParams: PaginationParams,
   ): Promise<PaginatedResponse<string>> {
-    const apartmentList = await this.apartmentModel
-      .find()
-      .select('_id')
-      .skip(getSkip(paginationParams))
-      .limit(paginationParams.limitPerPage)
-      .exec();
-
-    const total = await this.apartmentModel.countDocuments().exec();
+    const [apartmentList, total] = await this.findAndCount({
+      select: ['_id'],
+      skip: getSkip(paginationParams),
+      take: paginationParams.limitPerPage,
+    });
 
     return { data: apartmentList.map(apartment => apartment._id), total };
   }
 
   async saveApartmentList(apartments: Apartment[]): Promise<Apartment[]> {
-    return this.apartmentModel.create(apartments);
+    return this.save(apartments);
   }
 }

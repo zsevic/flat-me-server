@@ -1,4 +1,6 @@
 export interface Token {
+  _id?: string;
+
   expiresAt: Date;
 
   value: string;

@@ -98,38 +98,38 @@ export class TasksService {
     this.logCronJobFinished(SAVING_APARTMENT_LIST_FROM_PROVIDERS_CRON_JOB);
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_1PM, {
-    name: SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB,
-    timeZone: 'Europe/Belgrade',
-  })
-  async handleSendingNewApartmentsForFreeSubscriptionUsers(): Promise<void> {
-    this.logCronJobStarted(SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB);
+  // @Cron(CronExpression.EVERY_DAY_AT_1PM, {
+  //   name: SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB,
+  //   timeZone: 'Europe/Belgrade',
+  // })
+  // async handleSendingNewApartmentsForFreeSubscriptionUsers(): Promise<void> {
+  //   this.logCronJobStarted(SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB);
 
-    try {
-      const limitPerPage = defaultPaginationParams.limitPerPage;
-      let pageNumber = defaultPaginationParams.pageNumber;
-      let filters;
-      let total;
+  //   try {
+  //     const limitPerPage = defaultPaginationParams.limitPerPage;
+  //     let pageNumber = defaultPaginationParams.pageNumber;
+  //     let filters;
+  //     let total;
 
-      do {
-        ({
-          data: filters,
-          total,
-        } = await this.filterService.getFilterListBySubscriptionName(
-          Subscription.FREE,
-          { limitPerPage, pageNumber },
-        ));
-        await Promise.all(
-          filters.map(filter => this.sendNewApartmentsByFilter(filter)),
-        );
-        pageNumber++;
-      } while (total >= getSkip({ limitPerPage, pageNumber }));
-    } catch (error) {
-      this.logger.error(error);
-    }
+  //     do {
+  //       ({
+  //         data: filters,
+  //         total,
+  //       } = await this.filterService.getFilterListBySubscriptionName(
+  //         Subscription.FREE,
+  //         { limitPerPage, pageNumber },
+  //       ));
+  //       await Promise.all(
+  //         filters.map(filter => this.sendNewApartmentsByFilter(filter)),
+  //       );
+  //       pageNumber++;
+  //     } while (total >= getSkip({ limitPerPage, pageNumber }));
+  //   } catch (error) {
+  //     this.logger.error(error);
+  //   }
 
-    this.logCronJobFinished(SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB);
-  }
+  //   this.logCronJobFinished(SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB);
+  // }
 
   private async sendNewApartmentsByFilter(
     filter: FilterDocument,

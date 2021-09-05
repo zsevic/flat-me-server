@@ -1,32 +1,34 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
-import { User, UserDocument } from './user.schema';
+import { BadRequestException } from '@nestjs/common';
+import { EntityRepository, Repository } from 'typeorm';
+import { UserEntity } from './user.entity';
+import { User } from './user.interface';
 
-@Injectable()
-export class UserRepository {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
-
+@EntityRepository(UserEntity)
+export class UserRepository extends Repository<UserEntity> {
   async addFilter(userId: string, filterId: string) {
-    return this.userModel.findByIdAndUpdate(userId, {
-      $push: {
-        filters: filterId,
-      },
-    });
+    const user = await this.findOne({ _id: userId });
+    if (!user) {
+      // TODO
+    }
+
+    user.filters.push(filterId);
+
+    return this.save(user);
   }
 
-  async getById(id: string): Promise<UserDocument> {
-    return this.userModel.findById(id);
+  async getById(id: string): Promise<User> {
+    return this.findOne({ _id: id });
   }
 
   async getByEmail(email: string): Promise<User> {
-    return this.userModel.findOne({ email });
+    return this.findOne({ email });
   }
 
   async getReceivedApartmentsIds(userId: string): Promise<string[]> {
-    const user = await this.userModel
-      .findById(userId)
-      .select('receivedApartments');
+    const user = await this.findOne({
+      where: { _id: userId },
+      select: ['receivedApartments'],
+    });
 
     if (!user) return [];
 
@@ -40,31 +42,26 @@ export class UserRepository {
     return user.email;
   }
 
-  async insertReceivedApartmentsIds(
-    userId: string,
-    apartmentsIds: Types._ObjectId[],
-  ) {
-    return this.userModel.findByIdAndUpdate(userId, {
-      $push: {
-        receivedApartments: { $each: apartmentsIds },
-      },
+  async insertReceivedApartmentsIds(userId: string, apartmentsIds: string[]) {
+    const user = await this.findOne({ _id: userId });
+    if (!user) {
+      // TODO
+    }
+
+    return this.save({
+      ...user,
+      receivedApartments: [...user.receivedApartments, ...apartmentsIds],
     });
   }
 
   async saveUser(email: string): Promise<User> {
-    const createdUser = new this.userModel({
-      _id: Types.ObjectId(),
-      email,
-    });
-
-    return createdUser.save();
+    return this.save({ email });
   }
 
-  async verifyUser(user: UserDocument): Promise<void> {
-    user.set({
+  async verifyUser(user: User): Promise<void> {
+    await this.save({
+      ...user,
       isVerified: true,
     });
-
-    await user.save();
   }
 }

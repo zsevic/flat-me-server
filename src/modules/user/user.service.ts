@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { ApartmentDocument } from 'modules/apartment/apartment.schema';
+import { Apartment } from 'modules/apartment/apartment.interface';
 import { Subscription } from './subscription.enum';
+import { User } from './user.interface';
 import { UserRepository } from './user.repository';
-import { User, UserDocument } from './user.schema';
 
 @Injectable()
 export class UserService {
@@ -52,10 +52,7 @@ export class UserService {
     return user;
   }
 
-  async insertReceivedApartmentsIds(
-    userId: string,
-    apartments: ApartmentDocument[],
-  ) {
+  async insertReceivedApartmentsIds(userId: string, apartments: Apartment[]) {
     const apartmentsIds = apartments.map(apartment => apartment._id);
 
     return this.userRepository.insertReceivedApartmentsIds(
@@ -72,13 +69,12 @@ export class UserService {
     return this.userRepository.saveUser(email);
   }
 
-  async verifyUser(id: string): Promise<UserDocument> {
+  async verifyUser(id: string): Promise<User> {
     const user = await this.userRepository.getById(id);
     if (!user) throw new BadRequestException('User is not found');
 
-    if (user.isVerified) return user;
+    if (user.isVerified) return;
 
     await this.userRepository.verifyUser(user);
-    return user;
   }
 }

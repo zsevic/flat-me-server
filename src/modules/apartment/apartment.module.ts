@@ -1,22 +1,13 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from 'modules/user/user.module';
 import { ApartmentController } from './apartment.controller';
 import { ApartmentRepository } from './apartment.repository';
-import { Apartment, ApartmentSchema } from './apartment.schema';
 import { ApartmentService } from './apartment.service';
 import { BaseProvider } from './providers';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([
-      {
-        name: Apartment.name,
-        schema: ApartmentSchema,
-      },
-    ]),
-    UserModule,
-  ],
+  imports: [TypeOrmModule.forFeature([ApartmentRepository]), UserModule],
   providers: [ApartmentRepository, ApartmentService, BaseProvider],
   controllers: [ApartmentController],
   exports: [ApartmentService],
