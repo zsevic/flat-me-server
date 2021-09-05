@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, MongoRepository } from 'typeorm';
 import {
   PaginatedResponse,
   PaginationParams,
@@ -11,7 +11,7 @@ import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
 
 @Injectable()
 @EntityRepository(ApartmentEntity)
-export class ApartmentRepository extends Repository<ApartmentEntity> {
+export class ApartmentRepository extends MongoRepository<ApartmentEntity> {
   async deleteApartment(id: string): Promise<void> {
     await this.delete({ _id: id });
   }

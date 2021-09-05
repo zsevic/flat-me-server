@@ -70,15 +70,15 @@ export class FilterService {
     return `${process.env.CLIENT_URL}/filters/deactivation/${deactivationToken.value}`;
   }
 
-  // async getFilterListBySubscriptionName(
-  //   subscriptionName: string,
-  //   paginationParams: PaginationParams,
-  // ): Promise<PaginatedResponse<Filter>> {
-  //   return this.filterRepository.getFilterListBySubscriptionName(
-  //     subscriptionName,
-  //     paginationParams,
-  //   );
-  // }
+  async getFilterListBySubscriptionName(
+    subscriptionName: string,
+    paginationParams: PaginationParams,
+  ): Promise<PaginatedResponse<Filter>> {
+    return this.filterRepository.getFilterListBySubscriptionName(
+      subscriptionName,
+      paginationParams,
+    );
+  }
 
   getInitialFilter = (filter: FilterDto): FilterDto => ({
     ...filter,
