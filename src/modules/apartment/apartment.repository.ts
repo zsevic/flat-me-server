@@ -1,4 +1,12 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import {
+  Between,
+  EntityRepository,
+  In,
+  MoreThan,
+  Not,
+  Repository,
+} from 'typeorm';
 import {
   PaginatedResponse,
   PaginationParams,
@@ -7,7 +15,6 @@ import { getSkip } from 'modules/pagination/pagination.utils';
 import { ApartmentEntity } from './apartment.entity';
 import { Apartment } from './apartment.interface';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
-import { Injectable } from '@nestjs/common';
 
 @Injectable()
 @EntityRepository(ApartmentEntity)
@@ -21,35 +28,21 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
     skippedApartments?: string[],
     dateFilter?: Date,
   ): Promise<PaginatedResponse<Apartment>> {
-    console.log(this);
     const { limitPerPage = 10, pageNumber = 1 } = filter;
     const query = {
       ...(skippedApartments &&
         Array.isArray(skippedApartments) &&
         skippedApartments.length > 0 && {
-          _id: {
-            $nin: skippedApartments,
-          },
+          _id: Not(In(skippedApartments)),
         }),
       ...(dateFilter && {
-        createdAt: {
-          $gte: dateFilter,
-        },
+        createdAt: MoreThan(dateFilter),
       }),
-      furnished: {
-        $in: filter.furnished,
-      },
-      municipality: {
-        $in: filter.municipalities,
-      },
-      price: {
-        $gte: filter.minPrice,
-        $lte: filter.maxPrice,
-      },
+      furnished: In(filter.furnished),
+      municipality: In(filter.municipalities),
+      price: Between(filter.minPrice, filter.maxPrice),
       rentOrSale: filter.rentOrSale,
-      structure: {
-        $in: filter.structures,
-      },
+      structure: In(filter.structures),
     };
 
     const [data, total] = await this.findAndCount({
