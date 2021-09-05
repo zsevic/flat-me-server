@@ -11,7 +11,7 @@ import { UserService } from './user.service';
     MailModule,
     TokenModule,
   ],
-  providers: [UserRepository, UserService],
+  providers: [UserService],
   exports: [UserService],
 })
 export class UserModule {}

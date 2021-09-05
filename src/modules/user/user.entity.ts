@@ -1,5 +1,4 @@
 import { FilterEntity } from 'modules/filter/filter.entity';
-import { TokenEntity } from 'modules/token/token.entity';
 import { Column, Entity, ObjectIdColumn, OneToMany } from 'typeorm';
 import { Subscription } from './subscription.enum';
 

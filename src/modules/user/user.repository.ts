@@ -1,8 +1,9 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { User } from './user.interface';
 
+@Injectable()
 @EntityRepository(UserEntity)
 export class UserRepository extends Repository<UserEntity> {
   async addFilter(userId: string, filterId: string) {

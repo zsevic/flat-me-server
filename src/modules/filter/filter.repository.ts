@@ -1,17 +1,16 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
 import {
   PaginatedResponse,
   PaginationParams,
 } from 'modules/pagination/pagination.interfaces';
 import { getSkip } from 'modules/pagination/pagination.utils';
-import { Filter, FilterDocument } from './filter.schema';
 import { EntityRepository, Repository } from 'typeorm';
 import { FilterEntity } from './filter.entity';
+import { Filter } from './filter.interface';
 
+@Injectable()
 @EntityRepository(FilterEntity)
-export class FilterRepository extends Repository<Filter> {
+export class FilterRepository extends Repository<FilterEntity> {
   async deactivateFilter(filter: Filter): Promise<void> {
     await this.save({
       ...filter,

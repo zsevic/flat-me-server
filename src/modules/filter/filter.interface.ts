@@ -1,5 +1,3 @@
-import { RentOrSale } from './filter.enums';
-
 export interface Filter {
   _id?: string;
 
@@ -15,7 +13,7 @@ export interface Filter {
 
   municipalities: string[];
 
-  rentOrSale: RentOrSale;
+  rentOrSale: string;
 
   structures: number[];
 

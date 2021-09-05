@@ -8,7 +8,7 @@ import { BaseProvider } from './providers';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ApartmentRepository]), UserModule],
-  providers: [ApartmentRepository, ApartmentService, BaseProvider],
+  providers: [ApartmentService, BaseProvider],
   controllers: [ApartmentController],
   exports: [ApartmentService],
 })

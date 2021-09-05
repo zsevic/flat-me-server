@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Apartment } from 'modules/apartment/apartment.interface';
 import { Subscription } from './subscription.enum';
 import { User } from './user.interface';
@@ -6,7 +7,10 @@ import { UserRepository } from './user.repository';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    @InjectRepository(UserRepository)
+    private readonly userRepository: UserRepository,
+  ) {}
 
   async getById(id: string): Promise<User> {
     return this.userRepository.getById(id);
