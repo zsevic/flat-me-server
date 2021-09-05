@@ -12,6 +12,7 @@ export class MongoDBConfigService implements TypeOrmOptionsFactory {
       type: 'mongodb',
       url: this.configService.get<string>('database.MONGODB_URL'),
       entities: [path.join(__dirname, '/../../../**/*.entity.{js,ts}')],
+      useUnifiedTopology: true,
     };
   }
 }
