@@ -11,7 +11,12 @@ import { Filter } from './filter.interface';
 @Injectable()
 @EntityRepository(FilterEntity)
 export class FilterRepository extends MongoRepository<FilterEntity> {
-  async deactivateFilter(filter: Filter): Promise<void> {
+  async deactivateFilter(filterId: string): Promise<void> {
+    const filter = await this.findOne({ _id: filterId });
+    if (!filter) {
+      throw new BadRequestException('Filter is not found');
+    }
+
     await this.save({
       ...filter,
       isActive: false,

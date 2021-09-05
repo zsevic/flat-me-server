@@ -48,14 +48,8 @@ export class FilterService {
   async deactivateFilterByToken(token: string): Promise<void> {
     const validToken = await this.tokenService.getValidToken(token);
 
-    await this.deactivateFilter(validToken.filter);
+    await this.filterRepository.deactivateFilter(validToken.filter);
     await this.tokenService.deleteToken(validToken._id);
-  }
-
-  private async deactivateFilter(filterId: string): Promise<void> {
-    const filter = await this.filterRepository.findFilterById(filterId);
-
-    return this.filterRepository.deactivateFilter(filter);
   }
 
   async getDeactivationUrl(

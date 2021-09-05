@@ -27,7 +27,7 @@ const tokenService = {
 };
 
 const userService = {
-  getVerifiedOrCreateNewUser: jest.fn(),
+  getVerifiedUserOrCreateNewUser: jest.fn(),
   saveFilter: jest.fn(),
   verifyUser: jest.fn(),
 };
@@ -107,7 +107,7 @@ describe('FilterService', () => {
       };
       const token = 'token';
       jest
-        .spyOn(userService, 'getVerifiedOrCreateNewUser')
+        .spyOn(userService, 'getVerifiedUserOrCreateNewUser')
         .mockResolvedValue(user);
       jest.spyOn(filterRepository, 'saveFilter').mockResolvedValue(savedFilter);
       jest
@@ -118,7 +118,7 @@ describe('FilterService', () => {
         filterDto as SaveFilterDto,
       );
 
-      expect(userService.getVerifiedOrCreateNewUser).toHaveBeenCalledWith(
+      expect(userService.getVerifiedUserOrCreateNewUser).toHaveBeenCalledWith(
         email,
       );
       expect(filterRepository.saveFilter).toHaveBeenCalledWith(newFilter);
@@ -135,6 +135,10 @@ describe('FilterService', () => {
   });
 
   describe('deactivateFilterByToken', () => {
+    afterEach(() => {
+      jest.resetAllMocks();
+    });
+
     it('should throw an error when token is not found', async () => {
       const token = 'token';
       jest
@@ -155,14 +159,16 @@ describe('FilterService', () => {
       };
       jest.spyOn(tokenService, 'getValidToken').mockResolvedValue(token);
       jest
-        .spyOn(filterRepository, 'findFilterById')
-        .mockRejectedValue(new BadRequestException());
+        .spyOn(filterRepository, 'deactivateFilter')
+        .mockRejectedValue(new BadRequestException('Filter is not found'));
 
       await expect(
         filterService.deactivateFilterByToken(token.value),
       ).rejects.toThrowError(BadRequestException);
       expect(tokenService.getValidToken).toHaveBeenCalledWith(token.value);
-      expect(filterRepository.deactivateFilter).not.toHaveBeenCalled();
+      expect(filterRepository.deactivateFilter).toHaveBeenCalledWith(
+        token.filter,
+      );
     });
 
     it('should deactivate found filter', async () => {
@@ -181,19 +187,17 @@ describe('FilterService', () => {
       const token = {
         filter: filterId,
         value: 'token',
+        _id: 'tokenid',
       };
       jest.spyOn(tokenService, 'getValidToken').mockResolvedValue(token);
-      jest
-        .spyOn(filterRepository, 'findFilterById')
-        .mockResolvedValue(foundFilter);
 
       await filterService.deactivateFilterByToken(token.value);
 
       expect(tokenService.getValidToken).toHaveBeenCalledWith(token.value);
       expect(filterRepository.deactivateFilter).toHaveBeenCalledWith(
-        foundFilter,
+        foundFilter._id,
       );
-      expect(tokenService.deleteToken).toHaveBeenCalledWith(token);
+      expect(tokenService.deleteToken).toHaveBeenCalledWith(token._id);
     });
   });
 
