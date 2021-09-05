@@ -9,35 +9,27 @@ export class FilterEntity extends BaseEntity {
   @Column()
   furnished: string[];
 
-  @Column({
-    name: 'min_price',
-  })
+  @Column()
   minPrice: number;
 
-  @Column({
-    name: 'max_price',
-  })
+  @Column()
   maxPrice: number;
 
   @Column()
   municipalities: string[];
 
-  @Column({
-    name: 'rent_or_sale',
-  })
+  @Column()
   rentOrSale: string;
 
   @Column()
   structures: number[];
 
   @Column({
-    name: 'is_active',
     default: false,
   })
   isActive: boolean;
 
   @Column({
-    name: 'is_verified',
     default: false,
   })
   isVerified: boolean;

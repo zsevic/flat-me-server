@@ -9,35 +9,25 @@ export class ApartmentEntity extends BaseEntity {
   @ObjectIdColumn()
   _id: string;
 
-  @Column({
-    name: 'apartment_id',
-  })
+  @Column()
   apartmentId: string;
 
-  @Column({
-    name: 'provider_name',
-  })
+  @Column()
   providerName: string;
 
   @Column()
   address: string;
 
-  @Column({
-    name: 'available_from',
-  })
+  @Column()
   availableFrom?: string;
 
-  @Column({
-    name: 'cover_photo_url',
-  })
+  @Column()
   coverPhotoUrl: string;
 
   @Column()
   floor: string;
 
-  @Column({
-    name: 'heating_types',
-  })
+  @Column()
   heatingTypes: string[];
 
   @Column()
@@ -52,17 +42,13 @@ export class ApartmentEntity extends BaseEntity {
   @Column()
   place: string;
 
-  @Column({
-    name: 'posted_at',
-  })
+  @Column()
   postedAt: string;
 
   @Column()
   price: number;
 
-  @Column({
-    name: 'rent_or_sale',
-  })
+  @Column()
   rentOrSale: string;
 
   @Column()

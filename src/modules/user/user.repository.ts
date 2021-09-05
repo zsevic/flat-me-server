@@ -12,9 +12,10 @@ export class UserRepository extends MongoRepository<UserEntity> {
       // TODO
     }
 
-    user.filters.push(filterId);
-
-    return this.save(user);
+    return this.save({
+      ...user,
+      filters: [...user.filters, filterId],
+    });
   }
 
   async getById(id: string): Promise<User> {
@@ -56,7 +57,7 @@ export class UserRepository extends MongoRepository<UserEntity> {
   }
 
   async saveUser(email: string): Promise<User> {
-    return this.save({ email });
+    return this.save({ email, filters: [] });
   }
 
   async verifyUser(user: User): Promise<void> {

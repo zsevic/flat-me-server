@@ -13,7 +13,6 @@ export class UserEntity {
   email: string;
 
   @Column({
-    name: 'is_verified',
     default: false,
   })
   isVerified: boolean;
@@ -31,8 +30,6 @@ export class UserEntity {
   @Column()
   filters: string[];
 
-  @Column({
-    name: 'received_apartments',
-  })
+  @Column()
   receivedApartments: string[];
 }

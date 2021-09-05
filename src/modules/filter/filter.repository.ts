@@ -42,7 +42,7 @@ export class FilterRepository extends MongoRepository<FilterEntity> {
     paginationParams: PaginationParams,
   ): Promise<PaginatedResponse<Filter>> {
     const skip = getSkip(paginationParams);
-    const response = await this.aggregate([
+    const [response] = await this.aggregate([
       {
         $lookup: {
           from: 'users',
@@ -81,12 +81,12 @@ export class FilterRepository extends MongoRepository<FilterEntity> {
           ],
         },
       },
-    ]);
+    ]).toArray();
 
     console.log('response', response);
 
     return {
-      data: [],
+      data: response.data,
       total: 0,
     };
   }
