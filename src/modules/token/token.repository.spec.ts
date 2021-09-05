@@ -1,24 +1,14 @@
 import { BadRequestException } from '@nestjs/common';
-import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
+import { MongoRepository } from 'typeorm';
 import { TokenRepository } from './token.repository';
-
-const tokenModel = {
-  findOne: jest.fn(),
-};
 
 describe('TokenRepository', () => {
   let tokenRepository: TokenRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        TokenRepository,
-        {
-          provide: getModelToken('Token'),
-          useValue: tokenModel,
-        },
-      ],
+      providers: [TokenRepository],
     }).compile();
 
     tokenRepository = module.get<TokenRepository>(TokenRepository);
@@ -29,32 +19,40 @@ describe('TokenRepository', () => {
       const token = 'token';
       const date = new Date(1629843303410);
       const query = {
-        expiresAt: { $gt: date },
-        value: token,
+        where: {
+          expiresAt: { $gt: date },
+          value: token,
+        },
       };
-      jest.spyOn(tokenModel, 'findOne').mockResolvedValue(null);
+      const findOneSpy = jest
+        .spyOn(MongoRepository.prototype, 'findOne')
+        .mockResolvedValue(null);
       // @ts-ignore
       jest.spyOn(global, 'Date').mockReturnValue(date);
 
       await expect(
         tokenRepository.getUnexpiredToken(token),
       ).rejects.toThrowError(BadRequestException);
-      expect(tokenModel.findOne).toHaveBeenCalledWith(query);
+      expect(findOneSpy).toHaveBeenCalledWith(query);
     });
 
     it('should return unexpired token', async () => {
       const tokenValue = 'token';
       const date = new Date(1629843303410);
       const query = {
-        expiresAt: { $gt: date },
-        value: tokenValue,
+        where: {
+          expiresAt: { $gt: date },
+          value: tokenValue,
+        },
       };
       const token = {
         value: tokenValue,
         filter: 'filterid',
         user: 'userid',
       };
-      jest.spyOn(tokenModel, 'findOne').mockResolvedValue(token);
+      const findOneSpy = jest
+        .spyOn(MongoRepository.prototype, 'findOne')
+        .mockResolvedValue(token);
       // @ts-ignore
       jest.spyOn(global, 'Date').mockReturnValue(date);
 
@@ -63,7 +61,7 @@ describe('TokenRepository', () => {
       );
 
       expect(unexpiredToken).toEqual(token);
-      expect(tokenModel.findOne).toHaveBeenCalledWith(query);
+      expect(findOneSpy).toHaveBeenCalledWith(query);
     });
   });
 });
