@@ -36,7 +36,7 @@ describe('ApartmentRepository', () => {
   });
 
   describe('getApartmentsIds', () => {
-    it.skip('should return list of found apartments ids', async () => {
+    it('should return list of found apartments ids', async () => {
       const apartmentList = [
         {
           _id: 'id1',
@@ -78,7 +78,7 @@ describe('ApartmentRepository', () => {
   });
 
   describe('getApartmentList', () => {
-    it.skip('should return apartment list', async () => {
+    it('should return apartment list', async () => {
       const filter = {
         rentOrSale: 'rent',
         municipalities: ['Palilula'],
@@ -147,7 +147,7 @@ describe('ApartmentRepository', () => {
       expect(apartmentModel.exec).toHaveBeenCalledTimes(2);
     });
 
-    it.skip('should return new apartments', async () => {
+    it('should return new apartments', async () => {
       const filter = {
         rentOrSale: 'rent',
         municipalities: ['Palilula'],
