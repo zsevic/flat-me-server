@@ -7,6 +7,7 @@ import {
   PaginationParams,
 } from 'modules/pagination/pagination.interfaces';
 import { UserService } from 'modules/user/user.service';
+import { requiredFields } from './apartment.constants';
 import { Apartment } from './apartment.interface';
 import { ApartmentRepository } from './apartment.repository';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
@@ -48,16 +49,10 @@ export class ApartmentService {
           if (!apartment.price) return;
 
           const apartmentInfo = provider.parseApartmentInfo(apartment);
-          if (
-            !apartmentInfo.coverPhotoUrl ||
-            !apartmentInfo.floor ||
-            !apartmentInfo.address ||
-            !apartmentInfo.heatingTypes ||
-            !apartmentInfo.municipality
-          ) {
-            console.log('apartmentinfo', apartmentInfo);
-            return;
-          }
+          const isValidApartmentInfo = requiredFields.every(
+            field => !!apartmentInfo[field],
+          );
+          if (!isValidApartmentInfo) return;
 
           foundApartments.push(apartmentInfo);
         });
