@@ -4,7 +4,7 @@ import {
   DEFAULT_LIMIT_PER_PAGE,
 } from 'modules/pagination/pagination.constants';
 import { getSkip } from 'modules/pagination/pagination.utils';
-import { Repository } from 'typeorm';
+import { Between, In, MoreThan, Not, Repository } from 'typeorm';
 import { ApartmentRepository } from './apartment.repository';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
 
@@ -88,20 +88,11 @@ describe('ApartmentRepository', () => {
         },
       ];
       const query = {
-        furnished: {
-          $in: filter.furnished,
-        },
-        municipality: {
-          $in: filter.municipalities,
-        },
-        price: {
-          $gte: filter.minPrice,
-          $lte: filter.maxPrice,
-        },
+        furnished: In(filter.furnished),
+        municipality: In(filter.municipalities),
+        price: Between(filter.minPrice, filter.maxPrice),
         rentOrSale: filter.rentOrSale,
-        structure: {
-          $in: filter.structures,
-        },
+        structure: In(filter.structures),
       };
       const findAndCountSpy = jest
         .spyOn(Repository.prototype, 'findAndCount')
@@ -154,26 +145,13 @@ describe('ApartmentRepository', () => {
       ];
       const dateFilter = new Date(2020, 8, 10);
       const query = {
-        id: {
-          $nin: skippedApartments,
-        },
-        createdAt: {
-          $gte: dateFilter,
-        },
-        furnished: {
-          $in: filter.furnished,
-        },
-        municipality: {
-          $in: filter.municipalities,
-        },
-        price: {
-          $gte: filter.minPrice,
-          $lte: filter.maxPrice,
-        },
+        id: Not(In(skippedApartments)),
+        createdAt: MoreThan(dateFilter),
+        furnished: In(filter.furnished),
+        municipality: In(filter.municipalities),
+        price: Between(filter.minPrice, filter.maxPrice),
         rentOrSale: filter.rentOrSale,
-        structure: {
-          $in: filter.structures,
-        },
+        structure: In(filter.structures),
       };
       const findAndCountSpy = jest
         .spyOn(Repository.prototype, 'findAndCount')

@@ -1,6 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Repository } from 'typeorm';
+import { MoreThan, Repository } from 'typeorm';
 import { TokenRepository } from './token.repository';
 
 describe('TokenRepository', () => {
@@ -20,7 +20,7 @@ describe('TokenRepository', () => {
       const date = new Date(1629843303410);
       const query = {
         where: {
-          expiresAt: { $gt: date },
+          expiresAt: MoreThan(date),
           value: token,
         },
       };
@@ -41,7 +41,7 @@ describe('TokenRepository', () => {
       const date = new Date(1629843303410);
       const query = {
         where: {
-          expiresAt: { $gt: date },
+          expiresAt: MoreThan(date),
           value: tokenValue,
         },
       };

@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { RentOrSale } from 'modules/filter/filter.enums';
-import { Filter } from 'modules/filter/filter.interface';
 import { UserService } from 'modules/user/user.service';
 import { ApartmentRepository } from './apartment.repository';
 import { ApartmentService } from './apartment.service';

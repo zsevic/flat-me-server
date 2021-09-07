@@ -1,5 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { EntityRepository, Repository } from 'typeorm';
+import {
+  Between,
+  EntityRepository,
+  In,
+  MoreThan,
+  Not,
+  Repository,
+} from 'typeorm';
 import {
   PaginatedResponse,
   PaginationParams,
@@ -45,29 +52,16 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
       ...(skippedApartments &&
         Array.isArray(skippedApartments) &&
         skippedApartments.length > 0 && {
-          id: {
-            $nin: skippedApartments,
-          },
+          id: Not(In(skippedApartments)),
         }),
       ...(dateFilter && {
-        createdAt: {
-          $gte: dateFilter,
-        },
+        createdAt: MoreThan(dateFilter),
       }),
-      furnished: {
-        $in: filter.furnished,
-      },
-      municipality: {
-        $in: filter.municipalities,
-      },
-      price: {
-        $gte: filter.minPrice,
-        $lte: filter.maxPrice,
-      },
+      furnished: In(filter.furnished),
+      municipality: In(filter.municipalities),
+      price: Between(filter.minPrice, filter.maxPrice),
       rentOrSale: filter.rentOrSale,
-      structure: {
-        $in: filter.structures,
-      },
+      structure: In(filter.structures),
     };
 
     const [data, total] = await this.findAndCount({
