@@ -19,7 +19,7 @@ export interface Filter {
 
   structures: number[];
 
-  userId?: string;
+  userId: string;
 
   user?: User;
 

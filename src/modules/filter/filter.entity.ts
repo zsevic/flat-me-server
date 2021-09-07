@@ -51,6 +51,11 @@ export class FilterEntity extends BaseEntity {
   })
   isVerified: boolean;
 
+  @Column({
+    name: 'user_id',
+  })
+  userId: string;
+
   @ManyToOne(
     () => UserEntity,
     userEntity => userEntity.filters,
