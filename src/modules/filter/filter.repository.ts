@@ -48,7 +48,8 @@ export class FilterRepository extends Repository<FilterEntity> {
   ): Promise<PaginatedResponse<Filter>> {
     const skip = getSkip(paginationParams);
     const [data, total] = await this.createQueryBuilder('filter')
-      .leftJoin('filter.user', 'user')
+      .leftJoin('filter.user', 'user', 'filter.userId = user.id')
+      .leftJoinAndSelect('user.apartments', 'apartments')
       .where('filter.isActive = :isActive', { isActive: true })
       .andWhere('user.isVerified = :isVerified', { isVerified: true })
       .andWhere('user.subscription = :subscription', {
@@ -63,8 +64,9 @@ export class FilterRepository extends Repository<FilterEntity> {
         'filter.rentOrSale',
         'filter.structures',
         'filter.createdAt',
+        'filter.userId',
         'user',
-        'user.apartments',
+        'apartments',
       ])
       .skip(skip)
       .take(paginationParams.limitPerPage)

@@ -57,11 +57,12 @@ export class FilterEntity extends BaseEntity {
     () => UserEntity,
     userEntity => userEntity.filters,
   )
-  @JoinColumn({ name: 'user_id' })
+  @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user?: UserEntity;
 
   @Column({
     name: 'user_id',
+    select: false,
   })
   userId: string;
 
