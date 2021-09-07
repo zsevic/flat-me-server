@@ -1,6 +1,8 @@
 import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
+import { defaultPaginationParams } from 'modules/pagination/pagination.constants';
+import { Subscription } from 'modules/user/subscription.enum';
 import { FilterRepository } from './filter.repository';
 
 describe('FilterRepository', () => {
@@ -100,6 +102,35 @@ describe('FilterRepository', () => {
         id: filterId,
         isVerified: false,
       });
+    });
+  });
+
+  describe('getFilterListBySubscriptionName', () => {
+    it('should return filter list by subscription name', async () => {
+      const data = [];
+      const total = 0;
+      const filters = { data, total };
+      jest
+        .spyOn(Repository.prototype, 'createQueryBuilder')
+        .mockReturnValue(SelectQueryBuilder.prototype);
+      jest
+        .spyOn(SelectQueryBuilder.prototype, 'leftJoinAndSelect')
+        .mockReturnThis();
+      jest.spyOn(SelectQueryBuilder.prototype, 'where').mockReturnThis();
+      jest.spyOn(SelectQueryBuilder.prototype, 'andWhere').mockReturnThis();
+      jest.spyOn(SelectQueryBuilder.prototype, 'select').mockReturnThis();
+      jest.spyOn(SelectQueryBuilder.prototype, 'skip').mockReturnThis();
+      jest.spyOn(SelectQueryBuilder.prototype, 'take').mockReturnThis();
+      jest
+        .spyOn(SelectQueryBuilder.prototype, 'getManyAndCount')
+        .mockResolvedValue([data, total]);
+
+      const result = await filterRepository.getFilterListBySubscriptionName(
+        Subscription.FREE,
+        defaultPaginationParams,
+      );
+
+      expect(result).toEqual(filters);
     });
   });
 });
