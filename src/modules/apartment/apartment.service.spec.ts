@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { RentOrSale } from 'modules/filter/filter.enums';
-import { FilterDocument } from 'modules/filter/filter.schema';
+import { Filter } from 'modules/filter/filter.interface';
 import { UserService } from 'modules/user/user.service';
 import { ApartmentRepository } from './apartment.repository';
 import { ApartmentService } from './apartment.service';
@@ -61,14 +61,14 @@ describe('ApartmentService', () => {
   describe('getApartmentListFromDatabaseByFilter', () => {
     it('should get apartment list from the database by given filter', async () => {
       const filter = {
-        _id: '611c59c26962b452247b9432',
+        id: '611c59c26962b452247b9432',
         structures: [1, 2, 0.5, 1.5],
         municipalities: ['Savski venac', 'Zemun'],
         furnished: ['semi-furnished'],
         rentOrSale: 'rent',
         minPrice: 120,
         maxPrice: 370,
-        user: '611c59c26962b452247b9431',
+        userId: '611c59c26962b452247b9431',
         createdAt: new Date('2021-08-18T00:52:18.296Z'),
         isActive: true,
         isVerified: true,
@@ -76,7 +76,7 @@ describe('ApartmentService', () => {
       const apartmentList = [
         {
           heatingTypes: ['central'],
-          _id: 'cetiriZida_id1',
+          id: 'cetiriZida_id1',
           price: 350,
           apartmentId: 'id',
           providerName: 'cetiriZida',
@@ -111,12 +111,12 @@ describe('ApartmentService', () => {
         .mockResolvedValue(apartmentList);
 
       await apartmentService.getApartmentListFromDatabaseByFilter(
-        filter as FilterDocument,
+        filter,
         limitPerPage,
       );
 
       expect(userService.getReceivedApartmentsIds).toHaveBeenCalledWith(
-        filter.user,
+        filter.userId,
       );
       expect(apartmentRepository.getApartmentList).toHaveBeenCalledWith(
         apartmentListParams,
@@ -347,7 +347,7 @@ describe('ApartmentService', () => {
         [
           {
             price: 420,
-            _id: 'cetiriZida_60993e3e7906cd3a4c6832fd',
+            id: 'cetiriZida_60993e3e7906cd3a4c6832fd',
             apartmentId: '60993e3e7906cd3a4c6832fd',
             providerName: 'cetiriZida',
             address: 'Dalmatinska',
@@ -367,7 +367,7 @@ describe('ApartmentService', () => {
         [
           {
             price: 450,
-            _id: 'cityExpert_23-BR',
+            id: 'cityExpert_23-BR',
             apartmentId: 23,
             providerName: 'cityExpert',
             address: 'Cara Nikolaja Ii',
@@ -390,7 +390,7 @@ describe('ApartmentService', () => {
         [
           {
             price: 500,
-            _id: 'cetiriZida_60f99390d9982b10',
+            id: 'cetiriZida_60f99390d9982b10',
             apartmentId: '60f99390d9982b10',
             providerName: 'cetiriZida',
             coverPhotoUrl: 'cover-photo-url',
@@ -409,7 +409,7 @@ describe('ApartmentService', () => {
         [
           {
             price: 450,
-            _id: 'cityExpert_44352-BS',
+            id: 'cityExpert_44352-BS',
             apartmentId: 44352,
             providerName: 'cityExpert',
             address: 'Internacionalnih Brigada',
@@ -503,7 +503,7 @@ describe('ApartmentService', () => {
       const savedApartmentList = [
         {
           price: 420,
-          _id: 'cetiriZida_60993e3e7906cd3a4c6832fd',
+          id: 'cetiriZida_60993e3e7906cd3a4c6832fd',
           apartmentId: '60993e3e7906cd3a4c6832fd',
           providerName: 'cetiriZida',
           address: 'Dalmatinska',

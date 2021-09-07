@@ -5,14 +5,13 @@ import {
   OnApplicationShutdown,
 } from '@nestjs/common';
 import { ConfigService, ConfigModule } from '@nestjs/config';
-import { InjectConnection, MongooseModule } from '@nestjs/mongoose';
 import { ScheduleModule, SchedulerRegistry } from '@nestjs/schedule';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { InjectConnection, TypeOrmModule } from '@nestjs/typeorm';
 import * as Joi from 'joi';
-import { Connection } from 'mongoose';
 import { Subject } from 'rxjs';
+import { Connection } from 'typeorm';
 import databaseConfig from 'common/config/database';
-import { MongoDBConfigService } from 'common/config/mongodb-config.service';
+import { PostgresConfigService } from 'common/config/postgres-config.service';
 import { isEnvironment } from 'common/utils';
 import { ApartmentModule } from 'modules/apartment/apartment.module';
 import { FilterModule } from 'modules/filter/filter.module';
@@ -28,7 +27,7 @@ import { AppController } from './app.controller';
           CLIENT_URL: Joi.string()
             .uri()
             .required(),
-          MONGODB_URL: Joi.string()
+          DATABASE_URL: Joi.string()
             .uri()
             .required(),
           NODE_ENV: Joi.string()
@@ -46,21 +45,8 @@ import { AppController } from './app.controller';
           load: [databaseConfig],
         }),
       ],
-      useClass: MongoDBConfigService,
-      inject: [MongoDBConfigService],
-    }),
-    MongooseModule.forRootAsync({
-      imports: [
-        ConfigModule.forRoot({
-          load: [databaseConfig],
-        }),
-      ],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        uri: configService.get('database.MONGODB_URL'),
-        useCreateIndex: true,
-        useFindAndModify: false,
-      }),
+      useClass: PostgresConfigService,
+      inject: [PostgresConfigService],
     }),
     ScheduleModule.forRoot(),
     ApartmentModule,
@@ -73,7 +59,7 @@ import { AppController } from './app.controller';
       provide: 'configService',
       useFactory: () => new ConfigService(),
     },
-    MongoDBConfigService,
+    PostgresConfigService,
   ],
 })
 @Injectable()
@@ -87,19 +73,22 @@ export class AppModule implements OnApplicationShutdown {
   ) {}
 
   async closeDatabaseConnection(): Promise<void> {
-    await this.connection
-      .close()
-      .then(() => this.logger.log('Database connection is closed'));
+    try {
+      await this.connection.close();
+      this.logger.log('Database connection is closed');
+    } catch (error) {
+      this.logger.error(error.message);
+    }
   }
 
-  onApplicationShutdown = async (signal: string): Promise<void> => {
+  async onApplicationShutdown(signal: string): Promise<void> {
     if (!signal) return;
     this.logger.log(`Detected signal: ${signal}`);
 
     this.stopCronJobs();
     this.shutdownListener$.next();
-    await this.closeDatabaseConnection();
-  };
+    return this.closeDatabaseConnection();
+  }
 
   stopCronJobs(): void {
     const jobs = this.schedulerRegistry.getCronJobs();

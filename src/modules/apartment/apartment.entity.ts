@@ -1,4 +1,4 @@
-import { Column, Entity, ObjectIdColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 import { BaseEntity } from 'common/entities/base.entity';
 import { Location } from 'common/interfaces/location.interface';
 
@@ -6,8 +6,8 @@ import { Location } from 'common/interfaces/location.interface';
   name: 'apartments',
 })
 export class ApartmentEntity extends BaseEntity {
-  @ObjectIdColumn()
-  _id: string;
+  @PrimaryColumn()
+  id: string;
 
   @Column()
   apartmentId: string;
@@ -18,7 +18,9 @@ export class ApartmentEntity extends BaseEntity {
   @Column()
   address: string;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   availableFrom?: string;
 
   @Column()
@@ -27,13 +29,16 @@ export class ApartmentEntity extends BaseEntity {
   @Column()
   floor: string;
 
-  @Column()
+  @Column('varchar', { array: true })
   heatingTypes: string[];
 
   @Column()
   furnished: string;
 
-  @Column()
+  @Column({
+    nullable: true,
+    type: 'jsonb',
+  })
   location?: Location;
 
   @Column()

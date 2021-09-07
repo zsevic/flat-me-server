@@ -57,16 +57,12 @@ export class UserService {
   }
 
   async insertReceivedApartmentsIds(userId: string, apartments: Apartment[]) {
-    const apartmentsIds = apartments.map(apartment => apartment._id);
+    const apartmentsIds = apartments.map(apartment => apartment.id);
 
     return this.userRepository.insertReceivedApartmentsIds(
       userId,
       apartmentsIds,
     );
-  }
-
-  async saveFilter(userId: string, filterId: string) {
-    return this.userRepository.addFilter(userId, filterId);
   }
 
   async saveUser(email: string): Promise<User> {

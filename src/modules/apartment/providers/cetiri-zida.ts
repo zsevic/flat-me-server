@@ -150,7 +150,7 @@ export class CetiriZidaProvider implements Provider {
     };
 
     return {
-      _id: `${this.providerName}_${apartmentInfo.id}`,
+      id: `${this.providerName}_${apartmentInfo.id}`,
       apartmentId: apartmentInfo.id,
       providerName: this.providerName,
       ...(apartmentInfo.address && {

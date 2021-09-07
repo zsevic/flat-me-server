@@ -1,13 +1,13 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { EntityRepository, MongoRepository } from 'typeorm';
+import { EntityRepository, Repository } from 'typeorm';
 import { TokenEntity } from './token.entity';
 import { Token } from './token.interface';
 
 @Injectable()
 @EntityRepository(TokenEntity)
-export class TokenRepository extends MongoRepository<TokenEntity> {
+export class TokenRepository extends Repository<TokenEntity> {
   async deleteToken(tokenId: string): Promise<void> {
-    await this.delete({ _id: tokenId });
+    await this.delete({ id: tokenId });
   }
 
   async getUnexpiredToken(token: string): Promise<Token> {

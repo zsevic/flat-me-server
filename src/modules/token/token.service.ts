@@ -39,7 +39,7 @@ export class TokenService {
     );
     if (!validToken) return;
 
-    return this.deleteToken(validToken._id);
+    return this.deleteToken(validToken.id);
   }
 
   private generateToken = async (): Promise<string> => {

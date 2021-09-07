@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from 'common/entities/base.entity';
 import { UserEntity } from 'modules/user/user.entity';
 
@@ -6,7 +6,7 @@ import { UserEntity } from 'modules/user/user.entity';
   name: 'filters',
 })
 export class FilterEntity extends BaseEntity {
-  @Column()
+  @Column('varchar', { array: true })
   furnished: string[];
 
   @Column()
@@ -15,13 +15,13 @@ export class FilterEntity extends BaseEntity {
   @Column()
   maxPrice: number;
 
-  @Column()
+  @Column('varchar', { array: true })
   municipalities: string[];
 
   @Column()
   rentOrSale: string;
 
-  @Column()
+  @Column('decimal', { array: true })
   structures: number[];
 
   @Column({
@@ -38,6 +38,6 @@ export class FilterEntity extends BaseEntity {
     () => UserEntity,
     userEntity => userEntity.filters,
   )
-  @Column()
-  user: string;
+  @JoinColumn({ name: 'user_id' })
+  user?: UserEntity;
 }

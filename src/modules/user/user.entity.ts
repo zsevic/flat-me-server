@@ -1,18 +1,19 @@
 import { FilterEntity } from 'modules/filter/filter.entity';
-import { Column, Entity, ObjectIdColumn, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Subscription } from './subscription.enum';
 
 @Entity({
   name: 'users',
 })
 export class UserEntity {
-  @ObjectIdColumn()
-  _id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   email: string;
 
   @Column({
+    name: 'is_verified',
     default: false,
   })
   isVerified: boolean;
@@ -22,13 +23,12 @@ export class UserEntity {
   })
   subscription: string;
 
+  @Column({ name: 'received_apartments', type: 'varchar', array: true })
+  receivedApartments: string[];
+
   @OneToMany(
     () => FilterEntity,
     filterEntity => filterEntity.user,
   )
-  @Column()
-  filters: string[];
-
-  @Column()
-  receivedApartments: string[];
+  filters?: FilterEntity[];
 }

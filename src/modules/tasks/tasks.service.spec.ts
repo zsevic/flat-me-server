@@ -170,7 +170,7 @@ describe('TasksService', () => {
 
     it('should not send any apartments to the users when there are no new apartments by found filters', async () => {
       const foundFilter = {
-        _id: '611c59c26962b452247b9432',
+        id: '611c59c26962b452247b9432',
         structures: [1, 2, 0.5, 1.5],
         municipalities: ['Savski venac', 'Zemun'],
         furnished: ['semi-furnished'],
@@ -193,14 +193,14 @@ describe('TasksService', () => {
         filterService.getFilterListBySubscriptionName,
       ).toHaveBeenCalledWith(Subscription.FREE, defaultPaginationParams);
       expect(tokenService.deleteTokenByFilterId).toHaveBeenCalledWith(
-        foundFilter._id,
+        foundFilter.id,
       );
       expect(mailService.sendMailWithNewApartments).not.toHaveBeenCalled();
     });
 
     it('should send new apartments by found filters', async () => {
       const foundFilter = {
-        _id: '611c59c26962b452247b9432',
+        id: '611c59c26962b452247b9432',
         structures: [1, 2, 0.5, 1.5],
         municipalities: ['Savski venac', 'Zemun'],
         furnished: ['semi-furnished'],
@@ -213,7 +213,7 @@ describe('TasksService', () => {
       const apartmentList = [
         {
           heatingTypes: ['central'],
-          _id: 'cetiriZida_id1',
+          id: 'cetiriZida_id1',
           price: 350,
           apartmentId: 'id',
           providerName: 'cetiriZida',
@@ -234,7 +234,7 @@ describe('TasksService', () => {
         },
         {
           heatingTypes: ['district'],
-          _id: 'cetiriZida_id2',
+          id: 'cetiriZida_id2',
           price: 320,
           apartmentId: 'id',
           providerName: 'cetiriZida',
@@ -275,10 +275,10 @@ describe('TasksService', () => {
         filterService.getFilterListBySubscriptionName,
       ).toHaveBeenCalledWith(Subscription.FREE, defaultPaginationParams);
       expect(tokenService.deleteTokenByFilterId).toHaveBeenCalledWith(
-        foundFilter._id,
+        foundFilter.id,
       );
       expect(filterService.getDeactivationUrl).toHaveBeenCalledWith(
-        foundFilter._id,
+        foundFilter.id,
         FILTER_DEACTIVATION_TOKEN_EXPIRATION_HOURS,
       );
       expect(userService.getUserEmail).toHaveBeenCalledWith(foundFilter.user);
@@ -298,7 +298,7 @@ describe('TasksService', () => {
 
     it('should paginate over filters', async () => {
       const foundFilter = {
-        _id: '611c59c26962b452247b9432',
+        id: '611c59c26962b452247b9432',
         structures: [1, 2, 0.5, 1.5],
         municipalities: ['Savski venac', 'Zemun'],
         furnished: ['semi-furnished'],
@@ -326,7 +326,7 @@ describe('TasksService', () => {
         });
       });
       expect(tokenService.deleteTokenByFilterId).toHaveBeenCalledWith(
-        foundFilter._id,
+        foundFilter.id,
       );
       expect(mailService.sendMailWithNewApartments).not.toHaveBeenCalled();
     });
@@ -334,7 +334,7 @@ describe('TasksService', () => {
     it('should continue handling filters when one of the filter handler fails', async () => {
       const foundFilters = [
         {
-          _id: '611c5642c653f746ea0560a3',
+          id: '611c5642c653f746ea0560a3',
           structures: [1, 2],
           municipalities: ['Savski venac', 'Zemun'],
           furnished: ['semi-furnished'],
@@ -345,7 +345,7 @@ describe('TasksService', () => {
           createdAt: '2021-08-18T00:37:22.039Z',
         },
         {
-          _id: '611c59c26962b452247b9432',
+          id: '611c59c26962b452247b9432',
           structures: [1, 2, 0.5, 1.5],
           municipalities: ['Savski venac', 'Zemun'],
           furnished: ['semi-furnished'],
@@ -374,7 +374,7 @@ describe('TasksService', () => {
       ).toHaveBeenCalledWith(Subscription.FREE, defaultPaginationParams);
       foundFilters.forEach(filter => {
         expect(tokenService.deleteTokenByFilterId).toHaveBeenCalledWith(
-          filter._id,
+          filter.id,
         );
       });
       expect(tokenService.deleteTokenByFilterId).toHaveBeenCalledTimes(2);

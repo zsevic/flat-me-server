@@ -4,7 +4,7 @@ import { RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION } from 'modules/apartment/ap
 import { ApartmentService } from 'modules/apartment/apartment.service';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { filters } from 'modules/filter/filter.constants';
-import { FilterDocument } from 'modules/filter/filter.schema';
+import { Filter } from 'modules/filter/filter.interface';
 import { FilterService } from 'modules/filter/filter.service';
 import { MailService } from 'modules/mail/mail.service';
 import { defaultPaginationParams } from 'modules/pagination/pagination.constants';
@@ -131,11 +131,9 @@ export class TasksService {
     this.logCronJobFinished(SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB);
   }
 
-  private async sendNewApartmentsByFilter(
-    filter: FilterDocument,
-  ): Promise<void> {
+  private async sendNewApartmentsByFilter(filter: Filter): Promise<void> {
     try {
-      await this.tokenService.deleteTokenByFilterId(filter._id);
+      await this.tokenService.deleteTokenByFilterId(filter.id);
       this.logger.log(`Filter: ${JSON.stringify(filter)}`);
 
       const apartmentList = await this.apartmentService.getApartmentListFromDatabaseByFilter(
@@ -153,10 +151,10 @@ export class TasksService {
       );
 
       const filterDeactivationUrl = await this.filterService.getDeactivationUrl(
-        filter._id,
+        filter.id,
         FILTER_DEACTIVATION_TOKEN_EXPIRATION_HOURS,
       );
-      const userEmail = await this.userService.getUserEmail(filter.user);
+      const userEmail = await this.userService.getUserEmail(filter.userId);
       await this.mailService.sendMailWithNewApartments(
         userEmail,
         newApartments,
@@ -165,7 +163,7 @@ export class TasksService {
       );
 
       await this.userService.insertReceivedApartmentsIds(
-        filter.user,
+        filter.userId,
         newApartments,
       );
     } catch (error) {

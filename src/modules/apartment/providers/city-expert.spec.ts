@@ -377,7 +377,7 @@ describe('CityExpert', () => {
       };
       const parsedApartmentInfo = {
         price: 450,
-        _id: 'cityExpert_123-BS',
+        id: 'cityExpert_123-BS',
         apartmentId: 123,
         providerName: 'cityExpert',
         address: 'Internacionalnih Brigada',

@@ -27,10 +27,10 @@ describe('ApartmentRepository', () => {
     it('should return list of found apartments ids', async () => {
       const apartmentList = [
         {
-          _id: 'id1',
+          id: 'id1',
         },
         {
-          _id: 'id2',
+          id: 'id2',
         },
       ];
       const apartmentsIds = ['id1', 'id2'];
@@ -47,7 +47,7 @@ describe('ApartmentRepository', () => {
         total: apartmentsIds.length,
       });
       expect(findAndCountSpy).toHaveBeenCalledWith({
-        select: ['_id'],
+        select: ['id'],
         skip: getSkip(defaultPaginationParams),
         take: defaultPaginationParams.limitPerPage,
       });
@@ -67,7 +67,7 @@ describe('ApartmentRepository', () => {
       const apartmentList = [
         {
           heatingTypes: ['central'],
-          _id: 'cetiriZida_id1',
+          id: 'cetiriZida_id1',
           price: 350,
           apartmentId: 'id',
           providerName: 'cetiriZida',
@@ -132,7 +132,7 @@ describe('ApartmentRepository', () => {
       const apartmentList = [
         {
           heatingTypes: ['central'],
-          _id: 'cetiriZida_id1',
+          id: 'cetiriZida_id1',
           price: 350,
           apartmentId: 'id',
           providerName: 'cetiriZida',
@@ -154,7 +154,7 @@ describe('ApartmentRepository', () => {
       ];
       const dateFilter = new Date(2020, 8, 10);
       const query = {
-        _id: {
+        id: {
           $nin: skippedApartments,
         },
         createdAt: {

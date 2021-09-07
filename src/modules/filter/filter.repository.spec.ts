@@ -25,13 +25,13 @@ describe('FilterRepository', () => {
         filterRepository.findFilterById(filterId),
       ).rejects.toThrowError(BadRequestException);
 
-      expect(findOneSpy).toHaveBeenCalledWith({ _id: filterId });
+      expect(findOneSpy).toHaveBeenCalledWith({ id: filterId });
     });
 
     it('should return found filter', async () => {
       const filterId = 'filterid';
       const filter = {
-        _id: filterId,
+        id: filterId,
         structures: [1, 2, 0.5, 1.5],
         municipalities: ['Savski venac', 'Zemun'],
         furnished: ['semi-furnished'],
@@ -51,7 +51,7 @@ describe('FilterRepository', () => {
       const foundFilter = await filterRepository.findFilterById(filterId);
 
       expect(foundFilter).toEqual(filter);
-      expect(findOneSpy).toHaveBeenCalledWith({ _id: filterId });
+      expect(findOneSpy).toHaveBeenCalledWith({ id: filterId });
     });
   });
 
@@ -66,7 +66,7 @@ describe('FilterRepository', () => {
         filterRepository.findUnverifiedFilter(filterId),
       ).rejects.toThrowError(BadRequestException);
       expect(findOneSpy).toHaveBeenCalledWith({
-        _id: filterId,
+        id: filterId,
         isVerified: false,
       });
     });
@@ -74,7 +74,7 @@ describe('FilterRepository', () => {
     it('should return unverified filter', async () => {
       const filterId = 'id1';
       const filter = {
-        _id: filterId,
+        id: filterId,
         structures: [1, 2, 0.5, 1.5],
         municipalities: ['Savski venac', 'Zemun'],
         furnished: ['semi-furnished'],
@@ -97,7 +97,7 @@ describe('FilterRepository', () => {
 
       expect(unverifiedFilter).toEqual(filter);
       expect(findOneSpy).toHaveBeenCalledWith({
-        _id: filterId,
+        id: filterId,
         isVerified: false,
       });
     });

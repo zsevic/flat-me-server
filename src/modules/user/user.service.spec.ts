@@ -88,7 +88,7 @@ describe('UserService', () => {
         receivedApartments: [],
         filters: [],
         isVerified: false,
-        _id: userId,
+        id: userId,
         email,
         __v: 0,
       };
@@ -110,7 +110,7 @@ describe('UserService', () => {
         receivedApartments: [],
         filters: [],
         isVerified: false,
-        _id: userId,
+        id: userId,
         email,
         __v: 0,
       };
@@ -131,7 +131,7 @@ describe('UserService', () => {
         receivedApartments: [],
         filters: [],
         isVerified: true,
-        _id: userId,
+        id: userId,
         email,
         __v: 0,
       };
@@ -152,7 +152,7 @@ describe('UserService', () => {
         receivedApartments: [],
         filters: ['id1'],
         isVerified: true,
-        _id: userId,
+        id: userId,
         email,
         __v: 0,
       };
@@ -173,7 +173,7 @@ describe('UserService', () => {
         receivedApartments: [],
         filters: [],
         isVerified: true,
-        _id: userId,
+        id: userId,
         email,
         __v: 0,
       };
@@ -193,7 +193,7 @@ describe('UserService', () => {
       const apartmentList = [
         {
           heatingTypes: ['central'],
-          _id: 'id1',
+          id: 'id1',
           price: 350,
           apartmentId: 'id1',
           providerName: 'cetiriZida',
@@ -244,7 +244,7 @@ describe('UserService', () => {
         receivedApartments: [],
         filters: [],
         isVerified: true,
-        _id: userId,
+        id: userId,
         email: 'test@example.com',
         __v: 0,
       };
@@ -263,7 +263,7 @@ describe('UserService', () => {
         receivedApartments: [],
         filters: [],
         isVerified: false,
-        _id: userId,
+        id: userId,
         email: 'test@example.com',
         __v: 0,
       };

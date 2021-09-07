@@ -67,7 +67,7 @@ describe('MailService', () => {
       const apartmentList = [
         {
           price: 420,
-          _id: 'cetiriZida_60993e3e7906cd3a4c6832fd',
+          id: 'cetiriZida_60993e3e7906cd3a4c6832fd',
           apartmentId: '60993e3e7906cd3a4c6832fd',
           providerName: 'cetiriZida',
           address: 'Dalmatinska',

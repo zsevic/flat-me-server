@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
-import { FilterDocument } from 'modules/filter/filter.schema';
+import { Filter } from 'modules/filter/filter.interface';
 import {
   PaginatedResponse,
   PaginationParams,
@@ -97,7 +97,7 @@ export class ApartmentService {
   }
 
   async getApartmentListFromDatabaseByFilter(
-    filter: FilterDocument,
+    filter: Filter,
     limitPerPage: number,
   ) {
     const apartmentListParams = {
@@ -106,7 +106,7 @@ export class ApartmentService {
       pageNumber: 1,
     };
     const receivedApartmentsIds = await this.userService.getReceivedApartmentsIds(
-      filter.user,
+      filter.userId,
     );
 
     return this.getApartmentListFromDatabase(

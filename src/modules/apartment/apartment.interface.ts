@@ -1,7 +1,7 @@
 import { Location } from 'common/interfaces/location.interface';
 
 export interface Apartment {
-  _id: string;
+  id: string;
 
   apartmentId: string;
 

@@ -28,7 +28,6 @@ const tokenService = {
 
 const userService = {
   getVerifiedUserOrCreateNewUser: jest.fn(),
-  saveFilter: jest.fn(),
   verifyUser: jest.fn(),
 };
 
@@ -91,7 +90,7 @@ describe('FilterService', () => {
       };
       const savedFilter = {
         ...newFilter,
-        _id: filterId,
+        id: filterId,
         createdAt: '2021-08-22T20:59:57.918Z',
         updatedAt: '2021-08-22T20:59:57.918Z',
         __v: 0,
@@ -101,7 +100,7 @@ describe('FilterService', () => {
         receivedApartments: [],
         filters: [],
         isVerified: false,
-        _id: userId,
+        id: userId,
         email: 'test@example.com',
         __v: 0,
       };
@@ -122,7 +121,6 @@ describe('FilterService', () => {
         email,
       );
       expect(filterRepository.saveFilter).toHaveBeenCalledWith(newFilter);
-      expect(userService.saveFilter).toHaveBeenCalledWith(userId, filterId);
       expect(tokenService.createAndSaveToken).toHaveBeenCalledWith({
         filter: filterId,
         user: userId,
@@ -174,7 +172,7 @@ describe('FilterService', () => {
     it('should deactivate found filter', async () => {
       const filterId = '611c59c26962b452247b9432';
       const foundFilter = {
-        _id: filterId,
+        id: filterId,
         structures: [1, 2, 0.5, 1.5],
         municipalities: ['Savski venac', 'Zemun'],
         furnished: ['semi-furnished'],
@@ -187,7 +185,7 @@ describe('FilterService', () => {
       const token = {
         filter: filterId,
         value: 'token',
-        _id: 'tokenid',
+        id: 'tokenid',
       };
       jest.spyOn(tokenService, 'getValidToken').mockResolvedValue(token);
 
@@ -195,9 +193,9 @@ describe('FilterService', () => {
 
       expect(tokenService.getValidToken).toHaveBeenCalledWith(token.value);
       expect(filterRepository.deactivateFilter).toHaveBeenCalledWith(
-        foundFilter._id,
+        foundFilter.id,
       );
-      expect(tokenService.deleteToken).toHaveBeenCalledWith(token._id);
+      expect(tokenService.deleteToken).toHaveBeenCalledWith(token.id);
     });
   });
 
@@ -280,7 +278,7 @@ describe('FilterService', () => {
         value: 'token',
       };
       const foundFilter = {
-        _id: filterId,
+        id: filterId,
         structures: [1, 2, 0.5, 1.5],
         municipalities: ['Savski venac', 'Zemun'],
         furnished: ['semi-furnished'],
@@ -318,7 +316,7 @@ describe('FilterService', () => {
         value: 'token',
       };
       const foundFilter = {
-        _id: filterId,
+        id: filterId,
         structures: [1, 2, 0.5, 1.5],
         municipalities: ['Savski venac', 'Zemun'],
         furnished: ['semi-furnished'],

@@ -1,5 +1,5 @@
 export interface Token {
-  _id?: string;
+  id?: string;
 
   expiresAt: Date;
 

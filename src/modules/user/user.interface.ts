@@ -1,5 +1,7 @@
+import { Filter } from 'modules/filter/filter.interface';
+
 export class User {
-  _id: string;
+  id: string;
 
   email: string;
 
@@ -7,7 +9,7 @@ export class User {
 
   subscription: string;
 
-  filters: string[];
-
   receivedApartments: string[];
+
+  filters?: Filter[];
 }

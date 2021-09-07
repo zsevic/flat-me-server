@@ -1,35 +1,23 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { EntityRepository, MongoRepository } from 'typeorm';
+import { EntityRepository, Repository } from 'typeorm';
 import { Subscription } from './subscription.enum';
 import { UserEntity } from './user.entity';
 import { User } from './user.interface';
 
 @Injectable()
 @EntityRepository(UserEntity)
-export class UserRepository extends MongoRepository<UserEntity> {
-  async addFilter(userId: string, filterId: string) {
-    const user = await this.findOne({ _id: userId });
-    if (!user) {
-      // TODO
-    }
-
-    return this.save({
-      ...user,
-      filters: [...user.filters, filterId],
-    });
-  }
-
+export class UserRepository extends Repository<UserEntity> {
   async getById(id: string): Promise<User> {
-    return this.findOne({ _id: id });
+    return this.findOne({ id });
   }
 
   async getByEmail(email: string): Promise<User> {
-    return this.findOne({ email });
+    return this.findOne({ where: { email }, relations: ['filters'] });
   }
 
   async getReceivedApartmentsIds(userId: string): Promise<string[]> {
     const user = await this.findOne({
-      where: { _id: userId },
+      where: { id: userId },
       select: ['receivedApartments'],
     });
 
@@ -46,7 +34,7 @@ export class UserRepository extends MongoRepository<UserEntity> {
   }
 
   async insertReceivedApartmentsIds(userId: string, apartmentsIds: string[]) {
-    const user = await this.findOne({ _id: userId });
+    const user = await this.findOne({ id: userId });
     if (!user) {
       // TODO
     }
@@ -64,7 +52,6 @@ export class UserRepository extends MongoRepository<UserEntity> {
     return this.save({
       email,
       subscription,
-      filters: [],
       receivedApartments: [],
     });
   }

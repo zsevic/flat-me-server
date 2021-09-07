@@ -1,5 +1,7 @@
+import { User } from 'modules/user/user.interface';
+
 export interface Filter {
-  _id?: string;
+  id?: string;
 
   furnished: string[];
 
@@ -17,5 +19,9 @@ export interface Filter {
 
   structures: number[];
 
-  user: string;
+  userId?: string;
+
+  user?: User;
+
+  createdAt?: Date;
 }

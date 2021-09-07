@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:alpine
+    environment:
+      POSTGRES_DB: flat-me-db
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: username
+    ports:
+      - 5435:5432
+    restart: on-failure:3
+
+  pgweb:
+    image: sosedoff/pgweb
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgres://username:password@postgres:5432/flat-me-db?sslmode=disable
+    ports:
+      - 8085:8081
+    restart: on-failure:3

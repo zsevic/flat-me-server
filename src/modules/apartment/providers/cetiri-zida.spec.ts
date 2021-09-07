@@ -236,7 +236,7 @@ describe('CetiriZida', () => {
       };
       const parsedApartmentInfo = {
         price: 420,
-        _id: 'cetiriZida_id',
+        id: 'cetiriZida_id',
         apartmentId: 'id',
         providerName: 'cetiriZida',
         address: 'Dalmatinska',

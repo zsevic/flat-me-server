@@ -31,16 +31,15 @@ export class FilterService {
 
     const newFilter: Filter = {
       ...filter,
-      user: user._id,
+      userId: user.id,
       isActive: false,
       isVerified: false,
     };
     const savedFilter = await this.filterRepository.saveFilter(newFilter);
-    await this.userService.saveFilter(user._id, savedFilter._id);
 
     const token = await this.tokenService.createAndSaveToken({
-      filter: savedFilter._id,
-      user: user._id,
+      filter: savedFilter.id,
+      user: user.id,
     });
     await this.mailService.sendFilterVerificationMail(email, token.value);
   }
@@ -49,7 +48,7 @@ export class FilterService {
     const validToken = await this.tokenService.getValidToken(token);
 
     await this.filterRepository.deactivateFilter(validToken.filter);
-    await this.tokenService.deleteToken(validToken._id);
+    await this.tokenService.deleteToken(validToken.id);
   }
 
   async getDeactivationUrl(
@@ -83,7 +82,7 @@ export class FilterService {
     const {
       filter: filterId,
       user: userId,
-      _id: tokenId,
+      id: tokenId,
     } = await this.tokenService.getValidToken(token);
 
     await this.verifyAndActivateFilter(filterId);

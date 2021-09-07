@@ -4,15 +4,15 @@ import {
   PaginationParams,
 } from 'modules/pagination/pagination.interfaces';
 import { getSkip } from 'modules/pagination/pagination.utils';
-import { EntityRepository, MongoRepository } from 'typeorm';
+import { EntityRepository, Repository } from 'typeorm';
 import { FilterEntity } from './filter.entity';
 import { Filter } from './filter.interface';
 
 @Injectable()
 @EntityRepository(FilterEntity)
-export class FilterRepository extends MongoRepository<FilterEntity> {
+export class FilterRepository extends Repository<FilterEntity> {
   async deactivateFilter(filterId: string): Promise<void> {
-    const filter = await this.findOne({ _id: filterId });
+    const filter = await this.findOne({ id: filterId });
     if (!filter) {
       throw new BadRequestException('Filter is not found');
     }
@@ -24,7 +24,7 @@ export class FilterRepository extends MongoRepository<FilterEntity> {
   }
 
   async findFilterById(id: string): Promise<Filter> {
-    const filter = await this.findOne({ _id: id });
+    const filter = await this.findOne({ id });
     if (!filter) {
       throw new BadRequestException('Filter is not found');
     }
@@ -34,7 +34,7 @@ export class FilterRepository extends MongoRepository<FilterEntity> {
 
   async findUnverifiedFilter(id: string): Promise<Filter> {
     const filter = await this.findOne({
-      _id: id,
+      id,
       isVerified: false,
     });
     if (!filter) throw new BadRequestException('Filter not found');
@@ -47,52 +47,54 @@ export class FilterRepository extends MongoRepository<FilterEntity> {
     paginationParams: PaginationParams,
   ): Promise<PaginatedResponse<Filter>> {
     const skip = getSkip(paginationParams);
-    const [response] = await this.aggregate([
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'user',
-          foreignField: '_id',
-          as: 'usersData',
-        },
-      },
-      {
-        $match: {
-          isActive: true,
-          'usersData.isVerified': true,
-          'usersData.subscription': subscriptionName,
-        },
-      },
-      {
-        $project: {
-          _id: 1,
-          furnished: 1,
-          minPrice: 1,
-          maxPrice: 1,
-          municipalities: 1,
-          rentOrSale: 1,
-          structures: 1,
-          user: 1,
-          createdAt: 1,
-        },
-      },
-      {
-        $facet: {
-          data: [{ $skip: skip }, { $limit: paginationParams.limitPerPage }],
-          total: [
-            {
-              $count: 'count',
-            },
-          ],
-        },
-      },
-    ]).toArray();
+    // const [response] = await this.aggregate([
+    //   {
+    //     $lookup: {
+    //       from: 'users',
+    //       localField: 'user',
+    //       foreignField: 'id',
+    //       as: 'usersData',
+    //     },
+    //   },
+    //   {
+    //     $match: {
+    //       isActive: true,
+    //       'usersData.isVerified': true,
+    //       'usersData.subscription': subscriptionName,
+    //     },
+    //   },
+    //   {
+    //     $project: {
+    //       id: 1,
+    //       furnished: 1,
+    //       minPrice: 1,
+    //       maxPrice: 1,
+    //       municipalities: 1,
+    //       rentOrSale: 1,
+    //       structures: 1,
+    //       user: 1,
+    //       createdAt: 1,
+    //     },
+    //   },
+    //   {
+    //     $facet: {
+    //       data: [{ $skip: skip }, { $limit: paginationParams.limitPerPage }],
+    //       total: [
+    //         {
+    //           $count: 'count',
+    //         },
+    //       ],
+    //     },
+    //   },
+    // ]).toArray();
 
-    console.log('response', response);
-
+    // return {
+    //   data: response.data,
+    //   total: response.total.length === 0 ? 0 : response.total[0].count,
+    // };
     return {
-      data: response.data,
-      total: response.total.length === 0 ? 0 : response.total[0].count,
+      data: [],
+      total: 0,
     };
   }
 

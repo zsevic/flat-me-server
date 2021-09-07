@@ -203,7 +203,7 @@ export class CityExpertProvider implements Provider {
     ];
 
     return {
-      _id: `${this.providerName}_${apartmentInfo.uniqueID}`,
+      id: `${this.providerName}_${apartmentInfo.uniqueID}`,
       apartmentId: apartmentInfo.propId,
       providerName: this.providerName,
       ...(apartmentInfo.street && {

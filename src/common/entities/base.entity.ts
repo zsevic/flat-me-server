@@ -1,8 +1,12 @@
-import { CreateDateColumn, ObjectIdColumn, UpdateDateColumn } from 'typeorm';
+import {
+  CreateDateColumn,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 export class BaseEntity {
-  @ObjectIdColumn()
-  _id?: string;
+  @PrimaryGeneratedColumn('uuid')
+  id?: string;
 
   @CreateDateColumn()
   createdAt?: Date;

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { EntityRepository, MongoRepository } from 'typeorm';
+import { EntityRepository, Repository } from 'typeorm';
 import {
   PaginatedResponse,
   PaginationParams,
@@ -15,21 +15,21 @@ import {
 
 @Injectable()
 @EntityRepository(ApartmentEntity)
-export class ApartmentRepository extends MongoRepository<ApartmentEntity> {
+export class ApartmentRepository extends Repository<ApartmentEntity> {
   async deleteApartment(id: string): Promise<void> {
-    await this.delete({ _id: id });
+    await this.delete({ id });
   }
 
   async getApartmentsIds(
     paginationParams: PaginationParams,
   ): Promise<PaginatedResponse<string>> {
     const [apartmentList, total] = await this.findAndCount({
-      select: ['_id'],
+      select: ['id'],
       skip: getSkip(paginationParams),
       take: paginationParams.limitPerPage,
     });
 
-    return { data: apartmentList.map(apartment => apartment._id), total };
+    return { data: apartmentList.map(apartment => apartment.id), total };
   }
 
   async getApartmentList(
@@ -45,7 +45,7 @@ export class ApartmentRepository extends MongoRepository<ApartmentEntity> {
       ...(skippedApartments &&
         Array.isArray(skippedApartments) &&
         skippedApartments.length > 0 && {
-          _id: {
+          id: {
             $nin: skippedApartments,
           },
         }),

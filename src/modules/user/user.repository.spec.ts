@@ -19,7 +19,7 @@ describe('UserRepository', () => {
       const userId = 'userid';
       const query = {
         where: {
-          _id: userId,
+          id: userId,
         },
         select: ['receivedApartments'],
       };
@@ -42,13 +42,13 @@ describe('UserRepository', () => {
         receivedApartments: ['id1', 'id2'],
         filters: [],
         isVerified: true,
-        _id: userId,
+        id: userId,
         email: 'test@example.com',
         __v: 0,
       };
       const query = {
         where: {
-          _id: userId,
+          id: userId,
         },
         select: ['receivedApartments'],
       };
@@ -77,7 +77,7 @@ describe('UserRepository', () => {
         BadRequestException,
       );
 
-      expect(findOneSpy).toHaveBeenCalledWith({ _id: userId });
+      expect(findOneSpy).toHaveBeenCalledWith({ id: userId });
     });
 
     it('should return email for found user', async () => {
@@ -87,7 +87,7 @@ describe('UserRepository', () => {
         receivedApartments: ['id1', 'id2'],
         filters: [],
         isVerified: true,
-        _id: userId,
+        id: userId,
         email: 'test@example.com',
         __v: 0,
       };
@@ -98,7 +98,7 @@ describe('UserRepository', () => {
       const userEmail = await userRepository.getUserEmail(userId);
 
       expect(userEmail).toEqual(user.email);
-      expect(findOneSpy).toHaveBeenCalledWith({ _id: userId });
+      expect(findOneSpy).toHaveBeenCalledWith({ id: userId });
     });
   });
 });
