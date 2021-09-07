@@ -109,10 +109,11 @@ export class ApartmentService {
       limitPerPage,
       pageNumber: 1,
     };
+    const apartmentsIds = filter.user.apartments.map(apartment => apartment.id);
 
     return this.getApartmentListFromDatabase(
       apartmentListParams as ApartmentListParamsDto,
-      filter.user.receivedApartments,
+      apartmentsIds,
       filter.createdAt,
     );
   }

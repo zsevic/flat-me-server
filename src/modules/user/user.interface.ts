@@ -1,3 +1,4 @@
+import { Apartment } from 'modules/apartment/apartment.interface';
 import { Filter } from 'modules/filter/filter.interface';
 
 export class User {
@@ -9,7 +10,7 @@ export class User {
 
   subscription: string;
 
-  receivedApartments: string[];
+  apartments?: Apartment[];
 
   filters?: Filter[];
 }

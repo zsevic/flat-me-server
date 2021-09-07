@@ -16,10 +16,6 @@ export class UserService {
     return this.userRepository.getById(id);
   }
 
-  async getReceivedApartmentsIds(userId: string): Promise<string[]> {
-    return this.userRepository.getReceivedApartmentsIds(userId);
-  }
-
   async getVerifiedUserOrCreateNewUser(email: string): Promise<User> {
     const user = await this.getVerifiedUserByEmailAndValidateFilters(email);
     if (!user) return this.saveUser(email);
@@ -57,12 +53,7 @@ export class UserService {
   }
 
   async insertReceivedApartmentsIds(userId: string, apartments: Apartment[]) {
-    const apartmentsIds = apartments.map(apartment => apartment.id);
-
-    return this.userRepository.insertReceivedApartmentsIds(
-      userId,
-      apartmentsIds,
-    );
+    return this.userRepository.insertReceivedApartmentsIds(userId, apartments);
   }
 
   async saveUser(email: string): Promise<User> {

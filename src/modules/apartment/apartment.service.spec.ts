@@ -28,10 +28,6 @@ const baseProvider = {
   getProviderResults: jest.fn(),
 };
 
-const userService = {
-  getReceivedApartmentsIds: jest.fn(),
-};
-
 describe('ApartmentService', () => {
   let apartmentService: ApartmentService;
 
@@ -49,7 +45,7 @@ describe('ApartmentService', () => {
         },
         {
           provide: UserService,
-          useValue: userService,
+          useValue: {},
         },
       ],
     }).compile();
@@ -59,6 +55,7 @@ describe('ApartmentService', () => {
 
   describe('getApartmentListFromDatabaseByFilter', () => {
     it('should return apartment list from the database by given filter', async () => {
+      const apartments = [{ id: 'id1' }];
       const apartmentsIds = ['id1'];
       const filter = {
         id: 'f7188f2f-ee2d-4bcc-a439-1461abae0ff0',
@@ -72,7 +69,7 @@ describe('ApartmentService', () => {
         user: {
           id: 'userid',
           email: 'test@example.com',
-          receivedApartments: apartmentsIds,
+          apartments,
           isVerified: true,
           subscription: 'FREE',
         },
@@ -109,13 +106,11 @@ describe('ApartmentService', () => {
         pageNumber: 1,
       };
       jest
-        .spyOn(userService, 'getReceivedApartmentsIds')
-        .mockResolvedValue(apartmentsIds);
-      jest
         .spyOn(apartmentRepository, 'getApartmentList')
         .mockResolvedValue(apartmentList);
 
       await apartmentService.getApartmentListFromDatabaseByFilter(
+        // @ts-ignore
         filter,
         limitPerPage,
       );

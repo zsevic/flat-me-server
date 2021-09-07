@@ -7,7 +7,6 @@ import { UserService } from './user.service';
 const userRepository = {
   getByEmail: jest.fn(),
   getById: jest.fn(),
-  getReceivedApartmentsIds: jest.fn(),
   getUserEmail: jest.fn(),
   insertReceivedApartmentsIds: jest.fn(),
   saveUser: jest.fn(),
@@ -29,33 +28,6 @@ describe('UserService', () => {
     }).compile();
 
     userService = module.get<UserService>(UserService);
-  });
-
-  describe('getReceivedApartmentsIds', () => {
-    it('should receive empty array when user is not found', async () => {
-      jest
-        .spyOn(userRepository, 'getReceivedApartmentsIds')
-        .mockResolvedValueOnce([]);
-
-      const apartmentsIds = await userService.getReceivedApartmentsIds(
-        'userid',
-      );
-
-      expect(apartmentsIds).toEqual([]);
-    });
-
-    it('should receive array of apartments ids', async () => {
-      const ids = ['id1', 'id2'];
-      jest
-        .spyOn(userRepository, 'getReceivedApartmentsIds')
-        .mockResolvedValueOnce(ids);
-
-      const apartmentsIds = await userService.getReceivedApartmentsIds(
-        'userid',
-      );
-
-      expect(apartmentsIds).toEqual(ids);
-    });
   });
 
   describe('getUserByEmail', () => {
@@ -184,7 +156,7 @@ describe('UserService', () => {
   });
 
   describe('insertReceivedApartmentsIds', () => {
-    it('should insert apartments ids into user document', async () => {
+    it('should insert received apartments', async () => {
       const apartmentList = [
         {
           heatingTypes: ['central'],
@@ -205,7 +177,6 @@ describe('UserService', () => {
           url: 'url',
         },
       ];
-      const apartmentsIds = ['id1'];
       const userId = 'id1';
       await userService.insertReceivedApartmentsIds(
         userId,
@@ -214,7 +185,7 @@ describe('UserService', () => {
 
       expect(userRepository.insertReceivedApartmentsIds).toHaveBeenCalledWith(
         userId,
-        apartmentsIds,
+        apartmentList,
       );
     });
   });

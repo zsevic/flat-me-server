@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { Apartment } from 'modules/apartment/apartment.interface';
 import { EntityRepository, Repository } from 'typeorm';
 import { Subscription } from './subscription.enum';
 import { UserEntity } from './user.entity';
@@ -15,17 +16,6 @@ export class UserRepository extends Repository<UserEntity> {
     return this.findOne({ where: { email }, relations: ['filters'] });
   }
 
-  async getReceivedApartmentsIds(userId: string): Promise<string[]> {
-    const user = await this.findOne({
-      where: { id: userId },
-      select: ['receivedApartments'],
-    });
-
-    if (!user) return [];
-
-    return user.receivedApartments;
-  }
-
   async getUserEmail(userId: string): Promise<string> {
     const user = await this.getById(userId);
     if (!user) throw new BadRequestException('User is not valid');
@@ -33,7 +23,7 @@ export class UserRepository extends Repository<UserEntity> {
     return user.email;
   }
 
-  async insertReceivedApartmentsIds(userId: string, apartmentsIds: string[]) {
+  async insertReceivedApartmentsIds(userId: string, apartments: Apartment[]) {
     const user = await this.findOne({ id: userId });
     if (!user) {
       // TODO
@@ -41,7 +31,7 @@ export class UserRepository extends Repository<UserEntity> {
 
     return this.save({
       ...user,
-      receivedApartments: [...user.receivedApartments, ...apartmentsIds],
+      apartments: [...user.apartments, ...apartments],
     });
   }
 

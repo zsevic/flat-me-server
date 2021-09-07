@@ -1,6 +1,14 @@
+import { ApartmentEntity } from 'modules/apartment/apartment.entity';
 import { FilterEntity } from 'modules/filter/filter.entity';
 import { TokenEntity } from 'modules/token/token.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Subscription } from './subscription.enum';
 
 @Entity({
@@ -24,8 +32,9 @@ export class UserEntity {
   })
   subscription: string;
 
-  @Column({ name: 'received_apartments', type: 'varchar', array: true })
-  receivedApartments: string[];
+  @ManyToMany(() => ApartmentEntity)
+  @JoinTable()
+  apartments?: ApartmentEntity[];
 
   @OneToMany(
     () => FilterEntity,

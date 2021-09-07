@@ -64,6 +64,7 @@ export class FilterRepository extends Repository<FilterEntity> {
         'filter.structures',
         'filter.createdAt',
         'user',
+        'user.apartments',
       ])
       .skip(skip)
       .take(paginationParams.limitPerPage)
