@@ -1,4 +1,10 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { BaseEntity } from 'common/entities/base.entity';
 import { UserEntity } from 'modules/user/user.entity';
 
@@ -6,6 +12,9 @@ import { UserEntity } from 'modules/user/user.entity';
   name: 'filter',
 })
 export class FilterEntity extends BaseEntity {
+  @PrimaryGeneratedColumn('uuid')
+  id?: string;
+
   @Column('varchar', { array: true })
   furnished: string[];
 

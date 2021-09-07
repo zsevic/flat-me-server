@@ -6,7 +6,7 @@ import { Location } from 'common/interfaces/location.interface';
   name: 'apartment',
 })
 export class ApartmentEntity extends BaseEntity {
-  @PrimaryColumn()
+  @PrimaryColumn('varchar')
   id: string;
 
   @Column({
@@ -25,8 +25,9 @@ export class ApartmentEntity extends BaseEntity {
   @Column({
     name: 'available_from',
     nullable: true,
+    type: 'timestamp',
   })
-  availableFrom?: string;
+  availableFrom?: Date;
 
   @Column({
     name: 'cover_photo_url',
@@ -56,8 +57,10 @@ export class ApartmentEntity extends BaseEntity {
 
   @Column({
     name: 'posted_at',
+    nullable: true,
+    type: 'timestamp',
   })
-  postedAt: string;
+  postedAt?: Date;
 
   @Column()
   price: number;
@@ -70,7 +73,9 @@ export class ApartmentEntity extends BaseEntity {
   @Column()
   size: number;
 
-  @Column()
+  @Column({
+    type: 'decimal',
+  })
   structure: number;
 
   @Column()

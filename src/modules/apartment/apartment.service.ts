@@ -48,7 +48,12 @@ export class ApartmentService {
           if (!apartment.price) return;
 
           const apartmentInfo = provider.parseApartmentInfo(apartment);
-          if (!apartmentInfo.coverPhotoUrl || !apartmentInfo.floor) return;
+          if (
+            !apartmentInfo.coverPhotoUrl ||
+            !apartmentInfo.floor ||
+            !apartmentInfo.address
+          )
+            return;
 
           foundApartments.push(apartmentInfo);
         });

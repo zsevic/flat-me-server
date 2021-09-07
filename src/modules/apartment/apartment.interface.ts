@@ -9,7 +9,7 @@ export interface Apartment {
 
   address: string;
 
-  availableFrom?: string;
+  availableFrom?: Date;
 
   coverPhotoUrl: string;
 
@@ -25,7 +25,7 @@ export interface Apartment {
 
   place: string;
 
-  postedAt: string;
+  postedAt?: Date;
 
   price: number;
 
