@@ -114,6 +114,9 @@ describe('FilterRepository', () => {
         .spyOn(Repository.prototype, 'createQueryBuilder')
         .mockReturnValue(SelectQueryBuilder.prototype);
       jest.spyOn(SelectQueryBuilder.prototype, 'leftJoin').mockReturnThis();
+      jest
+        .spyOn(SelectQueryBuilder.prototype, 'leftJoinAndSelect')
+        .mockReturnThis();
       jest.spyOn(SelectQueryBuilder.prototype, 'where').mockReturnThis();
       jest.spyOn(SelectQueryBuilder.prototype, 'andWhere').mockReturnThis();
       jest.spyOn(SelectQueryBuilder.prototype, 'select').mockReturnThis();
