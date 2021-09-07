@@ -81,6 +81,7 @@
       "json",
       "ts"
     ],
+    "resetMocks": true,
     "rootDir": "src",
     "testRegex": ".spec.ts$",
     "transform": {

@@ -131,10 +131,6 @@ describe('FilterService', () => {
   });
 
   describe('deactivateFilterByToken', () => {
-    afterEach(() => {
-      jest.resetAllMocks();
-    });
-
     it('should throw an error when token is not found', async () => {
       const token = 'token';
       jest

@@ -77,10 +77,6 @@ describe('TasksService', () => {
   });
 
   describe('handleDeletingInactiveApartments', () => {
-    beforeEach(() => {
-      jest.resetAllMocks();
-    });
-
     it('should handle deleting inactive apartments', async () => {
       const cetiriZidaApartmentId = 'cetiriZida_23';
       const cityExpertApartmentId = 'cityExpert_12-BR';
@@ -149,10 +145,6 @@ describe('TasksService', () => {
   });
 
   describe('handleSendingNewApartmentsForFreeSubscriptionUsers', () => {
-    afterEach(() => {
-      jest.resetAllMocks();
-    });
-
     it('should not send any new apartments to the users when there are no saved filters', async () => {
       jest
         .spyOn(filterService, 'getFilterListBySubscriptionName')

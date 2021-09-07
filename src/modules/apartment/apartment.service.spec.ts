@@ -184,10 +184,6 @@ describe('ApartmentService', () => {
     const cetiriZidaProvider = new CetiriZidaProvider();
     const cityExpertProvider = new CityExpertProvider();
 
-    afterEach(() => {
-      jest.resetAllMocks();
-    });
-
     it('should find, paginate and save apartments from providers', async () => {
       const firstProviderResults = [
         {

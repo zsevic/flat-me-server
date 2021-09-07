@@ -19,10 +19,6 @@ describe('ApartmentRepository', () => {
     apartmentRepository = module.get<ApartmentRepository>(ApartmentRepository);
   });
 
-  afterEach(() => {
-    jest.resetAllMocks();
-  });
-
   describe('getApartmentsIds', () => {
     it('should return list of found apartments ids', async () => {
       const apartmentList = [
