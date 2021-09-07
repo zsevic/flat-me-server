@@ -75,7 +75,7 @@ export class TasksService {
     return this.apartmentService.deleteApartment(apartmentId);
   }
 
-  @Cron(CronExpression.EVERY_30_SECONDS, {
+  @Cron(CronExpression.EVERY_HOUR, {
     name: SAVING_APARTMENT_LIST_FROM_PROVIDERS_CRON_JOB,
   })
   async handleSavingApartmentListFromProviders(): Promise<void> {
