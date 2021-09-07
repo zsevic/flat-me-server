@@ -61,14 +61,14 @@ describe('ApartmentService', () => {
   describe('getApartmentListFromDatabaseByFilter', () => {
     it('should get apartment list from the database by given filter', async () => {
       const filter = {
-        id: '611c59c26962b452247b9432',
+        id: 'f7188f2f-ee2d-4bcc-a439-1461abae0ff0',
         structures: [1, 2, 0.5, 1.5],
         municipalities: ['Savski venac', 'Zemun'],
         furnished: ['semi-furnished'],
         rentOrSale: 'rent',
         minPrice: 120,
         maxPrice: 370,
-        userId: '611c59c26962b452247b9431',
+        userId: '31dbc67a-411b-448e-9c22-497563055120',
         createdAt: new Date('2021-08-18T00:52:18.296Z'),
         isActive: true,
         isVerified: true,
