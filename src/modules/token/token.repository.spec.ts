@@ -1,6 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { MongoRepository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { TokenRepository } from './token.repository';
 
 describe('TokenRepository', () => {
@@ -25,7 +25,7 @@ describe('TokenRepository', () => {
         },
       };
       const findOneSpy = jest
-        .spyOn(MongoRepository.prototype, 'findOne')
+        .spyOn(Repository.prototype, 'findOne')
         .mockResolvedValue(null);
       // @ts-ignore
       jest.spyOn(global, 'Date').mockReturnValue(date);
@@ -51,7 +51,7 @@ describe('TokenRepository', () => {
         user: 'userid',
       };
       const findOneSpy = jest
-        .spyOn(MongoRepository.prototype, 'findOne')
+        .spyOn(Repository.prototype, 'findOne')
         .mockResolvedValue(token);
       // @ts-ignore
       jest.spyOn(global, 'Date').mockReturnValue(date);

@@ -84,7 +84,7 @@ describe('FilterService', () => {
       };
       const newFilter = {
         ...filter,
-        user: userId,
+        userId,
         isActive: false,
         isVerified: false,
       };

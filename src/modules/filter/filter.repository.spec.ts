@@ -1,6 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { MongoRepository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { FilterRepository } from './filter.repository';
 
 describe('FilterRepository', () => {
@@ -18,7 +18,7 @@ describe('FilterRepository', () => {
     it('should throw an error when filter is not found', async () => {
       const filterId = 'filterid';
       const findOneSpy = jest
-        .spyOn(MongoRepository.prototype, 'findOne')
+        .spyOn(Repository.prototype, 'findOne')
         .mockResolvedValue(null);
 
       await expect(
@@ -45,7 +45,7 @@ describe('FilterRepository', () => {
       };
 
       const findOneSpy = jest
-        .spyOn(MongoRepository.prototype, 'findOne')
+        .spyOn(Repository.prototype, 'findOne')
         .mockResolvedValue(filter);
 
       const foundFilter = await filterRepository.findFilterById(filterId);
@@ -59,7 +59,7 @@ describe('FilterRepository', () => {
     it('should throw an error when filter is not found', async () => {
       const filterId = 'id1';
       const findOneSpy = jest
-        .spyOn(MongoRepository.prototype, 'findOne')
+        .spyOn(Repository.prototype, 'findOne')
         .mockResolvedValue(null);
 
       await expect(
@@ -88,7 +88,7 @@ describe('FilterRepository', () => {
       };
 
       const findOneSpy = jest
-        .spyOn(MongoRepository.prototype, 'findOne')
+        .spyOn(Repository.prototype, 'findOne')
         .mockResolvedValue(filter);
 
       const unverifiedFilter = await filterRepository.findUnverifiedFilter(

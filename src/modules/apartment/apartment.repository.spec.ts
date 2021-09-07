@@ -4,7 +4,7 @@ import {
   DEFAULT_LIMIT_PER_PAGE,
 } from 'modules/pagination/pagination.constants';
 import { getSkip } from 'modules/pagination/pagination.utils';
-import { MongoRepository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { ApartmentRepository } from './apartment.repository';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
 
@@ -35,7 +35,7 @@ describe('ApartmentRepository', () => {
       ];
       const apartmentsIds = ['id1', 'id2'];
       const findAndCountSpy = jest
-        .spyOn(MongoRepository.prototype, 'findAndCount')
+        .spyOn(Repository.prototype, 'findAndCount')
         .mockResolvedValue([apartmentList, apartmentList.length]);
 
       const response = await apartmentRepository.getApartmentsIds(
@@ -104,7 +104,7 @@ describe('ApartmentRepository', () => {
         },
       };
       const findAndCountSpy = jest
-        .spyOn(MongoRepository.prototype, 'findAndCount')
+        .spyOn(Repository.prototype, 'findAndCount')
         .mockResolvedValue([apartmentList, 1]);
 
       const result = await apartmentRepository.getApartmentList(
@@ -176,7 +176,7 @@ describe('ApartmentRepository', () => {
         },
       };
       const findAndCountSpy = jest
-        .spyOn(MongoRepository.prototype, 'findAndCount')
+        .spyOn(Repository.prototype, 'findAndCount')
         .mockResolvedValue([apartmentList, 1]);
 
       const result = await apartmentRepository.getApartmentList(

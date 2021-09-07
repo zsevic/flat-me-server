@@ -1,6 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { MongoRepository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { UserRepository } from './user.repository';
 
 describe('UserRepository', () => {
@@ -24,7 +24,7 @@ describe('UserRepository', () => {
         select: ['receivedApartments'],
       };
       const findOneSpy = jest
-        .spyOn(MongoRepository.prototype, 'findOne')
+        .spyOn(Repository.prototype, 'findOne')
         .mockResolvedValue(null);
 
       const apartmentsIds = await userRepository.getReceivedApartmentsIds(
@@ -54,7 +54,7 @@ describe('UserRepository', () => {
       };
 
       const findOneSpy = jest
-        .spyOn(MongoRepository.prototype, 'findOne')
+        .spyOn(Repository.prototype, 'findOne')
         .mockResolvedValue(user);
 
       const apartmentsIds = await userRepository.getReceivedApartmentsIds(
@@ -70,7 +70,7 @@ describe('UserRepository', () => {
     it('should throw an error when user is not found', async () => {
       const userId = 'userid';
       const findOneSpy = jest
-        .spyOn(MongoRepository.prototype, 'findOne')
+        .spyOn(Repository.prototype, 'findOne')
         .mockResolvedValue(null);
 
       await expect(userRepository.getUserEmail(userId)).rejects.toThrowError(
@@ -92,7 +92,7 @@ describe('UserRepository', () => {
         __v: 0,
       };
       const findOneSpy = jest
-        .spyOn(MongoRepository.prototype, 'findOne')
+        .spyOn(Repository.prototype, 'findOne')
         .mockResolvedValue(user);
 
       const userEmail = await userRepository.getUserEmail(userId);
