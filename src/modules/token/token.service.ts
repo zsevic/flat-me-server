@@ -26,7 +26,7 @@ export class TokenService {
       expiresAt,
       value: generatedToken,
       filterId: token.filterId,
-      userId: token.filterId,
+      userId: token.userId,
     });
   }
 

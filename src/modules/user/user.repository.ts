@@ -24,7 +24,10 @@ export class UserRepository extends Repository<UserEntity> {
   }
 
   async insertReceivedApartmentsIds(userId: string, apartments: Apartment[]) {
-    const user = await this.findOne({ id: userId });
+    const user = await this.findOne({
+      where: { id: userId },
+      relations: ['apartments'],
+    });
     if (!user) {
       // TODO
     }
