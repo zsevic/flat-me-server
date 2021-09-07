@@ -58,7 +58,8 @@ describe('ApartmentService', () => {
   });
 
   describe('getApartmentListFromDatabaseByFilter', () => {
-    it('should get apartment list from the database by given filter', async () => {
+    it('should return apartment list from the database by given filter', async () => {
+      const apartmentsIds = ['id1'];
       const filter = {
         id: 'f7188f2f-ee2d-4bcc-a439-1461abae0ff0',
         structures: [1, 2, 0.5, 1.5],
@@ -68,6 +69,13 @@ describe('ApartmentService', () => {
         minPrice: 120,
         maxPrice: 370,
         userId: '31dbc67a-411b-448e-9c22-497563055120',
+        user: {
+          id: 'userid',
+          email: 'test@example.com',
+          receivedApartments: apartmentsIds,
+          isVerified: true,
+          subscription: 'FREE',
+        },
         createdAt: new Date('2021-08-18T00:52:18.296Z'),
         isActive: true,
         isVerified: true,
@@ -94,7 +102,6 @@ describe('ApartmentService', () => {
           updatedAt: '2021-08-14T18:12:32.133Z',
         },
       ];
-      const apartmentsIds = ['id1'];
       const limitPerPage = 5;
       const apartmentListParams = {
         ...filter,
@@ -113,9 +120,6 @@ describe('ApartmentService', () => {
         limitPerPage,
       );
 
-      expect(userService.getReceivedApartmentsIds).toHaveBeenCalledWith(
-        filter.userId,
-      );
       expect(apartmentRepository.getApartmentList).toHaveBeenCalledWith(
         apartmentListParams,
         apartmentsIds,

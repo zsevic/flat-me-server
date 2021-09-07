@@ -17,8 +17,8 @@ export class TokenEntity extends BaseEntity {
   value: string;
 
   @Column()
-  filter?: string;
+  filterId: string;
 
   @Column()
-  user?: string;
+  userId: string;
 }

@@ -5,7 +5,7 @@ export interface Token {
 
   value: string;
 
-  filter?: string;
+  filterId: string;
 
-  user?: string;
+  userId: string;
 }

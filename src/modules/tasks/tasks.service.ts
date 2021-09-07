@@ -150,8 +150,11 @@ export class TasksService {
           firstApartment.price - secondApartment.price,
       );
 
-      const filterDeactivationUrl = await this.filterService.getDeactivationUrl(
-        filter.id,
+      const filterDeactivationUrl = await this.filterService.createTokenAndDeactivationUrl(
+        {
+          filterId: filter.id,
+          userId: filter.userId,
+        },
         FILTER_DEACTIVATION_TOKEN_EXPIRATION_HOURS,
       );
       const userEmail = await this.userService.getUserEmail(filter.userId);

@@ -25,7 +25,7 @@ const apartmentService = {
 };
 
 const filterService = {
-  getDeactivationUrl: jest.fn(),
+  createTokenAndDeactivationUrl: jest.fn(),
   getFilterListBySubscriptionName: jest.fn(),
   getInitialFilter: filters => ({ ...filters, pageNumber: 1 }),
 };
@@ -256,7 +256,7 @@ describe('TasksService', () => {
         });
       jest.spyOn(userService, 'getUserEmail').mockResolvedValue(email);
       jest
-        .spyOn(filterService, 'getDeactivationUrl')
+        .spyOn(filterService, 'createTokenAndDeactivationUrl')
         .mockResolvedValue(filterDeactivationUrl);
 
       await tasksService.handleSendingNewApartmentsForFreeSubscriptionUsers();
@@ -267,8 +267,11 @@ describe('TasksService', () => {
       expect(tokenService.deleteTokenByFilterId).toHaveBeenCalledWith(
         foundFilter.id,
       );
-      expect(filterService.getDeactivationUrl).toHaveBeenCalledWith(
-        foundFilter.id,
+      expect(filterService.createTokenAndDeactivationUrl).toHaveBeenCalledWith(
+        {
+          filterId: foundFilter.id,
+          userId: foundFilter.userId,
+        },
         FILTER_DEACTIVATION_TOKEN_EXPIRATION_HOURS,
       );
       expect(userService.getUserEmail).toHaveBeenCalledWith(foundFilter.userId);

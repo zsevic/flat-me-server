@@ -1,6 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MailService } from 'modules/mail/mail.service';
+import { Token } from 'modules/token/token.interface';
 import { TokenService } from 'modules/token/token.service';
 import { UserService } from 'modules/user/user.service';
 import { SaveFilterDto } from './dto/save-filter.dto';
@@ -120,8 +121,8 @@ describe('FilterService', () => {
       );
       expect(filterRepository.saveFilter).toHaveBeenCalledWith(newFilter);
       expect(tokenService.createAndSaveToken).toHaveBeenCalledWith({
-        filter: filterId,
-        user: userId,
+        filterId,
+        userId,
       });
       expect(mailService.sendFilterVerificationMail).toHaveBeenCalledWith(
         email,
@@ -146,7 +147,7 @@ describe('FilterService', () => {
     it('should throw an error when filter is not found', async () => {
       const filterId = 'id1';
       const token = {
-        filter: filterId,
+        filterId,
         value: 'token',
       };
       jest.spyOn(tokenService, 'getValidToken').mockResolvedValue(token);
@@ -159,7 +160,7 @@ describe('FilterService', () => {
       ).rejects.toThrowError(BadRequestException);
       expect(tokenService.getValidToken).toHaveBeenCalledWith(token.value);
       expect(filterRepository.deactivateFilter).toHaveBeenCalledWith(
-        token.filter,
+        token.filterId,
       );
     });
 
@@ -177,7 +178,7 @@ describe('FilterService', () => {
         createdAt: '2021-08-18T00:52:18.296Z',
       };
       const token = {
-        filter: filterId,
+        filterId,
         value: 'token',
         id: 'tokenid',
       };
@@ -193,17 +194,22 @@ describe('FilterService', () => {
     });
   });
 
-  describe('getDeactivationUrl', () => {
+  describe('createTokenAndDeactivationUrl', () => {
     it('should return deactivation url by given filter', async () => {
       const tokenValue = 'token';
-      const filterId = 'id1';
+      const filterId = 'filterid1';
+      const userId = 'userid1';
+      const tokenEntity: Partial<Token> = {
+        filterId,
+        userId,
+      };
       const expirationHours = 24;
       jest.spyOn(tokenService, 'createAndSaveToken').mockResolvedValue({
         value: tokenValue,
       });
 
-      const deactivationUrl = await filterService.getDeactivationUrl(
-        filterId,
+      const deactivationUrl = await filterService.createTokenAndDeactivationUrl(
+        tokenEntity,
         expirationHours,
       );
 
@@ -211,7 +217,7 @@ describe('FilterService', () => {
         `${clientUrl}/filters/deactivation/${tokenValue}`,
       );
       expect(tokenService.createAndSaveToken).toHaveBeenCalledWith(
-        { filter: filterId },
+        tokenEntity,
         expirationHours,
       );
     });
@@ -267,8 +273,8 @@ describe('FilterService', () => {
       const filterId = 'id1';
       const userId = 'user1';
       const token = {
-        filter: filterId,
-        user: userId,
+        filterId,
+        userId,
         value: 'token',
       };
       const foundFilter = {
@@ -298,15 +304,15 @@ describe('FilterService', () => {
       expect(filterRepository.verifyAndActivateFilter).toHaveBeenCalledWith(
         foundFilter,
       );
-      expect(userService.verifyUser).toHaveBeenCalledWith(token.user);
+      expect(userService.verifyUser).toHaveBeenCalledWith(token.userId);
     });
 
     it('should verify and activate found filter', async () => {
       const filterId = 'id1';
       const userId = 'user1';
       const token = {
-        filter: filterId,
-        user: userId,
+        filterId,
+        userId,
         value: 'token',
       };
       const foundFilter = {
@@ -332,7 +338,7 @@ describe('FilterService', () => {
       expect(filterRepository.verifyAndActivateFilter).toHaveBeenCalledWith(
         foundFilter,
       );
-      expect(userService.verifyUser).toHaveBeenCalledWith(token.user);
+      expect(userService.verifyUser).toHaveBeenCalledWith(token.userId);
     });
   });
 });

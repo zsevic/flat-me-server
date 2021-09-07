@@ -25,7 +25,8 @@ export class TokenService {
     return this.tokenRepository.saveToken({
       expiresAt,
       value: generatedToken,
-      ...token,
+      filterId: token.filterId,
+      userId: token.filterId,
     });
   }
 

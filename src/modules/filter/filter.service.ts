@@ -5,6 +5,7 @@ import {
   PaginationParams,
 } from 'modules/pagination/pagination.interfaces';
 import { MailService } from 'modules/mail/mail.service';
+import { Token } from 'modules/token/token.interface';
 import { TokenService } from 'modules/token/token.service';
 import { UserService } from 'modules/user/user.service';
 import { FilterDto } from './dto/filter.dto';
@@ -38,8 +39,8 @@ export class FilterService {
     const savedFilter = await this.filterRepository.saveFilter(newFilter);
 
     const token = await this.tokenService.createAndSaveToken({
-      filter: savedFilter.id,
-      user: user.id,
+      filterId: savedFilter.id,
+      userId: user.id,
     });
     await this.mailService.sendFilterVerificationMail(email, token.value);
   }
@@ -47,16 +48,16 @@ export class FilterService {
   async deactivateFilterByToken(token: string): Promise<void> {
     const validToken = await this.tokenService.getValidToken(token);
 
-    await this.filterRepository.deactivateFilter(validToken.filter);
+    await this.filterRepository.deactivateFilter(validToken.filterId);
     await this.tokenService.deleteToken(validToken.id);
   }
 
-  async getDeactivationUrl(
-    filterId: string,
+  async createTokenAndDeactivationUrl(
+    token: Partial<Token>,
     expirationHours: number,
   ): Promise<string> {
     const deactivationToken = await this.tokenService.createAndSaveToken(
-      { filter: filterId },
+      token,
       expirationHours,
     );
 
@@ -80,8 +81,8 @@ export class FilterService {
 
   async verifyFilter(token: string): Promise<void> {
     const {
-      filter: filterId,
-      user: userId,
+      filterId,
+      userId,
       id: tokenId,
     } = await this.tokenService.getValidToken(token);
 
