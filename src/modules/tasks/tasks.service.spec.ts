@@ -170,14 +170,14 @@ describe('TasksService', () => {
 
     it('should not send any apartments to the users when there are no new apartments by found filters', async () => {
       const foundFilter = {
-        id: '611c59c26962b452247b9432',
+        id: 'eea524df-b407-4994-8d3e-348a964318f7',
         structures: [1, 2, 0.5, 1.5],
         municipalities: ['Savski venac', 'Zemun'],
         furnished: ['semi-furnished'],
         rentOrSale: 'rent',
         minPrice: 120,
         maxPrice: 370,
-        user: '611c59c26962b452247b9431',
+        userId: 'ee3af62e-3bca-49ec-984b-c9a3e16f36e3',
         createdAt: '2021-08-18T00:52:18.296Z',
       };
       jest
@@ -200,14 +200,14 @@ describe('TasksService', () => {
 
     it('should send new apartments by found filters', async () => {
       const foundFilter = {
-        id: '611c59c26962b452247b9432',
+        id: '5b87d75f-5849-4a3d-a3f5-6462a9147f41',
         structures: [1, 2, 0.5, 1.5],
         municipalities: ['Savski venac', 'Zemun'],
         furnished: ['semi-furnished'],
         rentOrSale: 'rent',
         minPrice: 120,
         maxPrice: 370,
-        user: '611c59c26962b452247b9431',
+        userId: 'ad7bf1ac-df4b-4556-bb67-122bd82d3214',
         createdAt: '2021-08-18T00:52:18.296Z',
       };
       const apartmentList = [
@@ -281,7 +281,7 @@ describe('TasksService', () => {
         foundFilter.id,
         FILTER_DEACTIVATION_TOKEN_EXPIRATION_HOURS,
       );
-      expect(userService.getUserEmail).toHaveBeenCalledWith(foundFilter.user);
+      expect(userService.getUserEmail).toHaveBeenCalledWith(foundFilter.userId);
       expect(mailService.sendMailWithNewApartments).toHaveBeenCalledWith(
         email,
         [apartmentList[1], apartmentList[0]],
@@ -290,7 +290,7 @@ describe('TasksService', () => {
       );
       expect(
         userService.insertReceivedApartmentsIds,
-      ).toHaveBeenCalledWith(foundFilter.user, [
+      ).toHaveBeenCalledWith(foundFilter.userId, [
         apartmentList[1],
         apartmentList[0],
       ]);
@@ -298,14 +298,14 @@ describe('TasksService', () => {
 
     it('should paginate over filters', async () => {
       const foundFilter = {
-        id: '611c59c26962b452247b9432',
+        id: '5b87d75f-5849-4a3d-a3f5-6462a9147f41',
         structures: [1, 2, 0.5, 1.5],
         municipalities: ['Savski venac', 'Zemun'],
         furnished: ['semi-furnished'],
         rentOrSale: 'rent',
         minPrice: 120,
         maxPrice: 370,
-        user: '611c59c26962b452247b9431',
+        user: 'ad7bf1ac-df4b-4556-bb67-122bd82d3214',
         createdAt: '2021-08-18T00:52:18.296Z',
       };
       jest
@@ -334,25 +334,25 @@ describe('TasksService', () => {
     it('should continue handling filters when one of the filter handler fails', async () => {
       const foundFilters = [
         {
-          id: '611c5642c653f746ea0560a3',
+          id: '5b87d75f-5849-4a3d-a3f5-6462a9147f41',
           structures: [1, 2],
           municipalities: ['Savski venac', 'Zemun'],
           furnished: ['semi-furnished'],
           rentOrSale: 'rent',
           minPrice: 120,
           maxPrice: 370,
-          user: '611c5641c653f746ea0560a2',
+          userId: 'b2728317-869a-4183-a1e7-9d5ea616dff1',
           createdAt: '2021-08-18T00:37:22.039Z',
         },
         {
-          id: '611c59c26962b452247b9432',
+          id: 'eeb4f51d-25a2-4560-bb72-d1be3e13d585',
           structures: [1, 2, 0.5, 1.5],
           municipalities: ['Savski venac', 'Zemun'],
           furnished: ['semi-furnished'],
           rentOrSale: 'rent',
           minPrice: 120,
           maxPrice: 370,
-          user: '611c59c26962b452247b9431',
+          userId: '52f3372f-0e74-4ccb-bab7-3e397d46b0ef',
           createdAt: '2021-08-18T00:52:18.296Z',
         },
       ];
