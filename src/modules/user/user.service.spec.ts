@@ -90,7 +90,6 @@ describe('UserService', () => {
         isVerified: false,
         id: userId,
         email,
-        __v: 0,
       };
       jest.spyOn(userRepository, 'getByEmail').mockResolvedValue(null);
       jest.spyOn(userRepository, 'saveUser').mockResolvedValue(userData);
@@ -112,7 +111,6 @@ describe('UserService', () => {
         isVerified: false,
         id: userId,
         email,
-        __v: 0,
       };
       jest.spyOn(userRepository, 'getByEmail').mockResolvedValue(userData);
 
@@ -133,7 +131,6 @@ describe('UserService', () => {
         isVerified: true,
         id: userId,
         email,
-        __v: 0,
       };
       jest.spyOn(userRepository, 'getByEmail').mockResolvedValue(userData);
 
@@ -154,7 +151,6 @@ describe('UserService', () => {
         isVerified: true,
         id: userId,
         email,
-        __v: 0,
       };
       jest.spyOn(userRepository, 'getByEmail').mockResolvedValue(userData);
 
@@ -175,7 +171,6 @@ describe('UserService', () => {
         isVerified: true,
         id: userId,
         email,
-        __v: 0,
       };
       jest.spyOn(userRepository, 'getByEmail').mockResolvedValue(userData);
 
@@ -203,12 +198,11 @@ describe('UserService', () => {
           furnished: 'semi-furnished',
           municipality: 'Savski venac',
           place: 'Sarajevska',
-          postedAt: '2021-06-23T13:38:19+02:00',
+          postedAt: new Date('2021-06-23T13:38:19+02:00'),
           rentOrSale: 'rent',
           size: 41,
           structure: 3,
           url: 'url',
-          __v: 0,
         },
       ];
       const apartmentsIds = ['id1'];
@@ -246,7 +240,6 @@ describe('UserService', () => {
         isVerified: true,
         id: userId,
         email: 'test@example.com',
-        __v: 0,
       };
       jest.spyOn(userRepository, 'getById').mockResolvedValue(userData);
 
@@ -265,7 +258,6 @@ describe('UserService', () => {
         isVerified: false,
         id: userId,
         email: 'test@example.com',
-        __v: 0,
       };
       jest.spyOn(userRepository, 'getById').mockResolvedValue(userData);
 

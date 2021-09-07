@@ -54,8 +54,10 @@ export class ApartmentService {
             !apartmentInfo.address ||
             !apartmentInfo.heatingTypes ||
             !apartmentInfo.municipality
-          )
+          ) {
+            console.log('apartmentinfo', apartmentInfo);
             return;
+          }
 
           foundApartments.push(apartmentInfo);
         });

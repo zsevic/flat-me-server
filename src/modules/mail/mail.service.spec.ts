@@ -77,7 +77,7 @@ describe('MailService', () => {
           heatingTypes: ['district'],
           municipality: 'Zvezdara',
           place: 'Zvezdara opština',
-          postedAt: '2021-05-10T16:07:58+02:00',
+          postedAt: new Date('2021-05-10T16:07:58+02:00'),
           rentOrSale: 'rent',
           size: 69,
           structure: 1.5,

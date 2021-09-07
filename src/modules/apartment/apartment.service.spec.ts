@@ -85,12 +85,11 @@ describe('ApartmentService', () => {
           furnished: 'semi-furnished',
           municipality: 'Savski venac',
           place: 'Sarajevska',
-          postedAt: '2021-06-23T13:38:19+02:00',
+          postedAt: new Date('2021-06-23T13:38:19+02:00'),
           rentOrSale: 'rent',
           size: 41,
           structure: 3,
           url: 'url',
-          __v: 0,
           createdAt: '2021-08-14T18:12:32.133Z',
           updatedAt: '2021-08-14T18:12:32.133Z',
         },
@@ -185,6 +184,10 @@ describe('ApartmentService', () => {
     const cetiriZidaProvider = new CetiriZidaProvider();
     const cityExpertProvider = new CityExpertProvider();
 
+    afterEach(() => {
+      jest.resetAllMocks();
+    });
+
     it('should find, paginate and save apartments from providers', async () => {
       const firstProviderResults = [
         {
@@ -278,6 +281,7 @@ describe('ApartmentService', () => {
               id: '60f99390d9982b10',
               for: 'rent',
               price: 500,
+              address: 'Kursulina',
               deposit: 1,
               paymentTerm: 'month',
               allowedVirtualSightseeing: false,
@@ -356,7 +360,7 @@ describe('ApartmentService', () => {
             heatingTypes: ['district'],
             municipality: 'Zvezdara',
             place: 'Zvezdara opština',
-            postedAt: '2021-05-10T16:07:58+02:00',
+            postedAt: new Date('2021-05-10T16:07:58+02:00'),
             rentOrSale: 'rent',
             size: 69,
             structure: 3,
@@ -390,6 +394,7 @@ describe('ApartmentService', () => {
           {
             price: 500,
             id: 'cetiriZida_60f99390d9982b10',
+            address: 'Kursulina',
             apartmentId: '60f99390d9982b10',
             providerName: 'cetiriZida',
             coverPhotoUrl: 'cover-photo-url',
@@ -398,7 +403,7 @@ describe('ApartmentService', () => {
             heatingTypes: ['district'],
             municipality: 'Vračar',
             place: 'Vračar',
-            postedAt: '2020-04-22T17:49:36+02:00',
+            postedAt: new Date('2020-04-22T17:49:36+02:00'),
             rentOrSale: 'rent',
             size: 62,
             structure: 3,
@@ -512,7 +517,7 @@ describe('ApartmentService', () => {
           heatingTypes: ['district'],
           municipality: 'Zvezdara',
           place: 'Zvezdara opština',
-          postedAt: '2021-05-10T16:07:58+02:00',
+          postedAt: new Date('2021-05-10T16:07:58+02:00'),
           rentOrSale: 'rent',
           size: 69,
           structure: 3,

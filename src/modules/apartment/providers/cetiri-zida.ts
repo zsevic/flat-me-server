@@ -164,7 +164,7 @@ export class CetiriZidaProvider implements Provider {
       }),
       municipality: this.getMunicipality(apartmentInfo),
       place: apartmentInfo?.placeNames?.[0],
-      postedAt: apartmentInfo.createdAt,
+      postedAt: new Date(apartmentInfo.createdAt),
       price: apartmentInfo.price,
       rentOrSale: apartmentInfo.for,
       size: apartmentInfo.m2,

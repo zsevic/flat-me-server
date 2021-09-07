@@ -93,7 +93,6 @@ describe('FilterService', () => {
         id: filterId,
         createdAt: '2021-08-22T20:59:57.918Z',
         updatedAt: '2021-08-22T20:59:57.918Z',
-        __v: 0,
       };
       const user = {
         subscription: 'FREE',
@@ -102,7 +101,6 @@ describe('FilterService', () => {
         isVerified: false,
         id: userId,
         email: 'test@example.com',
-        __v: 0,
       };
       const token = 'token';
       jest

@@ -44,7 +44,6 @@ describe('UserRepository', () => {
         isVerified: true,
         id: userId,
         email: 'test@example.com',
-        __v: 0,
       };
       const query = {
         where: {
@@ -89,7 +88,6 @@ describe('UserRepository', () => {
         isVerified: true,
         id: userId,
         email: 'test@example.com',
-        __v: 0,
       };
       const findOneSpy = jest
         .spyOn(Repository.prototype, 'findOne')
