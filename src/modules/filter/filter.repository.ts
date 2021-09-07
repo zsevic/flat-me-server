@@ -47,54 +47,31 @@ export class FilterRepository extends Repository<FilterEntity> {
     paginationParams: PaginationParams,
   ): Promise<PaginatedResponse<Filter>> {
     const skip = getSkip(paginationParams);
-    // const [response] = await this.aggregate([
-    //   {
-    //     $lookup: {
-    //       from: 'users',
-    //       localField: 'user',
-    //       foreignField: 'id',
-    //       as: 'usersData',
-    //     },
-    //   },
-    //   {
-    //     $match: {
-    //       isActive: true,
-    //       'usersData.isVerified': true,
-    //       'usersData.subscription': subscriptionName,
-    //     },
-    //   },
-    //   {
-    //     $project: {
-    //       id: 1,
-    //       furnished: 1,
-    //       minPrice: 1,
-    //       maxPrice: 1,
-    //       municipalities: 1,
-    //       rentOrSale: 1,
-    //       structures: 1,
-    //       user: 1,
-    //       createdAt: 1,
-    //     },
-    //   },
-    //   {
-    //     $facet: {
-    //       data: [{ $skip: skip }, { $limit: paginationParams.limitPerPage }],
-    //       total: [
-    //         {
-    //           $count: 'count',
-    //         },
-    //       ],
-    //     },
-    //   },
-    // ]).toArray();
+    const [data, total] = await this.createQueryBuilder('filter')
+      .leftJoinAndSelect('filter.user', 'user')
+      .where('filter.is_active = :isActive', { isActive: true })
+      .andWhere('user.is_verified = :isVerified', { isVerified: true })
+      .andWhere('user.subscription = :subscription', {
+        subscription: subscriptionName,
+      })
+      .select([
+        'filter.id',
+        'filter.furnished',
+        'filter.minPrice',
+        'filter.maxPrice',
+        'filter.municipalities',
+        'filter.rentOrSale',
+        'filter.structures',
+        'filter.createdAt',
+        'user',
+      ])
+      .skip(skip)
+      .take(paginationParams.limitPerPage)
+      .getManyAndCount();
 
-    // return {
-    //   data: response.data,
-    //   total: response.total.length === 0 ? 0 : response.total[0].count,
-    // };
     return {
-      data: [],
-      total: 0,
+      data,
+      total,
     };
   }
 
