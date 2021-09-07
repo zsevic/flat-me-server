@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService, ConfigModule } from '@nestjs/config';
 import { ScheduleModule, SchedulerRegistry } from '@nestjs/schedule';
-import { InjectConnection, TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import * as Joi from 'joi';
 import { Subject } from 'rxjs';
 import { Connection } from 'typeorm';
@@ -68,7 +68,7 @@ export class AppModule implements OnApplicationShutdown {
   private readonly shutdownListener$: Subject<void> = new Subject();
 
   constructor(
-    @InjectConnection() private readonly connection: Connection,
+    private readonly connection: Connection,
     private readonly schedulerRegistry: SchedulerRegistry,
   ) {}
 

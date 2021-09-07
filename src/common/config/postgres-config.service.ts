@@ -11,6 +11,7 @@ export class PostgresConfigService implements TypeOrmOptionsFactory {
     return {
       type: 'postgres',
       url: this.configService.get<string>('database.url'),
+      keepConnectionAlive: true,
       entities: [path.join(__dirname, '/../../../**/*.entity.{js,ts}')],
       synchronize: true,
     };
