@@ -2,10 +2,12 @@ import { BaseEntity } from 'common/entities/base.entity';
 import { Column, Entity } from 'typeorm';
 
 @Entity({
-  name: 'tokens',
+  name: 'token',
 })
 export class TokenEntity extends BaseEntity {
-  @Column()
+  @Column({
+    name: 'expires_at',
+  })
   expiresAt: Date;
 
   @Column()

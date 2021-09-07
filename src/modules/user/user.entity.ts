@@ -3,7 +3,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Subscription } from './subscription.enum';
 
 @Entity({
-  name: 'users',
+  name: 'user',
 })
 export class UserEntity {
   @PrimaryGeneratedColumn('uuid')

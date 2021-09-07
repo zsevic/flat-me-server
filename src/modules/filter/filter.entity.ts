@@ -3,33 +3,41 @@ import { BaseEntity } from 'common/entities/base.entity';
 import { UserEntity } from 'modules/user/user.entity';
 
 @Entity({
-  name: 'filters',
+  name: 'filter',
 })
 export class FilterEntity extends BaseEntity {
   @Column('varchar', { array: true })
   furnished: string[];
 
-  @Column()
+  @Column({
+    name: 'min_price',
+  })
   minPrice: number;
 
-  @Column()
+  @Column({
+    name: 'max_price',
+  })
   maxPrice: number;
 
   @Column('varchar', { array: true })
   municipalities: string[];
 
-  @Column()
+  @Column({
+    name: 'rent_or_sale',
+  })
   rentOrSale: string;
 
   @Column('decimal', { array: true })
   structures: number[];
 
   @Column({
+    name: 'is_active',
     default: false,
   })
   isActive: boolean;
 
   @Column({
+    name: 'is_verified',
     default: false,
   })
   isVerified: boolean;

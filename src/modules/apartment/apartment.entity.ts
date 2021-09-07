@@ -3,33 +3,40 @@ import { BaseEntity } from 'common/entities/base.entity';
 import { Location } from 'common/interfaces/location.interface';
 
 @Entity({
-  name: 'apartments',
+  name: 'apartment',
 })
 export class ApartmentEntity extends BaseEntity {
   @PrimaryColumn()
   id: string;
 
-  @Column()
+  @Column({
+    name: 'apartment_id',
+  })
   apartmentId: string;
 
-  @Column()
+  @Column({
+    name: 'provider_name',
+  })
   providerName: string;
 
   @Column()
   address: string;
 
   @Column({
+    name: 'available_from',
     nullable: true,
   })
   availableFrom?: string;
 
-  @Column()
+  @Column({
+    name: 'cover_photo_url',
+  })
   coverPhotoUrl: string;
 
   @Column()
   floor: string;
 
-  @Column('varchar', { array: true })
+  @Column({ name: 'heating_types', type: 'varchar', array: true })
   heatingTypes: string[];
 
   @Column()
@@ -47,13 +54,17 @@ export class ApartmentEntity extends BaseEntity {
   @Column()
   place: string;
 
-  @Column()
+  @Column({
+    name: 'posted_at',
+  })
   postedAt: string;
 
   @Column()
   price: number;
 
-  @Column()
+  @Column({
+    name: 'rent_or_sale',
+  })
   rentOrSale: string;
 
   @Column()
