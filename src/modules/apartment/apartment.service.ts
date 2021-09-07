@@ -51,7 +51,9 @@ export class ApartmentService {
           if (
             !apartmentInfo.coverPhotoUrl ||
             !apartmentInfo.floor ||
-            !apartmentInfo.address
+            !apartmentInfo.address ||
+            !apartmentInfo.heatingTypes ||
+            !apartmentInfo.municipality
           )
             return;
 
