@@ -33,7 +33,17 @@ export class UserEntity {
   subscription: string;
 
   @ManyToMany(() => ApartmentEntity)
-  @JoinTable()
+  @JoinTable({
+    name: 'user_received_apartments',
+    joinColumn: {
+      name: 'user_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'apartment_id',
+      referencedColumnName: 'id',
+    },
+  })
   apartments?: ApartmentEntity[];
 
   @OneToMany(

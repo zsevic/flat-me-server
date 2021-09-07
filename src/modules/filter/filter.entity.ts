@@ -53,17 +53,17 @@ export class FilterEntity extends BaseEntity {
   })
   isVerified: boolean;
 
-  @Column({
-    name: 'user_id',
-  })
-  userId: string;
-
   @ManyToOne(
     () => UserEntity,
     userEntity => userEntity.filters,
   )
   @JoinColumn({ name: 'user_id' })
   user?: UserEntity;
+
+  @Column({
+    name: 'user_id',
+  })
+  userId: string;
 
   @OneToMany(
     () => TokenEntity,
