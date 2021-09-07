@@ -1,4 +1,5 @@
 import { FilterEntity } from 'modules/filter/filter.entity';
+import { TokenEntity } from 'modules/token/token.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Subscription } from './subscription.enum';
 
@@ -31,4 +32,10 @@ export class UserEntity {
     filterEntity => filterEntity.user,
   )
   filters?: FilterEntity[];
+
+  @OneToMany(
+    () => TokenEntity,
+    tokenEntity => tokenEntity.user,
+  )
+  tokens?: FilterEntity[];
 }

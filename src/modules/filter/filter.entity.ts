@@ -3,10 +3,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { BaseEntity } from 'common/entities/base.entity';
 import { UserEntity } from 'modules/user/user.entity';
+import { TokenEntity } from 'modules/token/token.entity';
 
 @Entity({
   name: 'filter',
@@ -62,4 +64,10 @@ export class FilterEntity extends BaseEntity {
   )
   @JoinColumn({ name: 'user_id' })
   user?: UserEntity;
+
+  @OneToMany(
+    () => TokenEntity,
+    tokenEntity => tokenEntity.filter,
+  )
+  tokens?: FilterEntity[];
 }
