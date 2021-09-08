@@ -58,6 +58,6 @@ jobs:
 
       - run: npm run test:e2e
         env:
-          DATABASE_URL: postgres://username:password@127.0.0.1:5432/flat-me-db
+          DATABASE_URL: postgres://${{ matrix.database-user }}:${{ matrix.database-password }}@${{ matrix.database-host }}:${{ matrix.database-port }}/${{ matrix.database-name }}
 
       - run: npm audit
