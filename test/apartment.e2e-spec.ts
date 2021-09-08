@@ -50,22 +50,6 @@ describe('ApartmentController (e2e)', () => {
         .expect(HttpStatus.BAD_REQUEST);
     });
 
-    it('should return apartment list based on given params (case with one-element arrays)', () => {
-      return request(app.getHttpServer())
-        .get('/apartments')
-        .query({
-          minPrice: 200,
-          furnished: ['furnished'],
-          structures: [2.5],
-          municipalities: ['Zvezdara'],
-          maxPrice: 300,
-          rentOrSale: 'rent',
-          limitPerPage: 2,
-          pageNumber: 1,
-        })
-        .expect(HttpStatus.OK);
-    });
-
     it('should return apartment list based on given params', () => {
       return request(app.getHttpServer())
         .get('/apartments')
