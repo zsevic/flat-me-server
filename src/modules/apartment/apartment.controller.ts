@@ -1,4 +1,4 @@
-import { Body, Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { PaginatedResponse } from 'modules/pagination/pagination.interfaces';
 import { Apartment } from './apartment.interface';
 import { ApartmentService } from './apartment.service';
@@ -10,7 +10,7 @@ export class ApartmentController {
 
   @Get()
   async getApartmentList(
-    @Body() apartmentListParamsDto: ApartmentListParamsDto,
+    @Query() apartmentListParamsDto: ApartmentListParamsDto,
   ): Promise<PaginatedResponse<Apartment>> {
     return this.apartmentService.getApartmentListFromDatabase(
       apartmentListParamsDto,
