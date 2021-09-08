@@ -59,6 +59,7 @@ export class FilterService {
     return `${process.env.CLIENT_URL}/filters/deactivation/${deactivationToken.value}`;
   }
 
+  @Transactional()
   async deactivateFilterByToken(token: string): Promise<void> {
     const validToken = await this.tokenService.getValidToken(token);
 
@@ -81,6 +82,7 @@ export class FilterService {
     pageNumber: 1,
   });
 
+  @Transactional()
   async verifyFilter(token: string): Promise<void> {
     const {
       filterId,
