@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 import {
   PaginatedResponse,
   PaginationParams,
@@ -23,6 +24,7 @@ export class FilterService {
     private readonly userService: UserService,
   ) {}
 
+  @Transactional()
   async createFilterAndSendVerificationMail(
     saveFilterDto: SaveFilterDto,
   ): Promise<void> {
@@ -45,13 +47,6 @@ export class FilterService {
     await this.mailService.sendFilterVerificationMail(email, token.value);
   }
 
-  async deactivateFilterByToken(token: string): Promise<void> {
-    const validToken = await this.tokenService.getValidToken(token);
-
-    await this.filterRepository.deactivateFilter(validToken.filterId);
-    await this.tokenService.deleteToken(validToken.id);
-  }
-
   async createTokenAndDeactivationUrl(
     token: Partial<Token>,
     expirationHours: number,
@@ -62,6 +57,13 @@ export class FilterService {
     );
 
     return `${process.env.CLIENT_URL}/filters/deactivation/${deactivationToken.value}`;
+  }
+
+  async deactivateFilterByToken(token: string): Promise<void> {
+    const validToken = await this.tokenService.getValidToken(token);
+
+    await this.filterRepository.deactivateFilter(validToken.filterId);
+    await this.tokenService.deleteToken(validToken.id);
   }
 
   async getFilterListBySubscriptionName(
