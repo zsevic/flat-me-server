@@ -3,7 +3,7 @@ name: Github CI
 on:
   push:
     branches:
-      - master
+      - '*'
 
 jobs:
   build:
@@ -31,7 +31,7 @@ jobs:
           POSTGRES_USER: ${{ matrix.database-user }}
           POSTGRES_PASSWORD: ${{ matrix.database-password }}
         ports:
-          - 5432:5432
+          - ${{ matrix.database-port }}:${{ matrix.database-port }}
         # Set health checks to wait until postgres has started
         options:
           --health-cmd pg_isready
