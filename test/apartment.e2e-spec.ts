@@ -1,5 +1,5 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
 import { CustomValidationPipe } from 'common/pipes';
 import { AppModule } from 'modules/app/app.module';
@@ -55,8 +55,8 @@ describe('ApartmentController (e2e)', () => {
         .get('/apartments')
         .query({
           minPrice: 200,
-          furnished: ['furnished'],
-          structures: [2.5],
+          furnished: ['furnished', 'empty'],
+          structures: [2.5, 3.0],
           municipalities: ['Zvezdara', 'Palilula'],
           maxPrice: 300,
           rentOrSale: 'rent',
