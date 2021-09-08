@@ -1,12 +1,13 @@
 import { Type } from 'class-transformer';
-import { IsArray, IsEnum, IsNotEmpty, Validate } from 'class-validator';
+import { IsEnum, IsNotEmpty, Validate } from 'class-validator';
 import { ArrayContainsValidator } from 'common/validators/array-contains.validator';
 import { FURNISHED, MUNICIPALITIES, STRUCTURES } from '../filter.constants';
 import { RentOrSale } from '../filter.enums';
 
 export class FilterDto {
   @Validate(ArrayContainsValidator, FURNISHED)
-  @IsArray()
+  @Type(() => String)
+  @IsNotEmpty()
   furnished: string[];
 
   @IsNotEmpty()
@@ -18,7 +19,8 @@ export class FilterDto {
   maxPrice: number;
 
   @Validate(ArrayContainsValidator, MUNICIPALITIES)
-  @IsArray()
+  @Type(() => String)
+  @IsNotEmpty()
   municipalities: string[];
 
   @IsNotEmpty()
@@ -27,7 +29,7 @@ export class FilterDto {
 
   @Validate(ArrayContainsValidator, STRUCTURES)
   @Type(() => Number)
-  @IsArray()
+  @IsNotEmpty()
   structures: number[];
 
   pageNumber?: number;
