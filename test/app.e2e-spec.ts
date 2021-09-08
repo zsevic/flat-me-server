@@ -3,6 +3,13 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from 'modules/app/app.module';
 
+jest.mock('typeorm-transactional-cls-hooked', () => ({
+  Transactional: () => () => ({}),
+  initializeTransactionalContext: () => ({}),
+  patchTypeORMRepositoryWithBaseRepository: () => ({}),
+  BaseRepository: class {},
+}));
+
 describe('AppController (e2e)', () => {
   let app: INestApplication;
 
