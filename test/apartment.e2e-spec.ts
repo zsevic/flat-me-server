@@ -50,7 +50,7 @@ describe('ApartmentController (e2e)', () => {
         .expect(HttpStatus.BAD_REQUEST);
     });
 
-    it('should return apartment list based on given params', () => {
+    it('should return apartment list based on given params (case with one-element arrays)', () => {
       return request(app.getHttpServer())
         .get('/apartments')
         .query({
