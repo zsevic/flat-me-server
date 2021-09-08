@@ -32,6 +32,10 @@ const userService = {
   verifyUser: jest.fn(),
 };
 
+jest.mock('typeorm-transactional-cls-hooked', () => ({
+  Transactional: () => () => ({}),
+}));
+
 describe('FilterService', () => {
   let filterService: FilterService;
   const clientUrl = 'client-url';
