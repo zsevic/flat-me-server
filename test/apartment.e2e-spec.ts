@@ -37,7 +37,7 @@ describe('ApartmentController (e2e)', () => {
     it("should return 400 status code when params don't have valid values", () => {
       return request(app.getHttpServer())
         .get('/apartments')
-        .query({
+        .send({
           minPrice: 200,
           furnished: ['test'],
           structures: [2.5],
@@ -50,10 +50,26 @@ describe('ApartmentController (e2e)', () => {
         .expect(HttpStatus.BAD_REQUEST);
     });
 
+    it('should return apartment list based on given params (covering case with one-element arrays which fails when using query instead of request body)', () => {
+      return request(app.getHttpServer())
+        .get('/apartments')
+        .send({
+          minPrice: 200,
+          furnished: ['furnished'],
+          structures: [2.5],
+          municipalities: ['Zvezdara'],
+          maxPrice: 300,
+          rentOrSale: 'rent',
+          limitPerPage: 2,
+          pageNumber: 1,
+        })
+        .expect(HttpStatus.OK);
+    });
+
     it('should return apartment list based on given params', () => {
       return request(app.getHttpServer())
         .get('/apartments')
-        .query({
+        .send({
           minPrice: 200,
           furnished: ['furnished', 'empty'],
           structures: [2.5, 3.0],
