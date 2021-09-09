@@ -8,7 +8,7 @@ const userRepository = {
   getByEmail: jest.fn(),
   getById: jest.fn(),
   getUserEmail: jest.fn(),
-  insertReceivedApartmentsIds: jest.fn(),
+  insertReceivedApartments: jest.fn(),
   saveUser: jest.fn(),
   verifyUser: jest.fn(),
 };
@@ -155,7 +155,7 @@ describe('UserService', () => {
     });
   });
 
-  describe('insertReceivedApartmentsIds', () => {
+  describe('insertReceivedApartments', () => {
     it('should insert received apartments', async () => {
       const apartmentList = [
         {
@@ -178,12 +178,12 @@ describe('UserService', () => {
         },
       ];
       const userId = 'id1';
-      await userService.insertReceivedApartmentsIds(
+      await userService.insertReceivedApartments(
         userId,
         apartmentList as Apartment[],
       );
 
-      expect(userRepository.insertReceivedApartmentsIds).toHaveBeenCalledWith(
+      expect(userRepository.insertReceivedApartments).toHaveBeenCalledWith(
         userId,
         apartmentList,
       );

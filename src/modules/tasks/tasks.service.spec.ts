@@ -40,8 +40,12 @@ const tokenService = {
 
 const userService = {
   getUserEmail: jest.fn(),
-  insertReceivedApartmentsIds: jest.fn(),
+  insertReceivedApartments: jest.fn(),
 };
+
+jest.mock('typeorm-transactional-cls-hooked', () => ({
+  Transactional: () => () => ({}),
+}));
 
 describe('TasksService', () => {
   let tasksService: TasksService;
@@ -282,7 +286,7 @@ describe('TasksService', () => {
         filterDeactivationUrl,
       );
       expect(
-        userService.insertReceivedApartmentsIds,
+        userService.insertReceivedApartments,
       ).toHaveBeenCalledWith(foundFilter.userId, [
         apartmentList[1],
         apartmentList[0],
