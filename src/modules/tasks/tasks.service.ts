@@ -165,7 +165,7 @@ export class TasksService {
         filterDeactivationUrl,
       );
 
-      await this.userService.insertReceivedApartmentsIds(
+      await this.userService.insertReceivedApartments(
         filter.userId,
         newApartments,
       );

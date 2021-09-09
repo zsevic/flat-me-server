@@ -52,8 +52,8 @@ export class UserService {
     return user;
   }
 
-  async insertReceivedApartmentsIds(userId: string, apartments: Apartment[]) {
-    return this.userRepository.insertReceivedApartmentsIds(userId, apartments);
+  async insertReceivedApartments(userId: string, apartments: Apartment[]) {
+    return this.userRepository.insertReceivedApartments(userId, apartments);
   }
 
   async saveUser(email: string): Promise<User> {

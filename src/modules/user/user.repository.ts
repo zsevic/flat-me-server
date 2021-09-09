@@ -23,14 +23,12 @@ export class UserRepository extends Repository<UserEntity> {
     return user.email;
   }
 
-  async insertReceivedApartmentsIds(userId: string, apartments: Apartment[]) {
+  async insertReceivedApartments(userId: string, apartments: Apartment[]) {
     const user = await this.findOne({
       where: { id: userId },
       relations: ['apartments'],
     });
-    if (!user) {
-      // TODO
-    }
+    if (!user) return;
 
     return this.save({
       ...user,
