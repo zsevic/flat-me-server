@@ -14,6 +14,5 @@ export const requiredFields = [
   'address',
   'coverPhotoUrl',
   'floor',
-  'heatingTypes',
   'municipality',
 ];

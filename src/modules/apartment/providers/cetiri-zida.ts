@@ -148,6 +148,8 @@ export class CetiriZidaProvider implements Provider {
       tileStove: 'tile stove',
       underfloor: 'underfloor',
     };
+    const heatingType = heatingTypesMap[apartmentInfo.heatingType];
+    const heatingTypes = heatingType ? [heatingType] : [];
 
     return {
       id: `${this.providerName}_${apartmentInfo.id}`,
@@ -159,9 +161,7 @@ export class CetiriZidaProvider implements Provider {
       coverPhotoUrl: apartmentInfo?.image?.search['380x0_fill_0_webp'],
       floor: floor[apartmentInfo.floor] || apartmentInfo.floor,
       furnished: furnished[apartmentInfo.furnished],
-      ...(heatingTypesMap[apartmentInfo.heatingType] && {
-        heatingTypes: [heatingTypesMap[apartmentInfo.heatingType]],
-      }),
+      heatingTypes,
       municipality: this.getMunicipality(apartmentInfo),
       place: apartmentInfo?.placeNames?.[0],
       postedAt: new Date(apartmentInfo.createdAt),
