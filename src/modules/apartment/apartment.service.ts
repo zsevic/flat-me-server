@@ -6,7 +6,6 @@ import {
   PaginatedResponse,
   PaginationParams,
 } from 'modules/pagination/pagination.interfaces';
-import { UserService } from 'modules/user/user.service';
 import { requiredFields } from './apartment.constants';
 import { Apartment } from './apartment.interface';
 import { ApartmentRepository } from './apartment.repository';
@@ -21,7 +20,6 @@ export class ApartmentService {
     @InjectRepository(ApartmentRepository)
     private readonly apartmentRepository: ApartmentRepository,
     private readonly baseProvider: BaseProvider,
-    private readonly userService: UserService,
   ) {}
 
   async deleteApartment(id): Promise<void> {
