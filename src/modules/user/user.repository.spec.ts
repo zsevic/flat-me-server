@@ -1,4 +1,3 @@
-import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Repository } from 'typeorm';
 import { UserRepository } from './user.repository';
@@ -21,9 +20,7 @@ describe('UserRepository', () => {
         .spyOn(Repository.prototype, 'findOne')
         .mockResolvedValue(null);
 
-      await expect(userRepository.getUserEmail(userId)).rejects.toThrowError(
-        BadRequestException,
-      );
+      await expect(userRepository.getUserEmail(userId)).rejects.toThrowError();
 
       expect(findOneSpy).toHaveBeenCalledWith({ id: userId });
     });
