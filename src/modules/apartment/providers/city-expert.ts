@@ -208,7 +208,7 @@ export class CityExpertProvider implements Provider {
 
     return {
       id: `${this.providerName}_${apartmentInfo.uniqueID}`,
-      apartmentId: apartmentInfo.propId,
+      apartmentId: apartmentInfo.uniqueID,
       providerName: this.providerName,
       ...(apartmentInfo.street && {
         address: capitalizeWords(apartmentInfo.street),

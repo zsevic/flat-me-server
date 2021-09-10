@@ -366,7 +366,7 @@ describe('ApartmentService', () => {
           {
             price: 450,
             id: 'cityExpert_23-BR',
-            apartmentId: 23,
+            apartmentId: '23-BR',
             providerName: 'cityExpert',
             address: 'Cara Nikolaja Ii',
             availableFrom: '2021-08-09T11:04:13Z',
@@ -409,7 +409,7 @@ describe('ApartmentService', () => {
           {
             price: 450,
             id: 'cityExpert_44352-BS',
-            apartmentId: 44352,
+            apartmentId: '44352-BS',
             providerName: 'cityExpert',
             address: 'Internacionalnih Brigada',
             availableFrom: '0001-01-01T00:00:00Z',
