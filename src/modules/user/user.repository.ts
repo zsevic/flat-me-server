@@ -42,6 +42,7 @@ export class UserRepository extends Repository<UserEntity> {
   ): Promise<User> {
     return this.save({
       email,
+      isVerified: false,
       subscription,
       receivedApartments: [],
     });
