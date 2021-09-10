@@ -1,70 +1,57 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
-import { User, UserDocument } from './user.schema';
+import { Injectable } from '@nestjs/common';
+import { Apartment } from 'modules/apartment/apartment.interface';
+import { EntityRepository, Repository } from 'typeorm';
+import { Subscription } from './subscription.enum';
+import { UserEntity } from './user.entity';
+import { User } from './user.interface';
 
 @Injectable()
-export class UserRepository {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
-
-  async addFilter(userId: string, filterId: string) {
-    return this.userModel.findByIdAndUpdate(userId, {
-      $push: {
-        filters: filterId,
-      },
-    });
-  }
-
-  async getById(id: string): Promise<UserDocument> {
-    return this.userModel.findById(id);
+@EntityRepository(UserEntity)
+export class UserRepository extends Repository<UserEntity> {
+  async getById(id: string): Promise<User> {
+    return this.findOne({ id });
   }
 
   async getByEmail(email: string): Promise<User> {
-    return this.userModel.findOne({ email });
-  }
-
-  async getReceivedApartmentsIds(userId: string): Promise<string[]> {
-    const user = await this.userModel
-      .findById(userId)
-      .select('receivedApartments');
-
-    if (!user) return [];
-
-    return user.receivedApartments;
+    return this.findOne({ where: { email }, relations: ['filters'] });
   }
 
   async getUserEmail(userId: string): Promise<string> {
     const user = await this.getById(userId);
-    if (!user) throw new BadRequestException('User is not valid');
+    if (!user) throw new Error('User is not valid');
 
     return user.email;
   }
 
-  async insertReceivedApartmentsIds(
-    userId: string,
-    apartmentsIds: Types._ObjectId[],
-  ) {
-    return this.userModel.findByIdAndUpdate(userId, {
-      $push: {
-        receivedApartments: { $each: apartmentsIds },
-      },
+  async insertReceivedApartments(userId: string, apartments: Apartment[]) {
+    const user = await this.findOne({
+      where: { id: userId },
+      relations: ['apartments'],
+    });
+    if (!user) return;
+
+    return this.save({
+      ...user,
+      apartments: [...user.apartments, ...apartments],
     });
   }
 
-  async saveUser(email: string): Promise<User> {
-    const createdUser = new this.userModel({
-      _id: Types.ObjectId(),
+  async saveUser(
+    email: string,
+    subscription = Subscription.FREE,
+  ): Promise<User> {
+    return this.save({
       email,
+      isVerified: false,
+      subscription,
+      receivedApartments: [],
     });
-
-    return createdUser.save();
   }
 
-  async verifyUser(user: UserDocument): Promise<void> {
-    user.set({
+  async verifyUser(user: User): Promise<void> {
+    await this.save({
+      ...user,
       isVerified: true,
     });
-
-    await user.save();
   }
 }

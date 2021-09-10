@@ -1,10 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION } from 'modules/apartment/apartment.constants';
 import { ApartmentService } from 'modules/apartment/apartment.service';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { filters } from 'modules/filter/filter.constants';
-import { FilterDocument } from 'modules/filter/filter.schema';
+import { Filter } from 'modules/filter/filter.interface';
 import { FilterService } from 'modules/filter/filter.service';
 import { MailService } from 'modules/mail/mail.service';
 import { defaultPaginationParams } from 'modules/pagination/pagination.constants';
@@ -120,7 +121,11 @@ export class TasksService {
           { limitPerPage, pageNumber },
         ));
         await Promise.all(
-          filters.map(filter => this.sendNewApartmentsByFilter(filter)),
+          filters.map(filter =>
+            this.sendNewApartmentsByFilter(filter).catch(error =>
+              this.logger.error(error),
+            ),
+          ),
         );
         pageNumber++;
       } while (total >= getSkip({ limitPerPage, pageNumber }));
@@ -131,46 +136,44 @@ export class TasksService {
     this.logCronJobFinished(SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB);
   }
 
-  private async sendNewApartmentsByFilter(
-    filter: FilterDocument,
-  ): Promise<void> {
-    try {
-      await this.tokenService.deleteTokenByFilterId(filter._id);
-      this.logger.log(`Filter: ${JSON.stringify(filter)}`);
+  @Transactional()
+  private async sendNewApartmentsByFilter(filter: Filter): Promise<void> {
+    await this.tokenService.deleteTokenByFilterId(filter.id);
+    this.logger.log(`Filter: ${JSON.stringify(filter)}`);
 
-      const apartmentList = await this.apartmentService.getApartmentListFromDatabaseByFilter(
-        filter,
-        RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION,
-      );
-      if (apartmentList.data.length === 0) {
-        this.logger.log('There are no apartments to send to the user');
-        return;
-      }
-
-      const newApartments = [...apartmentList.data].sort(
-        (firstApartment, secondApartment) =>
-          firstApartment.price - secondApartment.price,
-      );
-
-      const filterDeactivationUrl = await this.filterService.getDeactivationUrl(
-        filter._id,
-        FILTER_DEACTIVATION_TOKEN_EXPIRATION_HOURS,
-      );
-      const userEmail = await this.userService.getUserEmail(filter.user);
-      await this.mailService.sendMailWithNewApartments(
-        userEmail,
-        newApartments,
-        filter as FilterDto,
-        filterDeactivationUrl,
-      );
-
-      await this.userService.insertReceivedApartmentsIds(
-        filter.user,
-        newApartments,
-      );
-    } catch (error) {
-      this.logger.error(error);
+    const apartmentList = await this.apartmentService.getApartmentListFromDatabaseByFilter(
+      filter,
+      RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION,
+    );
+    if (apartmentList.data.length === 0) {
+      this.logger.log('There are no apartments to send to the user');
+      return;
     }
+
+    const newApartments = [...apartmentList.data].sort(
+      (firstApartment, secondApartment) =>
+        firstApartment.price - secondApartment.price,
+    );
+
+    const filterDeactivationUrl = await this.filterService.createTokenAndDeactivationUrl(
+      {
+        filterId: filter.id,
+        userId: filter.userId,
+      },
+      FILTER_DEACTIVATION_TOKEN_EXPIRATION_HOURS,
+    );
+    const userEmail = await this.userService.getUserEmail(filter.userId);
+    await this.mailService.sendMailWithNewApartments(
+      userEmail,
+      newApartments,
+      filter as FilterDto,
+      filterDeactivationUrl,
+    );
+
+    await this.userService.insertReceivedApartments(
+      filter.userId,
+      newApartments,
+    );
   }
 
   private logCronJobFinished = (cronJobName: string): void => {

@@ -1,13 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
-import { FilterDocument } from 'modules/filter/filter.schema';
+import { Filter } from 'modules/filter/filter.interface';
 import {
   PaginatedResponse,
   PaginationParams,
 } from 'modules/pagination/pagination.interfaces';
-import { UserService } from 'modules/user/user.service';
+import { requiredFields } from './apartment.constants';
+import { Apartment } from './apartment.interface';
 import { ApartmentRepository } from './apartment.repository';
-import { ApartmentDocument } from './apartment.schema';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
 import { BaseProvider } from './providers';
 
@@ -16,9 +17,9 @@ export class ApartmentService {
   private readonly logger = new Logger(ApartmentService.name);
 
   constructor(
+    @InjectRepository(ApartmentRepository)
     private readonly apartmentRepository: ApartmentRepository,
     private readonly baseProvider: BaseProvider,
-    private readonly userService: UserService,
   ) {}
 
   async deleteApartment(id): Promise<void> {
@@ -46,7 +47,10 @@ export class ApartmentService {
           if (!apartment.price) return;
 
           const apartmentInfo = provider.parseApartmentInfo(apartment);
-          if (!apartmentInfo.coverPhotoUrl || !apartmentInfo.floor) return;
+          const isValidApartmentInfo = requiredFields.every(
+            field => !!apartmentInfo[field],
+          );
+          if (!isValidApartmentInfo) return;
 
           foundApartments.push(apartmentInfo);
         });
@@ -95,7 +99,7 @@ export class ApartmentService {
   }
 
   async getApartmentListFromDatabaseByFilter(
-    filter: FilterDocument,
+    filter: Filter,
     limitPerPage: number,
   ) {
     const apartmentListParams = {
@@ -103,13 +107,11 @@ export class ApartmentService {
       limitPerPage,
       pageNumber: 1,
     };
-    const receivedApartmentsIds = await this.userService.getReceivedApartmentsIds(
-      filter.user,
-    );
+    const apartmentsIds = filter.user.apartments.map(apartment => apartment.id);
 
     return this.getApartmentListFromDatabase(
       apartmentListParams as ApartmentListParamsDto,
-      receivedApartmentsIds,
+      apartmentsIds,
       filter.createdAt,
     );
   }
@@ -118,7 +120,7 @@ export class ApartmentService {
     filter: ApartmentListParamsDto,
     skippedApartmentments?: string[],
     dateFilter?: Date,
-  ): Promise<PaginatedResponse<ApartmentDocument>> {
+  ): Promise<PaginatedResponse<Apartment>> {
     return this.apartmentRepository.getApartmentList(
       filter,
       skippedApartmentments,

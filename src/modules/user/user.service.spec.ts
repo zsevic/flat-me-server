@@ -1,15 +1,14 @@
 import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { ApartmentDocument } from 'modules/apartment/apartment.schema';
+import { Apartment } from 'modules/apartment/apartment.interface';
 import { UserRepository } from './user.repository';
 import { UserService } from './user.service';
 
 const userRepository = {
   getByEmail: jest.fn(),
   getById: jest.fn(),
-  getReceivedApartmentsIds: jest.fn(),
   getUserEmail: jest.fn(),
-  insertReceivedApartmentsIds: jest.fn(),
+  insertReceivedApartments: jest.fn(),
   saveUser: jest.fn(),
   verifyUser: jest.fn(),
 };
@@ -29,33 +28,6 @@ describe('UserService', () => {
     }).compile();
 
     userService = module.get<UserService>(UserService);
-  });
-
-  describe('getReceivedApartmentsIds', () => {
-    it('should receive empty array when user is not found', async () => {
-      jest
-        .spyOn(userRepository, 'getReceivedApartmentsIds')
-        .mockResolvedValueOnce([]);
-
-      const apartmentsIds = await userService.getReceivedApartmentsIds(
-        'userid',
-      );
-
-      expect(apartmentsIds).toEqual([]);
-    });
-
-    it('should receive array of apartments ids', async () => {
-      const ids = ['id1', 'id2'];
-      jest
-        .spyOn(userRepository, 'getReceivedApartmentsIds')
-        .mockResolvedValueOnce(ids);
-
-      const apartmentsIds = await userService.getReceivedApartmentsIds(
-        'userid',
-      );
-
-      expect(apartmentsIds).toEqual(ids);
-    });
   });
 
   describe('getUserByEmail', () => {
@@ -88,14 +60,13 @@ describe('UserService', () => {
         receivedApartments: [],
         filters: [],
         isVerified: false,
-        _id: userId,
+        id: userId,
         email,
-        __v: 0,
       };
       jest.spyOn(userRepository, 'getByEmail').mockResolvedValue(null);
       jest.spyOn(userRepository, 'saveUser').mockResolvedValue(userData);
 
-      const user = await userService.getVerifiedOrCreateNewUser(email);
+      const user = await userService.getVerifiedUserOrCreateNewUser(email);
 
       expect(user).toMatchObject(userData);
       expect(userRepository.getByEmail).toHaveBeenCalledWith(email);
@@ -110,14 +81,13 @@ describe('UserService', () => {
         receivedApartments: [],
         filters: [],
         isVerified: false,
-        _id: userId,
+        id: userId,
         email,
-        __v: 0,
       };
       jest.spyOn(userRepository, 'getByEmail').mockResolvedValue(userData);
 
       await expect(
-        userService.getVerifiedOrCreateNewUser(email),
+        userService.getVerifiedUserOrCreateNewUser(email),
       ).rejects.toThrowError(BadRequestException);
 
       expect(userRepository.getByEmail).toHaveBeenCalledWith(email);
@@ -131,14 +101,13 @@ describe('UserService', () => {
         receivedApartments: [],
         filters: [],
         isVerified: true,
-        _id: userId,
+        id: userId,
         email,
-        __v: 0,
       };
       jest.spyOn(userRepository, 'getByEmail').mockResolvedValue(userData);
 
       await expect(
-        userService.getVerifiedOrCreateNewUser(email),
+        userService.getVerifiedUserOrCreateNewUser(email),
       ).rejects.toThrowError(BadRequestException);
 
       expect(userRepository.getByEmail).toHaveBeenCalledWith(email);
@@ -152,14 +121,13 @@ describe('UserService', () => {
         receivedApartments: [],
         filters: ['id1'],
         isVerified: true,
-        _id: userId,
+        id: userId,
         email,
-        __v: 0,
       };
       jest.spyOn(userRepository, 'getByEmail').mockResolvedValue(userData);
 
       await expect(
-        userService.getVerifiedOrCreateNewUser(email),
+        userService.getVerifiedUserOrCreateNewUser(email),
       ).rejects.toThrowError(BadRequestException);
 
       expect(userRepository.getByEmail).toHaveBeenCalledWith(email);
@@ -173,25 +141,26 @@ describe('UserService', () => {
         receivedApartments: [],
         filters: [],
         isVerified: true,
-        _id: userId,
+        id: userId,
         email,
-        __v: 0,
       };
       jest.spyOn(userRepository, 'getByEmail').mockResolvedValue(userData);
 
-      const verifiedUser = await userService.getVerifiedOrCreateNewUser(email);
+      const verifiedUser = await userService.getVerifiedUserOrCreateNewUser(
+        email,
+      );
 
       expect(verifiedUser).toEqual(userData);
       expect(userRepository.getByEmail).toHaveBeenCalledWith(email);
     });
   });
 
-  describe('insertReceivedApartmentsIds', () => {
-    it('should insert apartments ids into user document', async () => {
+  describe('insertReceivedApartments', () => {
+    it('should insert received apartments', async () => {
       const apartmentList = [
         {
           heatingTypes: ['central'],
-          _id: 'id1',
+          id: 'id1',
           price: 350,
           apartmentId: 'id1',
           providerName: 'cetiriZida',
@@ -201,24 +170,22 @@ describe('UserService', () => {
           furnished: 'semi-furnished',
           municipality: 'Savski venac',
           place: 'Sarajevska',
-          postedAt: '2021-06-23T13:38:19+02:00',
+          postedAt: new Date('2021-06-23T13:38:19+02:00'),
           rentOrSale: 'rent',
           size: 41,
           structure: 3,
           url: 'url',
-          __v: 0,
         },
       ];
-      const apartmentsIds = ['id1'];
       const userId = 'id1';
-      await userService.insertReceivedApartmentsIds(
+      await userService.insertReceivedApartments(
         userId,
-        apartmentList as ApartmentDocument[],
+        apartmentList as Apartment[],
       );
 
-      expect(userRepository.insertReceivedApartmentsIds).toHaveBeenCalledWith(
+      expect(userRepository.insertReceivedApartments).toHaveBeenCalledWith(
         userId,
-        apartmentsIds,
+        apartmentList,
       );
     });
   });
@@ -235,23 +202,22 @@ describe('UserService', () => {
       expect(userRepository.getById).toHaveBeenCalledWith(userId);
     });
 
-    it('should return found user when found user is already verified', async () => {
+    it('should return when found user is already verified', async () => {
       const userId = 'id1';
       const userData = {
         subscription: 'FREE',
         receivedApartments: [],
         filters: [],
         isVerified: true,
-        _id: userId,
+        id: userId,
         email: 'test@example.com',
-        __v: 0,
       };
       jest.spyOn(userRepository, 'getById').mockResolvedValue(userData);
 
-      const verifiedUser = await userService.verifyUser(userId);
+      await userService.verifyUser(userId);
 
-      expect(verifiedUser).toEqual(userData);
       expect(userRepository.getById).toHaveBeenCalledWith(userId);
+      expect(userRepository.verifyUser).not.toHaveBeenCalled();
     });
 
     it('should verify found user', async () => {
@@ -261,22 +227,15 @@ describe('UserService', () => {
         receivedApartments: [],
         filters: [],
         isVerified: false,
-        _id: userId,
+        id: userId,
         email: 'test@example.com',
-        __v: 0,
       };
       jest.spyOn(userRepository, 'getById').mockResolvedValue(userData);
-      jest.spyOn(userRepository, 'verifyUser').mockImplementation(user =>
-        Object.assign(user, {
-          isVerified: true,
-        }),
-      );
 
-      const verifiedUser = await userService.verifyUser(userId);
+      await userService.verifyUser(userId);
 
-      expect(verifiedUser).toEqual(userData);
       expect(userRepository.getById).toHaveBeenCalledWith(userId);
-      expect(userRepository.verifyUser).toHaveBeenCalled();
+      expect(userRepository.verifyUser).toHaveBeenCalledWith(userData);
     });
   });
 });

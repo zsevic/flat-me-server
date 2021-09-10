@@ -1,23 +1,20 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
-import { Token, TokenDocument } from './token.schema';
+import { EntityRepository, MoreThan, Repository } from 'typeorm';
+import { TokenEntity } from './token.entity';
+import { Token } from './token.interface';
 
 @Injectable()
-export class TokenRepository {
-  constructor(
-    @InjectModel(Token.name) private tokenModel: Model<TokenDocument>,
-  ) {}
-
-  async deleteToken(token: TokenDocument): Promise<void> {
-    await token.remove();
+@EntityRepository(TokenEntity)
+export class TokenRepository extends Repository<TokenEntity> {
+  async deleteToken(tokenId: string): Promise<void> {
+    await this.delete({ id: tokenId });
   }
 
-  async getUnexpiredToken(token: string): Promise<TokenDocument> {
-    const validToken = await this.tokenModel.findOne({
-      value: token,
-      expiresAt: {
-        $gt: new Date(),
+  async getUnexpiredToken(token: string): Promise<Token> {
+    const validToken = await this.findOne({
+      where: {
+        value: token,
+        expiresAt: MoreThan(new Date()),
       },
     });
     if (!validToken) throw new BadRequestException('Token is not valid');
@@ -25,21 +22,16 @@ export class TokenRepository {
     return validToken;
   }
 
-  async getUnexpiredTokenByFilterId(filterId: string): Promise<TokenDocument> {
-    return this.tokenModel.findOne({
-      expiresAt: {
-        $gt: new Date(),
+  async getUnexpiredTokenByFilterId(filterId: string): Promise<Token> {
+    return this.findOne({
+      where: {
+        expiresAt: MoreThan(new Date()),
+        filter: filterId,
       },
-      filter: filterId,
     });
   }
 
   async saveToken(token: Token): Promise<Token> {
-    const createdToken = new this.tokenModel({
-      _id: Types.ObjectId(),
-      ...token,
-    });
-
-    return createdToken.save();
+    return this.save(token);
   }
 }

@@ -25,7 +25,7 @@ const apartmentService = {
 };
 
 const filterService = {
-  getDeactivationUrl: jest.fn(),
+  createTokenAndDeactivationUrl: jest.fn(),
   getFilterListBySubscriptionName: jest.fn(),
   getInitialFilter: filters => ({ ...filters, pageNumber: 1 }),
 };
@@ -40,8 +40,12 @@ const tokenService = {
 
 const userService = {
   getUserEmail: jest.fn(),
-  insertReceivedApartmentsIds: jest.fn(),
+  insertReceivedApartments: jest.fn(),
 };
+
+jest.mock('typeorm-transactional-cls-hooked', () => ({
+  Transactional: () => () => ({}),
+}));
 
 describe('TasksService', () => {
   let tasksService: TasksService;
@@ -77,10 +81,6 @@ describe('TasksService', () => {
   });
 
   describe('handleDeletingInactiveApartments', () => {
-    beforeEach(() => {
-      jest.resetAllMocks();
-    });
-
     it('should handle deleting inactive apartments', async () => {
       const cetiriZidaApartmentId = 'cetiriZida_23';
       const cityExpertApartmentId = 'cityExpert_12-BR';
@@ -149,10 +149,6 @@ describe('TasksService', () => {
   });
 
   describe('handleSendingNewApartmentsForFreeSubscriptionUsers', () => {
-    afterEach(() => {
-      jest.resetAllMocks();
-    });
-
     it('should not send any new apartments to the users when there are no saved filters', async () => {
       jest
         .spyOn(filterService, 'getFilterListBySubscriptionName')
@@ -170,14 +166,14 @@ describe('TasksService', () => {
 
     it('should not send any apartments to the users when there are no new apartments by found filters', async () => {
       const foundFilter = {
-        _id: '611c59c26962b452247b9432',
+        id: 'eea524df-b407-4994-8d3e-348a964318f7',
         structures: [1, 2, 0.5, 1.5],
         municipalities: ['Savski venac', 'Zemun'],
         furnished: ['semi-furnished'],
         rentOrSale: 'rent',
         minPrice: 120,
         maxPrice: 370,
-        user: '611c59c26962b452247b9431',
+        userId: 'ee3af62e-3bca-49ec-984b-c9a3e16f36e3',
         createdAt: '2021-08-18T00:52:18.296Z',
       };
       jest
@@ -193,27 +189,27 @@ describe('TasksService', () => {
         filterService.getFilterListBySubscriptionName,
       ).toHaveBeenCalledWith(Subscription.FREE, defaultPaginationParams);
       expect(tokenService.deleteTokenByFilterId).toHaveBeenCalledWith(
-        foundFilter._id,
+        foundFilter.id,
       );
       expect(mailService.sendMailWithNewApartments).not.toHaveBeenCalled();
     });
 
     it('should send new apartments by found filters', async () => {
       const foundFilter = {
-        _id: '611c59c26962b452247b9432',
+        id: '5b87d75f-5849-4a3d-a3f5-6462a9147f41',
         structures: [1, 2, 0.5, 1.5],
         municipalities: ['Savski venac', 'Zemun'],
         furnished: ['semi-furnished'],
         rentOrSale: 'rent',
         minPrice: 120,
         maxPrice: 370,
-        user: '611c59c26962b452247b9431',
+        userId: 'ad7bf1ac-df4b-4556-bb67-122bd82d3214',
         createdAt: '2021-08-18T00:52:18.296Z',
       };
       const apartmentList = [
         {
           heatingTypes: ['central'],
-          _id: 'cetiriZida_id1',
+          id: 'cetiriZida_id1',
           price: 350,
           apartmentId: 'id',
           providerName: 'cetiriZida',
@@ -223,18 +219,17 @@ describe('TasksService', () => {
           furnished: 'semi-furnished',
           municipality: 'Savski venac',
           place: 'Sarajevska',
-          postedAt: '2021-06-23T13:38:19+02:00',
+          postedAt: new Date('2021-06-23T13:38:19+02:00'),
           rentOrSale: 'rent',
           size: 41,
           structure: 3,
           url: 'url',
-          __v: 0,
           createdAt: '2021-08-14T18:12:32.133Z',
           updatedAt: '2021-08-14T18:12:32.133Z',
         },
         {
           heatingTypes: ['district'],
-          _id: 'cetiriZida_id2',
+          id: 'cetiriZida_id2',
           price: 320,
           apartmentId: 'id',
           providerName: 'cetiriZida',
@@ -244,12 +239,11 @@ describe('TasksService', () => {
           furnished: 'furnished',
           municipality: 'Savski venac',
           place: 'Sarajevska',
-          postedAt: '2021-06-23T13:38:19+02:00',
+          postedAt: new Date('2021-06-23T13:38:19+02:00'),
           rentOrSale: 'rent',
           size: 41,
           structure: 1.5,
           url: 'url',
-          __v: 0,
           createdAt: '2021-08-14T18:12:32.133Z',
           updatedAt: '2021-08-14T18:12:32.133Z',
         },
@@ -266,7 +260,7 @@ describe('TasksService', () => {
         });
       jest.spyOn(userService, 'getUserEmail').mockResolvedValue(email);
       jest
-        .spyOn(filterService, 'getDeactivationUrl')
+        .spyOn(filterService, 'createTokenAndDeactivationUrl')
         .mockResolvedValue(filterDeactivationUrl);
 
       await tasksService.handleSendingNewApartmentsForFreeSubscriptionUsers();
@@ -275,13 +269,16 @@ describe('TasksService', () => {
         filterService.getFilterListBySubscriptionName,
       ).toHaveBeenCalledWith(Subscription.FREE, defaultPaginationParams);
       expect(tokenService.deleteTokenByFilterId).toHaveBeenCalledWith(
-        foundFilter._id,
+        foundFilter.id,
       );
-      expect(filterService.getDeactivationUrl).toHaveBeenCalledWith(
-        foundFilter._id,
+      expect(filterService.createTokenAndDeactivationUrl).toHaveBeenCalledWith(
+        {
+          filterId: foundFilter.id,
+          userId: foundFilter.userId,
+        },
         FILTER_DEACTIVATION_TOKEN_EXPIRATION_HOURS,
       );
-      expect(userService.getUserEmail).toHaveBeenCalledWith(foundFilter.user);
+      expect(userService.getUserEmail).toHaveBeenCalledWith(foundFilter.userId);
       expect(mailService.sendMailWithNewApartments).toHaveBeenCalledWith(
         email,
         [apartmentList[1], apartmentList[0]],
@@ -289,8 +286,8 @@ describe('TasksService', () => {
         filterDeactivationUrl,
       );
       expect(
-        userService.insertReceivedApartmentsIds,
-      ).toHaveBeenCalledWith(foundFilter.user, [
+        userService.insertReceivedApartments,
+      ).toHaveBeenCalledWith(foundFilter.userId, [
         apartmentList[1],
         apartmentList[0],
       ]);
@@ -298,14 +295,14 @@ describe('TasksService', () => {
 
     it('should paginate over filters', async () => {
       const foundFilter = {
-        _id: '611c59c26962b452247b9432',
+        id: '5b87d75f-5849-4a3d-a3f5-6462a9147f41',
         structures: [1, 2, 0.5, 1.5],
         municipalities: ['Savski venac', 'Zemun'],
         furnished: ['semi-furnished'],
         rentOrSale: 'rent',
         minPrice: 120,
         maxPrice: 370,
-        user: '611c59c26962b452247b9431',
+        user: 'ad7bf1ac-df4b-4556-bb67-122bd82d3214',
         createdAt: '2021-08-18T00:52:18.296Z',
       };
       jest
@@ -326,7 +323,7 @@ describe('TasksService', () => {
         });
       });
       expect(tokenService.deleteTokenByFilterId).toHaveBeenCalledWith(
-        foundFilter._id,
+        foundFilter.id,
       );
       expect(mailService.sendMailWithNewApartments).not.toHaveBeenCalled();
     });
@@ -334,25 +331,25 @@ describe('TasksService', () => {
     it('should continue handling filters when one of the filter handler fails', async () => {
       const foundFilters = [
         {
-          _id: '611c5642c653f746ea0560a3',
+          id: '5b87d75f-5849-4a3d-a3f5-6462a9147f41',
           structures: [1, 2],
           municipalities: ['Savski venac', 'Zemun'],
           furnished: ['semi-furnished'],
           rentOrSale: 'rent',
           minPrice: 120,
           maxPrice: 370,
-          user: '611c5641c653f746ea0560a2',
+          userId: 'b2728317-869a-4183-a1e7-9d5ea616dff1',
           createdAt: '2021-08-18T00:37:22.039Z',
         },
         {
-          _id: '611c59c26962b452247b9432',
+          id: 'eeb4f51d-25a2-4560-bb72-d1be3e13d585',
           structures: [1, 2, 0.5, 1.5],
           municipalities: ['Savski venac', 'Zemun'],
           furnished: ['semi-furnished'],
           rentOrSale: 'rent',
           minPrice: 120,
           maxPrice: 370,
-          user: '611c59c26962b452247b9431',
+          userId: '52f3372f-0e74-4ccb-bab7-3e397d46b0ef',
           createdAt: '2021-08-18T00:52:18.296Z',
         },
       ];
@@ -374,7 +371,7 @@ describe('TasksService', () => {
       ).toHaveBeenCalledWith(Subscription.FREE, defaultPaginationParams);
       foundFilters.forEach(filter => {
         expect(tokenService.deleteTokenByFilterId).toHaveBeenCalledWith(
-          filter._id,
+          filter.id,
         );
       });
       expect(tokenService.deleteTokenByFilterId).toHaveBeenCalledTimes(2);

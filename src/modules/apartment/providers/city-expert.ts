@@ -138,6 +138,10 @@ export class CityExpertProvider implements Provider {
     try {
       const [, apartmentId] = id.split('_');
       const [propertyId, propertyType] = apartmentId.split('-');
+      if (!this.propertyTypes[propertyType]) {
+        return Promise.reject(new Error('Property type is not valid'));
+      }
+
       const response = await axios.get(
         `${apartmentActivityBaseUrlForCityExpert}/${propertyId}/${this.propertyTypes[propertyType]}`,
         {
@@ -203,7 +207,7 @@ export class CityExpertProvider implements Provider {
     ];
 
     return {
-      _id: `${this.providerName}_${apartmentInfo.uniqueID}`,
+      id: `${this.providerName}_${apartmentInfo.uniqueID}`,
       apartmentId: apartmentInfo.propId,
       providerName: this.providerName,
       ...(apartmentInfo.street && {

@@ -1,7 +1,7 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getLocationUrl } from 'common/utils/location';
-import { ApartmentDocument } from 'modules/apartment/apartment.schema';
+import { Apartment } from 'modules/apartment/apartment.interface';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { MailService } from './mail.service';
 
@@ -67,7 +67,7 @@ describe('MailService', () => {
       const apartmentList = [
         {
           price: 420,
-          _id: 'cetiriZida_60993e3e7906cd3a4c6832fd',
+          id: 'cetiriZida_60993e3e7906cd3a4c6832fd',
           apartmentId: '60993e3e7906cd3a4c6832fd',
           providerName: 'cetiriZida',
           address: 'Dalmatinska',
@@ -77,7 +77,7 @@ describe('MailService', () => {
           heatingTypes: ['district'],
           municipality: 'Zvezdara',
           place: 'Zvezdara opština',
-          postedAt: '2021-05-10T16:07:58+02:00',
+          postedAt: new Date('2021-05-10T16:07:58+02:00'),
           rentOrSale: 'rent',
           size: 69,
           structure: 1.5,
@@ -98,7 +98,7 @@ describe('MailService', () => {
 
       await mailService.sendMailWithNewApartments(
         email,
-        apartmentList as ApartmentDocument[],
+        apartmentList as Apartment[],
         filter as FilterDto,
         deactivationUrl,
       );

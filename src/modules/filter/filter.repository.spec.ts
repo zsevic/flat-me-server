@@ -1,25 +1,16 @@
 import { BadRequestException } from '@nestjs/common';
-import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
+import { Repository, SelectQueryBuilder } from 'typeorm';
+import { defaultPaginationParams } from 'modules/pagination/pagination.constants';
+import { Subscription } from 'modules/user/subscription.enum';
 import { FilterRepository } from './filter.repository';
-
-const filterModel = {
-  findById: jest.fn(),
-  findOne: jest.fn(),
-};
 
 describe('FilterRepository', () => {
   let filterRepository: FilterRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        FilterRepository,
-        {
-          provide: getModelToken('Filter'),
-          useValue: filterModel,
-        },
-      ],
+      providers: [FilterRepository],
     }).compile();
 
     filterRepository = module.get<FilterRepository>(FilterRepository);
@@ -28,13 +19,15 @@ describe('FilterRepository', () => {
   describe('findUnverifiedFilter', () => {
     it('should throw an error when filter is not found', async () => {
       const filterId = 'id1';
-      jest.spyOn(filterModel, 'findOne').mockResolvedValue(null);
+      const findOneSpy = jest
+        .spyOn(Repository.prototype, 'findOne')
+        .mockResolvedValue(null);
 
       await expect(
         filterRepository.findUnverifiedFilter(filterId),
       ).rejects.toThrowError(BadRequestException);
-      expect(filterModel.findOne).toHaveBeenCalledWith({
-        _id: filterId,
+      expect(findOneSpy).toHaveBeenCalledWith({
+        id: filterId,
         isVerified: false,
       });
     });
@@ -42,7 +35,7 @@ describe('FilterRepository', () => {
     it('should return unverified filter', async () => {
       const filterId = 'id1';
       const filter = {
-        _id: filterId,
+        id: filterId,
         structures: [1, 2, 0.5, 1.5],
         municipalities: ['Savski venac', 'Zemun'],
         furnished: ['semi-furnished'],
@@ -55,54 +48,49 @@ describe('FilterRepository', () => {
         isVerified: false,
       };
 
-      jest.spyOn(filterModel, 'findOne').mockResolvedValue(filter);
+      const findOneSpy = jest
+        .spyOn(Repository.prototype, 'findOne')
+        .mockResolvedValue(filter);
 
       const unverifiedFilter = await filterRepository.findUnverifiedFilter(
         filterId,
       );
 
       expect(unverifiedFilter).toEqual(filter);
-      expect(filterModel.findOne).toHaveBeenCalledWith({
-        _id: filterId,
+      expect(findOneSpy).toHaveBeenCalledWith({
+        id: filterId,
         isVerified: false,
       });
     });
   });
 
-  describe('findFilterById', () => {
-    it('should throw an error when filter is not found', async () => {
-      const filterId = 'filterid';
-      jest.spyOn(filterModel, 'findById').mockResolvedValue(null);
+  describe('getFilterListBySubscriptionName', () => {
+    it('should return filter list by subscription name', async () => {
+      const data = [];
+      const total = 0;
+      const filters = { data, total };
+      jest
+        .spyOn(Repository.prototype, 'createQueryBuilder')
+        .mockReturnValue(SelectQueryBuilder.prototype);
+      jest.spyOn(SelectQueryBuilder.prototype, 'leftJoin').mockReturnThis();
+      jest
+        .spyOn(SelectQueryBuilder.prototype, 'leftJoinAndSelect')
+        .mockReturnThis();
+      jest.spyOn(SelectQueryBuilder.prototype, 'where').mockReturnThis();
+      jest.spyOn(SelectQueryBuilder.prototype, 'andWhere').mockReturnThis();
+      jest.spyOn(SelectQueryBuilder.prototype, 'select').mockReturnThis();
+      jest.spyOn(SelectQueryBuilder.prototype, 'skip').mockReturnThis();
+      jest.spyOn(SelectQueryBuilder.prototype, 'take').mockReturnThis();
+      jest
+        .spyOn(SelectQueryBuilder.prototype, 'getManyAndCount')
+        .mockResolvedValue([data, total]);
 
-      await expect(
-        filterRepository.findFilterById(filterId),
-      ).rejects.toThrowError(BadRequestException);
+      const result = await filterRepository.getFilterListBySubscriptionName(
+        Subscription.FREE,
+        defaultPaginationParams,
+      );
 
-      expect(filterModel.findById).toHaveBeenCalledWith(filterId);
-    });
-
-    it('should return found filter', async () => {
-      const filterId = 'filterid';
-      const filter = {
-        _id: filterId,
-        structures: [1, 2, 0.5, 1.5],
-        municipalities: ['Savski venac', 'Zemun'],
-        furnished: ['semi-furnished'],
-        rentOrSale: 'rent',
-        minPrice: 120,
-        maxPrice: 370,
-        user: '611c59c26962b452247b9431',
-        createdAt: new Date('2021-08-18T00:52:18.296Z'),
-        isActive: false,
-        isVerified: false,
-      };
-
-      jest.spyOn(filterModel, 'findById').mockResolvedValue(filter);
-
-      const foundFilter = await filterRepository.findFilterById(filterId);
-
-      expect(foundFilter).toEqual(filter);
-      expect(filterModel.findById).toHaveBeenCalledWith(filterId);
+      expect(result).toEqual(filters);
     });
   });
 });

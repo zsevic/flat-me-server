@@ -9,3 +9,10 @@ export const CITY_EXPERT_API_BASE_URL = 'https://cityexpert.rs/api';
 export const apartmentActivityBaseUrlForCityExpert = `${CITY_EXPERT_API_BASE_URL}/PropertyView`;
 export const apartmentStatusFinished = 'FINISHED';
 export const apartmentStatusNotAvailable = 'NOT-AVAILABLE';
+
+export const requiredFields = [
+  'address',
+  'coverPhotoUrl',
+  'floor',
+  'municipality',
+];

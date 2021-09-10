@@ -43,18 +43,10 @@ npm run migrate
 npm run migrate:down
 ```
 
-### Seeders
-
-```bash
-npm run seed:generate <SEEDER_NAME>
-npm run seed
-npm run seed:down
-```
-
 ### API documentation
 
 API documentation is generated using [@nestjs/swagger](https://www.npmjs.com/package/@nestjs/swagger) module at `/api-docs` endpoint
 
 ### Technologies used
 
-- Node.js, TypeScript, NestJS, Mongoose
+- Node.js, TypeScript, NestJS, TypeORM

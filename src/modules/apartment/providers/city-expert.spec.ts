@@ -256,22 +256,13 @@ describe('CityExpert', () => {
       );
     });
 
-    it('should return undefined when error is thrown', async () => {
+    it('should throw an error when property type is not valid', async () => {
       const provider = new CityExpertProvider();
-      // @ts-ignore
-      axios.get.mockRejectedValue(new Error('test'));
 
-      const isApartmentInactive = await provider.isApartmentInactive(
-        'cityExpert_3546-BZ',
-      );
-
-      expect(isApartmentInactive).toEqual(undefined);
-      expect(axios.get).toHaveBeenCalledWith(
-        `${apartmentActivityBaseUrlForCityExpert}/3546/r`,
-        {
-          timeout: DEFAULT_TIMEOUT,
-        },
-      );
+      await expect(
+        provider.isApartmentInactive('cityExpert_3546-BZ'),
+      ).rejects.toThrowError(Error);
+      expect(axios.get).not.toHaveBeenCalled();
     });
 
     it('should return true for inactive apartment', async () => {
@@ -377,7 +368,7 @@ describe('CityExpert', () => {
       };
       const parsedApartmentInfo = {
         price: 450,
-        _id: 'cityExpert_123-BS',
+        id: 'cityExpert_123-BS',
         apartmentId: 123,
         providerName: 'cityExpert',
         address: 'Internacionalnih Brigada',

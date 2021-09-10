@@ -1,39 +1,31 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
 import {
   PaginatedResponse,
   PaginationParams,
 } from 'modules/pagination/pagination.interfaces';
 import { getSkip } from 'modules/pagination/pagination.utils';
-import { Filter, FilterDocument } from './filter.schema';
+import { EntityRepository, Repository } from 'typeorm';
+import { FilterEntity } from './filter.entity';
+import { Filter } from './filter.interface';
 
 @Injectable()
-export class FilterRepository {
-  constructor(
-    @InjectModel(Filter.name) private filterModel: Model<FilterDocument>,
-  ) {}
-
-  async deactivateFilter(filter: FilterDocument): Promise<void> {
-    filter.set({
-      isActive: false,
-    });
-
-    await filter.save();
-  }
-
-  async findFilterById(id: string): Promise<FilterDocument> {
-    const filter = await this.filterModel.findById(id);
+@EntityRepository(FilterEntity)
+export class FilterRepository extends Repository<FilterEntity> {
+  async deactivateFilter(filterId: string): Promise<void> {
+    const filter = await this.findOne({ id: filterId });
     if (!filter) {
       throw new BadRequestException('Filter is not found');
     }
 
-    return filter;
+    await this.save({
+      ...filter,
+      isActive: false,
+    });
   }
 
-  async findUnverifiedFilter(id: string): Promise<FilterDocument> {
-    const filter = await this.filterModel.findOne({
-      _id: id,
+  async findUnverifiedFilter(id: string): Promise<Filter> {
+    const filter = await this.findOne({
+      id,
       isVerified: false,
     });
     if (!filter) throw new BadRequestException('Filter not found');
@@ -44,70 +36,48 @@ export class FilterRepository {
   async getFilterListBySubscriptionName(
     subscriptionName: string,
     paginationParams: PaginationParams,
-  ): Promise<PaginatedResponse<FilterDocument>> {
+  ): Promise<PaginatedResponse<Filter>> {
     const skip = getSkip(paginationParams);
-    const [response] = await this.filterModel.aggregate([
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'user',
-          foreignField: '_id',
-          as: 'usersData',
-        },
-      },
-      {
-        $match: {
-          isActive: true,
-          'usersData.isVerified': true,
-          'usersData.subscription': subscriptionName,
-        },
-      },
-      {
-        $project: {
-          _id: 1,
-          furnished: 1,
-          minPrice: 1,
-          maxPrice: 1,
-          municipalities: 1,
-          rentOrSale: 1,
-          structures: 1,
-          user: 1,
-          createdAt: 1,
-        },
-      },
-      {
-        $facet: {
-          data: [{ $skip: skip }, { $limit: paginationParams.limitPerPage }],
-          total: [
-            {
-              $count: 'count',
-            },
-          ],
-        },
-      },
-    ]);
+    const [data, total] = await this.createQueryBuilder('filter')
+      .leftJoin('filter.user', 'user', 'filter.userId = user.id')
+      .leftJoinAndSelect('user.apartments', 'apartments')
+      .where('filter.isActive = :isActive', { isActive: true })
+      .andWhere('user.isVerified = :isVerified', { isVerified: true })
+      .andWhere('user.subscription = :subscription', {
+        subscription: subscriptionName,
+      })
+      .select([
+        'filter.id',
+        'filter.furnished',
+        'filter.minPrice',
+        'filter.maxPrice',
+        'filter.municipalities',
+        'filter.rentOrSale',
+        'filter.structures',
+        'filter.createdAt',
+        'filter.userId',
+        'user',
+        'apartments',
+      ])
+      .skip(skip)
+      .take(paginationParams.limitPerPage)
+      .getManyAndCount();
 
     return {
-      data: response.data,
-      total: response.total[0].count,
+      data,
+      total,
     };
   }
 
   async saveFilter(filter: Filter): Promise<Filter> {
-    const createdFilter = new this.filterModel({
-      _id: Types.ObjectId(),
-      ...filter,
-    });
-
-    return createdFilter.save();
+    return this.save(filter);
   }
 
-  async verifyAndActivateFilter(filter: FilterDocument): Promise<void> {
-    filter.set({
+  async verifyAndActivateFilter(filter: Filter): Promise<void> {
+    await this.save({
+      ...filter,
       isVerified: true,
       isActive: true,
     });
-
-    await filter.save();
   }
 }

@@ -33,7 +33,7 @@ describe('TokenService', () => {
 
     it('should delete token by filter id', async () => {
       const token = {
-        value: 'token',
+        id: 'tokenid',
       };
       jest
         .spyOn(tokenRepository, 'getUnexpiredTokenByFilterId')
@@ -41,7 +41,7 @@ describe('TokenService', () => {
 
       await tokenService.deleteTokenByFilterId('filterId');
 
-      expect(tokenRepository.deleteToken).toHaveBeenCalledWith(token);
+      expect(tokenRepository.deleteToken).toHaveBeenCalledWith(token.id);
     });
   });
 });

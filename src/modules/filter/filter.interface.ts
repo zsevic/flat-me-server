@@ -1,7 +1,7 @@
-import { RentOrSale } from './filter.enums';
+import { User } from 'modules/user/user.interface';
 
 export interface Filter {
-  _id?: string;
+  id?: string;
 
   furnished: string[];
 
@@ -15,9 +15,13 @@ export interface Filter {
 
   municipalities: string[];
 
-  rentOrSale: RentOrSale;
+  rentOrSale: string;
 
   structures: number[];
 
-  user: string;
+  userId: string;
+
+  user?: User;
+
+  createdAt?: Date;
 }

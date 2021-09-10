@@ -1,22 +1,22 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { ApartmentDocument } from 'modules/apartment/apartment.schema';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Apartment } from 'modules/apartment/apartment.interface';
 import { Subscription } from './subscription.enum';
+import { User } from './user.interface';
 import { UserRepository } from './user.repository';
-import { User, UserDocument } from './user.schema';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    @InjectRepository(UserRepository)
+    private readonly userRepository: UserRepository,
+  ) {}
 
   async getById(id: string): Promise<User> {
     return this.userRepository.getById(id);
   }
 
-  async getReceivedApartmentsIds(userId: string): Promise<string[]> {
-    return this.userRepository.getReceivedApartmentsIds(userId);
-  }
-
-  async getVerifiedOrCreateNewUser(email: string): Promise<User> {
+  async getVerifiedUserOrCreateNewUser(email: string): Promise<User> {
     const user = await this.getVerifiedUserByEmailAndValidateFilters(email);
     if (!user) return this.saveUser(email);
 
@@ -52,33 +52,20 @@ export class UserService {
     return user;
   }
 
-  async insertReceivedApartmentsIds(
-    userId: string,
-    apartments: ApartmentDocument[],
-  ) {
-    const apartmentsIds = apartments.map(apartment => apartment._id);
-
-    return this.userRepository.insertReceivedApartmentsIds(
-      userId,
-      apartmentsIds,
-    );
-  }
-
-  async saveFilter(userId: string, filterId: string) {
-    return this.userRepository.addFilter(userId, filterId);
+  async insertReceivedApartments(userId: string, apartments: Apartment[]) {
+    return this.userRepository.insertReceivedApartments(userId, apartments);
   }
 
   async saveUser(email: string): Promise<User> {
     return this.userRepository.saveUser(email);
   }
 
-  async verifyUser(id: string): Promise<UserDocument> {
+  async verifyUser(id: string): Promise<void> {
     const user = await this.userRepository.getById(id);
     if (!user) throw new BadRequestException('User is not found');
 
-    if (user.isVerified) return user;
+    if (user.isVerified) return;
 
     await this.userRepository.verifyUser(user);
-    return user;
   }
 }

@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { RentOrSale } from 'modules/filter/filter.enums';
-import { FilterDocument } from 'modules/filter/filter.schema';
 import { UserService } from 'modules/user/user.service';
 import { ApartmentRepository } from './apartment.repository';
 import { ApartmentService } from './apartment.service';
@@ -29,10 +28,6 @@ const baseProvider = {
   getProviderResults: jest.fn(),
 };
 
-const userService = {
-  getReceivedApartmentsIds: jest.fn(),
-};
-
 describe('ApartmentService', () => {
   let apartmentService: ApartmentService;
 
@@ -50,7 +45,7 @@ describe('ApartmentService', () => {
         },
         {
           provide: UserService,
-          useValue: userService,
+          useValue: {},
         },
       ],
     }).compile();
@@ -59,16 +54,25 @@ describe('ApartmentService', () => {
   });
 
   describe('getApartmentListFromDatabaseByFilter', () => {
-    it('should get apartment list from the database by given filter', async () => {
+    it('should return apartment list from the database by given filter', async () => {
+      const apartments = [{ id: 'id1' }];
+      const apartmentsIds = ['id1'];
       const filter = {
-        _id: '611c59c26962b452247b9432',
+        id: 'f7188f2f-ee2d-4bcc-a439-1461abae0ff0',
         structures: [1, 2, 0.5, 1.5],
         municipalities: ['Savski venac', 'Zemun'],
         furnished: ['semi-furnished'],
         rentOrSale: 'rent',
         minPrice: 120,
         maxPrice: 370,
-        user: '611c59c26962b452247b9431',
+        userId: '31dbc67a-411b-448e-9c22-497563055120',
+        user: {
+          id: 'userid',
+          email: 'test@example.com',
+          apartments,
+          isVerified: true,
+          subscription: 'FREE',
+        },
         createdAt: new Date('2021-08-18T00:52:18.296Z'),
         isActive: true,
         isVerified: true,
@@ -76,7 +80,7 @@ describe('ApartmentService', () => {
       const apartmentList = [
         {
           heatingTypes: ['central'],
-          _id: 'cetiriZida_id1',
+          id: 'cetiriZida_id1',
           price: 350,
           apartmentId: 'id',
           providerName: 'cetiriZida',
@@ -86,17 +90,15 @@ describe('ApartmentService', () => {
           furnished: 'semi-furnished',
           municipality: 'Savski venac',
           place: 'Sarajevska',
-          postedAt: '2021-06-23T13:38:19+02:00',
+          postedAt: new Date('2021-06-23T13:38:19+02:00'),
           rentOrSale: 'rent',
           size: 41,
           structure: 3,
           url: 'url',
-          __v: 0,
           createdAt: '2021-08-14T18:12:32.133Z',
           updatedAt: '2021-08-14T18:12:32.133Z',
         },
       ];
-      const apartmentsIds = ['id1'];
       const limitPerPage = 5;
       const apartmentListParams = {
         ...filter,
@@ -104,20 +106,15 @@ describe('ApartmentService', () => {
         pageNumber: 1,
       };
       jest
-        .spyOn(userService, 'getReceivedApartmentsIds')
-        .mockResolvedValue(apartmentsIds);
-      jest
         .spyOn(apartmentRepository, 'getApartmentList')
         .mockResolvedValue(apartmentList);
 
       await apartmentService.getApartmentListFromDatabaseByFilter(
-        filter as FilterDocument,
+        // @ts-ignore
+        filter,
         limitPerPage,
       );
 
-      expect(userService.getReceivedApartmentsIds).toHaveBeenCalledWith(
-        filter.user,
-      );
       expect(apartmentRepository.getApartmentList).toHaveBeenCalledWith(
         apartmentListParams,
         apartmentsIds,
@@ -279,6 +276,7 @@ describe('ApartmentService', () => {
               id: '60f99390d9982b10',
               for: 'rent',
               price: 500,
+              address: 'Kursulina',
               deposit: 1,
               paymentTerm: 'month',
               allowedVirtualSightseeing: false,
@@ -347,7 +345,7 @@ describe('ApartmentService', () => {
         [
           {
             price: 420,
-            _id: 'cetiriZida_60993e3e7906cd3a4c6832fd',
+            id: 'cetiriZida_60993e3e7906cd3a4c6832fd',
             apartmentId: '60993e3e7906cd3a4c6832fd',
             providerName: 'cetiriZida',
             address: 'Dalmatinska',
@@ -357,7 +355,7 @@ describe('ApartmentService', () => {
             heatingTypes: ['district'],
             municipality: 'Zvezdara',
             place: 'Zvezdara opština',
-            postedAt: '2021-05-10T16:07:58+02:00',
+            postedAt: new Date('2021-05-10T16:07:58+02:00'),
             rentOrSale: 'rent',
             size: 69,
             structure: 3,
@@ -367,7 +365,7 @@ describe('ApartmentService', () => {
         [
           {
             price: 450,
-            _id: 'cityExpert_23-BR',
+            id: 'cityExpert_23-BR',
             apartmentId: 23,
             providerName: 'cityExpert',
             address: 'Cara Nikolaja Ii',
@@ -390,7 +388,8 @@ describe('ApartmentService', () => {
         [
           {
             price: 500,
-            _id: 'cetiriZida_60f99390d9982b10',
+            id: 'cetiriZida_60f99390d9982b10',
+            address: 'Kursulina',
             apartmentId: '60f99390d9982b10',
             providerName: 'cetiriZida',
             coverPhotoUrl: 'cover-photo-url',
@@ -399,7 +398,7 @@ describe('ApartmentService', () => {
             heatingTypes: ['district'],
             municipality: 'Vračar',
             place: 'Vračar',
-            postedAt: '2020-04-22T17:49:36+02:00',
+            postedAt: new Date('2020-04-22T17:49:36+02:00'),
             rentOrSale: 'rent',
             size: 62,
             structure: 3,
@@ -409,7 +408,7 @@ describe('ApartmentService', () => {
         [
           {
             price: 450,
-            _id: 'cityExpert_44352-BS',
+            id: 'cityExpert_44352-BS',
             apartmentId: 44352,
             providerName: 'cityExpert',
             address: 'Internacionalnih Brigada',
@@ -460,6 +459,185 @@ describe('ApartmentService', () => {
       });
     });
 
+    it('should skip saving invalid apartments', async () => {
+      const firstProviderResults = [
+        {
+          total: 2,
+          ads: [
+            {
+              m2: 69,
+              floor: 1,
+              totalFloors: 3,
+              furnished: 'yes',
+              heatingType: 'district',
+              id: '60993e3e7906cd3a4c6832fd',
+              for: 'rent',
+              price: 420,
+              previousPrice: 300,
+              bookmarkCount: 3,
+              registered: 'yes',
+              address: 'Dalmatinska',
+              allowedVirtualSightseeing: false,
+              featuredExpiresAt: '2021-08-25T19:01:41+02:00',
+              featuredCounter: 5,
+              authorId: 57,
+              createdAt: '2021-05-10T16:07:58+02:00',
+              roomCount: 3,
+              description100: 'description',
+              type: 'apartment',
+              structureName: 'Trosoban stan',
+              structureAbbreviation: '3.0 stan',
+              title: 'Dalmatinska',
+              urlPath: '/url',
+              placeNames: ['Zvezdara opština'],
+              agencyAvatarUrlTemplate: 'url',
+              agencyUrl: 'url',
+              imageCount: 15,
+            },
+          ],
+        },
+        {
+          info: {
+            hasNextPage: true,
+          },
+          result: [
+            {
+              uniqueID: '23-BR',
+              propId: 23,
+              statusId: 51,
+              cityId: 1,
+              location: '45.79825, 21.48652',
+              street: 'Cara Nikolaja II',
+              floor: 'VPR',
+              size: 33,
+              structure: '1.5',
+              polygons: ['Vračar'],
+              ptId: 1,
+              price: 450,
+              coverPhoto: 'url.jpg',
+              rentOrSale: 'r',
+              caseId: 57364,
+              caseType: 'BR',
+              underConstruction: false,
+              filed: 0,
+              furnished: 1,
+              ceiling: 2,
+              furnishingArray: [],
+              bldgOptsArray: [],
+              heatingArray: [1],
+              parkingArray: [5],
+              yearOfConstruction: 2,
+              joineryArray: [2],
+              petsArray: [3],
+              otherArray: [],
+              availableFrom: '2021-08-09T11:04:13Z',
+              firstPublished: '2021-08-09T09:22:38Z',
+              pricePerSize: 13.636364,
+            },
+          ],
+        },
+      ];
+      const secondProviderResults = [
+        {
+          total: 2,
+          ads: [
+            {
+              m2: 62,
+              totalFloors: 5,
+              furnished: 'yes',
+              heatingType: 'district',
+              id: '60f99390d9982b10',
+              for: 'rent',
+              price: 500,
+              address: 'Kursulina',
+              deposit: 1,
+              paymentTerm: 'month',
+              allowedVirtualSightseeing: false,
+              featuredExpiresAt: '2021-08-24T09:38:53+02:00',
+              featuredCounter: 3,
+              authorId: 149,
+              createdAt: '2020-04-22T17:49:36+02:00',
+              roomCount: 3,
+              description100: 'description',
+              type: 'apartment',
+              structureName: 'Dvosoban stan',
+              structureAbbreviation: '2.0 stan',
+              title: 'Hram Svetog Save',
+              urlPath: '/url2',
+              placeNames: ['Vračar'],
+              agencyAvatarUrlTemplate: 'url',
+              agencyUrl: 'url',
+              image: { search: { '380x0_fill_0_webp': 'cover-photo-url' } },
+              imageCount: 11,
+            },
+          ],
+        },
+        {
+          info: {
+            hasNextPage: false,
+          },
+          result: [
+            {
+              uniqueID: '44352-BS',
+              propId: 44352,
+              statusId: 51,
+              cityId: 1,
+              location: '44.79498, 20.47002',
+              floor: 'SU',
+              size: 37,
+              structure: '1.5',
+              municipality: 'Vračar',
+              polygons: ['Vračar'],
+              ptId: 1,
+              price: 450,
+              coverPhoto: 'cover.jpg',
+              rentOrSale: 's',
+              caseId: 56305,
+              caseType: 'BS',
+              underConstruction: false,
+              filed: 2,
+              furnished: 1,
+              ceiling: 2,
+              furnishingArray: [],
+              bldgOptsArray: [],
+              heatingArray: [4],
+              parkingArray: [5],
+              yearOfConstruction: 1,
+              joineryArray: [2],
+              petsArray: [],
+              otherArray: [],
+              availableFrom: '0001-01-01T00:00:00Z',
+              firstPublished: '2021-06-28T17:20:08Z',
+              pricePerSize: 2162.162,
+            },
+          ],
+        },
+      ];
+      jest.spyOn(baseProvider, 'getProviderRequests').mockReturnValue([
+        // @ts-ignore
+        { request: {}, provider: cetiriZidaProvider },
+        // @ts-ignore
+        { request: {}, provider: cityExpertProvider },
+      ]);
+
+      jest
+        .spyOn(baseProvider, 'getProviderResults')
+        .mockResolvedValueOnce(firstProviderResults)
+        .mockResolvedValueOnce(secondProviderResults);
+
+      await apartmentService.saveApartmentListFromProviders({
+        furnished: ['furnished'],
+        municipalities: ['Vračar', 'Zvezdara'],
+        minPrice: 400,
+        maxPrice: 500,
+        structures: [1.5, 3.0],
+        rentOrSale: RentOrSale.rent,
+        pageNumber: 1,
+      });
+
+      expect(apartmentRepository.saveApartmentList).not.toHaveBeenCalled();
+    });
+
     it('should handle failed requests from providers', async () => {
       const providerResults = [
         {
@@ -503,7 +681,7 @@ describe('ApartmentService', () => {
       const savedApartmentList = [
         {
           price: 420,
-          _id: 'cetiriZida_60993e3e7906cd3a4c6832fd',
+          id: 'cetiriZida_60993e3e7906cd3a4c6832fd',
           apartmentId: '60993e3e7906cd3a4c6832fd',
           providerName: 'cetiriZida',
           address: 'Dalmatinska',
@@ -513,7 +691,7 @@ describe('ApartmentService', () => {
           heatingTypes: ['district'],
           municipality: 'Zvezdara',
           place: 'Zvezdara opština',
-          postedAt: '2021-05-10T16:07:58+02:00',
+          postedAt: new Date('2021-05-10T16:07:58+02:00'),
           rentOrSale: 'rent',
           size: 69,
           structure: 3,

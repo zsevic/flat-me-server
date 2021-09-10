@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { getTestMessageUrl } from 'nodemailer';
 import { isEnvironment } from 'common/utils';
 import { getLocationUrl } from 'common/utils/location';
-import { ApartmentDocument } from 'modules/apartment/apartment.schema';
+import { Apartment } from 'modules/apartment/apartment.interface';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 
 @Injectable()
@@ -43,7 +43,7 @@ export class MailService {
 
   async sendMailWithNewApartments(
     email: string,
-    apartmentList: ApartmentDocument[],
+    apartmentList: Apartment[],
     filter: FilterDto,
     deactivationUrl: string,
   ): Promise<void> {
