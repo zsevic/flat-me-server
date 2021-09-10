@@ -16,47 +16,6 @@ describe('FilterRepository', () => {
     filterRepository = module.get<FilterRepository>(FilterRepository);
   });
 
-  describe('findFilterById', () => {
-    it('should throw an error when filter is not found', async () => {
-      const filterId = 'filterid';
-      const findOneSpy = jest
-        .spyOn(Repository.prototype, 'findOne')
-        .mockResolvedValue(null);
-
-      await expect(
-        filterRepository.findFilterById(filterId),
-      ).rejects.toThrowError(BadRequestException);
-
-      expect(findOneSpy).toHaveBeenCalledWith({ id: filterId });
-    });
-
-    it('should return found filter', async () => {
-      const filterId = 'filterid';
-      const filter = {
-        id: filterId,
-        structures: [1, 2, 0.5, 1.5],
-        municipalities: ['Savski venac', 'Zemun'],
-        furnished: ['semi-furnished'],
-        rentOrSale: 'rent',
-        minPrice: 120,
-        maxPrice: 370,
-        user: '611c59c26962b452247b9431',
-        createdAt: new Date('2021-08-18T00:52:18.296Z'),
-        isActive: false,
-        isVerified: false,
-      };
-
-      const findOneSpy = jest
-        .spyOn(Repository.prototype, 'findOne')
-        .mockResolvedValue(filter);
-
-      const foundFilter = await filterRepository.findFilterById(filterId);
-
-      expect(foundFilter).toEqual(filter);
-      expect(findOneSpy).toHaveBeenCalledWith({ id: filterId });
-    });
-  });
-
   describe('findUnverifiedFilter', () => {
     it('should throw an error when filter is not found', async () => {
       const filterId = 'id1';

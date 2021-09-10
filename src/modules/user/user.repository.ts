@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Apartment } from 'modules/apartment/apartment.interface';
 import { EntityRepository, Repository } from 'typeorm';
 import { Subscription } from './subscription.enum';
@@ -18,7 +18,7 @@ export class UserRepository extends Repository<UserEntity> {
 
   async getUserEmail(userId: string): Promise<string> {
     const user = await this.getById(userId);
-    if (!user) throw new BadRequestException('User is not valid');
+    if (!user) throw new Error('User is not valid');
 
     return user.email;
   }

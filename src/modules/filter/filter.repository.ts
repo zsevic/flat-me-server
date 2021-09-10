@@ -23,15 +23,6 @@ export class FilterRepository extends Repository<FilterEntity> {
     });
   }
 
-  async findFilterById(id: string): Promise<Filter> {
-    const filter = await this.findOne({ id });
-    if (!filter) {
-      throw new BadRequestException('Filter is not found');
-    }
-
-    return filter;
-  }
-
   async findUnverifiedFilter(id: string): Promise<Filter> {
     const filter = await this.findOne({
       id,

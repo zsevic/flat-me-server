@@ -11,7 +11,6 @@ import { FilterService } from './filter.service';
 
 const filterRepository = {
   deactivateFilter: jest.fn(),
-  findFilterById: jest.fn(),
   findUnverifiedFilter: jest.fn(),
   saveFilter: jest.fn(),
   verifyAndActivateFilter: jest.fn(),
