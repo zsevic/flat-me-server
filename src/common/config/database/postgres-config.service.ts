@@ -20,7 +20,13 @@ export class PostgresConfigService implements TypeOrmOptionsFactory {
       url: this.configService.get<string>('database.url'),
       entities: [path.join(__dirname, '/../../../**/*.entity.{js,ts}')],
       keepConnectionAlive: true,
-      synchronize: true,
+      logging: false,
+      migrations: [
+        path.resolve(`${__dirname}/../../../../database/migrations/*{.ts,.js}`),
+      ],
+      migrationsTableName: 'migrations',
+      migrationsRun: true,
+      synchronize: false,
     };
   }
 }

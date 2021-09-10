@@ -11,7 +11,7 @@ import * as Joi from 'joi';
 import { Subject } from 'rxjs';
 import { Connection } from 'typeorm';
 import databaseConfig from 'common/config/database';
-import { PostgresConfigService } from 'common/config/postgres-config.service';
+import { PostgresConfigService } from 'common/config/database/postgres-config.service';
 import { isEnvironment } from 'common/utils';
 import { ApartmentModule } from 'modules/apartment/apartment.module';
 import { FilterModule } from 'modules/filter/filter.module';

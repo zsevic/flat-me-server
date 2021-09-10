@@ -34,7 +34,7 @@ export class UserEntity {
 
   @ManyToMany(() => ApartmentEntity)
   @JoinTable({
-    name: 'user_received_apartments',
+    name: 'user_received_apartment',
     joinColumn: {
       name: 'user_id',
       referencedColumnName: 'id',
