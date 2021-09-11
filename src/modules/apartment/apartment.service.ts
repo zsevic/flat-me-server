@@ -55,16 +55,16 @@ export class ApartmentService {
           foundApartments.push(apartmentInfo);
         });
 
-        this.logger.log(
-          `Found ${foundApartments.length} new apartment(s) from ${provider.providerName} for ${filter.rentOrSale}, page ${filter.pageNumber}`,
-        );
+        if (foundApartments.length === 0) {
+          this.logger.log('Skipping saving, there are no found apartments');
+          continue;
+        }
+
         try {
-          if (foundApartments.length > 0) {
-            this.logger.log(
-              `Saving ${foundApartments.length} new apartment(s) from ${provider.providerName} for ${filter.rentOrSale}, page ${filter.pageNumber}`,
-            );
-            await this.apartmentRepository.saveApartmentList(foundApartments);
-          }
+          this.logger.log(
+            `Saving ${foundApartments.length} new apartment(s) from ${provider.providerName} for ${filter.rentOrSale}, page ${filter.pageNumber}`,
+          );
+          await this.apartmentRepository.saveApartmentList(foundApartments);
         } catch (error) {
           this.logger.error(error.message);
           continue;
