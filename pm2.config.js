@@ -3,7 +3,7 @@ module.exports = {
     {
       name: 'app',
       script: 'dist/src/main.js',
-      instances: 'max',
+      instances: 2,
       env: {
         NODE_ENV: 'development',
         NODE_PATH: './dist',
