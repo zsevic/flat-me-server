@@ -38,7 +38,7 @@ npm run test:e2e
 ### Migrations
 
 ```bash
-npm run migration:generate <MIGRATION_NAME>
+npm run migration:create <MIGRATION_NAME>
 npm run migrate
 npm run migrate:down
 ```
