@@ -36,6 +36,8 @@ export class TasksService {
     name: DELETING_INACTIVE_APARTMENTS,
   })
   async handleDeletingInactiveApartments(): Promise<void> {
+    if (!this.shouldRunCronJob()) return;
+
     this.logCronJobStarted(DELETING_INACTIVE_APARTMENTS);
 
     try {
@@ -76,10 +78,16 @@ export class TasksService {
     return this.apartmentService.deleteApartment(apartmentId);
   }
 
+  private shouldRunCronJob() {
+    return process.env?.NODE_APP_INSTANCE === '0';
+  }
+
   @Cron(CronExpression.EVERY_HOUR, {
     name: SAVING_APARTMENT_LIST_FROM_PROVIDERS_CRON_JOB,
   })
   async handleSavingApartmentListFromProviders(): Promise<void> {
+    if (!this.shouldRunCronJob()) return;
+
     this.logCronJobStarted(SAVING_APARTMENT_LIST_FROM_PROVIDERS_CRON_JOB);
     const saveApartmentListFromProviders = [];
     for (const filter of filters) {
@@ -104,6 +112,8 @@ export class TasksService {
     timeZone: 'Europe/Belgrade',
   })
   async handleSendingNewApartmentsForFreeSubscriptionUsers(): Promise<void> {
+    if (!this.shouldRunCronJob()) return;
+
     this.logCronJobStarted(SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB);
 
     try {
