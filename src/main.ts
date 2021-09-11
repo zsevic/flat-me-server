@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import compression from 'compression';
 import * as i18n from 'i18n';
 import { WinstonModule } from 'nest-winston';
 import { format, transports } from 'winston';
@@ -35,6 +36,7 @@ async function bootstrap(): Promise<void> {
   app.get(AppModule).subscribeToShutdown(() => app.close());
 
   app.setViewEngine('pug');
+  app.use(compression());
   app.use(i18n.init);
   app.use(loggerMiddleware);
   app.useGlobalFilters(new AllExceptionsFilter());
