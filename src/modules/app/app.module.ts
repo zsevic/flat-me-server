@@ -36,6 +36,7 @@ import { AppController } from './app.controller';
             .required(),
           PORT: Joi.number().required(),
           SENDGRID_API_KEY: Joi.string().required(),
+          SENTRY_DSN: Joi.string().required(),
         }),
       }),
     }),

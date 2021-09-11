@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import * as Sentry from '@sentry/node';
 import compression from 'compression';
 import * as i18n from 'i18n';
 import { WinstonModule } from 'nest-winston';
@@ -49,6 +50,12 @@ async function bootstrap(): Promise<void> {
   );
   if (isEnvironment('development')) {
     setupApiDocs(app);
+  }
+
+  if (isEnvironment('production')) {
+    Sentry.init({
+      dsn: configService.get('SENTRY_DSN'),
+    });
   }
 
   await app.listen(configService.get('PORT')).then(() => {
