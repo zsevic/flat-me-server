@@ -333,7 +333,6 @@ describe('FilterService', () => {
       jest
         .spyOn(filterRepository, 'findUnverifiedFilter')
         .mockResolvedValue(foundFilter);
-      jest.spyOn(userService, 'verifyUser').mockResolvedValue(undefined);
 
       await filterService.verifyFilter(token.value);
 

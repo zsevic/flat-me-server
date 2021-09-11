@@ -358,8 +358,7 @@ describe('TasksService', () => {
         .mockResolvedValue({ data: foundFilters, total: foundFilters.length });
       jest
         .spyOn(tokenService, 'deleteTokenByFilterId')
-        .mockRejectedValueOnce(new Error())
-        .mockResolvedValue(undefined);
+        .mockRejectedValueOnce(new Error());
       jest
         .spyOn(apartmentService, 'getApartmentListFromDatabaseByFilter')
         .mockResolvedValue({ data: [] });
