@@ -60,12 +60,13 @@ export class ApartmentService {
         );
         try {
           if (foundApartments.length > 0) {
+            this.logger.log(
+              `Saving ${foundApartments.length} new apartment(s) from ${provider.providerName} for ${filter.rentOrSale}, page ${filter.pageNumber}`,
+            );
             await this.apartmentRepository.saveApartmentList(foundApartments);
           }
         } catch (error) {
-          this.logger.error(
-            `Couldn't save apartments, error: ${JSON.stringify(error)}`,
-          );
+          this.logger.error(error.message);
           continue;
         }
 

@@ -80,7 +80,7 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
     for (const apartment of apartments) {
       const isApartmentAlreadySaved = await this.findOne({ id: apartment.id });
       if (isApartmentAlreadySaved)
-        throw new Error('Apartment is already saved');
+        throw new Error(`Apartment (${apartment.id}) is already saved`);
 
       await this.save(apartment);
     }
