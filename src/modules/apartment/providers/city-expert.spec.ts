@@ -261,7 +261,7 @@ describe('CityExpert', () => {
 
       await expect(
         provider.isApartmentInactive('cityExpert_3546-BZ'),
-      ).rejects.toThrowError(Error);
+      ).rejects.toThrowError();
       expect(axios.get).not.toHaveBeenCalled();
     });
 
