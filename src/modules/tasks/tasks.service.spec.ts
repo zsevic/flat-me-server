@@ -50,6 +50,10 @@ jest.mock('typeorm-transactional-cls-hooked', () => ({
 describe('TasksService', () => {
   let tasksService: TasksService;
 
+  beforeAll(() => {
+    process.env.NODE_APP_INSTANCE = '0';
+  });
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
