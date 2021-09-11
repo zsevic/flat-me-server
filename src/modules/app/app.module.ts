@@ -16,7 +16,6 @@ import { isEnvironment } from 'common/utils';
 import { ApartmentModule } from 'modules/apartment/apartment.module';
 import { FilterModule } from 'modules/filter/filter.module';
 import { TasksModule } from 'modules/tasks/tasks.module';
-import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -54,7 +53,6 @@ import { AppController } from './app.controller';
     FilterModule,
     TasksModule,
   ],
-  controllers: [AppController],
   providers: [
     {
       provide: 'configService',
