@@ -9,6 +9,7 @@ import { i18nConfig } from 'common/config/i18n';
 import { AllExceptionsFilter } from 'common/filters';
 import { loggerMiddleware } from 'common/middlewares';
 import { CustomValidationPipe } from 'common/pipes';
+import { isEnvironment } from 'common/utils';
 import { AppModule } from 'modules/app/app.module';
 
 i18n.configure(i18nConfig);
@@ -44,7 +45,9 @@ async function bootstrap(): Promise<void> {
       whitelist: true,
     }),
   );
-  setupApiDocs(app);
+  if (isEnvironment('development')) {
+    setupApiDocs(app);
+  }
 
   await app.listen(configService.get('PORT')).then(() => {
     logger.log(`Server is running on port ${configService.get('PORT')}`);
