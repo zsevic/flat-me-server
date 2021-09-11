@@ -9,6 +9,7 @@ import {
   apartmentActivityBaseUrlForCetiriZida,
   CETIRI_ZIDA_API_BASE_URL,
 } from '../apartment.constants';
+import { Apartment } from '../apartment.interface';
 
 export class CetiriZidaProvider implements Provider {
   private readonly providerName = 'cetiriZida';
@@ -121,7 +122,7 @@ export class CetiriZidaProvider implements Provider {
     return municipalities[municipalityKey];
   };
 
-  parseApartmentInfo = apartmentInfo => {
+  parseApartmentInfo = (apartmentInfo): Apartment => {
     const floor = {
       '-4': 'cellar',
       '-3': 'basement',

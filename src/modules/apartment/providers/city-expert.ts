@@ -11,6 +11,7 @@ import {
   apartmentStatusNotAvailable,
   CITY_EXPERT_API_BASE_URL,
 } from '../apartment.constants';
+import { Apartment } from '../apartment.interface';
 
 export class CityExpertProvider implements Provider {
   private readonly providerName = 'cityExpert';
@@ -167,7 +168,7 @@ export class CityExpertProvider implements Provider {
     }
   }
 
-  parseApartmentInfo = apartmentInfo => {
+  parseApartmentInfo = (apartmentInfo): Apartment => {
     const [latitude, longitude] = apartmentInfo.location.split(', ');
     const floor = {
       SU: 'basement',
@@ -184,7 +185,7 @@ export class CityExpertProvider implements Provider {
       2: 'semi-furnished',
       3: 'empty',
     };
-    const heatingTypesMap = {
+    const heatingTypesMap: Record<number, string> = {
       1: 'district',
       4: 'electricity',
       10: 'storage heater',
@@ -199,9 +200,9 @@ export class CityExpertProvider implements Provider {
 
     const { structure } = apartmentInfo;
     const heatingTypes = [
-      ...new Set(
+      ...new Set<string>(
         apartmentInfo.heatingArray.map(
-          heatingType => heatingTypesMap[heatingType],
+          (heatingType: number): string => heatingTypesMap[heatingType],
         ),
       ),
     ];
