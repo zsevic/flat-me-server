@@ -9,7 +9,7 @@ import { format, transports } from 'winston';
 import { setupApiDocs } from 'common/config/api-docs';
 import { i18nConfig } from 'common/config/i18n';
 import { AllExceptionsFilter } from 'common/filters';
-import { loggerMiddleware } from 'common/middlewares';
+import { loggerMiddleware, sslRedirect } from 'common/middlewares';
 import { CustomValidationPipe } from 'common/pipes';
 import { isEnvironment } from 'common/utils';
 import { AppModule } from 'modules/app/app.module';
@@ -53,6 +53,7 @@ async function bootstrap(): Promise<void> {
   }
 
   if (isEnvironment('production')) {
+    app.use(sslRedirect());
     Sentry.init({
       dsn: configService.get('SENTRY_DSN'),
     });
