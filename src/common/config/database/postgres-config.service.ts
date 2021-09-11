@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
+import { isEnvironment } from 'common/utils';
 import path from 'path';
 import {
   initializeTransactionalContext,
@@ -26,6 +27,11 @@ export class PostgresConfigService implements TypeOrmOptionsFactory {
       ],
       migrationsTableName: 'migrations',
       migrationsRun: true,
+      ...(isEnvironment('production') && {
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      }),
       synchronize: false,
     };
   }
