@@ -5,9 +5,12 @@ import {
   OnApplicationShutdown,
 } from '@nestjs/common';
 import { ConfigService, ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
 import { ScheduleModule, SchedulerRegistry } from '@nestjs/schedule';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as Joi from 'joi';
+import { ThrottlerStorageRedisService } from 'nestjs-throttler-storage-redis';
 import { Subject } from 'rxjs';
 import { Connection } from 'typeorm';
 import databaseConfig from 'common/config/database';
@@ -34,6 +37,9 @@ import { TasksModule } from 'modules/tasks/tasks.module';
             .default('development')
             .required(),
           PORT: Joi.number().required(),
+          REDIS_URL: Joi.string()
+            .uri()
+            .required(),
           SENDGRID_API_KEY: Joi.string().required(),
           SENTRY_DSN: Joi.string().required(),
         }),
@@ -48,6 +54,18 @@ import { TasksModule } from 'modules/tasks/tasks.module';
       useClass: PostgresConfigService,
       inject: [PostgresConfigService],
     }),
+    ThrottlerModule.forRootAsync({
+      useFactory: (configService: ConfigService) => {
+        const redisUrl = configService.get('REDIS_URL');
+
+        return {
+          ttl: 60 * 60 * 24,
+          limit: 3,
+          storage: new ThrottlerStorageRedisService(redisUrl),
+        };
+      },
+      inject: [ConfigService],
+    }),
     ScheduleModule.forRoot(),
     ApartmentModule,
     FilterModule,
@@ -57,6 +75,10 @@ import { TasksModule } from 'modules/tasks/tasks.module';
     {
       provide: 'configService',
       useFactory: () => new ConfigService(),
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
     },
     PostgresConfigService,
   ],

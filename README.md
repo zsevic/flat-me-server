@@ -9,6 +9,7 @@
 ```bash
 git clone https://github.com/zsevic/flat-me-server
 cd flat-me-server
+docker-compose up
 cp .env.sample .env # change values after copying
 npm i
 npm run start:dev
@@ -49,4 +50,4 @@ API documentation is generated using [@nestjs/swagger](https://www.npmjs.com/pac
 
 ### Technologies used
 
-- Node.js, TypeScript, NestJS, TypeORM
+- Node.js, TypeScript, NestJS, TypeORM, Redis
