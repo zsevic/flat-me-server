@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as Sentry from '@sentry/node';
 import compression from 'compression';
+import helmet from 'helmet';
 import * as i18n from 'i18n';
 import { WinstonModule } from 'nest-winston';
 import { format, transports } from 'winston';
@@ -39,6 +40,7 @@ async function bootstrap(): Promise<void> {
 
   app.setViewEngine('pug');
   app.use(compression());
+  app.use(helmet());
   app.use(i18n.init);
   app.use(loggerMiddleware);
   app.useGlobalFilters(new AllExceptionsFilter());
