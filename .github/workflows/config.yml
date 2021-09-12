@@ -8,10 +8,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container: node:16.3.0-alpine3.13
 
     strategy:
       matrix:
-        node-version: [16.x]
         database-name:
         - flat-me-db
         database-user:
@@ -19,7 +19,7 @@ jobs:
         database-password:
         - password
         database-host:
-        - 127.0.0.1
+        - postgres
         database-port:
         - 5432
         redis-host:
@@ -44,7 +44,7 @@ jobs:
           --health-retries 5
 
       redis:
-        image: redis:latest
+        image: redis
         # Set health checks to wait until redis has started
         options: >-
           --health-cmd "redis-cli ping"
@@ -72,6 +72,6 @@ jobs:
       - run: npm run test:e2e
         env:
           DATABASE_URL: postgres://${{ matrix.database-user }}:${{ matrix.database-password }}@${{ matrix.database-host }}:${{ matrix.database-port }}/${{ matrix.database-name }}
-          REDIS_URL: redis:${{ matrix.redis-host }}:${{ matrix.redis-port }}
+          REDIS_URL: redis://${{ matrix.redis-host }}:${{ matrix.redis-port }}
 
       - run: npm audit
