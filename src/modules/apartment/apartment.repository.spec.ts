@@ -4,7 +4,8 @@ import {
   DEFAULT_LIMIT_PER_PAGE,
 } from 'modules/pagination/pagination.constants';
 import { getSkip } from 'modules/pagination/pagination.utils';
-import { Between, In, MoreThan, Not, Repository } from 'typeorm';
+import { Between, In, MoreThan, Not } from 'typeorm';
+import { ApartmentEntity } from './apartment.entity';
 import { Apartment } from './apartment.interface';
 import { ApartmentRepository } from './apartment.repository';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
@@ -32,8 +33,11 @@ describe('ApartmentRepository', () => {
       ];
       const apartmentsIds = ['id1', 'id2'];
       const findAndCountSpy = jest
-        .spyOn(Repository.prototype, 'findAndCount')
-        .mockResolvedValue([apartmentList, apartmentList.length]);
+        .spyOn(apartmentRepository, 'findAndCount')
+        .mockResolvedValue([
+          apartmentList as ApartmentEntity[],
+          apartmentList.length,
+        ]);
 
       const response = await apartmentRepository.getApartmentsIds(
         defaultPaginationParams,
@@ -79,8 +83,8 @@ describe('ApartmentRepository', () => {
           size: 41,
           structure: 3,
           url: 'url',
-          createdAt: '2021-08-14T18:12:32.133Z',
-          updatedAt: '2021-08-14T18:12:32.133Z',
+          createdAt: new Date('2021-08-14T18:12:32.133Z'),
+          updatedAt: new Date('2021-08-14T18:12:32.133Z'),
         },
       ];
       const query = {
@@ -91,8 +95,8 @@ describe('ApartmentRepository', () => {
         structure: In(filter.structures),
       };
       const findAndCountSpy = jest
-        .spyOn(Repository.prototype, 'findAndCount')
-        .mockResolvedValue([apartmentList, 1]);
+        .spyOn(apartmentRepository, 'findAndCount')
+        .mockResolvedValue([apartmentList as ApartmentEntity[], 1]);
 
       const result = await apartmentRepository.getApartmentList(
         filter as ApartmentListParamsDto,
@@ -134,8 +138,8 @@ describe('ApartmentRepository', () => {
           size: 41,
           structure: 3,
           url: 'url',
-          createdAt: '2021-08-14T18:12:32.133Z',
-          updatedAt: '2021-08-14T18:12:32.133Z',
+          createdAt: new Date('2021-08-14T18:12:32.133Z'),
+          updatedAt: new Date('2021-08-14T18:12:32.133Z'),
         },
       ];
       const dateFilter = new Date(2020, 8, 10);
@@ -149,8 +153,8 @@ describe('ApartmentRepository', () => {
         structure: In(filter.structures),
       };
       const findAndCountSpy = jest
-        .spyOn(Repository.prototype, 'findAndCount')
-        .mockResolvedValue([apartmentList, 1]);
+        .spyOn(apartmentRepository, 'findAndCount')
+        .mockResolvedValue([apartmentList as ApartmentEntity[], 1]);
 
       const result = await apartmentRepository.getApartmentList(
         filter as ApartmentListParamsDto,
@@ -175,9 +179,9 @@ describe('ApartmentRepository', () => {
         },
       ];
       jest
-        .spyOn(Repository.prototype, 'findOne')
-        .mockResolvedValue(apartments[0]);
-      const saveSpy = jest.spyOn(Repository.prototype, 'save');
+        .spyOn(apartmentRepository, 'findOne')
+        .mockResolvedValue(apartments[0] as ApartmentEntity);
+      const saveSpy = jest.spyOn(apartmentRepository, 'save');
 
       await expect(
         apartmentRepository.saveApartmentList(apartments as Apartment[]),
@@ -191,9 +195,9 @@ describe('ApartmentRepository', () => {
           id: 'id',
         },
       ];
-      jest.spyOn(Repository.prototype, 'findOne').mockResolvedValue(null);
+      jest.spyOn(apartmentRepository, 'findOne').mockResolvedValue(null);
       const saveSpy = jest
-        .spyOn(Repository.prototype, 'save')
+        .spyOn(apartmentRepository, 'save')
         .mockResolvedValue(null);
 
       await apartmentRepository.saveApartmentList(apartments as Apartment[]);

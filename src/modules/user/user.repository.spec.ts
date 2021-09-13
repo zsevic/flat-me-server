@@ -1,5 +1,4 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { Repository } from 'typeorm';
 import { UserRepository } from './user.repository';
 
 describe('UserRepository', () => {
@@ -17,7 +16,7 @@ describe('UserRepository', () => {
     it('should throw an error when user is not found', async () => {
       const userId = 'userid';
       const findOneSpy = jest
-        .spyOn(Repository.prototype, 'findOne')
+        .spyOn(userRepository, 'findOne')
         .mockResolvedValue(null);
 
       await expect(userRepository.getUserEmail(userId)).rejects.toThrowError();
@@ -36,7 +35,7 @@ describe('UserRepository', () => {
         email: 'test@example.com',
       };
       const findOneSpy = jest
-        .spyOn(Repository.prototype, 'findOne')
+        .spyOn(userRepository, 'findOne')
         .mockResolvedValue(user);
 
       const userEmail = await userRepository.getUserEmail(userId);

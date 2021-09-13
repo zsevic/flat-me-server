@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { defaultPaginationParams } from 'modules/pagination/pagination.constants';
 import { Subscription } from 'modules/user/subscription.enum';
+import { FilterEntity } from './filter.entity';
 import { FilterRepository } from './filter.repository';
 
 describe('FilterRepository', () => {
@@ -20,7 +21,7 @@ describe('FilterRepository', () => {
     it('should throw an error when filter is not found', async () => {
       const filterId = 'id1';
       const findOneSpy = jest
-        .spyOn(Repository.prototype, 'findOne')
+        .spyOn(filterRepository, 'findOne')
         .mockResolvedValue(null);
 
       await expect(
@@ -42,15 +43,15 @@ describe('FilterRepository', () => {
         rentOrSale: 'rent',
         minPrice: 120,
         maxPrice: 370,
-        user: '611c59c26962b452247b9431',
+        userId: '611c59c26962b452247b9431',
         createdAt: new Date('2021-08-18T00:52:18.296Z'),
         isActive: false,
         isVerified: false,
       };
 
       const findOneSpy = jest
-        .spyOn(Repository.prototype, 'findOne')
-        .mockResolvedValue(filter);
+        .spyOn(filterRepository, 'findOne')
+        .mockResolvedValue(filter as FilterEntity);
 
       const unverifiedFilter = await filterRepository.findUnverifiedFilter(
         filterId,
