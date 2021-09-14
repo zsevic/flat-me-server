@@ -9,8 +9,9 @@ import { APP_GUARD } from '@nestjs/core';
 import { ScheduleModule, SchedulerRegistry } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { InjectRedis } from '@liaoliaots/nestjs-redis';
+import { Redis } from 'ioredis';
 import * as Joi from 'joi';
-import { ThrottlerStorageRedisService } from 'nestjs-throttler-storage-redis';
 import { Subject } from 'rxjs';
 import { Connection } from 'typeorm';
 import databaseConfig from 'common/config/database';
@@ -19,6 +20,8 @@ import { isEnvironment } from 'common/utils';
 import { ApartmentModule } from 'modules/apartment/apartment.module';
 import { FilterModule } from 'modules/filter/filter.module';
 import { TasksModule } from 'modules/tasks/tasks.module';
+import { ThrottlerStorageModule } from 'modules/throttler-storage/throttler-storage.module';
+import { ThrottlerStorageService } from 'modules/throttler-storage/throttler-storage.service';
 
 @Module({
   imports: [
@@ -55,16 +58,15 @@ import { TasksModule } from 'modules/tasks/tasks.module';
       inject: [PostgresConfigService],
     }),
     ThrottlerModule.forRootAsync({
-      useFactory: (configService: ConfigService) => {
-        const redisUrl = configService.get('REDIS_URL');
-
+      imports: [ThrottlerStorageModule],
+      useFactory: (throttlerStorage: ThrottlerStorageService) => {
         return {
           ttl: 60 * 60 * 24,
           limit: 3,
-          storage: new ThrottlerStorageRedisService(redisUrl),
+          storage: throttlerStorage,
         };
       },
-      inject: [ConfigService],
+      inject: [ThrottlerStorageService],
     }),
     ScheduleModule.forRoot(),
     ApartmentModule,
@@ -89,17 +91,19 @@ export class AppModule implements OnApplicationShutdown {
   private readonly shutdownListener$: Subject<void> = new Subject();
 
   constructor(
-    private readonly connection: Connection,
+    private readonly databaseConnection: Connection,
+    @InjectRedis() private readonly redisConnection: Redis,
     private readonly schedulerRegistry: SchedulerRegistry,
   ) {}
 
   async closeDatabaseConnection(): Promise<void> {
-    try {
-      await this.connection.close();
-      this.logger.log('Database connection is closed');
-    } catch (error) {
-      this.logger.error(error.message);
-    }
+    await this.databaseConnection.close();
+    this.logger.log('Database connection is closed');
+  }
+
+  async closeRedisConnection(): Promise<void> {
+    await this.redisConnection.quit();
+    this.logger.log('Redis connection is closed');
   }
 
   async onApplicationShutdown(signal: string): Promise<void> {
@@ -108,7 +112,10 @@ export class AppModule implements OnApplicationShutdown {
 
     this.stopCronJobs();
     this.shutdownListener$.next();
-    return this.closeDatabaseConnection();
+    await Promise.all([
+      this.closeDatabaseConnection(),
+      this.closeRedisConnection(),
+    ]).catch(error => this.logger.error(error.message));
   }
 
   stopCronJobs(): void {
