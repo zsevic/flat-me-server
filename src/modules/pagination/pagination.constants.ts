@@ -7,5 +7,5 @@ export const defaultPaginationParams: PaginationParams = {
 
 export const emptyPaginatedResponse = { data: [], total: 0 };
 
-export const DEFAULT_LIMIT_PER_PAGE = 10;
+export const DEFAULT_LIMIT_PER_PAGE = 12;
 export const DEFAULT_PAGE_NUMBER = 1;
