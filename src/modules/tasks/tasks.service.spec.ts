@@ -18,8 +18,6 @@ const apartmentService = {
   deleteApartment: jest.fn(),
   getApartmentListFromDatabaseByFilter: jest.fn(),
   getApartmentsIds: jest.fn(),
-  handleDeletingInactiveApartmentFromCetiriZida: jest.fn(),
-  handleDeletingInactiveApartmentFromCityExpert: jest.fn(),
   isApartmentInactive: jest.fn(),
   saveApartmentListFromProviders: jest.fn(),
 };
