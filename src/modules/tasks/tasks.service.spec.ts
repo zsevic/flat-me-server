@@ -18,6 +18,7 @@ const apartmentService = {
   deleteApartment: jest.fn(),
   getApartmentListFromDatabaseByFilter: jest.fn(),
   getApartmentsIds: jest.fn(),
+  handleDeletingInactiveApartment: jest.fn(),
   isApartmentInactive: jest.fn(),
   saveApartmentListFromProviders: jest.fn(),
 };
@@ -83,34 +84,6 @@ describe('TasksService', () => {
   });
 
   describe('handleDeletingInactiveApartments', () => {
-    it('should handle deleting inactive apartments', async () => {
-      const cetiriZidaApartmentId = 'cetiriZida_23';
-      const cityExpertApartmentId = 'cityExpert_12-BR';
-      jest.spyOn(apartmentService, 'getApartmentsIds').mockResolvedValue({
-        data: [cetiriZidaApartmentId, cityExpertApartmentId],
-        total: 2,
-      });
-      jest
-        .spyOn(apartmentService, 'isApartmentInactive')
-        .mockResolvedValueOnce(true)
-        .mockResolvedValueOnce(false);
-
-      await tasksService.handleDeletingInactiveApartments();
-
-      expect(apartmentService.isApartmentInactive).toHaveBeenCalledWith(
-        cetiriZidaApartmentId,
-      );
-      expect(apartmentService.isApartmentInactive).toHaveBeenCalledWith(
-        cityExpertApartmentId,
-      );
-      expect(apartmentService.deleteApartment).toHaveBeenCalledWith(
-        cetiriZidaApartmentId,
-      );
-      expect(apartmentService.deleteApartment).not.toHaveBeenCalledWith(
-        cityExpertApartmentId,
-      );
-    });
-
     it('should paginate over apartments ids', async () => {
       const cetiriZidaApartmentId = 'cetiriZida_23';
       const cityExpertApartmentId = 'cityExpert_12-BR';
@@ -118,20 +91,18 @@ describe('TasksService', () => {
         data: [cetiriZidaApartmentId, cityExpertApartmentId],
         total: 51,
       });
-      jest
-        .spyOn(apartmentService, 'isApartmentInactive')
-        .mockResolvedValue(false);
 
       await tasksService.handleDeletingInactiveApartments();
 
-      expect(apartmentService.isApartmentInactive).toHaveBeenCalledWith(
-        cetiriZidaApartmentId,
-      );
-      expect(apartmentService.isApartmentInactive).toHaveBeenCalledWith(
-        cityExpertApartmentId,
-      );
-      expect(apartmentService.isApartmentInactive).toHaveBeenCalledTimes(4);
-      expect(apartmentService.deleteApartment).not.toHaveBeenCalled();
+      expect(
+        apartmentService.handleDeletingInactiveApartment,
+      ).toHaveBeenCalledWith(cetiriZidaApartmentId);
+      expect(
+        apartmentService.handleDeletingInactiveApartment,
+      ).toHaveBeenCalledWith(cityExpertApartmentId);
+      expect(
+        apartmentService.handleDeletingInactiveApartment,
+      ).toHaveBeenCalledTimes(4);
     });
   });
 

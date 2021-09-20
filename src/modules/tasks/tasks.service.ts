@@ -55,7 +55,9 @@ export class TasksService {
           pageNumber,
         }));
         await Promise.all(
-          apartmentsIds.map(id => this.handleDeletingInactiveApartment(id)),
+          apartmentsIds.map(id =>
+            this.apartmentService.handleDeletingInactiveApartment(id),
+          ),
         );
         pageNumber++;
       } while (total >= getSkip({ limitPerPage, pageNumber }));
@@ -64,18 +66,6 @@ export class TasksService {
     }
 
     this.logCronJobFinished(DELETING_INACTIVE_APARTMENTS);
-  }
-
-  private async handleDeletingInactiveApartment(
-    apartmentId: string,
-  ): Promise<void> {
-    const isApartmentInactive = await this.apartmentService.isApartmentInactive(
-      apartmentId,
-    );
-    if (!isApartmentInactive) return;
-
-    this.logger.log(`Deleting apartment: ${apartmentId}`);
-    return this.apartmentService.deleteApartment(apartmentId);
   }
 
   private shouldRunCronJob() {

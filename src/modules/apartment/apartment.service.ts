@@ -135,6 +135,14 @@ export class ApartmentService {
     return this.apartmentRepository.getApartmentsIds(paginationParams);
   }
 
+  async handleDeletingInactiveApartment(apartmentId: string): Promise<void> {
+    const isApartmentInactive = await this.isApartmentInactive(apartmentId);
+    if (!isApartmentInactive) return;
+
+    this.logger.log(`Deleting apartment: ${apartmentId}`);
+    return this.deleteApartment(apartmentId);
+  }
+
   async isApartmentInactive(id: string): Promise<boolean> {
     try {
       const [providerName] = id.split('_');

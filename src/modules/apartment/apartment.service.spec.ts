@@ -123,6 +123,40 @@ describe('ApartmentService', () => {
     });
   });
 
+  describe('handleDeletingInactiveApartment', () => {
+    it('should skip deleting apartment when apartment is not inactive', async () => {
+      const apartmentId = 'apartmentid';
+      const isApartmentInactiveSpy = jest
+        .spyOn(apartmentService, 'isApartmentInactive')
+        .mockResolvedValue(false);
+      const deleteApartmentSpy = jest.spyOn(
+        apartmentService,
+        'deleteApartment',
+      );
+
+      await apartmentService.handleDeletingInactiveApartment(apartmentId);
+
+      expect(isApartmentInactiveSpy).toBeCalledWith(apartmentId);
+      expect(deleteApartmentSpy).not.toBeCalled();
+    });
+
+    it('should delete inactive apartment', async () => {
+      const apartmentId = 'apartmentid';
+      const isApartmentInactiveSpy = jest
+        .spyOn(apartmentService, 'isApartmentInactive')
+        .mockResolvedValue(true);
+      const deleteApartmentSpy = jest.spyOn(
+        apartmentService,
+        'deleteApartment',
+      );
+
+      await apartmentService.handleDeletingInactiveApartment(apartmentId);
+
+      expect(isApartmentInactiveSpy).toBeCalledWith(apartmentId);
+      expect(deleteApartmentSpy).toBeCalledWith(apartmentId);
+    });
+  });
+
   describe('isApartmentInactive', () => {
     it('should skip deleting apartment when apartment is active', async () => {
       const apartmentId = '1234';
