@@ -11,6 +11,7 @@ import { Apartment } from './apartment.interface';
 import { ApartmentRepository } from './apartment.repository';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
 import { BaseProvider } from './providers';
+import { Provider } from './providers/provider.interface';
 
 @Injectable()
 export class ApartmentService {
@@ -37,24 +38,12 @@ export class ApartmentService {
         providerRequests,
       );
       for (const [index, providerResult] of providerResults.entries()) {
-        const foundApartments = [];
         const { provider } = providerRequests[index];
 
         const apartments = provider.getResults(providerResult) || [];
         if (apartments.length === 0) continue;
 
-        apartments.forEach(apartment => {
-          if (!apartment.price) return;
-
-          const apartmentInfo = provider.parseApartmentInfo(apartment);
-          const isValidApartmentInfo = requiredFields.every(
-            field => !!apartmentInfo[field],
-          );
-          if (!isValidApartmentInfo) return;
-
-          foundApartments.push(apartmentInfo);
-        });
-
+        const foundApartments = this.getFoundApartments(apartments, provider);
         if (foundApartments.length === 0) {
           this.logger.log('Skipping saving, there are no found apartments');
           continue;
@@ -134,6 +123,20 @@ export class ApartmentService {
   ): Promise<PaginatedResponse<string>> {
     return this.apartmentRepository.getApartmentsIds(paginationParams);
   }
+
+  getFoundApartments = (apartments, provider: Provider): Apartment[] =>
+    apartments.reduce((apartmentList, apartment) => {
+      if (!apartment.price) return apartmentList;
+
+      const apartmentInfo = provider.parseApartmentInfo(apartment);
+      const isValidApartmentInfo = requiredFields.every(
+        field => !!apartmentInfo[field],
+      );
+      if (!isValidApartmentInfo) return apartmentList;
+
+      apartmentList.push(apartmentInfo);
+      return apartmentList;
+    }, []);
 
   async handleDeletingInactiveApartment(apartmentId: string): Promise<void> {
     const isApartmentInactive = await this.isApartmentInactive(apartmentId);
