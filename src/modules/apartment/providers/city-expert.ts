@@ -246,7 +246,11 @@ export class CityExpertProvider implements Provider {
     };
   };
 
-  private parseFloor(floorData) {
+  parseFloor(floorData, totalFloors?: number) {
+    if (Number(floorData) === Number(totalFloors)) {
+      return this.floor['PTK'];
+    }
+
     return this.floor[floorData] || floorData;
   }
 
@@ -255,8 +259,12 @@ export class CityExpertProvider implements Provider {
     apartmentInfo: Apartment,
   ): Apartment =>
     Object.assign(apartmentInfo, {
-      ...(apartmentData.floor && {
-        floor: this.parseFloor(apartmentData.floor),
-      }),
+      ...(apartmentData.floor &&
+        apartmentData?.onsite?.basInfFloorTotal && {
+          floor: this.parseFloor(
+            apartmentData.floor,
+            apartmentData.onsite.basInfFloorTotal,
+          ),
+        }),
     });
 }

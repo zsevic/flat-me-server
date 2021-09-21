@@ -395,4 +395,24 @@ describe('CityExpert', () => {
       expect(result).toEqual(parsedApartmentInfo);
     });
   });
+
+  describe('parseFloor', () => {
+    it('should return floor when totalFloor is undefined', () => {
+      const provider = new CityExpertProvider();
+
+      expect(provider.parseFloor('SU')).toEqual('basement');
+    });
+
+    it('should return floor when floor is not attic', () => {
+      const provider = new CityExpertProvider();
+
+      expect(provider.parseFloor('4', 5)).toEqual('4');
+    });
+
+    it('should return attic when floor is attic', () => {
+      const provider = new CityExpertProvider();
+
+      expect(provider.parseFloor('4', 4)).toEqual('attic');
+    });
+  });
 });
