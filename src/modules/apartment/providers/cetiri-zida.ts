@@ -17,7 +17,7 @@ export class CetiriZidaProvider implements Provider {
   private readonly logger = new Logger(CetiriZidaProvider.name);
 
   createRequest(filter: FilterDto) {
-    return createRequest.call(this, filter);
+    return createRequest.call(this, filter, this.createRequestConfig);
   }
 
   createRequestConfig(filter: FilterDto): AxiosRequestConfig {

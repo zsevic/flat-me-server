@@ -43,7 +43,10 @@ export class ApartmentService {
         const apartments = provider.getResults(providerResult) || [];
         if (apartments.length === 0) continue;
 
-        const foundApartments = this.getFoundApartments(apartments, provider);
+        const foundApartments = await this.getFoundApartments(
+          apartments,
+          provider,
+        );
         if (foundApartments.length === 0) {
           this.logger.log('Skipping saving, there are no found apartments');
           continue;
@@ -124,19 +127,36 @@ export class ApartmentService {
     return this.apartmentRepository.getApartmentsIds(paginationParams);
   }
 
-  getFoundApartments = (apartments, provider: Provider): Apartment[] =>
-    apartments.reduce((apartmentList, apartment) => {
-      if (!apartment.price) return apartmentList;
+  getFoundApartments = async (
+    apartments,
+    provider: Provider,
+  ): Promise<Apartment[]> => {
+    const foundAparments = [];
+    for (const apartment of apartments) {
+      if (!apartment.price) continue;
 
       const apartmentInfo = provider.parseApartmentInfo(apartment);
       const isValidApartmentInfo = requiredFields.every(
         field => !!apartmentInfo[field],
       );
-      if (!isValidApartmentInfo) return apartmentList;
+      if (!isValidApartmentInfo) continue;
 
-      apartmentList.push(apartmentInfo);
-      return apartmentList;
-    }, []);
+      if (provider?.createRequestForApartment) {
+        this.logger.log(`Sending request for apartment ${apartmentInfo.id}`);
+        const { request } = provider.createRequestForApartment(
+          apartmentInfo.apartmentId,
+        );
+        try {
+          const apartmentData = await request;
+          provider.updateInfoFromApartment(apartmentData, apartmentInfo);
+        } catch (error) {
+          this.logger.error(error);
+        }
+      }
+      foundAparments.push(apartmentInfo);
+    }
+    return foundAparments;
+  };
 
   async handleDeletingInactiveApartment(apartmentId: string): Promise<void> {
     const isApartmentInactive = await this.isApartmentInactive(apartmentId);

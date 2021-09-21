@@ -4,7 +4,7 @@ import { DEFAULT_TIMEOUT, ECONNABORTED } from 'common/constants';
 import { capitalizeWords } from 'common/utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { Provider } from './provider.interface';
-import { createRequest } from './utils';
+import { createRequest, createRequestForApartment } from './utils';
 import {
   apartmentActivityBaseUrlForCityExpert,
   apartmentStatusFinished,
@@ -20,11 +20,23 @@ export class CityExpertProvider implements Provider {
     BS: 's',
   };
 
+  private readonly floor = {
+    SU: 'basement',
+    PR: 'ground floor',
+    NPR: 'low ground floor',
+    VPR: 'high ground floor',
+    PTK: 'attic',
+  };
+
   private readonly url = `${CITY_EXPERT_API_BASE_URL}/Search/`;
   private readonly logger = new Logger(CityExpertProvider.name);
 
   createRequest(filter: FilterDto) {
     return createRequest.call(this, filter);
+  }
+
+  createRequestForApartment(apartmentId: string) {
+    return createRequestForApartment.call(this, apartmentId);
   }
 
   createRequestConfig(filter: FilterDto): AxiosRequestConfig {
@@ -102,13 +114,24 @@ export class CityExpertProvider implements Provider {
     };
   }
 
+  createRequestConfigForApartment(apartmentId: string): AxiosRequestConfig {
+    return {
+      url: this.getApartmentUrl(apartmentId),
+      method: 'GET',
+    };
+  }
+
   getResults = data => data?.result;
 
-  private getValueForUrl = string =>
-    string
-      .split(' ')
-      .join('-')
-      .toLowerCase();
+  getApartmentUrl(apartmentId: string): string {
+    const [propertyId, propertyType] = apartmentId.split('-');
+    const type = this.propertyTypes[propertyType];
+    if (!type) {
+      throw new Error('Property type is not valid');
+    }
+
+    return `${apartmentActivityBaseUrlForCityExpert}/${propertyId}/${type}`;
+  }
 
   private getUrlFromApartmentInfo = apartmentInfo => {
     const rentOrSale = {
@@ -133,22 +156,22 @@ export class CityExpertProvider implements Provider {
     )}`;
   };
 
+  private getValueForUrl = string =>
+    string
+      .split(' ')
+      .join('-')
+      .toLowerCase();
+
   hasNextPage = (data): boolean => data.info.hasNextPage;
 
   async isApartmentInactive(id: string): Promise<boolean> {
     try {
       const [, apartmentId] = id.split('_');
-      const [propertyId, propertyType] = apartmentId.split('-');
-      if (!this.propertyTypes[propertyType]) {
-        return Promise.reject(new Error('Property type is not valid'));
-      }
 
-      const response = await axios.get(
-        `${apartmentActivityBaseUrlForCityExpert}/${propertyId}/${this.propertyTypes[propertyType]}`,
-        {
-          timeout: DEFAULT_TIMEOUT,
-        },
-      );
+      const url = this.getApartmentUrl(apartmentId);
+      const response = await axios.get(url, {
+        timeout: DEFAULT_TIMEOUT,
+      });
       if (
         [apartmentStatusFinished, apartmentStatusNotAvailable].includes(
           response.data.status,
@@ -170,16 +193,6 @@ export class CityExpertProvider implements Provider {
 
   parseApartmentInfo = (apartmentInfo): Apartment => {
     const [latitude, longitude] = apartmentInfo.location.split(', ');
-    const floor = {
-      SU: 'basement',
-      PR: 'ground floor',
-      NPR: 'low ground floor',
-      VPR: 'high ground floor',
-      '2_4': '2-4',
-      '5_10': '5-10',
-      '11+': '11+',
-      PTK: 'attic',
-    };
     const furnished = {
       1: 'furnished',
       2: 'semi-furnished',
@@ -216,7 +229,7 @@ export class CityExpertProvider implements Provider {
       }),
       availableFrom: apartmentInfo.availableFrom,
       coverPhotoUrl: `https://img.cityexpert.rs/sites/default/files/styles/1920x/public/image/${apartmentInfo.coverPhoto}`,
-      floor: floor[apartmentInfo.floor] || apartmentInfo.floor,
+      floor: this.parseFloor(apartmentInfo.floor),
       furnished: furnished[apartmentInfo.furnished],
       heatingTypes,
       location: {
@@ -232,4 +245,18 @@ export class CityExpertProvider implements Provider {
       url: this.getUrlFromApartmentInfo(apartmentInfo),
     };
   };
+
+  private parseFloor(floorData) {
+    return this.floor[floorData] || floorData;
+  }
+
+  updateInfoFromApartment = (
+    apartmentData,
+    apartmentInfo: Apartment,
+  ): Apartment =>
+    Object.assign(apartmentInfo, {
+      ...(apartmentData.floor && {
+        floor: this.parseFloor(apartmentData.floor),
+      }),
+    });
 }

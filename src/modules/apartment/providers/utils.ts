@@ -13,3 +13,15 @@ export function createRequest(filter: FilterDto) {
     provider: this as Provider,
   };
 }
+
+export function createRequestForApartment(apartmentId: string) {
+  return {
+    request: axios(this.createRequestConfigForApartment(apartmentId))
+      .then(response => response.data)
+      .catch(error => {
+        this.logger.error(`Request failed for apartment ${apartmentId}`, error);
+        return {};
+      }),
+    provider: this as Provider,
+  };
+}

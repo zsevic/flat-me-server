@@ -475,6 +475,13 @@ describe('ApartmentService', () => {
         .mockResolvedValueOnce(firstProviderResults)
         .mockResolvedValueOnce(secondProviderResults);
 
+      jest
+        .spyOn(cityExpertProvider, 'createRequestForApartment')
+        .mockReturnValue({
+          request: {},
+          provider: CityExpertProvider,
+        });
+
       await apartmentService.saveApartmentListFromProviders({
         furnished: ['furnished'],
         municipalities: ['Vračar', 'Zvezdara'],

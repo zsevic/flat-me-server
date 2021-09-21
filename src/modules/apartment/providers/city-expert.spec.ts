@@ -162,6 +162,16 @@ describe('CityExpert', () => {
     });
   });
 
+  describe('getApartmentUrl', () => {
+    it('should throw an error when property type is not valid', async () => {
+      const provider = new CityExpertProvider();
+
+      expect(() =>
+        provider.getApartmentUrl('cityExpert_3546-BZ'),
+      ).toThrowError();
+    });
+  });
+
   describe('getResults', () => {
     it('should return the results from the provider', () => {
       const result = [];
@@ -254,15 +264,6 @@ describe('CityExpert', () => {
           timeout: DEFAULT_TIMEOUT,
         },
       );
-    });
-
-    it('should throw an error when property type is not valid', async () => {
-      const provider = new CityExpertProvider();
-
-      await expect(
-        provider.isApartmentInactive('cityExpert_3546-BZ'),
-      ).rejects.toThrowError();
-      expect(axios.get).not.toHaveBeenCalled();
     });
 
     it('should return true for inactive apartment', async () => {
