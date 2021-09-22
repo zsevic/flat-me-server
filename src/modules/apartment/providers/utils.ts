@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { Provider } from './provider.interface';
 
@@ -24,4 +24,21 @@ export function createRequestForApartment(apartmentId: string) {
       }),
     provider: this as Provider,
   };
+}
+
+export function createRequestConfigForApartment(
+  apartmentId: string,
+): AxiosRequestConfig {
+  return {
+    url: this.getApartmentUrl(apartmentId),
+    method: 'GET',
+  };
+}
+
+export function parseFloor(floorData, totalFloors?: number) {
+  if (Number(floorData) === Number(totalFloors)) {
+    return this.floor['PTK'];
+  }
+
+  return this.floor[floorData] || floorData;
 }

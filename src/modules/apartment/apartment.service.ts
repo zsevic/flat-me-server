@@ -151,18 +151,16 @@ export class ApartmentService {
         return foundAparments;
       }
 
-      if (provider?.createRequestForApartment) {
+      try {
         this.logger.log(`Sending request for apartment ${apartmentInfo.id}`);
-        const { request } = provider.createRequestForApartment(
+        const apartmentData = await provider.createRequestForApartment(
           apartmentInfo.apartmentId,
-        );
-        try {
-          const apartmentData = await request;
-          provider.updateInfoFromApartment(apartmentData, apartmentInfo);
-        } catch (error) {
-          this.logger.error(error);
-        }
+        ).request;
+        provider.updateInfoFromApartment(apartmentData, apartmentInfo);
+      } catch (error) {
+        this.logger.error(error);
       }
+
       foundAparments.push(apartmentInfo);
     }
     return foundAparments;

@@ -4,12 +4,15 @@ import { DEFAULT_TIMEOUT, ECONNABORTED } from 'common/constants';
 import { capitalizeWords } from 'common/utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { Provider } from './provider.interface';
-import { createRequest, createRequestForApartment } from './utils';
 import {
-  apartmentActivityBaseUrlForCityExpert,
+  createRequest,
+  createRequestConfigForApartment,
+  createRequestForApartment,
+  parseFloor,
+} from './utils';
+import {
   apartmentStatusFinished,
   apartmentStatusNotAvailable,
-  CITY_EXPERT_API_BASE_URL,
 } from '../apartment.constants';
 import { Apartment } from '../apartment.interface';
 
@@ -28,8 +31,16 @@ export class CityExpertProvider implements Provider {
     PTK: 'attic',
   };
 
-  private readonly url = `${CITY_EXPERT_API_BASE_URL}/Search/`;
+  private readonly apiBaseUrl = 'https://cityexpert.rs/api';
   private readonly logger = new Logger(CityExpertProvider.name);
+
+  get apartmentBaseUrl() {
+    return `${this.apiBaseUrl}/PropertyView`;
+  }
+
+  get searchUrl() {
+    return `${this.apiBaseUrl}/Search/`;
+  }
 
   createRequest(filter: FilterDto) {
     return createRequest.call(this, filter);
@@ -105,7 +116,7 @@ export class CityExpertProvider implements Provider {
     };
 
     return {
-      url: this.url,
+      url: this.searchUrl,
       headers: {
         'content-type': 'application/json',
       },
@@ -115,10 +126,7 @@ export class CityExpertProvider implements Provider {
   }
 
   createRequestConfigForApartment(apartmentId: string): AxiosRequestConfig {
-    return {
-      url: this.getApartmentUrl(apartmentId),
-      method: 'GET',
-    };
+    return createRequestConfigForApartment.call(this, apartmentId);
   }
 
   getResults = data => data?.result;
@@ -130,7 +138,7 @@ export class CityExpertProvider implements Provider {
       throw new Error('Property type is not valid');
     }
 
-    return `${apartmentActivityBaseUrlForCityExpert}/${propertyId}/${type}`;
+    return `${this.apartmentBaseUrl}/${propertyId}/${type}`;
   }
 
   private getUrlFromApartmentInfo = apartmentInfo => {
@@ -247,11 +255,7 @@ export class CityExpertProvider implements Provider {
   };
 
   parseFloor(floorData, totalFloors?: number) {
-    if (Number(floorData) === Number(totalFloors)) {
-      return this.floor['PTK'];
-    }
-
-    return this.floor[floorData] || floorData;
+    return parseFloor.call(this, floorData, totalFloors);
   }
 
   updateInfoFromApartment = (
@@ -259,12 +263,11 @@ export class CityExpertProvider implements Provider {
     apartmentInfo: Apartment,
   ): Apartment =>
     Object.assign(apartmentInfo, {
-      ...(apartmentData.floor &&
-        apartmentData?.onsite?.basInfFloorTotal && {
-          floor: this.parseFloor(
-            apartmentData.floor,
-            apartmentData.onsite.basInfFloorTotal,
-          ),
-        }),
+      ...(apartmentData.floor && {
+        floor: this.parseFloor(
+          apartmentData.floor,
+          apartmentData?.onsite?.basInfFloorTotal,
+        ),
+      }),
     });
 }

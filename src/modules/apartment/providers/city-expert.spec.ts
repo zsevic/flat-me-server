@@ -3,7 +3,6 @@ import axios from 'axios';
 import { DEFAULT_TIMEOUT, ECONNABORTED } from 'common/constants';
 import { RentOrSale } from 'modules/filter/filter.enums';
 import {
-  apartmentActivityBaseUrlForCityExpert,
   apartmentStatusFinished,
   apartmentStatusNotAvailable,
 } from '../apartment.constants';
@@ -215,6 +214,8 @@ describe('CityExpert', () => {
   });
 
   describe('isApartmentInactive', () => {
+    const id = '3546-BR';
+
     it('should return undefined for invalid id', async () => {
       const provider = new CityExpertProvider();
       const isApartmentInactive = await provider.isApartmentInactive('id');
@@ -232,16 +233,13 @@ describe('CityExpert', () => {
       });
 
       const isApartmentInactive = await provider.isApartmentInactive(
-        'cityExpert_3546-BR',
+        `cityExpert_${id}`,
       );
 
       expect(isApartmentInactive).toEqual(true);
-      expect(axios.get).toHaveBeenCalledWith(
-        `${apartmentActivityBaseUrlForCityExpert}/3546/r`,
-        {
-          timeout: DEFAULT_TIMEOUT,
-        },
-      );
+      expect(axios.get).toHaveBeenCalledWith(provider.getApartmentUrl(id), {
+        timeout: DEFAULT_TIMEOUT,
+      });
     });
 
     it('should return undefined when response status is not valid', async () => {
@@ -254,16 +252,13 @@ describe('CityExpert', () => {
       });
 
       const isApartmentInactive = await provider.isApartmentInactive(
-        'cityExpert_3546-BR',
+        `cityExpert_${id}`,
       );
 
       expect(isApartmentInactive).toEqual(undefined);
-      expect(axios.get).toHaveBeenCalledWith(
-        `${apartmentActivityBaseUrlForCityExpert}/3546/r`,
-        {
-          timeout: DEFAULT_TIMEOUT,
-        },
-      );
+      expect(axios.get).toHaveBeenCalledWith(provider.getApartmentUrl(id), {
+        timeout: DEFAULT_TIMEOUT,
+      });
     });
 
     it('should return true for inactive apartment', async () => {
@@ -276,16 +271,13 @@ describe('CityExpert', () => {
       });
 
       const isApartmentInactive = await provider.isApartmentInactive(
-        'cityExpert_3546-BR',
+        `cityExpert_${id}`,
       );
 
       expect(isApartmentInactive).toEqual(true);
-      expect(axios.get).toHaveBeenCalledWith(
-        `${apartmentActivityBaseUrlForCityExpert}/3546/r`,
-        {
-          timeout: DEFAULT_TIMEOUT,
-        },
-      );
+      expect(axios.get).toHaveBeenCalledWith(provider.getApartmentUrl(id), {
+        timeout: DEFAULT_TIMEOUT,
+      });
     });
 
     it('should return true for inactive apartment', async () => {
@@ -298,16 +290,13 @@ describe('CityExpert', () => {
       });
 
       const isApartmentInactive = await provider.isApartmentInactive(
-        'cityExpert_3546-BR',
+        `cityExpert_${id}`,
       );
 
       expect(isApartmentInactive).toEqual(true);
-      expect(axios.get).toHaveBeenCalledWith(
-        `${apartmentActivityBaseUrlForCityExpert}/3546/r`,
-        {
-          timeout: DEFAULT_TIMEOUT,
-        },
-      );
+      expect(axios.get).toHaveBeenCalledWith(provider.getApartmentUrl(id), {
+        timeout: DEFAULT_TIMEOUT,
+      });
     });
 
     it('should return undefined when request connection is aborted', async () => {
@@ -318,16 +307,13 @@ describe('CityExpert', () => {
       });
 
       const isApartmentInactive = await provider.isApartmentInactive(
-        'cityExpert_3546-BR',
+        `cityExpert_${id}`,
       );
 
       expect(isApartmentInactive).toEqual(undefined);
-      expect(axios.get).toHaveBeenCalledWith(
-        `${apartmentActivityBaseUrlForCityExpert}/3546/r`,
-        {
-          timeout: DEFAULT_TIMEOUT,
-        },
-      );
+      expect(axios.get).toHaveBeenCalledWith(provider.getApartmentUrl(id), {
+        timeout: DEFAULT_TIMEOUT,
+      });
     });
   });
 

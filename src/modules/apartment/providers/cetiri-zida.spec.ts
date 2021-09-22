@@ -2,7 +2,6 @@ import { HttpStatus } from '@nestjs/common';
 import axios from 'axios';
 import { DEFAULT_TIMEOUT, ECONNABORTED } from 'common/constants';
 import { RentOrSale } from 'modules/filter/filter.enums';
-import { apartmentActivityBaseUrlForCetiriZida } from '../apartment.constants';
 import { CetiriZidaProvider } from './cetiri-zida';
 
 jest.mock('axios');
@@ -112,6 +111,8 @@ describe('CetiriZida', () => {
   });
 
   describe('isApartmentInactive', () => {
+    const id = 'id';
+
     it('should return undefined for invalid id', async () => {
       const provider = new CetiriZidaProvider();
       // @ts-ignore
@@ -132,16 +133,13 @@ describe('CetiriZida', () => {
       });
 
       const isApartmentInactive = await provider.isApartmentInactive(
-        'cetiriZida_id',
+        `cetiriZida_${id}`,
       );
 
       expect(isApartmentInactive).toEqual(true);
-      expect(axios.get).toHaveBeenCalledWith(
-        `${apartmentActivityBaseUrlForCetiriZida}/id`,
-        {
-          timeout: DEFAULT_TIMEOUT,
-        },
-      );
+      expect(axios.get).toHaveBeenCalledWith(provider.getApartmentUrl(id), {
+        timeout: DEFAULT_TIMEOUT,
+      });
     });
 
     it('should return undefined when connection is aborted', async () => {
@@ -152,16 +150,13 @@ describe('CetiriZida', () => {
       });
 
       const isApartmentInactive = await provider.isApartmentInactive(
-        'cetiriZida_id',
+        `cetiriZida_${id}`,
       );
 
       expect(isApartmentInactive).toEqual(undefined);
-      expect(axios.get).toHaveBeenCalledWith(
-        `${apartmentActivityBaseUrlForCetiriZida}/id`,
-        {
-          timeout: DEFAULT_TIMEOUT,
-        },
-      );
+      expect(axios.get).toHaveBeenCalledWith(provider.getApartmentUrl(id), {
+        timeout: DEFAULT_TIMEOUT,
+      });
     });
 
     it('should return undefined when connection is aborted', async () => {
@@ -170,16 +165,13 @@ describe('CetiriZida', () => {
       axios.get.mockRejectedValue(new Error('error'));
 
       const isApartmentInactive = await provider.isApartmentInactive(
-        'cetiriZida_id',
+        `cetiriZida_${id}`,
       );
 
       expect(isApartmentInactive).toEqual(undefined);
-      expect(axios.get).toHaveBeenCalledWith(
-        `${apartmentActivityBaseUrlForCetiriZida}/id`,
-        {
-          timeout: DEFAULT_TIMEOUT,
-        },
-      );
+      expect(axios.get).toHaveBeenCalledWith(provider.getApartmentUrl(id), {
+        timeout: DEFAULT_TIMEOUT,
+      });
     });
 
     it('should return undefined when apartment is active', async () => {
@@ -188,16 +180,13 @@ describe('CetiriZida', () => {
       axios.get.mockResolvedValue(undefined);
 
       const isApartmentInactive = await provider.isApartmentInactive(
-        'cetiriZida_id',
+        `cetiriZida_${id}`,
       );
 
       expect(isApartmentInactive).toEqual(undefined);
-      expect(axios.get).toHaveBeenCalledWith(
-        `${apartmentActivityBaseUrlForCetiriZida}/id`,
-        {
-          timeout: DEFAULT_TIMEOUT,
-        },
-      );
+      expect(axios.get).toHaveBeenCalledWith(provider.getApartmentUrl(id), {
+        timeout: DEFAULT_TIMEOUT,
+      });
     });
   });
 

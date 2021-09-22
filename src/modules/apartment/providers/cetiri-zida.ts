@@ -4,20 +4,42 @@ import { DEFAULT_TIMEOUT, ECONNABORTED } from 'common/constants';
 import { capitalizeWords } from 'common/utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { Provider } from './provider.interface';
-import { createRequest } from './utils';
 import {
-  apartmentActivityBaseUrlForCetiriZida,
-  CETIRI_ZIDA_API_BASE_URL,
-} from '../apartment.constants';
+  createRequest,
+  createRequestConfigForApartment,
+  createRequestForApartment,
+  parseFloor,
+} from './utils';
 import { Apartment } from '../apartment.interface';
 
 export class CetiriZidaProvider implements Provider {
   private readonly providerName = 'cetiriZida';
-  private readonly url = `${CETIRI_ZIDA_API_BASE_URL}/v6/search/apartments`;
+  private readonly apiBaseUrl = 'https://api.4zida.rs';
   private readonly logger = new Logger(CetiriZidaProvider.name);
+
+  private readonly floor = {
+    '-4': 'cellar',
+    '-3': 'basement',
+    '-2': 'low ground floor',
+    '-1': 'ground floor',
+    '0': 'high ground floor',
+    100: 'attic',
+  };
+
+  get apartmentBaseUrl() {
+    return `${this.apiBaseUrl}/v5/eds`;
+  }
+
+  get searchUrl() {
+    return `${this.apiBaseUrl}/v6/search/apartments`;
+  }
 
   createRequest(filter: FilterDto) {
     return createRequest.call(this, filter, this.createRequestConfig);
+  }
+
+  createRequestForApartment(apartmentId: string) {
+    return createRequestForApartment.call(this, apartmentId);
   }
 
   createRequestConfig(filter: FilterDto): AxiosRequestConfig {
@@ -71,9 +93,17 @@ export class CetiriZidaProvider implements Provider {
     };
 
     return {
-      url: this.url,
+      url: this.searchUrl,
       params,
     };
+  }
+
+  createRequestConfigForApartment(apartmentId: string): AxiosRequestConfig {
+    return createRequestConfigForApartment.call(this, apartmentId);
+  }
+
+  getApartmentUrl(apartmentId: string): string {
+    return `${this.apartmentBaseUrl}/${apartmentId}`;
   }
 
   getResults = data => data?.ads;
@@ -86,12 +116,10 @@ export class CetiriZidaProvider implements Provider {
   async isApartmentInactive(id: string): Promise<boolean> {
     const [, apartmentId] = id.split('_');
     try {
-      await axios.get(
-        `${apartmentActivityBaseUrlForCetiriZida}/${apartmentId}`,
-        {
-          timeout: DEFAULT_TIMEOUT,
-        },
-      );
+      const url = this.getApartmentUrl(apartmentId);
+      await axios.get(url, {
+        timeout: DEFAULT_TIMEOUT,
+      });
     } catch (error) {
       if (error.response?.status === HttpStatus.NOT_FOUND) return true;
       if (error.code === ECONNABORTED) {
@@ -125,15 +153,6 @@ export class CetiriZidaProvider implements Provider {
   };
 
   parseApartmentInfo = (apartmentInfo): Apartment => {
-    const floor = {
-      '-4': 'cellar',
-      '-3': 'basement',
-      '-2': 'low ground floor',
-      '-1': 'ground floor',
-      '0': 'high ground floor',
-      100: 'attic',
-    };
-
     const furnished = {
       no: 'empty',
       semi: 'semi-furnished',
@@ -162,7 +181,7 @@ export class CetiriZidaProvider implements Provider {
         address: capitalizeWords(apartmentInfo.address),
       }),
       coverPhotoUrl: apartmentInfo?.image?.search['380x0_fill_0_webp'],
-      floor: floor[apartmentInfo.floor] || apartmentInfo.floor,
+      floor: this.parseFloor(apartmentInfo.floor),
       furnished: furnished[apartmentInfo.furnished],
       heatingTypes,
       municipality: this.getMunicipality(apartmentInfo),
@@ -175,4 +194,18 @@ export class CetiriZidaProvider implements Provider {
       url: `https://4zida.rs${apartmentInfo.urlPath}`,
     };
   };
+
+  parseFloor(floorData, totalFloors?: number) {
+    return parseFloor.call(this, floorData, totalFloors);
+  }
+
+  updateInfoFromApartment = (
+    apartmentData,
+    apartmentInfo: Apartment,
+  ): Apartment =>
+    Object.assign(apartmentInfo, {
+      ...(apartmentData.floor && {
+        floor: this.parseFloor(apartmentData.floor, apartmentData?.totalFloors),
+      }),
+    });
 }
