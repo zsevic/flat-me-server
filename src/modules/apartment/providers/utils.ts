@@ -35,9 +35,9 @@ export function createRequestConfigForApartment(
   };
 }
 
-export function parseFloor(floorData, totalFloors?: number) {
+export function parseFloor(floorData, atticKey, totalFloors?: number) {
   if (Number(floorData) === Number(totalFloors)) {
-    return this.floor['PTK'];
+    return this.floor[atticKey];
   }
 
   return this.floor[floorData] || floorData;

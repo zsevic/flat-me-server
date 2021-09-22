@@ -17,13 +17,14 @@ export class CetiriZidaProvider implements Provider {
   private readonly apiBaseUrl = 'https://api.4zida.rs';
   private readonly logger = new Logger(CetiriZidaProvider.name);
 
+  private readonly atticKey = 100;
   private readonly floor = {
     '-4': 'cellar',
     '-3': 'basement',
     '-2': 'low ground floor',
     '-1': 'ground floor',
     '0': 'high ground floor',
-    100: 'attic',
+    [this.atticKey]: 'attic',
   };
 
   get apartmentBaseUrl() {
@@ -35,7 +36,7 @@ export class CetiriZidaProvider implements Provider {
   }
 
   createRequest(filter: FilterDto) {
-    return createRequest.call(this, filter, this.createRequestConfig);
+    return createRequest.call(this, filter);
   }
 
   createRequestForApartment(apartmentId: string) {
@@ -196,16 +197,21 @@ export class CetiriZidaProvider implements Provider {
   };
 
   parseFloor(floorData, totalFloors?: number) {
-    return parseFloor.call(this, floorData, totalFloors);
+    return parseFloor.call(this, floorData, this.atticKey, totalFloors);
   }
 
-  updateInfoFromApartment = (
-    apartmentData,
-    apartmentInfo: Apartment,
-  ): Apartment =>
-    Object.assign(apartmentInfo, {
-      ...(apartmentData.floor && {
-        floor: this.parseFloor(apartmentData.floor, apartmentData?.totalFloors),
-      }),
-    });
+  updateInfoFromApartment = (apartmentData, apartmentInfo: Apartment): void => {
+    const floor = this.parseFloor(
+      apartmentData.floor,
+      apartmentData?.totalFloors,
+    );
+    if (!floor) {
+      this.logger.log(
+        `Skip updating the floor for apartment ${apartmentInfo.id}`,
+      );
+      return;
+    }
+
+    Object.assign(apartmentInfo, { floor });
+  };
 }

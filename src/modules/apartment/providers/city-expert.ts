@@ -23,12 +23,13 @@ export class CityExpertProvider implements Provider {
     BS: 's',
   };
 
+  private readonly atticKey = 'PTK';
   private readonly floor = {
     SU: 'basement',
     PR: 'ground floor',
     NPR: 'low ground floor',
     VPR: 'high ground floor',
-    PTK: 'attic',
+    [this.atticKey]: 'attic',
   };
 
   private readonly apiBaseUrl = 'https://cityexpert.rs/api';
@@ -255,19 +256,21 @@ export class CityExpertProvider implements Provider {
   };
 
   parseFloor(floorData, totalFloors?: number) {
-    return parseFloor.call(this, floorData, totalFloors);
+    return parseFloor.call(this, floorData, this.atticKey, totalFloors);
   }
 
-  updateInfoFromApartment = (
-    apartmentData,
-    apartmentInfo: Apartment,
-  ): Apartment =>
-    Object.assign(apartmentInfo, {
-      ...(apartmentData.floor && {
-        floor: this.parseFloor(
-          apartmentData.floor,
-          apartmentData?.onsite?.basInfFloorTotal,
-        ),
-      }),
-    });
+  updateInfoFromApartment = (apartmentData, apartmentInfo: Apartment): void => {
+    const floor = this.parseFloor(
+      apartmentData.floor,
+      apartmentData?.onsite?.basInfFloorTotal,
+    );
+    if (!floor) {
+      this.logger.log(
+        `Skip updating the floor for apartment ${apartmentInfo.id}`,
+      );
+      return;
+    }
+
+    Object.assign(apartmentInfo, { floor });
+  };
 }
