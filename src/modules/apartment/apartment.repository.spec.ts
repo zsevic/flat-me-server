@@ -6,7 +6,6 @@ import {
 import { getSkip } from 'modules/pagination/pagination.utils';
 import { Between, In, MoreThan, Not } from 'typeorm';
 import { ApartmentEntity } from './apartment.entity';
-import { Apartment } from './apartment.interface';
 import { ApartmentRepository } from './apartment.repository';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
 
@@ -168,41 +167,6 @@ describe('ApartmentRepository', () => {
         skip: getSkip(defaultPaginationParams),
         take: DEFAULT_LIMIT_PER_PAGE,
       });
-    });
-  });
-
-  describe('saveApartmentList', () => {
-    it('should throw an error when apartment is already saved', async () => {
-      const apartments = [
-        {
-          id: 'id',
-        },
-      ];
-      jest
-        .spyOn(apartmentRepository, 'findOne')
-        .mockResolvedValue(apartments[0] as ApartmentEntity);
-      const saveSpy = jest.spyOn(apartmentRepository, 'save');
-
-      await expect(
-        apartmentRepository.saveApartmentList(apartments as Apartment[]),
-      ).rejects.toThrowError();
-      expect(saveSpy).not.toHaveBeenCalled();
-    });
-
-    it('should save apartments', async () => {
-      const apartments = [
-        {
-          id: 'id',
-        },
-      ];
-      jest.spyOn(apartmentRepository, 'findOne').mockResolvedValue(null);
-      const saveSpy = jest
-        .spyOn(apartmentRepository, 'save')
-        .mockResolvedValue(null);
-
-      await apartmentRepository.saveApartmentList(apartments as Apartment[]);
-
-      expect(saveSpy).toHaveBeenCalled();
     });
   });
 });

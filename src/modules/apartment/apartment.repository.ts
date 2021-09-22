@@ -77,12 +77,6 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
   }
 
   async saveApartmentList(apartments: Apartment[]): Promise<void> {
-    for (const apartment of apartments) {
-      const isApartmentAlreadySaved = await this.findOne({ id: apartment.id });
-      if (isApartmentAlreadySaved)
-        throw new Error(`Apartment (${apartment.id}) is already saved`);
-
-      await this.save(apartment);
-    }
+    await this.save(apartments);
   }
 }

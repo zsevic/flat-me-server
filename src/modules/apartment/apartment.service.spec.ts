@@ -11,6 +11,7 @@ import {
 
 const apartmentRepository = {
   deleteApartment: jest.fn(),
+  findOne: jest.fn(),
   getApartmentList: jest.fn(),
   saveApartmentList: jest.fn(),
 };

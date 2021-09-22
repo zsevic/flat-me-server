@@ -141,6 +141,16 @@ export class ApartmentService {
       );
       if (!isValidApartmentInfo) continue;
 
+      const isApartmentAlreadySaved = await this.apartmentRepository.findOne({
+        id: apartmentInfo.id,
+      });
+      if (isApartmentAlreadySaved) {
+        this.logger.log(
+          `Skipping saving, apartment ${apartmentInfo.id} is already saved`,
+        );
+        return foundAparments;
+      }
+
       if (provider?.createRequestForApartment) {
         this.logger.log(`Sending request for apartment ${apartmentInfo.id}`);
         const { request } = provider.createRequestForApartment(
