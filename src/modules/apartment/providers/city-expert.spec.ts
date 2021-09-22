@@ -401,4 +401,54 @@ describe('CityExpert', () => {
       expect(provider.parseFloor('4', 4)).toEqual('attic');
     });
   });
+
+  describe('updateInfoFromApartment', () => {
+    it('should update floor value with attic', () => {
+      const provider = new CityExpertProvider();
+      const apartmentInfo = {
+        floor: 2,
+      };
+      const apartmentData = {
+        floor: 2,
+        onsite: {
+          basInfFloorTotal: 2,
+        },
+      };
+
+      // @ts-ignore
+      provider.updateInfoFromApartment(apartmentData, apartmentInfo);
+
+      expect(apartmentInfo.floor).toEqual('attic');
+    });
+
+    it('should update floor value when total floors value is undefined', () => {
+      const provider = new CityExpertProvider();
+      const apartmentInfo = {
+        floor: 2,
+      };
+      const apartmentData = {
+        floor: 'SU',
+      };
+
+      // @ts-ignore
+      provider.updateInfoFromApartment(apartmentData, apartmentInfo);
+
+      expect(apartmentInfo.floor).toEqual('basement');
+    });
+
+    it('should update floor value when total floors value is undefined', () => {
+      const provider = new CityExpertProvider();
+      const apartmentInfo = {
+        floor: 2,
+      };
+      const apartmentData = {
+        floor: 3,
+      };
+
+      // @ts-ignore
+      provider.updateInfoFromApartment(apartmentData, apartmentInfo);
+
+      expect(apartmentInfo.floor).toEqual(apartmentData.floor);
+    });
+  });
 });

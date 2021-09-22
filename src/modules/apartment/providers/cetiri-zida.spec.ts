@@ -268,4 +268,72 @@ describe('CetiriZida', () => {
       expect(result).toEqual(parsedApartmentInfoWithDefaultHeatingTypes);
     });
   });
+
+  describe('parseFloor', () => {
+    it('should return floor when totalFloor is undefined', () => {
+      const provider = new CetiriZidaProvider();
+
+      expect(provider.parseFloor('-4')).toEqual('cellar');
+    });
+
+    it('should return floor when floor is not attic', () => {
+      const provider = new CetiriZidaProvider();
+
+      expect(provider.parseFloor('4', 5)).toEqual('4');
+    });
+
+    it('should return attic when floor is attic', () => {
+      const provider = new CetiriZidaProvider();
+
+      expect(provider.parseFloor('4', 4)).toEqual('attic');
+    });
+  });
+
+  describe('updateInfoFromApartment', () => {
+    it('should update floor value with attic', () => {
+      const provider = new CetiriZidaProvider();
+      const apartmentInfo = {
+        floor: 2,
+      };
+      const apartmentData = {
+        floor: 2,
+        totalFloors: 2,
+      };
+
+      // @ts-ignore
+      provider.updateInfoFromApartment(apartmentData, apartmentInfo);
+
+      expect(apartmentInfo.floor).toEqual('attic');
+    });
+
+    it('should update floor value when total floors value is undefined', () => {
+      const provider = new CetiriZidaProvider();
+      const apartmentInfo = {
+        floor: 2,
+      };
+      const apartmentData = {
+        floor: '-4',
+      };
+
+      // @ts-ignore
+      provider.updateInfoFromApartment(apartmentData, apartmentInfo);
+
+      expect(apartmentInfo.floor).toEqual('cellar');
+    });
+
+    it('should update floor value when total floors value is undefined', () => {
+      const provider = new CetiriZidaProvider();
+      const apartmentInfo = {
+        floor: 2,
+      };
+      const apartmentData = {
+        floor: 3,
+      };
+
+      // @ts-ignore
+      provider.updateInfoFromApartment(apartmentData, apartmentInfo);
+
+      expect(apartmentInfo.floor).toEqual(apartmentData.floor);
+    });
+  });
 });
