@@ -48,7 +48,9 @@ export class ApartmentService {
           provider,
         );
         if (foundApartments.length === 0) {
-          this.logger.log('Skipping saving, there are no found apartments');
+          this.logger.log(
+            `Skipping saving for provider ${provider.providerName}, there are no found apartments`,
+          );
           continue;
         }
 
