@@ -11,7 +11,7 @@ export class BaseProvider {
 
   createProvider(providerName: string): Provider {
     if (!Object.keys(this.providers).includes(providerName)) {
-      throw new Error('Provider name is not valid');
+      throw new Error(`Provider name (${providerName}) is not valid`);
     }
 
     return new this.providers[providerName]();

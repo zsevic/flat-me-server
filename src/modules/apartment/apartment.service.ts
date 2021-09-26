@@ -148,7 +148,7 @@ export class ApartmentService {
         this.logger.log(
           `Skipping saving, apartment ${apartmentInfo.id} is already saved`,
         );
-        return foundAparments;
+        continue;
       }
 
       try {
