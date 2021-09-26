@@ -147,9 +147,6 @@ export class ApartmentService {
         id: apartmentInfo.id,
       });
       if (isApartmentAlreadySaved) {
-        this.logger.log(
-          `Skipping saving, apartment ${apartmentInfo.id} is already saved`,
-        );
         continue;
       }
 
@@ -158,6 +155,7 @@ export class ApartmentService {
         const apartmentData = await provider.createRequestForApartment(
           apartmentInfo.apartmentId,
         ).request;
+        if (!apartmentData) continue;
         provider.updateInfoFromApartment(apartmentData, apartmentInfo);
       } catch (error) {
         this.logger.error(error);

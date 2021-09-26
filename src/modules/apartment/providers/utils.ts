@@ -20,7 +20,7 @@ export function createRequestForApartment(apartmentId: string) {
       .then(response => response.data)
       .catch(error => {
         this.logger.error(`Request failed for apartment ${apartmentId}`, error);
-        return {};
+        return null;
       }),
     provider: this as Provider,
   };
