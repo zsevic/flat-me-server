@@ -123,6 +123,7 @@ export class CityExpertProvider implements Provider {
       },
       data: requestBody,
       method: 'POST',
+      timeout: DEFAULT_TIMEOUT,
     };
   }
 

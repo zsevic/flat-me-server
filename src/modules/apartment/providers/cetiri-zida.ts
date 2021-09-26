@@ -96,6 +96,7 @@ export class CetiriZidaProvider implements Provider {
     return {
       url: this.searchUrl,
       params,
+      timeout: DEFAULT_TIMEOUT,
     };
   }
 

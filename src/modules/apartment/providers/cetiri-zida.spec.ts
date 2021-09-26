@@ -29,6 +29,7 @@ describe('CetiriZida', () => {
           structures: [102, 101, 103],
         },
         url: 'https://api.4zida.rs/v6/search/apartments',
+        timeout: DEFAULT_TIMEOUT,
       };
       const provider = new CetiriZidaProvider();
 
@@ -59,6 +60,7 @@ describe('CetiriZida', () => {
           structures: [105],
         },
         url: 'https://api.4zida.rs/v6/search/apartments',
+        timeout: DEFAULT_TIMEOUT,
       };
       const provider = new CetiriZidaProvider();
 

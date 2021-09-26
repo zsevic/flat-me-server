@@ -78,6 +78,7 @@ describe('CityExpert', () => {
           aptEquipment: [],
           site: 'SR',
         },
+        timeout: DEFAULT_TIMEOUT,
       };
       const provider = new CityExpertProvider();
 
@@ -152,6 +153,7 @@ describe('CityExpert', () => {
           aptEquipment: [],
           site: 'SR',
         },
+        timeout: DEFAULT_TIMEOUT,
       };
       const provider = new CityExpertProvider();
 
