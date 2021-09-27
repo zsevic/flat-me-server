@@ -5,6 +5,7 @@ import { RentOrSale } from 'modules/filter/filter.enums';
 import {
   apartmentStatusFinished,
   apartmentStatusNotAvailable,
+  apartmentStatusReserved,
 } from '../apartment.constants';
 import { CityExpertProvider } from './city-expert';
 
@@ -244,12 +245,12 @@ describe('CityExpert', () => {
       });
     });
 
-    it('should return undefined when response status is not valid', async () => {
+    it('should return true for inactive apartment', async () => {
       const provider = new CityExpertProvider();
       // @ts-ignore
       axios.get.mockResolvedValue({
         data: {
-          status: 'status',
+          status: apartmentStatusNotAvailable,
         },
       });
 
@@ -257,7 +258,7 @@ describe('CityExpert', () => {
         `cityExpert_${id}`,
       );
 
-      expect(isApartmentInactive).toEqual(undefined);
+      expect(isApartmentInactive).toEqual(true);
       expect(axios.get).toHaveBeenCalledWith(provider.getApartmentUrl(id), {
         timeout: DEFAULT_TIMEOUT,
       });
@@ -268,7 +269,7 @@ describe('CityExpert', () => {
       // @ts-ignore
       axios.get.mockResolvedValue({
         data: {
-          status: apartmentStatusNotAvailable,
+          status: apartmentStatusReserved,
         },
       });
 

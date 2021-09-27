@@ -10,10 +10,7 @@ import {
   createRequestForApartment,
   parseFloor,
 } from './utils';
-import {
-  apartmentStatusFinished,
-  apartmentStatusNotAvailable,
-} from '../apartment.constants';
+import { apartmentStatusPublished } from '../apartment.constants';
 import { Apartment } from '../apartment.interface';
 
 export class CityExpertProvider implements Provider {
@@ -182,11 +179,7 @@ export class CityExpertProvider implements Provider {
       const response = await axios.get(url, {
         timeout: DEFAULT_TIMEOUT,
       });
-      if (
-        [apartmentStatusFinished, apartmentStatusNotAvailable].includes(
-          response.data.status,
-        )
-      ) {
+      if (response.data.status !== apartmentStatusPublished) {
         return true;
       }
     } catch (error) {
