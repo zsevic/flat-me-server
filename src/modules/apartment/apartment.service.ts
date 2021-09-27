@@ -151,7 +151,6 @@ export class ApartmentService {
       }
 
       try {
-        this.logger.log(`Sending request for apartment ${apartmentInfo.id}`);
         const apartmentData = await provider.createRequestForApartment(
           apartmentInfo.apartmentId,
         ).request;
