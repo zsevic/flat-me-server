@@ -10,7 +10,10 @@ import {
   createRequestForApartment,
   parseFloor,
 } from './utils';
-import { apartmentStatusPublished } from '../apartment.constants';
+import {
+  apartmentStatusPublished,
+  CITY_EXPERT_LOGO_URL,
+} from '../apartment.constants';
 import { Apartment } from '../apartment.interface';
 
 export class CityExpertProvider implements Provider {
@@ -30,8 +33,7 @@ export class CityExpertProvider implements Provider {
   };
 
   private readonly apiBaseUrl = 'https://cityexpert.rs/api';
-  private readonly logoUrl =
-    'https://cityexpert.rs/images/cxlogo/cityexpert-logo-header.svg';
+  private readonly logoUrl = CITY_EXPERT_LOGO_URL;
   private readonly logger = new Logger(CityExpertProvider.name);
 
   get apartmentBaseUrl() {

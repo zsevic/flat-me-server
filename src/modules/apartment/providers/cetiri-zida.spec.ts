@@ -2,9 +2,15 @@ import { HttpStatus } from '@nestjs/common';
 import axios from 'axios';
 import { DEFAULT_TIMEOUT, ECONNABORTED } from 'common/constants';
 import { RentOrSale } from 'modules/filter/filter.enums';
+import { CETIRI_ZIDA_LOGO_URL } from '../apartment.constants';
 import { CetiriZidaProvider } from './cetiri-zida';
 
 jest.mock('axios');
+
+const agencyAvatarUrlTemplate =
+  'https://resizer.4zida.rs/unsigned/{{mode}}/{{height}}/{{width}}/ce/0/plain/local:///agencies/0aa1c17d3c.jpeg@{{format}}';
+const advertiserLogoUrl =
+  'https://resizer.4zida.rs/unsigned/fit/75/75/ce/0/plain/local:///agencies/0aa1c17d3c.jpeg@webp';
 
 describe('CetiriZida', () => {
   describe('createRequestConfig', () => {
@@ -219,7 +225,6 @@ describe('CetiriZida', () => {
       title: 'Dalmatinska',
       urlPath: '/url',
       placeNames: ['Zvezdara opština'],
-      agencyAvatarUrlTemplate: 'url',
       agencyUrl: 'url',
       image: { search: { '380x0_fill_0_webp': 'cover-photo-url' } },
       imageCount: 15,
@@ -231,6 +236,7 @@ describe('CetiriZida', () => {
       providerName: 'cetiriZida',
       address: 'Dalmatinska',
       coverPhotoUrl: 'cover-photo-url',
+      advertiserLogoUrl: CETIRI_ZIDA_LOGO_URL,
       floor: 'basement',
       furnished: 'furnished',
       heatingTypes: ['thermal pump'],
@@ -259,6 +265,33 @@ describe('CetiriZida', () => {
       const parsedApartmentInfoWithDefaultHeatingTypes = {
         ...parsedApartmentInfo,
         heatingTypes: [],
+      };
+
+      const provider = new CetiriZidaProvider();
+
+      const result = provider.parseApartmentInfo(
+        apartmentInfoWithNoHeatingTypes,
+      );
+
+      expect(result).toEqual(parsedApartmentInfoWithDefaultHeatingTypes);
+    });
+
+    it('should return parsed apartment info with default advertiser logo url', () => {
+      const provider = new CetiriZidaProvider();
+
+      const result = provider.parseApartmentInfo(apartmentInfo);
+
+      expect(result).toEqual(parsedApartmentInfo);
+    });
+
+    it('should return parsed apartment info with parsed advertiser logo url', () => {
+      const apartmentInfoWithNoHeatingTypes = {
+        ...apartmentInfo,
+        agencyAvatarUrlTemplate,
+      };
+      const parsedApartmentInfoWithDefaultHeatingTypes = {
+        ...parsedApartmentInfo,
+        advertiserLogoUrl,
       };
 
       const provider = new CetiriZidaProvider();

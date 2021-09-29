@@ -6,6 +6,7 @@ import {
   apartmentStatusFinished,
   apartmentStatusNotAvailable,
   apartmentStatusReserved,
+  CITY_EXPERT_LOGO_URL,
 } from '../apartment.constants';
 import { CityExpertProvider } from './city-expert';
 
@@ -365,6 +366,7 @@ describe('CityExpert', () => {
         availableFrom: '0001-01-01T00:00:00Z',
         coverPhotoUrl:
           'https://img.cityexpert.rs/sites/default/files/styles/1920x/public/image/cover.jpg',
+        advertiserLogoUrl: CITY_EXPERT_LOGO_URL,
         floor: 'high ground floor',
         furnished: 'semi-furnished',
         heatingTypes: ['underfloor'],

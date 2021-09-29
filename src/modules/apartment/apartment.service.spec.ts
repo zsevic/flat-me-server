@@ -1,6 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { RentOrSale } from 'modules/filter/filter.enums';
 import { UserService } from 'modules/user/user.service';
+import {
+  CETIRI_ZIDA_LOGO_URL,
+  CITY_EXPERT_LOGO_URL,
+} from './apartment.constants';
 import { ApartmentRepository } from './apartment.repository';
 import { ApartmentService } from './apartment.service';
 import {
@@ -28,6 +32,11 @@ const baseProvider = {
   getProviderRequests: jest.fn(),
   getProviderResults: jest.fn(),
 };
+
+const agencyAvatarUrlTemplate =
+  'https://resizer.4zida.rs/unsigned/{{mode}}/{{height}}/{{width}}/ce/0/plain/local:///agencies/0aa1c17d3c.jpeg@{{format}}';
+const advertiserLogoUrl =
+  'https://resizer.4zida.rs/unsigned/fit/75/75/ce/0/plain/local:///agencies/0aa1c17d3c.jpeg@webp';
 
 describe('ApartmentService', () => {
   let apartmentService: ApartmentService;
@@ -249,7 +258,7 @@ describe('ApartmentService', () => {
               title: 'Dalmatinska',
               urlPath: '/url',
               placeNames: ['Zvezdara opština'],
-              agencyAvatarUrlTemplate: 'url',
+              agencyAvatarUrlTemplate,
               agencyUrl: 'url',
               image: { search: { '380x0_fill_0_webp': 'cover-photo-url' } },
               imageCount: 15,
@@ -327,7 +336,7 @@ describe('ApartmentService', () => {
               title: 'Hram Svetog Save',
               urlPath: '/url2',
               placeNames: ['Vračar'],
-              agencyAvatarUrlTemplate: 'url',
+              agencyAvatarUrlTemplate,
               agencyUrl: 'url',
               image: { search: { '380x0_fill_0_webp': 'cover-photo-url' } },
               imageCount: 11,
@@ -385,6 +394,7 @@ describe('ApartmentService', () => {
             providerName: 'cetiriZida',
             address: 'Dalmatinska',
             coverPhotoUrl: 'cover-photo-url',
+            advertiserLogoUrl,
             floor: 1,
             furnished: 'furnished',
             heatingTypes: ['district'],
@@ -407,6 +417,7 @@ describe('ApartmentService', () => {
             availableFrom: '2021-08-09T11:04:13Z',
             coverPhotoUrl:
               'https://img.cityexpert.rs/sites/default/files/styles/1920x/public/image/url.jpg',
+            advertiserLogoUrl: CITY_EXPERT_LOGO_URL,
             floor: 'high ground floor',
             furnished: 'furnished',
             heatingTypes: ['district'],
@@ -428,6 +439,7 @@ describe('ApartmentService', () => {
             apartmentId: '60f99390d9982b10',
             providerName: 'cetiriZida',
             coverPhotoUrl: 'cover-photo-url',
+            advertiserLogoUrl,
             floor: 3,
             furnished: 'furnished',
             heatingTypes: ['district'],
@@ -450,6 +462,7 @@ describe('ApartmentService', () => {
             availableFrom: '0001-01-01T00:00:00Z',
             coverPhotoUrl:
               'https://img.cityexpert.rs/sites/default/files/styles/1920x/public/image/cover.jpg',
+            advertiserLogoUrl: CITY_EXPERT_LOGO_URL,
             floor: 'basement',
             furnished: 'furnished',
             heatingTypes: ['electricity'],
@@ -539,7 +552,6 @@ describe('ApartmentService', () => {
               title: 'Dalmatinska',
               urlPath: '/url',
               placeNames: ['Zvezdara opština'],
-              agencyAvatarUrlTemplate: 'url',
               agencyUrl: 'url',
               image: { search: { '380x0_fill_0_webp': 'cover-photo-url' } },
               imageCount: 15,
@@ -569,7 +581,7 @@ describe('ApartmentService', () => {
               title: 'Hram Svetog Save',
               urlPath: '/url2',
               placeNames: ['Vračar'],
-              agencyAvatarUrlTemplate: 'url',
+              agencyAvatarUrlTemplate,
               agencyUrl: 'url',
               image: { search: { '380x0_fill_0_webp': 'cover-photo-url' } },
               imageCount: 11,
@@ -590,6 +602,7 @@ describe('ApartmentService', () => {
         providerName: 'cetiriZida',
         address: 'Dalmatinska',
         coverPhotoUrl: 'cover-photo-url',
+        advertiserLogoUrl: CETIRI_ZIDA_LOGO_URL,
         floor: 1,
         furnished: 'furnished',
         heatingTypes: ['district'],
@@ -610,6 +623,7 @@ describe('ApartmentService', () => {
           apartmentId: '60f99390d9982b10',
           providerName: 'cetiriZida',
           coverPhotoUrl: 'cover-photo-url',
+          advertiserLogoUrl,
           floor: 3,
           furnished: 'furnished',
           heatingTypes: ['district'],
@@ -868,7 +882,7 @@ describe('ApartmentService', () => {
               title: 'Dalmatinska',
               urlPath: '/url',
               placeNames: ['Zvezdara opština'],
-              agencyAvatarUrlTemplate: 'url',
+              agencyAvatarUrlTemplate,
               agencyUrl: 'url',
               image: { search: { '380x0_fill_0_webp': 'cover-photo-url' } },
               imageCount: 15,
@@ -885,6 +899,7 @@ describe('ApartmentService', () => {
           providerName: 'cetiriZida',
           address: 'Dalmatinska',
           coverPhotoUrl: 'cover-photo-url',
+          advertiserLogoUrl,
           floor: 1,
           furnished: 'furnished',
           heatingTypes: ['district'],

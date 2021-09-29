@@ -10,13 +10,13 @@ import {
   createRequestForApartment,
   parseFloor,
 } from './utils';
+import { CETIRI_ZIDA_LOGO_URL } from '../apartment.constants';
 import { Apartment } from '../apartment.interface';
 
 export class CetiriZidaProvider implements Provider {
   private readonly providerName = 'cetiriZida';
   private readonly apiBaseUrl = 'https://api.4zida.rs';
-  private readonly logoUrl =
-    'https://www.4zida.rs/assets/images/logos/deo-is-grupe-white.png';
+  private readonly logoUrl = CETIRI_ZIDA_LOGO_URL;
   private readonly logger = new Logger(CetiriZidaProvider.name);
 
   private readonly atticKey = 100;
