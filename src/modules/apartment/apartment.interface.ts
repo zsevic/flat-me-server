@@ -13,6 +13,8 @@ export interface Apartment {
 
   coverPhotoUrl: string;
 
+  advertiserLogoUrl: string;
+
   floor: string;
 
   heatingTypes: string[];

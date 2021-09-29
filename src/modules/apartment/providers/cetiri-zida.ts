@@ -15,6 +15,8 @@ import { Apartment } from '../apartment.interface';
 export class CetiriZidaProvider implements Provider {
   private readonly providerName = 'cetiriZida';
   private readonly apiBaseUrl = 'https://api.4zida.rs';
+  private readonly logoUrl =
+    'https://www.4zida.rs/assets/images/logos/deo-is-grupe-white.png';
   private readonly logger = new Logger(CetiriZidaProvider.name);
 
   private readonly atticKey = 100;
@@ -134,6 +136,16 @@ export class CetiriZidaProvider implements Provider {
     }
   }
 
+  private getAdvertiserLogoUrl = advertiserLogoUrl => {
+    if (!advertiserLogoUrl) return this.logoUrl;
+
+    return advertiserLogoUrl
+      .replace('{{mode}}', 'fit')
+      .replace('{{width}}', '75')
+      .replace('{{height}}', '75')
+      .replace('{{format}}', 'webp');
+  };
+
   private getMunicipality = apartmentInfo => {
     const municipalities = {
       Čukarica: 'Čukarica',
@@ -183,6 +195,9 @@ export class CetiriZidaProvider implements Provider {
         address: capitalizeWords(apartmentInfo.address),
       }),
       coverPhotoUrl: apartmentInfo?.image?.search['380x0_fill_0_webp'],
+      advertiserLogoUrl: this.getAdvertiserLogoUrl(
+        apartmentInfo.agencyAvatarUrlTemplate,
+      ),
       floor: this.parseFloor(apartmentInfo.floor),
       furnished: furnished[apartmentInfo.furnished],
       heatingTypes,

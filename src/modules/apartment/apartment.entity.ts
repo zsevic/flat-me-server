@@ -34,6 +34,11 @@ export class ApartmentEntity extends BaseEntity {
   })
   coverPhotoUrl: string;
 
+  @Column({
+    name: 'advertiser_logo_url',
+  })
+  advertiserLogoUrl: string;
+
   @Column()
   floor: string;
 

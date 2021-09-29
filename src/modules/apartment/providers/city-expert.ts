@@ -30,6 +30,8 @@ export class CityExpertProvider implements Provider {
   };
 
   private readonly apiBaseUrl = 'https://cityexpert.rs/api';
+  private readonly logoUrl =
+    'https://cityexpert.rs/images/cxlogo/cityexpert-logo-header.svg';
   private readonly logger = new Logger(CityExpertProvider.name);
 
   get apartmentBaseUrl() {
@@ -232,6 +234,7 @@ export class CityExpertProvider implements Provider {
       }),
       availableFrom: apartmentInfo.availableFrom,
       coverPhotoUrl: `https://img.cityexpert.rs/sites/default/files/styles/1920x/public/image/${apartmentInfo.coverPhoto}`,
+      advertiserLogoUrl: this.logoUrl,
       floor: this.parseFloor(apartmentInfo.floor),
       furnished: furnished[apartmentInfo.furnished],
       heatingTypes,
