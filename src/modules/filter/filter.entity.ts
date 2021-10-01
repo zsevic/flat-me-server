@@ -18,6 +18,9 @@ export class FilterEntity extends BaseEntity {
   id?: string;
 
   @Column('varchar', { array: true })
+  floor: string[];
+
+  @Column('varchar', { array: true })
   furnished: string[];
 
   @Column({

@@ -5,6 +5,8 @@ export interface Filter {
 
   furnished: string[];
 
+  floor?: string[];
+
   isActive: boolean;
 
   isVerified: boolean;

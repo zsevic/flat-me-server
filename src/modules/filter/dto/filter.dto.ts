@@ -1,7 +1,12 @@
 import { Type } from 'class-transformer';
-import { IsEnum, IsNotEmpty, Validate } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, Validate } from 'class-validator';
 import { ArrayContainsValidator } from 'common/validators/array-contains.validator';
-import { FURNISHED, MUNICIPALITIES, STRUCTURES } from '../filter.constants';
+import {
+  floorFilters,
+  FURNISHED,
+  MUNICIPALITIES,
+  STRUCTURES,
+} from '../filter.constants';
 import { RentOrSale } from '../filter.enums';
 
 export class FilterDto {
@@ -31,6 +36,11 @@ export class FilterDto {
   @Type(() => Number)
   @IsNotEmpty()
   structures: number[];
+
+  @Validate(ArrayContainsValidator, Object.keys(floorFilters))
+  @IsOptional()
+  @Type(() => String)
+  floor?: string[] = [];
 
   pageNumber?: number;
 }

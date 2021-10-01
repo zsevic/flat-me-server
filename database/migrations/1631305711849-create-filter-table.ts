@@ -18,6 +18,11 @@ export class CreateFilterTable1631305711849 implements MigrationInterface {
             type: 'uuid',
           },
           {
+            name: 'floor',
+            type: 'varchar',
+            isArray: true,
+          },
+          {
             name: 'furnished',
             type: 'varchar',
             isArray: true,

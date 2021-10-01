@@ -7,6 +7,11 @@ import {
   Not,
   Repository,
 } from 'typeorm';
+import { floorFilters } from 'modules/filter/filter.constants';
+import {
+  DEFAULT_LIMIT_PER_PAGE,
+  DEFAULT_PAGE_NUMBER,
+} from 'modules/pagination/pagination.constants';
 import {
   PaginatedResponse,
   PaginationParams,
@@ -15,10 +20,6 @@ import { getSkip } from 'modules/pagination/pagination.utils';
 import { ApartmentEntity } from './apartment.entity';
 import { Apartment } from './apartment.interface';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
-import {
-  DEFAULT_LIMIT_PER_PAGE,
-  DEFAULT_PAGE_NUMBER,
-} from 'modules/pagination/pagination.constants';
 
 @Injectable()
 @EntityRepository(ApartmentEntity)
@@ -48,6 +49,13 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
       limitPerPage = DEFAULT_LIMIT_PER_PAGE,
       pageNumber = DEFAULT_PAGE_NUMBER,
     } = filter;
+
+    const floor =
+      filter.floor?.reduce((acc: string[], current: string): string[] => {
+        acc.push(...floorFilters[current]);
+        return acc;
+      }, []) || null;
+
     const query = {
       ...(skippedApartments &&
         Array.isArray(skippedApartments) &&
@@ -57,6 +65,7 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
       ...(dateFilter && {
         createdAt: MoreThan(dateFilter),
       }),
+      ...(floor && { floor: Not(In(floor)) }),
       furnished: In(filter.furnished),
       municipality: In(filter.municipalities),
       price: Between(filter.minPrice, filter.maxPrice),

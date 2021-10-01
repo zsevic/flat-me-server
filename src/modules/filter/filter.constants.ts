@@ -16,6 +16,17 @@ export const MUNICIPALITIES = [
   'Zvezdara',
 ];
 
+export const floorFilters = {
+  'not-ground-floor': [
+    'cellar',
+    'basement',
+    'low ground floor',
+    'ground floor',
+    'high ground floor',
+  ],
+  'not-attic': ['attic'],
+};
+
 export const STRUCTURES = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0];
 
 const baseFilter = {
