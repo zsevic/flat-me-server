@@ -19,7 +19,7 @@ export class ArrayContainsValidator implements ValidatorConstraintInterface {
     );
   }
 
-  defaultMessage(): string {
-    return '($value) doesn\'t contain valid values!';
+  defaultMessage({ property, value }): string {
+    return `(${property}) doesn\'t contain valid values (${value})!`;
   }
 }
