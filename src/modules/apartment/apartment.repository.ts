@@ -76,6 +76,9 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
     const [data, total] = await this.findAndCount({
       where: query,
       skip: getSkip({ pageNumber, limitPerPage }),
+      order: {
+        createdAt: 'DESC',
+      },
       take: limitPerPage,
     });
 
