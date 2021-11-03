@@ -106,6 +106,9 @@ describe('ApartmentRepository', () => {
         where: query,
         skip: getSkip(defaultPaginationParams),
         take: DEFAULT_LIMIT_PER_PAGE,
+        order: {
+          createdAt: 'DESC',
+        },
       });
     });
 
@@ -166,6 +169,9 @@ describe('ApartmentRepository', () => {
         where: query,
         skip: getSkip(defaultPaginationParams),
         take: DEFAULT_LIMIT_PER_PAGE,
+        order: {
+          createdAt: 'DESC',
+        },
       });
     });
   });
