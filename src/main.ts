@@ -62,8 +62,9 @@ async function bootstrap(): Promise<void> {
     });
   }
 
-  await app.listen(configService.get('PORT') || 8080).then(() => {
-    logger.log(`Server is running on port ${configService.get('PORT')}`);
+  const PORT = configService.get('PORT') || 8080;
+  await app.listen(PORT).then(() => {
+    logger.log(`Server is running on port ${PORT}`);
   });
 }
 
