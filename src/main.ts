@@ -62,7 +62,7 @@ async function bootstrap(): Promise<void> {
     });
   }
 
-  await app.listen(configService.get('PORT')).then(() => {
+  await app.listen(configService.get('PORT') || 8080).then(() => {
     logger.log(`Server is running on port ${configService.get('PORT')}`);
   });
 }
