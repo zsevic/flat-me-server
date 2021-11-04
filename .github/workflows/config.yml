@@ -68,9 +68,9 @@ jobs:
 
       - run: npm test
 
-      # - run: npm run test:e2e
-      #   env:
-      #     DATABASE_URL: postgres://${{ matrix.database-user }}:${{ matrix.database-password }}@${{ matrix.database-host }}:${{ matrix.database-port }}/${{ matrix.database-name }}
-      #     REDIS_URL: redis://${{ matrix.redis-host }}:${{ matrix.redis-port }}
+      - run: npm run test:e2e
+        env:
+          DATABASE_URL: postgres://${{ matrix.database-user }}:${{ matrix.database-password }}@${{ matrix.database-host }}:${{ matrix.database-port }}/${{ matrix.database-name }}
+          REDIS_URL: redis://${{ matrix.redis-host }}:${{ matrix.redis-port }}
 
       - run: npm audit --audit-level=critical
