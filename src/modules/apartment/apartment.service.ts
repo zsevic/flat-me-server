@@ -172,7 +172,6 @@ export class ApartmentService {
     lastCheckedAt: Date,
   ): Promise<void> {
     try {
-      console.log('is checkable', this.isCheckableApartment(lastCheckedAt));
       if (!this.isCheckableApartment(lastCheckedAt)) return;
 
       const isApartmentInactive = await this.isApartmentInactive(apartmentId);
