@@ -24,6 +24,28 @@ import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
 @Injectable()
 @EntityRepository(ApartmentEntity)
 export class ApartmentRepository extends Repository<ApartmentEntity> {
+  createQueryForApartmentList = (
+    filter: ApartmentListParamsDto,
+    skippedApartments?: string[],
+    dateFilter?: Date,
+    floor?: string[],
+  ) => ({
+    ...(skippedApartments &&
+      Array.isArray(skippedApartments) &&
+      skippedApartments.length > 0 && {
+        id: Not(In(skippedApartments)),
+      }),
+    ...(dateFilter && {
+      createdAt: MoreThan(dateFilter),
+    }),
+    ...(floor && { floor: Not(In(floor)) }),
+    furnished: In(filter.furnished),
+    municipality: In(filter.municipalities),
+    price: Between(filter.minPrice, filter.maxPrice),
+    rentOrSale: filter.rentOrSale,
+    structure: In(filter.structures),
+  });
+
   async deleteApartment(id: string): Promise<void> {
     await this.delete({ id });
   }
@@ -56,22 +78,12 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
         return acc;
       }, []) || null;
 
-    const query = {
-      ...(skippedApartments &&
-        Array.isArray(skippedApartments) &&
-        skippedApartments.length > 0 && {
-          id: Not(In(skippedApartments)),
-        }),
-      ...(dateFilter && {
-        createdAt: MoreThan(dateFilter),
-      }),
-      ...(floor && { floor: Not(In(floor)) }),
-      furnished: In(filter.furnished),
-      municipality: In(filter.municipalities),
-      price: Between(filter.minPrice, filter.maxPrice),
-      rentOrSale: filter.rentOrSale,
-      structure: In(filter.structures),
-    };
+    const query = this.createQueryForApartmentList(
+      filter,
+      skippedApartments,
+      dateFilter,
+      floor,
+    );
 
     const [data, total] = await this.findAndCount({
       where: query,

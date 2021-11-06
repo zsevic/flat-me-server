@@ -2,10 +2,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { Filter } from 'modules/filter/filter.interface';
+import { defaultPaginationParams } from 'modules/pagination/pagination.constants';
 import {
   PaginatedResponse,
   PaginationParams,
 } from 'modules/pagination/pagination.interfaces';
+import { getSkip } from 'modules/pagination/pagination.utils';
 import { requiredFields } from './apartment.constants';
 import { Apartment } from './apartment.interface';
 import { ApartmentRepository } from './apartment.repository';
@@ -167,7 +169,9 @@ export class ApartmentService {
 
   async handleDeletingInactiveApartment(apartmentId: string): Promise<void> {
     const isApartmentInactive = await this.isApartmentInactive(apartmentId);
-    if (!isApartmentInactive) return;
+    if (!isApartmentInactive) {
+      return;
+    }
 
     this.logger.log(`Deleting apartment: ${apartmentId}`);
     return this.deleteApartment(apartmentId);
@@ -189,6 +193,35 @@ export class ApartmentService {
       const providerRequests = this.baseProvider.getProviderRequests(filter);
 
       return this.findAndSaveApartmentsFromProviders(providerRequests, filter);
+    } catch (error) {
+      this.logger.error(error);
+    }
+  }
+
+  async validateApartmentListFromDatabase(
+    filter: ApartmentListParamsDto,
+  ): Promise<void> {
+    const where = this.apartmentRepository.createQueryForApartmentList(filter);
+
+    try {
+      const limitPerPage = defaultPaginationParams.limitPerPage;
+      let pageNumber = defaultPaginationParams.pageNumber;
+      let apartmentList;
+      let total;
+
+      do {
+        [apartmentList, total] = await this.apartmentRepository.findAndCount({
+          where,
+          take: limitPerPage,
+          skip: getSkip({ limitPerPage, pageNumber }),
+        });
+        await Promise.all(
+          apartmentList.map(apartment =>
+            this.handleDeletingInactiveApartment(apartment.id),
+          ),
+        );
+        pageNumber++;
+      } while (total >= getSkip({ limitPerPage, pageNumber }));
     } catch (error) {
       this.logger.error(error);
     }

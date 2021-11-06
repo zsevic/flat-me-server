@@ -83,29 +83,6 @@ describe('TasksService', () => {
     tasksService = module.get<TasksService>(TasksService);
   });
 
-  describe('handleDeletingInactiveApartments', () => {
-    it('should paginate over apartments ids', async () => {
-      const cetiriZidaApartmentId = 'cetiriZida_23';
-      const cityExpertApartmentId = 'cityExpert_12-BR';
-      jest.spyOn(apartmentService, 'getApartmentsIds').mockResolvedValue({
-        data: [cetiriZidaApartmentId, cityExpertApartmentId],
-        total: 51,
-      });
-
-      await tasksService.handleDeletingInactiveApartments();
-
-      expect(
-        apartmentService.handleDeletingInactiveApartment,
-      ).toHaveBeenCalledWith(cetiriZidaApartmentId);
-      expect(
-        apartmentService.handleDeletingInactiveApartment,
-      ).toHaveBeenCalledWith(cityExpertApartmentId);
-      expect(
-        apartmentService.handleDeletingInactiveApartment,
-      ).toHaveBeenCalledTimes(4);
-    });
-  });
-
   describe('handleSavingApartmentListFromProviders', () => {
     it('should handle saving apartment list from providers', async () => {
       await tasksService.handleSavingApartmentListFromProviders();

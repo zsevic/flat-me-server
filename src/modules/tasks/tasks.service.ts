@@ -15,7 +15,6 @@ import { TokenService } from 'modules/token/token.service';
 import { Subscription } from 'modules/user/subscription.enum';
 import { UserService } from 'modules/user/user.service';
 import {
-  DELETING_INACTIVE_APARTMENTS,
   SAVING_APARTMENT_LIST_FROM_PROVIDERS_CRON_JOB,
   SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB,
 } from './tasks.constants';
@@ -31,42 +30,6 @@ export class TasksService {
     private readonly tokenService: TokenService,
     private readonly userService: UserService,
   ) {}
-
-  @Cron(CronExpression.EVERY_12_HOURS, {
-    name: DELETING_INACTIVE_APARTMENTS,
-  })
-  async handleDeletingInactiveApartments(): Promise<void> {
-    if (!this.shouldRunCronJob()) return;
-
-    this.logCronJobStarted(DELETING_INACTIVE_APARTMENTS);
-
-    try {
-      const limitPerPage = defaultPaginationParams.limitPerPage;
-      let pageNumber = defaultPaginationParams.pageNumber;
-      let apartmentsIds;
-      let total;
-
-      do {
-        ({
-          data: apartmentsIds,
-          total,
-        } = await this.apartmentService.getApartmentsIds({
-          limitPerPage,
-          pageNumber,
-        }));
-        await Promise.all(
-          apartmentsIds.map(id =>
-            this.apartmentService.handleDeletingInactiveApartment(id),
-          ),
-        );
-        pageNumber++;
-      } while (total >= getSkip({ limitPerPage, pageNumber }));
-    } catch (error) {
-      this.logger.error(error);
-    }
-
-    this.logCronJobFinished(DELETING_INACTIVE_APARTMENTS);
-  }
 
   private shouldRunCronJob() {
     return process.env?.NODE_APP_INSTANCE === '0';

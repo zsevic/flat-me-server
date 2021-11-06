@@ -14,6 +14,12 @@ export class ApartmentController {
   async getApartmentList(
     @Query() apartmentListParamsDto: ApartmentListParamsDto,
   ): Promise<PaginatedResponse<Apartment>> {
+    if (apartmentListParamsDto.pageNumber === 1) {
+      await this.apartmentService.validateApartmentListFromDatabase(
+        apartmentListParamsDto,
+      );
+    }
+
     return this.apartmentService.getApartmentListFromDatabase(
       apartmentListParamsDto,
     );
