@@ -18,6 +18,7 @@ const apartmentRepository = {
   findOne: jest.fn(),
   getApartmentList: jest.fn(),
   saveApartmentList: jest.fn(),
+  updateLastCheckedDatetime: jest.fn(),
 };
 
 const cetiriZidaProvider = new CetiriZidaProvider();
@@ -134,7 +135,7 @@ describe('ApartmentService', () => {
   });
 
   describe('handleDeletingInactiveApartment', () => {
-    it('should skip deleting apartment when apartment is not inactive', async () => {
+    it('should skip checking and deleting apartment when apartment has been checked recently', async () => {
       const apartmentId = 'apartmentid';
       const isApartmentInactiveSpy = jest
         .spyOn(apartmentService, 'isApartmentInactive')
@@ -143,8 +144,34 @@ describe('ApartmentService', () => {
         apartmentService,
         'deleteApartment',
       );
+      const FIVE_SECONDS = 1000 * 5;
+      const lastCheckedAt = new Date(Date.now() - FIVE_SECONDS);
 
-      await apartmentService.handleDeletingInactiveApartment(apartmentId);
+      await apartmentService.handleDeletingInactiveApartment(
+        apartmentId,
+        lastCheckedAt,
+      );
+
+      expect(isApartmentInactiveSpy).not.toBeCalled();
+      expect(deleteApartmentSpy).not.toBeCalled();
+    });
+
+    it('should skip deleting apartment when apartment is active', async () => {
+      const apartmentId = 'apartmentid';
+      const isApartmentInactiveSpy = jest
+        .spyOn(apartmentService, 'isApartmentInactive')
+        .mockResolvedValue(false);
+      const deleteApartmentSpy = jest.spyOn(
+        apartmentService,
+        'deleteApartment',
+      );
+      const TEN_MINUTES = 1000 * 60 * 10;
+      const lastCheckedAt = new Date(Date.now() - TEN_MINUTES);
+
+      await apartmentService.handleDeletingInactiveApartment(
+        apartmentId,
+        lastCheckedAt,
+      );
 
       expect(isApartmentInactiveSpy).toBeCalledWith(apartmentId);
       expect(deleteApartmentSpy).not.toBeCalled();
@@ -159,8 +186,13 @@ describe('ApartmentService', () => {
         apartmentService,
         'deleteApartment',
       );
+      const TEN_MINUTES = 1000 * 60 * 10;
+      const lastCheckedAt = new Date(Date.now() - TEN_MINUTES);
 
-      await apartmentService.handleDeletingInactiveApartment(apartmentId);
+      await apartmentService.handleDeletingInactiveApartment(
+        apartmentId,
+        lastCheckedAt,
+      );
 
       expect(isApartmentInactiveSpy).toBeCalledWith(apartmentId);
       expect(deleteApartmentSpy).toBeCalledWith(apartmentId);
@@ -220,6 +252,24 @@ describe('ApartmentService', () => {
 
       expect(isApartmentInactive).toEqual(true);
       expect(baseProvider.createProvider).toHaveBeenCalledWith(providerName);
+    });
+  });
+
+  describe('isCheckableApartment', () => {
+    it('should return true when last checking was more than 5 minutes ago', () => {
+      expect(
+        apartmentService.isCheckableApartment(
+          new Date(Date.now() + 1000 * 60 * 10),
+        ),
+      );
+    });
+
+    it('should return false when last checking was less than 5 minutes ago', () => {
+      expect(
+        apartmentService.isCheckableApartment(
+          new Date(Date.now() + 1000 * 60 * 2),
+        ),
+      );
     });
   });
 

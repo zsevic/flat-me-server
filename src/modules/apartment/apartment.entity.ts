@@ -49,6 +49,12 @@ export class ApartmentEntity extends BaseEntity {
   furnished: string;
 
   @Column({
+    name: 'last_checked_at',
+    type: 'timestamp',
+  })
+  lastCheckedAt: Date;
+
+  @Column({
     nullable: true,
     type: 'jsonb',
   })

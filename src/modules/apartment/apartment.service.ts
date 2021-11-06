@@ -167,14 +167,25 @@ export class ApartmentService {
     return foundAparments;
   };
 
-  async handleDeletingInactiveApartment(apartmentId: string): Promise<void> {
-    const isApartmentInactive = await this.isApartmentInactive(apartmentId);
-    if (!isApartmentInactive) {
-      return;
-    }
+  async handleDeletingInactiveApartment(
+    apartmentId: string,
+    lastCheckedAt: Date,
+  ): Promise<void> {
+    try {
+      console.log('is checkable', this.isCheckableApartment(lastCheckedAt));
+      if (!this.isCheckableApartment(lastCheckedAt)) return;
 
-    this.logger.log(`Deleting apartment: ${apartmentId}`);
-    return this.deleteApartment(apartmentId);
+      const isApartmentInactive = await this.isApartmentInactive(apartmentId);
+      if (!isApartmentInactive) {
+        await this.apartmentRepository.updateLastCheckedDatetime(apartmentId);
+        return;
+      }
+
+      this.logger.log(`Deleting apartment: ${apartmentId}`);
+      return this.deleteApartment(apartmentId);
+    } catch (error) {
+      this.logger.error(error);
+    }
   }
 
   async isApartmentInactive(id: string): Promise<boolean> {
@@ -186,6 +197,15 @@ export class ApartmentService {
       this.logger.error(error);
       return false;
     }
+  }
+
+  isCheckableApartment(lastCheckedAt: Date): boolean {
+    const FIVE_MINUTES = 300000;
+    if (new Date().getTime() - lastCheckedAt.getTime() > FIVE_MINUTES) {
+      return true;
+    }
+
+    return false;
   }
 
   async saveApartmentListFromProviders(filter: FilterDto) {
@@ -217,7 +237,10 @@ export class ApartmentService {
         });
         await Promise.all(
           apartmentList.map(apartment =>
-            this.handleDeletingInactiveApartment(apartment.id),
+            this.handleDeletingInactiveApartment(
+              apartment.id,
+              new Date(apartment.lastCheckedAt),
+            ),
           ),
         );
         pageNumber++;

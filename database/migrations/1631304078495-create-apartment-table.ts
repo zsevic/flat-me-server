@@ -50,6 +50,11 @@ export class CreateApartmentTable1631304078495 implements MigrationInterface {
             type: 'varchar',
           },
           {
+            name: 'last_checked_at',
+            type: 'timestamp',
+            default: 'current_timestamp',
+          },
+          {
             name: 'location',
             type: 'jsonb',
             isNullable: true,
