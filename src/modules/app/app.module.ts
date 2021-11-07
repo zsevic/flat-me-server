@@ -19,6 +19,7 @@ import { PostgresConfigService } from 'common/config/database/postgres-config.se
 import { isEnvironment } from 'common/utils';
 import { ApartmentModule } from 'modules/apartment/apartment.module';
 import { FilterModule } from 'modules/filter/filter.module';
+import { HealthCheckModule } from 'modules/health-check/health-check.module';
 import { TasksModule } from 'modules/tasks/tasks.module';
 import { ThrottlerStorageModule } from 'modules/throttler-storage/throttler-storage.module';
 import { ThrottlerStorageService } from 'modules/throttler-storage/throttler-storage.service';
@@ -68,6 +69,7 @@ import { ThrottlerStorageService } from 'modules/throttler-storage/throttler-sto
       },
       inject: [ThrottlerStorageService],
     }),
+    HealthCheckModule,
     ScheduleModule.forRoot(),
     ApartmentModule,
     FilterModule,
