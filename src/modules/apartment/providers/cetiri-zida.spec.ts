@@ -3,6 +3,7 @@ import axios from 'axios';
 import { DEFAULT_TIMEOUT, ECONNABORTED } from 'common/constants';
 import { RentOrSale } from 'modules/filter/filter.enums';
 import { CETIRI_ZIDA_LOGO_URL } from '../apartment.constants';
+import { Apartment } from '../apartment.interface';
 import { CetiriZidaProvider } from './cetiri-zida';
 
 jest.mock('axios');
@@ -325,6 +326,21 @@ describe('CetiriZida', () => {
   });
 
   describe('updateInfoFromApartment', () => {
+    it('should add location info', () => {
+      const provider = new CetiriZidaProvider();
+      const apartmentInfo: Partial<Apartment> = {};
+      const apartmentData = {
+        latitude: 20,
+        longitude: 40,
+      };
+
+      // @ts-ignore
+      provider.updateInfoFromApartment(apartmentData, apartmentInfo);
+
+      expect(apartmentInfo.location.latitude).toEqual(apartmentData.latitude);
+      expect(apartmentInfo.location.longitude).toEqual(apartmentData.longitude);
+    });
+
     it('should update floor value with attic', () => {
       const provider = new CetiriZidaProvider();
       const apartmentInfo = {

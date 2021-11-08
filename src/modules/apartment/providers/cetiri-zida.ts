@@ -221,13 +221,19 @@ export class CetiriZidaProvider implements Provider {
       apartmentData.floor,
       apartmentData?.totalFloors,
     );
-    if (!floor) {
-      this.logger.log(
-        `Skip updating the floor for apartment ${apartmentInfo.id}`,
-      );
-      return;
+
+    let location;
+    const { latitude, longitude } = apartmentData;
+    if (latitude && longitude) {
+      location = {
+        latitude,
+        longitude,
+      };
     }
 
-    Object.assign(apartmentInfo, { floor });
+    Object.assign(apartmentInfo, {
+      ...(floor && { floor }),
+      ...(location?.latitude && location?.longitude && { location }),
+    });
   };
 }
