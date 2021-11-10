@@ -1,41 +1,41 @@
-div #{__('HELLO_MESSAGE', { name })}, here is the list with #{apartmentList.length} apartment(s) for #{filter.rentOrSale}
+div Lista novih stanova:
 
 ul
   for apartment in apartmentList 
     li
-      span price: #{apartment.price}EUR, 
-      span structure: #{apartment.structure}, 
+      span cena: #{apartment.price}€, 
+      span struktura: #{apartment.structure}, 
       if apartment.address
-        span address: #{apartment.address}, 
+        span adresa: #{apartment.address}, 
       if apartment.place && apartment.address && apartment.place !== apartment.address
         span #{apartment.place}, 
       else if apartment.place && !apartment.address
-        span place: #{apartment.place}, 
+        span mesto: #{apartment.place}, 
       if apartment.floor
-        span floor: #{apartment.floor}, 
+        span sprat: #{apartment.floor}, 
       case apartment.furnished
         when 'furnished'
-          span namešteno, 
+          span namešten, 
         when 'semi-furnished'
-          span polunamešteno, 
+          span polunamešten, 
         when 'empty'
-          span prazno, 
+          span prazan, 
       if apartment.heatingTypes.length
-        span heating type: #{apartment.heatingTypes[0]}, 
-      span size: #{apartment.size}m
+        span grejanje: #{apartment.heatingTypes[0]}, 
+      span kvadratura: #{apartment.size}m
       sup 2
       span , 
       if apartment.postedAt 
-        span posted at: #{new Date(apartment.postedAt).toDateString()} 
+        span objavljen: #{new Date(apartment.postedAt).toDateString()} 
       if apartment.availableFrom
         if new Date(apartment.availableFrom) < new Date()
-          span available for moving in 
+          span useljiv odmah
         else
-          span available for moving in from #{new Date(apartment.availableFrom).toDateString()} 
+          span useljiv od #{new Intl.DateTimeFormat('it', {day:'2-digit', month:'2-digit', year:'numeric'}).format(new Date(apartment.availableFrom))} 
       if apartment.locationUrl
-        a(href=`${apartment.locationUrl}`) location 
+        a(href=`${apartment.locationUrl}`) lokacija 
       if apartment.url
-        a(href=`${apartment.url}`) url 
+        a(href=`${apartment.url}`) link 
 
 p U slučaju da želite da isključite obaveštenja za sačuvanu pretragu, kliknite na sledeći 
   a(href=`${deactivationUrl}`) link
