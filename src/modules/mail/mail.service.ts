@@ -12,11 +12,19 @@ export class MailService {
 
   constructor(private readonly mailerService: MailerService) {}
 
-  private getMailSubject = (
+  private getMailSubjectForNewApartments = (
     filter: FilterDto,
     apartmentListLength: number,
-  ): string =>
-    `Found ${apartmentListLength} new apartment(s) for ${filter.rentOrSale}`;
+  ): string => {
+    const rentOrSale =
+      filter.rentOrSale === 'rent' ? 'iznajmljivanje' : 'kupovinu';
+    const projectName = 'FlatMe';
+    if (apartmentListLength === 1)
+      return `[${projectName}] 1 novi stan za ${rentOrSale}`;
+    if (apartmentListLength <= 4)
+      return `[${projectName}] ${apartmentListLength} nova stana za ${rentOrSale}`;
+    return `[${projectName}] ${apartmentListLength} novih stanova za ${rentOrSale}`;
+  };
 
   async sendFilterVerificationMail(
     email: string,
@@ -52,7 +60,10 @@ export class MailService {
     );
     const mailInfo = await this.mailerService.sendMail({
       to: email,
-      subject: this.getMailSubject(filter, apartmentList.length),
+      subject: this.getMailSubjectForNewApartments(
+        filter,
+        apartmentList.length,
+      ),
       template:
         apartmentList.length > 1 ? './new-apartments' : './one-new-apartment',
       context: {

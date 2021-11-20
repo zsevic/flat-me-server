@@ -1,7 +1,7 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Test, TestingModule } from '@nestjs/testing';
-import { getLocationUrl } from 'common/utils/location';
 import { Apartment } from 'modules/apartment/apartment.interface';
+import { localizeApartment } from 'modules/apartment/apartment.utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { MailService } from './mail.service';
 
@@ -68,6 +68,7 @@ describe('MailService', () => {
         {
           price: 420,
           id: 'cetiriZida_60993e3e7906cd3a4c6832fd',
+          advertiserLogoUrl: 'logo-url',
           apartmentId: '60993e3e7906cd3a4c6832fd',
           providerName: 'cetiriZida',
           address: 'Dalmatinska',
@@ -105,17 +106,11 @@ describe('MailService', () => {
 
       expect(mailerService.sendMail).toHaveBeenCalledWith({
         to: email,
-        subject: `Found ${apartmentList.length} new apartment(s) for ${filter.rentOrSale}`,
-        template: './new-apartments',
+        subject: '[FlatMe] Pronađen 1 novi stan za iznajmljivanje',
+        template: './one-new-apartment',
         context: {
-          apartmentList: apartmentList.map(apartment => ({
-            ...apartment,
-            ...(apartment.location && {
-              locationUrl: getLocationUrl(apartment.location),
-            }),
-          })),
-          filter,
-          name: 'user',
+          apartmentList: apartmentList.map(localizeApartment),
+          apartment: localizeApartment(apartmentList[0]),
           deactivationUrl,
         },
       });
