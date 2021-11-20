@@ -1,41 +1,6 @@
-div Lista novih stanova:
+div Novi stanovi koji odgovaraju Vašoj sačuvanoj pretrazi
 
-ul
-  for apartment in apartmentList 
-    li
-      span cena: #{apartment.price}€, 
-      span struktura: #{apartment.structure}, 
-      if apartment.address
-        span adresa: #{apartment.address}, 
-      if apartment.place && apartment.address && apartment.place !== apartment.address
-        span #{apartment.place}, 
-      else if apartment.place && !apartment.address
-        span mesto: #{apartment.place}, 
-      if apartment.floor
-        span sprat: #{apartment.floor}, 
-      case apartment.furnished
-        when 'furnished'
-          span namešten, 
-        when 'semi-furnished'
-          span polunamešten, 
-        when 'empty'
-          span prazan, 
-      if apartment.heatingTypes.length
-        span grejanje: #{apartment.heatingTypes[0]}, 
-      span kvadratura: #{apartment.size}m
-      sup 2
-      span , 
-      if apartment.postedAt 
-        span objavljen: #{new Date(apartment.postedAt).toDateString()} 
-      if apartment.availableFrom
-        if new Date(apartment.availableFrom) < new Date()
-          span useljiv odmah
-        else
-          span useljiv od #{new Intl.DateTimeFormat('it', {day:'2-digit', month:'2-digit', year:'numeric'}).format(new Date(apartment.availableFrom))} 
-      if apartment.locationUrl
-        a(href=`${apartment.locationUrl}`) lokacija 
-      if apartment.url
-        a(href=`${apartment.url}`) link 
+for apartment in apartmentList
+  include ./partials/apartment-info
 
-p U slučaju da želite da isključite obaveštenja za sačuvanu pretragu, kliknite na sledeći 
-  a(href=`${deactivationUrl}`) link
+include ./partials/unsubscribe

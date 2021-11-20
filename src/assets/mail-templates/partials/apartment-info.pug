@@ -1,0 +1,26 @@
+img(src=apartment.coverPhotoUrl)
+div
+  if apartment.address
+    span #{apartment.address}
+  if apartment.place && apartment.address && apartment.place !== apartment.address
+    span , #{apartment.place}
+  else if apartment.place && !apartment.address
+    span #{apartment.place}
+  ul
+    li
+      span #{apartment.price}€
+    li
+      span #{apartment.size}m
+      sup 2
+    li
+      span #{apartment.structure}
+    li
+      span #{apartment.floor}
+    li
+      span #{apartment.furnished} 
+    if apartment.locationUrl
+      li
+        a(href=`${apartment.locationUrl}`) lokacija
+    if apartment.url
+      li
+        a(href=`${apartment.url}`) saznaj više

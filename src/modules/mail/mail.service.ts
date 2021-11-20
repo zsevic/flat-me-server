@@ -2,8 +2,8 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable, Logger } from '@nestjs/common';
 import { getTestMessageUrl } from 'nodemailer';
 import { isEnvironment } from 'common/utils';
-import { getLocationUrl } from 'common/utils/location';
 import { Apartment } from 'modules/apartment/apartment.interface';
+import { localizeApartment } from 'modules/apartment/apartment.utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 
 @Injectable()
@@ -53,16 +53,11 @@ export class MailService {
     const mailInfo = await this.mailerService.sendMail({
       to: email,
       subject: this.getMailSubject(filter, apartmentList.length),
-      template: './new-apartments',
+      template:
+        apartmentList.length > 1 ? './new-apartments' : './one-new-apartment',
       context: {
-        apartmentList: apartmentList.map(apartment => ({
-          ...apartment,
-          ...(apartment.location && {
-            locationUrl: getLocationUrl(apartment.location),
-          }),
-        })),
-        filter,
-        name: 'user',
+        apartmentList: apartmentList.map(localizeApartment),
+        apartment: localizeApartment(apartmentList[0]),
         deactivationUrl,
       },
     });
