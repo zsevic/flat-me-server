@@ -106,7 +106,7 @@ describe('MailService', () => {
 
       expect(mailerService.sendMail).toHaveBeenCalledWith({
         to: email,
-        subject: '[FlatMe] Pronađen 1 novi stan za iznajmljivanje',
+        subject: '[FlatMe] 1 novi stan za iznajmljivanje',
         template: './one-new-apartment',
         context: {
           apartmentList: apartmentList.map(localizeApartment),
