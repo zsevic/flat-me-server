@@ -53,6 +53,7 @@ export class TasksService {
 
     try {
       await Promise.all(saveApartmentListFromProviders);
+      await this.handleSendingNewApartmentsForFreeSubscriptionUsers();
     } catch (error) {
       this.logger.error(error);
     }
@@ -60,13 +61,7 @@ export class TasksService {
     this.logCronJobFinished(SAVING_APARTMENT_LIST_FROM_PROVIDERS_CRON_JOB);
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_1PM, {
-    name: SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB,
-    timeZone: 'Europe/Belgrade',
-  })
   async handleSendingNewApartmentsForFreeSubscriptionUsers(): Promise<void> {
-    if (!this.shouldRunCronJob()) return;
-
     this.logCronJobStarted(SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB);
 
     try {
