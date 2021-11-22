@@ -1,6 +1,9 @@
-div Novi stanovi koji odgovaraju Vašoj sačuvanoj pretrazi
+include ./partials/head
+div
+  p(class='mb-2') Novi stanovi koji odgovaraju Vašoj sačuvanoj pretrazi
 
-for apartment in apartmentList
-  include ./partials/apartment-info
+.container
+  for apartment in apartmentList
+    include ./partials/apartment-info
 
 include ./partials/unsubscribe

@@ -1,4 +1,5 @@
 import { getLocationUrl } from 'common/utils/location';
+import latinize from 'latinize';
 import { Apartment } from './apartment.interface';
 
 const floorsLocaleMap = {
@@ -28,6 +29,12 @@ const structuresMap = {
   3.0: 'trosoban',
 };
 
+const areAddressAndPlaceValid = (apartment: Apartment): boolean =>
+  apartment.place &&
+  apartment.address &&
+  latinize(apartment.place) !== latinize(apartment.address) &&
+  apartment.place !== apartment.municipality;
+
 export const localizeApartment = (apartment: Apartment) => ({
   ...apartment,
   ...(apartment.location && {
@@ -36,4 +43,5 @@ export const localizeApartment = (apartment: Apartment) => ({
   floor: handleFloor(apartment.floor),
   furnished: furnishedMap[apartment.furnished],
   structure: structuresMap[apartment.structure],
+  areAddressAndPlaceValid: areAddressAndPlaceValid(apartment),
 });

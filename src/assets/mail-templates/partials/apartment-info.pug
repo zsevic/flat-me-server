@@ -1,26 +1,23 @@
-img(src=apartment.coverPhotoUrl)
-div
-  if apartment.address
-    span #{apartment.address}
-  if apartment.place && apartment.address && apartment.place !== apartment.address
-    span , #{apartment.place}
-  else if apartment.place && !apartment.address
-    span #{apartment.place}
-  ul
-    li
-      span #{apartment.price}€
-    li
-      span #{apartment.size}m
-      sup 2
-    li
-      span #{apartment.structure}
-    li
-      span #{apartment.floor}
-    li
-      span #{apartment.furnished} 
-    if apartment.locationUrl
-      li
-        a(href=`${apartment.locationUrl}`) lokacija
-    if apartment.url
-      li
-        a(href=`${apartment.url}`) saznaj više
+.card.mt-2
+  .card-header
+    img.card-img(src=apartment.coverPhotoUrl, alt='stan')
+  .card-body
+    h5(class='card-title' style='white-space: initial')
+      if apartment.locationUrl
+        a.card-link.btn.btn-primary(href=`${apartment.locationUrl}`)
+          include ./apartment-address
+      else
+        include ./apartment-address
+    ul.list-group.list-group-flush.list-group-horizontal-sm
+      li.list-group-item
+        span #{apartment.price}€
+      li.list-group-item
+        span #{apartment.size}m²
+      li.list-group-item
+        span #{apartment.structure}
+      li.list-group-item
+        span #{apartment.floor}
+      li.list-group-item
+        span #{apartment.furnished}
+    .card-body
+      a.card-link.btn.btn-primary(href=`${apartment.url}`) saznaj više
