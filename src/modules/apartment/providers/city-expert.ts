@@ -245,7 +245,7 @@ export class CityExpertProvider implements Provider {
         longitude,
       },
       municipality: apartmentInfo.municipality,
-      place: apartmentInfo?.polygons?.[0],
+      place: apartmentInfo.municipality,
       price: apartmentInfo.price,
       rentOrSale: rentOrSaleField[apartmentInfo.rentOrSale],
       size: apartmentInfo.size,
@@ -263,13 +263,11 @@ export class CityExpertProvider implements Provider {
       apartmentData.floor,
       apartmentData?.onsite?.basInfFloorTotal,
     );
-    if (!floor) {
-      this.logger.log(
-        `Skip updating the floor for apartment ${apartmentInfo.id}`,
-      );
-      return;
-    }
+    const place = apartmentData?.neighbourhoods?.[0];
 
-    Object.assign(apartmentInfo, { floor });
+    Object.assign(apartmentInfo, {
+      ...(floor && { floor }),
+      ...(place && { place }),
+    });
   };
 }

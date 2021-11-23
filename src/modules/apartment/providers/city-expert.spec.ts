@@ -455,5 +455,33 @@ describe('CityExpert', () => {
 
       expect(apartmentInfo.floor).toEqual(apartmentData.floor);
     });
+
+    it('should update place value when apartment data has a neighbourhood value', () => {
+      const provider = new CityExpertProvider();
+      const apartmentInfo = {
+        place: 'Novi Beograd',
+      };
+      const apartmentData = {
+        neighbourhoods: ['Ledine'],
+      };
+
+      // @ts-ignore
+      provider.updateInfoFromApartment(apartmentData, apartmentInfo);
+
+      expect(apartmentInfo.place).toEqual(apartmentData.neighbourhoods[0]);
+    });
+
+    it("should skip updating place value when apartment data doesn't have a neighbourhood value", () => {
+      const provider = new CityExpertProvider();
+      const apartmentInfo = {
+        place: 'Novi Beograd',
+      };
+      const apartmentData = {};
+
+      // @ts-ignore
+      provider.updateInfoFromApartment(apartmentData, apartmentInfo);
+
+      expect(apartmentInfo.place).toEqual(apartmentInfo.place);
+    });
   });
 });
