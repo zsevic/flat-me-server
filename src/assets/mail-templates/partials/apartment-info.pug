@@ -1,23 +1,30 @@
-.card.mt-2
-  .card-header
-    img.card-img(src=apartment.coverPhotoUrl, alt='stan')
-  .card-body
-    h5(class='card-title' style='white-space: initial')
-      if apartment.locationUrl
-        a.card-link.btn.btn-primary(href=`${apartment.locationUrl}`)
+.two-col(style='text-align:center;font-size:0;')
+  //if mso
+    table(role='presentation', width='100%')
+      tr
+        td(style='width:50%;padding:10px;', valign='middle')
+  .column(style='width:100%;max-width:330px;display:inline-block;vertical-align:middle;')
+    div(style='padding:10px;')
+      p(style='margin:0;font-family:Arial,sans-serif;font-size:14px;line-height:18px;')
+        img(src=apartment.coverPhotoUrl, width='310', alt='stan', style='display:block;width:310px;max-width:100%;height:auto;')
+  //if mso
+    td(style='width:50%;padding:10px;', valign='middle')
+  .column(style='width:100%;max-width:330px;display:inline-block;vertical-align:middle;')
+    div(style='padding:10px;font-size:14px;line-height:18px;text-align:left;')
+      p(style='margin-top:0;margin-bottom:12px;font-family:Arial,sans-serif;font-weight:bold;white-space:initial;')
+        if apartment.locationUrl
+          a(href=`${apartment.locationUrl}`, style='color:#3366CC;text-decoration:underline;')
+            include ./apartment-address
+        else
           include ./apartment-address
-      else
-        include ./apartment-address
-    ul.list-group.list-group-flush.list-group-horizontal-sm
-      li.list-group-item
-        span #{apartment.price}€
-      li.list-group-item
-        span #{apartment.size}m²
-      li.list-group-item
-        span #{apartment.structure}
-      li.list-group-item
-        span #{apartment.floor}
-      li.list-group-item
-        span #{apartment.furnished}
-    .card-body
-      a.card-link.btn.btn-primary(href=`${apartment.url}`) saznaj više
+      p(style='margin-top:0;margin-bottom:14px;font-family:Arial,sans-serif;')
+        | #{apartment.price}€, #{apartment.size}m², #{apartment.structure}, #{apartment.floor}, #{apartment.furnished}
+      p(style='margin:0;font-family:Arial,sans-serif;')
+        a(href=`${apartment.url}`, target='_blank', rel='noopener noreferrer', style='background: #ffffff; border: 2px solid #3366CC; text-decoration: none; padding: 10px 25px; color: #000000; border-radius: 4px; display:inline-block; mso-padding-alt:0;text-underline-color:#ffffff')
+          //if mso
+            i(style='letter-spacing: 25px;mso-font-width:-100%;mso-text-raise:20pt') &nbsp;
+          span(style='mso-text-raise:10pt;font-weight:bold;') saznaj više
+          //if mso
+            i(style='letter-spacing: 25px;mso-font-width:-100%') &nbsp;
+  //if mso
+.spacer(style='line-height:24px;height:24px;mso-line-height-rule:exactly;') &nbsp;

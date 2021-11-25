@@ -1,2 +1,12 @@
-p(class='mt-2') U slučaju da želite da isključite obaveštenja za sačuvanu pretragu, kliknite na sledeći 
-  a(href=`${deactivationUrl}`) link
+.sidebar(style='font-size:0;text-align:center;')
+  //if mso
+    table(role='presentation', width='100%')
+      tr
+        td(style='width:560px;padding:10px;text-align:center;', valign='middle', dir='ltr')
+  .large(style='width:100%;max-width:560px;display:inline-block;vertical-align:middle;direction:ltr;')
+    div(style='padding:10px;font-size:14px;line-height:18px;')
+      p(style='margin:0;font-family:Arial,sans-serif;')
+        | U slučaju da želite da isključite obaveštenja za sačuvanu pretragu, kliknite na sledeći 
+        a(href=`${deactivationUrl}`, target='_blank', rel='noopener noreferrer', style='color:#3366CC;text-decoration:underline;')
+          strong link
+  //if mso

@@ -1,9 +1,19 @@
 include ./partials/head
-div
-  p(class='mb-2') Novi stanovi koji odgovaraju Vašoj sačuvanoj pretrazi
 
-.container
-  for apartment in apartmentList
-    include ./partials/apartment-info
-
-include ./partials/unsubscribe
+div(role='article', aria-roledescription='email', lang='en', style='-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;background-color:#ffffff;')
+  table(role='presentation', style='width:100%;border:0;border-spacing:0;')
+    tr
+      td(align='center')
+        //if mso
+          table(role='presentation', align='center', style='width:660px;')
+            tr
+              td(style='padding:20px 0;')
+        .outer(style='width:96%;max-width:660px;margin:20px auto;')
+          table(role='presentation', style='width:100%;border:0;border-spacing:0;')
+            tr
+              td(style='padding:10px;text-align:left;')
+                h1(style='margin-top:0;margin-bottom:16px;font-family:Arial,sans-serif;font-size:22px;line-height:32px;font-weight:bold;') Novi stanovi koji odgovaraju Vašoj sačuvanoj pretrazi
+          for apartment in apartmentList
+            include ./partials/apartment-info
+          include ./partials/unsubscribe
+        //if mso
