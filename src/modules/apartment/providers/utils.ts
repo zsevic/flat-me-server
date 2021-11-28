@@ -14,9 +14,9 @@ export function createRequest(filter: FilterDto) {
   };
 }
 
-export function createRequestForApartment(apartmentId: string) {
+export function createRequestForApartment(apartmentId: string, url?: string) {
   return {
-    request: axios(this.createRequestConfigForApartment(apartmentId))
+    request: axios(this.createRequestConfigForApartment(apartmentId, url))
       .then(response => response.data)
       .catch(error => {
         this.logger.error(`Request failed for apartment ${apartmentId}`, error);
@@ -28,9 +28,10 @@ export function createRequestForApartment(apartmentId: string) {
 
 export function createRequestConfigForApartment(
   apartmentId: string,
+  url?: string,
 ): AxiosRequestConfig {
   return {
-    url: this.getApartmentUrl(apartmentId),
+    url: url ? url : this.getApartmentUrl(apartmentId),
     method: 'GET',
   };
 }

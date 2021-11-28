@@ -42,7 +42,7 @@ export class ApartmentService {
       for (const [index, providerResult] of providerResults.entries()) {
         const { provider } = providerRequests[index];
 
-        const apartments = provider.getResults(providerResult) || [];
+        const apartments = provider.getResults(providerResult, filter) || [];
         if (apartments.length === 0) continue;
 
         const foundApartments = await this.getFoundApartments(
@@ -155,6 +155,7 @@ export class ApartmentService {
       try {
         const apartmentData = await provider.createRequestForApartment(
           apartmentInfo.apartmentId,
+          apartmentInfo.url,
         ).request;
         if (!apartmentData) continue;
         provider.updateInfoFromApartment(apartmentData, apartmentInfo);
@@ -170,11 +171,15 @@ export class ApartmentService {
   async handleDeletingInactiveApartment(
     apartmentId: string,
     lastCheckedAt: Date,
+    apartmentUrl?: string,
   ): Promise<void> {
     try {
       if (!this.isCheckableApartment(lastCheckedAt)) return;
 
-      const isApartmentInactive = await this.isApartmentInactive(apartmentId);
+      const isApartmentInactive = await this.isApartmentInactive(
+        apartmentId,
+        apartmentUrl,
+      );
       if (!isApartmentInactive) {
         await this.apartmentRepository.updateLastCheckedDatetime(apartmentId);
         return;
@@ -187,11 +192,11 @@ export class ApartmentService {
     }
   }
 
-  async isApartmentInactive(id: string): Promise<boolean> {
+  async isApartmentInactive(id: string, url?: string): Promise<boolean> {
     try {
       const [providerName] = id.split('_');
       const provider = this.baseProvider.createProvider(providerName);
-      return provider.isApartmentInactive(id);
+      return provider.isApartmentInactive(id, url);
     } catch (error) {
       this.logger.error(error);
       return false;
@@ -239,6 +244,7 @@ export class ApartmentService {
             this.handleDeletingInactiveApartment(
               apartment.id,
               new Date(apartment.lastCheckedAt),
+              apartment.url,
             ),
           ),
         );

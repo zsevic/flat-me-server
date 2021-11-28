@@ -35,6 +35,10 @@ export class CityExpertProvider implements Provider {
   private readonly apiBaseUrl = 'https://cityexpert.rs/api';
   private readonly logoUrl = CITY_EXPERT_LOGO_URL;
   private readonly logger = new Logger(CityExpertProvider.name);
+  readonly supportedSearch = {
+    rent: true,
+    sale: true,
+  };
 
   get apartmentBaseUrl() {
     return `${this.apiBaseUrl}/PropertyView`;
