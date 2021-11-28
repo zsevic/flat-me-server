@@ -25,13 +25,6 @@ export class BaseProvider {
     return Object.keys(this.providers)
       .map((providerName: string) => {
         const provider = this.createProvider(providerName);
-        if (!provider.supportedSearch[filter.rentOrSale]) {
-          this.logger.log(
-            `${filter.rentOrSale} search is not supported for ${providerName}`,
-          );
-          return;
-        }
-
         return provider.createRequest(filter);
       })
       .filter(request => !!request);

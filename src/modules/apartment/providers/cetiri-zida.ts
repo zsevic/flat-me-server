@@ -18,10 +18,6 @@ export class CetiriZidaProvider implements Provider {
   private readonly apiBaseUrl = 'https://api.4zida.rs';
   private readonly logoUrl = CETIRI_ZIDA_LOGO_URL;
   private readonly logger = new Logger(CetiriZidaProvider.name);
-  readonly supportedSearch = {
-    rent: true,
-    sale: true,
-  };
 
   private readonly atticKey = 100;
   private readonly floor = {

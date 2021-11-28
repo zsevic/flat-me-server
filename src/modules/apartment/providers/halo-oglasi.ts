@@ -21,11 +21,6 @@ export class HaloOglasiProvider implements Provider {
     sale: 'prodaja',
   };
 
-  readonly supportedSearch = {
-    rent: true,
-    sale: false,
-  };
-
   private readonly atticKey = 'PTK';
   private readonly floor = {
     SU: 'basement',
@@ -91,7 +86,9 @@ export class HaloOglasiProvider implements Provider {
       cena_d_from: filter.minPrice,
       cena_d_to: filter.maxPrice,
       cena_d_unit: 4,
-      namestenost_id_l: furnishedFilter,
+      ...(filter.rentOrSale === 'rent' && {
+        namestenost_id_l: furnishedFilter,
+      }),
       page: filter.pageNumber,
     };
 
