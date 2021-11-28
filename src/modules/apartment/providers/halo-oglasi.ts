@@ -127,8 +127,7 @@ export class HaloOglasiProvider implements Provider {
         const apartment = this.parseApartmentInfoFromHtml(element, filter);
         if (Object.keys(apartment).length > 0) {
           if (!apartment.advertiserLogoUrl) {
-            apartment.advertiserLogoUrl =
-              'https://www.flat-me.com/assets/logo.png';
+            apartment.advertiserLogoUrl = this.logoUrl;
           }
           apartment.place = apartment.place || apartment.municipality;
           apartment.rentOrSale = filter.rentOrSale;

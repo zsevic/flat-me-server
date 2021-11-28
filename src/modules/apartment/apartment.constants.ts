@@ -12,7 +12,7 @@ export const CETIRI_ZIDA_LOGO_URL =
 export const CITY_EXPERT_LOGO_URL =
   'https://cityexpert.rs/images/cxlogo/cityexpert-logo-header.svg';
 export const HALO_OGLASI_LOGO_URL =
-  'https://www.halooglasi.com/Content/Quiddita/Widgets/Common/Stylesheets/img/logos/logos.png';
+  'https://www.halooglasi.com/Content/assets/frontend/layout/img/logo-halooglasi.png';
 
 export const requiredFields = [
   'address',
