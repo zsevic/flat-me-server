@@ -173,7 +173,7 @@ describe('ApartmentService', () => {
         lastCheckedAt,
       );
 
-      expect(isApartmentInactiveSpy).toBeCalledWith(apartmentId);
+      expect(isApartmentInactiveSpy).toBeCalledWith(apartmentId, undefined);
       expect(deleteApartmentSpy).not.toBeCalled();
     });
 
@@ -194,7 +194,7 @@ describe('ApartmentService', () => {
         lastCheckedAt,
       );
 
-      expect(isApartmentInactiveSpy).toBeCalledWith(apartmentId);
+      expect(isApartmentInactiveSpy).toBeCalledWith(apartmentId, undefined);
       expect(deleteApartmentSpy).toBeCalledWith(apartmentId);
     });
   });
