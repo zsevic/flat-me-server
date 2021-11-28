@@ -92,6 +92,7 @@ export class HaloOglasiProvider implements Provider {
       cena_d_to: filter.maxPrice,
       cena_d_unit: 4,
       namestenost_id_l: furnishedFilter,
+      page: filter.pageNumber,
     };
 
     return {
