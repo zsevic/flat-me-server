@@ -263,6 +263,9 @@ export class HaloOglasiProvider implements Provider {
       id: `${this.providerName}_${apartmentId}`,
       apartmentId,
       providerName: this.providerName,
+      ...(municipalitiesMap[apartmentInfo.place] && {
+        place: municipalitiesMap[apartmentInfo.place],
+      }),
       heatingTypes: [],
       furnished: 'furnished',
       floor: 1,
