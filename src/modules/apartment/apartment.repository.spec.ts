@@ -55,7 +55,7 @@ describe('ApartmentRepository', () => {
   });
 
   describe('getApartmentList', () => {
-    it('should return apartment list', async () => {
+    it('should return apartment list for rent', async () => {
       const filter = {
         rentOrSale: 'rent',
         municipalities: ['Palilula'],
@@ -88,6 +88,61 @@ describe('ApartmentRepository', () => {
       ];
       const query = {
         furnished: In(filter.furnished),
+        municipality: In(filter.municipalities),
+        price: Between(filter.minPrice, filter.maxPrice),
+        rentOrSale: filter.rentOrSale,
+        structure: In(filter.structures),
+      };
+      const findAndCountSpy = jest
+        .spyOn(apartmentRepository, 'findAndCount')
+        .mockResolvedValue([apartmentList as ApartmentEntity[], 1]);
+
+      const result = await apartmentRepository.getApartmentList(
+        filter as ApartmentListParamsDto,
+      );
+
+      expect(result).toEqual({ total: 1, data: apartmentList });
+      expect(findAndCountSpy).toHaveBeenCalledWith({
+        where: query,
+        skip: getSkip(defaultPaginationParams),
+        take: DEFAULT_LIMIT_PER_PAGE,
+        order: {
+          createdAt: 'DESC',
+        },
+      });
+    });
+
+    it('should return apartment list for sale', async () => {
+      const filter = {
+        rentOrSale: 'sale',
+        municipalities: ['Palilula'],
+        structures: [1, 1.5],
+        furnished: ['semi-furnished'],
+        minPrice: 200,
+        maxPrice: 300,
+      };
+      const apartmentList = [
+        {
+          heatingTypes: ['central'],
+          id: 'cetiriZida_id1',
+          price: 350,
+          apartmentId: 'id',
+          providerName: 'cetiriZida',
+          address: 'street',
+          coverPhotoUrl: 'url',
+          floor: 'ground floor',
+          municipality: 'Savski venac',
+          place: 'Sarajevska',
+          postedAt: new Date('2021-06-23T13:38:19+02:00'),
+          rentOrSale: 'sale',
+          size: 41,
+          structure: 3,
+          url: 'url',
+          createdAt: new Date('2021-08-14T18:12:32.133Z'),
+          updatedAt: new Date('2021-08-14T18:12:32.133Z'),
+        },
+      ];
+      const query = {
         municipality: In(filter.municipalities),
         price: Between(filter.minPrice, filter.maxPrice),
         rentOrSale: filter.rentOrSale,

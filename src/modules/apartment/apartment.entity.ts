@@ -46,8 +46,10 @@ export class ApartmentEntity extends BaseEntity {
   @Column({ name: 'heating_types', type: 'varchar', array: true })
   heatingTypes: string[];
 
-  @Column()
-  furnished: string;
+  @Column({
+    nullable: true,
+  })
+  furnished?: string;
 
   @Column({
     name: 'last_checked_at',

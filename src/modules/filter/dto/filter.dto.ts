@@ -1,5 +1,11 @@
 import { Type } from 'class-transformer';
-import { IsEnum, IsNotEmpty, IsOptional, Validate } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  Validate,
+  ValidateIf,
+} from 'class-validator';
 import { ArrayContainsValidator } from 'common/validators/array-contains.validator';
 import {
   floorFilters,
@@ -10,6 +16,7 @@ import {
 import { RentOrSale } from '../filter.enums';
 
 export class FilterDto {
+  @ValidateIf((dto: FilterDto) => dto.rentOrSale === 'rent')
   @Validate(ArrayContainsValidator, FURNISHED)
   @Type(() => String)
   @IsNotEmpty()
