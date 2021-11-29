@@ -39,7 +39,9 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
       createdAt: MoreThan(dateFilter),
     }),
     ...(floor && { floor: Not(In(floor)) }),
-    furnished: In(filter.furnished),
+    ...(filter.rentOrSale === 'rent' && {
+      furnished: In(filter.furnished),
+    }),
     municipality: In(filter.municipalities),
     price: Between(filter.minPrice, filter.maxPrice),
     rentOrSale: filter.rentOrSale,

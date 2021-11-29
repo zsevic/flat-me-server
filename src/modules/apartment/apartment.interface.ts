@@ -19,7 +19,7 @@ export interface Apartment {
 
   heatingTypes: string[];
 
-  furnished: string;
+  furnished?: string;
 
   location?: Location;
 

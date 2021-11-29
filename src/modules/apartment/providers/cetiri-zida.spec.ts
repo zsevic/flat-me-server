@@ -2,15 +2,10 @@ import { HttpStatus } from '@nestjs/common';
 import axios from 'axios';
 import { DEFAULT_TIMEOUT, ECONNABORTED } from 'common/constants';
 import { RentOrSale } from 'modules/filter/filter.enums';
-import { CETIRI_ZIDA_LOGO_URL } from '../apartment.constants';
 import { Apartment } from '../apartment.interface';
 import { CetiriZidaProvider } from './cetiri-zida';
 
 jest.mock('axios');
-
-const agencyAvatarUrlTemplate =
-  'https://resizer.4zida.rs/unsigned/{{mode}}/{{height}}/{{width}}/ce/0/plain/local:///agencies/0aa1c17d3c.jpeg@{{format}}';
-const advertiserName = 'agency';
 
 describe('CetiriZida', () => {
   describe('createRequestConfig', () => {

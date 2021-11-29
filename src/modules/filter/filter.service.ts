@@ -34,6 +34,7 @@ export class FilterService {
 
     const newFilter: Filter = {
       ...filter,
+      furnished: filter.rentOrSale === 'sale' ? [] : filter.furnished,
       userId: user.id,
       isActive: false,
       isVerified: false,

@@ -1,10 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { RentOrSale } from 'modules/filter/filter.enums';
 import { UserService } from 'modules/user/user.service';
-import {
-  CETIRI_ZIDA_LOGO_URL,
-  CITY_EXPERT_LOGO_URL,
-} from './apartment.constants';
 import { ApartmentRepository } from './apartment.repository';
 import { ApartmentService } from './apartment.service';
 import {
@@ -36,7 +32,6 @@ const baseProvider = {
 
 const agencyAvatarUrlTemplate =
   'https://resizer.4zida.rs/unsigned/{{mode}}/{{height}}/{{width}}/ce/0/plain/local:///agencies/0aa1c17d3c.jpeg@{{format}}';
-const advertiserName = 'agency';
 
 describe('ApartmentService', () => {
   let apartmentService: ApartmentService;

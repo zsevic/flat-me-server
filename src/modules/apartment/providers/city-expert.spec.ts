@@ -6,7 +6,6 @@ import {
   apartmentStatusFinished,
   apartmentStatusNotAvailable,
   apartmentStatusReserved,
-  CITY_EXPERT_LOGO_URL,
 } from '../apartment.constants';
 import { CityExpertProvider } from './city-expert';
 

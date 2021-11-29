@@ -49,6 +49,7 @@ export class CreateApartmentTable1631304078495 implements MigrationInterface {
           {
             name: 'furnished',
             type: 'varchar',
+            isNullable: true,
           },
           {
             name: 'last_checked_at',
