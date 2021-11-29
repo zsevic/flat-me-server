@@ -10,14 +10,12 @@ import {
   createRequestForApartment,
   parseFloor,
 } from './utils';
-import {
-  apartmentStatusPublished,
-  CITY_EXPERT_LOGO_URL,
-} from '../apartment.constants';
+import { apartmentStatusPublished } from '../apartment.constants';
 import { Apartment } from '../apartment.interface';
 
 export class CityExpertProvider implements Provider {
   private readonly providerName = 'cityExpert';
+  private readonly advertiserName = 'City Expert';
   private readonly propertyTypes = {
     BR: 'r',
     BS: 's',
@@ -33,7 +31,6 @@ export class CityExpertProvider implements Provider {
   };
 
   private readonly apiBaseUrl = 'https://cityexpert.rs/api';
-  private readonly logoUrl = CITY_EXPERT_LOGO_URL;
   private readonly logger = new Logger(CityExpertProvider.name);
 
   get apartmentBaseUrl() {
@@ -236,7 +233,7 @@ export class CityExpertProvider implements Provider {
       }),
       availableFrom: apartmentInfo.availableFrom,
       coverPhotoUrl: `https://img.cityexpert.rs/sites/default/files/styles/1920x/public/image/${apartmentInfo.coverPhoto}`,
-      advertiserLogoUrl: this.logoUrl,
+      advertiserName: this.advertiserName,
       floor: this.parseFloor(apartmentInfo.floor),
       furnished: furnished[apartmentInfo.furnished],
       heatingTypes,
