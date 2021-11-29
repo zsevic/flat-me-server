@@ -18,7 +18,12 @@
         else
           include ./apartment-address
       p(style='margin-top:0;margin-bottom:14px;font-family:Arial,sans-serif;')
-        | #{apartment.price}€, #{apartment.size}m², #{apartment.structure}, #{apartment.floor}, #{apartment.furnished}
+        span #{apartment.price}€, 
+        span #{apartment.size}m², 
+        span #{apartment.structure}, 
+        span #{apartment.floor}
+        if apartment.furnished
+          span , #{apartment.furnished}
       p(style='margin:0;font-family:Arial,sans-serif;')
         a(href=`${apartment.url}`, target='_blank', rel='noopener noreferrer', style='background: #ffffff; border: 2px solid #3366CC; text-decoration: none; padding: 10px 25px; color: #000000; border-radius: 4px; display:inline-block; mso-padding-alt:0;text-underline-color:#ffffff')
           //if mso
