@@ -68,7 +68,7 @@ describe('MailService', () => {
         {
           price: 420,
           id: 'cetiriZida_60993e3e7906cd3a4c6832fd',
-          advertiserLogoUrl: 'logo-url',
+          advertiserName: 'agency',
           apartmentId: '60993e3e7906cd3a4c6832fd',
           providerName: 'cetiriZida',
           address: 'Dalmatinska',

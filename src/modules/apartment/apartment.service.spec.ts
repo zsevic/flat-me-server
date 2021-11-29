@@ -36,8 +36,7 @@ const baseProvider = {
 
 const agencyAvatarUrlTemplate =
   'https://resizer.4zida.rs/unsigned/{{mode}}/{{height}}/{{width}}/ce/0/plain/local:///agencies/0aa1c17d3c.jpeg@{{format}}';
-const advertiserLogoUrl =
-  'https://resizer.4zida.rs/unsigned/fit/75/75/ce/0/plain/local:///agencies/0aa1c17d3c.jpeg@webp';
+const advertiserName = 'agency';
 
 describe('ApartmentService', () => {
   let apartmentService: ApartmentService;
@@ -294,6 +293,11 @@ describe('ApartmentService', () => {
               previousPrice: 300,
               bookmarkCount: 3,
               registered: 'yes',
+              author: {
+                agency: {
+                  title: 'agency',
+                },
+              },
               address: 'Dalmatinska',
               allowedVirtualSightseeing: false,
               featuredExpiresAt: '2021-08-25T19:01:41+02:00',
@@ -370,6 +374,11 @@ describe('ApartmentService', () => {
               id: '60f99390d9982b10',
               for: 'rent',
               price: 500,
+              author: {
+                agency: {
+                  title: 'agency',
+                },
+              },
               address: 'Kursulina',
               deposit: 1,
               paymentTerm: 'month',
@@ -444,7 +453,7 @@ describe('ApartmentService', () => {
             providerName: 'cetiriZida',
             address: 'Dalmatinska',
             coverPhotoUrl: 'cover-photo-url',
-            advertiserLogoUrl,
+            advertiserName,
             floor: 1,
             furnished: 'furnished',
             heatingTypes: ['district'],
@@ -467,7 +476,7 @@ describe('ApartmentService', () => {
             availableFrom: '2021-08-09T11:04:13Z',
             coverPhotoUrl:
               'https://img.cityexpert.rs/sites/default/files/styles/1920x/public/image/url.jpg',
-            advertiserLogoUrl: CITY_EXPERT_LOGO_URL,
+            advertiserName: 'City Expert',
             floor: 'high ground floor',
             furnished: 'furnished',
             heatingTypes: ['district'],
@@ -489,7 +498,7 @@ describe('ApartmentService', () => {
             apartmentId: '60f99390d9982b10',
             providerName: 'cetiriZida',
             coverPhotoUrl: 'cover-photo-url',
-            advertiserLogoUrl,
+            advertiserName,
             floor: 3,
             furnished: 'furnished',
             heatingTypes: ['district'],
@@ -512,7 +521,7 @@ describe('ApartmentService', () => {
             availableFrom: '0001-01-01T00:00:00Z',
             coverPhotoUrl:
               'https://img.cityexpert.rs/sites/default/files/styles/1920x/public/image/cover.jpg',
-            advertiserLogoUrl: CITY_EXPERT_LOGO_URL,
+            advertiserName: 'City Expert',
             floor: 'basement',
             furnished: 'furnished',
             heatingTypes: ['electricity'],
@@ -588,6 +597,11 @@ describe('ApartmentService', () => {
               previousPrice: 300,
               bookmarkCount: 3,
               registered: 'yes',
+              author: {
+                agency: {
+                  title: 'agency',
+                },
+              },
               address: 'Dalmatinska',
               allowedVirtualSightseeing: false,
               featuredExpiresAt: '2021-08-25T19:01:41+02:00',
@@ -615,6 +629,11 @@ describe('ApartmentService', () => {
               id: '60f99390d9982b10',
               for: 'rent',
               price: 500,
+              author: {
+                agency: {
+                  title: 'agency',
+                },
+              },
               address: 'Kursulina',
               deposit: 1,
               paymentTerm: 'month',
@@ -652,7 +671,7 @@ describe('ApartmentService', () => {
         providerName: 'cetiriZida',
         address: 'Dalmatinska',
         coverPhotoUrl: 'cover-photo-url',
-        advertiserLogoUrl: CETIRI_ZIDA_LOGO_URL,
+        advertiserName: 'agency',
         floor: 1,
         furnished: 'furnished',
         heatingTypes: ['district'],
@@ -673,7 +692,7 @@ describe('ApartmentService', () => {
           apartmentId: '60f99390d9982b10',
           providerName: 'cetiriZida',
           coverPhotoUrl: 'cover-photo-url',
-          advertiserLogoUrl,
+          advertiserName,
           floor: 3,
           furnished: 'furnished',
           heatingTypes: ['district'],
@@ -918,6 +937,11 @@ describe('ApartmentService', () => {
               previousPrice: 300,
               bookmarkCount: 3,
               registered: 'yes',
+              author: {
+                agency: {
+                  title: 'agency',
+                },
+              },
               address: 'Dalmatinska',
               allowedVirtualSightseeing: false,
               featuredExpiresAt: '2021-08-25T19:01:41+02:00',
@@ -949,7 +973,7 @@ describe('ApartmentService', () => {
           providerName: 'cetiriZida',
           address: 'Dalmatinska',
           coverPhotoUrl: 'cover-photo-url',
-          advertiserLogoUrl,
+          advertiserName,
           floor: 1,
           furnished: 'furnished',
           heatingTypes: ['district'],

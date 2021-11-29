@@ -13,7 +13,7 @@ export interface Apartment {
 
   coverPhotoUrl: string;
 
-  advertiserLogoUrl: string;
+  advertiserName?: string;
 
   floor: string;
 

@@ -10,8 +10,7 @@ jest.mock('axios');
 
 const agencyAvatarUrlTemplate =
   'https://resizer.4zida.rs/unsigned/{{mode}}/{{height}}/{{width}}/ce/0/plain/local:///agencies/0aa1c17d3c.jpeg@{{format}}';
-const advertiserLogoUrl =
-  'https://resizer.4zida.rs/unsigned/fit/75/75/ce/0/plain/local:///agencies/0aa1c17d3c.jpeg@webp';
+const advertiserName = 'agency';
 
 describe('CetiriZida', () => {
   describe('createRequestConfig', () => {
@@ -212,6 +211,11 @@ describe('CetiriZida', () => {
       previousPrice: 300,
       bookmarkCount: 3,
       registered: 'yes',
+      author: {
+        agency: {
+          title: 'agency',
+        },
+      },
       address: 'Dalmatinska',
       allowedVirtualSightseeing: false,
       featuredExpiresAt: '2021-08-25T19:01:41+02:00',
@@ -237,7 +241,7 @@ describe('CetiriZida', () => {
       providerName: 'cetiriZida',
       address: 'Dalmatinska',
       coverPhotoUrl: 'cover-photo-url',
-      advertiserLogoUrl: CETIRI_ZIDA_LOGO_URL,
+      advertiserName,
       floor: 'basement',
       furnished: 'furnished',
       heatingTypes: ['thermal pump'],
@@ -258,41 +262,16 @@ describe('CetiriZida', () => {
       expect(result).toEqual(parsedApartmentInfo);
     });
 
-    it('should return parsed apartment info with default heating types value', () => {
+    it('should return parsed apartment info with default heating types and advertiser name values', () => {
       const apartmentInfoWithNoHeatingTypes = {
         ...apartmentInfo,
+        author: undefined,
         heatingType: undefined,
       };
       const parsedApartmentInfoWithDefaultHeatingTypes = {
         ...parsedApartmentInfo,
+        advertiserName: undefined,
         heatingTypes: [],
-      };
-
-      const provider = new CetiriZidaProvider();
-
-      const result = provider.parseApartmentInfo(
-        apartmentInfoWithNoHeatingTypes,
-      );
-
-      expect(result).toEqual(parsedApartmentInfoWithDefaultHeatingTypes);
-    });
-
-    it('should return parsed apartment info with default advertiser logo url', () => {
-      const provider = new CetiriZidaProvider();
-
-      const result = provider.parseApartmentInfo(apartmentInfo);
-
-      expect(result).toEqual(parsedApartmentInfo);
-    });
-
-    it('should return parsed apartment info with parsed advertiser logo url', () => {
-      const apartmentInfoWithNoHeatingTypes = {
-        ...apartmentInfo,
-        agencyAvatarUrlTemplate,
-      };
-      const parsedApartmentInfoWithDefaultHeatingTypes = {
-        ...parsedApartmentInfo,
-        advertiserLogoUrl,
       };
 
       const provider = new CetiriZidaProvider();

@@ -33,8 +33,9 @@ export class CreateApartmentTable1631304078495 implements MigrationInterface {
             type: 'varchar',
           },
           {
-            name: 'advertiser_logo_url',
+            name: 'advertiser_name',
             type: 'varchar',
+            isNullable: true,
           },
           {
             name: 'floor',

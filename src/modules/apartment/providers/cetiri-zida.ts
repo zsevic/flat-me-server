@@ -136,16 +136,6 @@ export class CetiriZidaProvider implements Provider {
     }
   }
 
-  private getAdvertiserLogoUrl = advertiserLogoUrl => {
-    if (!advertiserLogoUrl) return this.logoUrl;
-
-    return advertiserLogoUrl
-      .replace('{{mode}}', 'fit')
-      .replace('{{width}}', '75')
-      .replace('{{height}}', '75')
-      .replace('{{format}}', 'webp');
-  };
-
   private getMunicipality = apartmentInfo => {
     const municipalities = {
       Čukarica: 'Čukarica',
@@ -195,9 +185,7 @@ export class CetiriZidaProvider implements Provider {
         address: capitalizeWords(apartmentInfo.address),
       }),
       coverPhotoUrl: apartmentInfo?.image?.search['380x0_fill_0_webp'],
-      advertiserLogoUrl: this.getAdvertiserLogoUrl(
-        apartmentInfo.agencyAvatarUrlTemplate,
-      ),
+      advertiserName: apartmentInfo?.author?.agency?.title,
       floor: this.parseFloor(apartmentInfo.floor),
       furnished: furnished[apartmentInfo.furnished],
       heatingTypes,
