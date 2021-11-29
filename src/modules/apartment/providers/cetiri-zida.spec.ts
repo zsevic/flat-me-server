@@ -211,11 +211,6 @@ describe('CetiriZida', () => {
       previousPrice: 300,
       bookmarkCount: 3,
       registered: 'yes',
-      author: {
-        agency: {
-          title: 'agency',
-        },
-      },
       address: 'Dalmatinska',
       allowedVirtualSightseeing: false,
       featuredExpiresAt: '2021-08-25T19:01:41+02:00',
@@ -241,7 +236,6 @@ describe('CetiriZida', () => {
       providerName: 'cetiriZida',
       address: 'Dalmatinska',
       coverPhotoUrl: 'cover-photo-url',
-      advertiserName,
       floor: 'basement',
       furnished: 'furnished',
       heatingTypes: ['thermal pump'],
@@ -364,6 +358,42 @@ describe('CetiriZida', () => {
       provider.updateInfoFromApartment(apartmentData, apartmentInfo);
 
       expect(apartmentInfo.floor).toEqual(apartmentData.floor);
+    });
+
+    it("shouldn't update advertiser name field when there is no value for it", () => {
+      const provider = new CetiriZidaProvider();
+      const apartmentInfo = {
+        advertiserName: 'agency',
+      };
+      const apartmentData = {};
+
+      // @ts-ignore
+      provider.updateInfoFromApartment(apartmentData, apartmentInfo);
+
+      expect(apartmentInfo.advertiserName).toEqual(
+        apartmentInfo.advertiserName,
+      );
+    });
+
+    it('should update advertiser name field when new value is defined', () => {
+      const provider = new CetiriZidaProvider();
+      const apartmentInfo = {
+        advertiserName: 'agency',
+      };
+      const apartmentData = {
+        author: {
+          agency: {
+            title: 'new agency',
+          },
+        },
+      };
+
+      // @ts-ignore
+      provider.updateInfoFromApartment(apartmentData, apartmentInfo);
+
+      expect(apartmentInfo.advertiserName).toEqual(
+        apartmentData.author.agency.title,
+      );
     });
   });
 });

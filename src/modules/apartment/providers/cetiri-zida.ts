@@ -185,7 +185,6 @@ export class CetiriZidaProvider implements Provider {
         address: capitalizeWords(apartmentInfo.address),
       }),
       coverPhotoUrl: apartmentInfo?.image?.search['380x0_fill_0_webp'],
-      advertiserName: apartmentInfo?.author?.agency?.title,
       floor: this.parseFloor(apartmentInfo.floor),
       furnished: furnished[apartmentInfo.furnished],
       heatingTypes,
@@ -218,8 +217,10 @@ export class CetiriZidaProvider implements Provider {
         longitude,
       };
     }
+    const advertiserName = apartmentData?.author?.agency?.title;
 
     Object.assign(apartmentInfo, {
+      ...(advertiserName && { advertiserName }),
       ...(floor && { floor }),
       ...(location?.latitude && location?.longitude && { location }),
     });

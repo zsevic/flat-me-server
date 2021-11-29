@@ -293,11 +293,6 @@ describe('ApartmentService', () => {
               previousPrice: 300,
               bookmarkCount: 3,
               registered: 'yes',
-              author: {
-                agency: {
-                  title: 'agency',
-                },
-              },
               address: 'Dalmatinska',
               allowedVirtualSightseeing: false,
               featuredExpiresAt: '2021-08-25T19:01:41+02:00',
@@ -374,11 +369,6 @@ describe('ApartmentService', () => {
               id: '60f99390d9982b10',
               for: 'rent',
               price: 500,
-              author: {
-                agency: {
-                  title: 'agency',
-                },
-              },
               address: 'Kursulina',
               deposit: 1,
               paymentTerm: 'month',
@@ -453,7 +443,6 @@ describe('ApartmentService', () => {
             providerName: 'cetiriZida',
             address: 'Dalmatinska',
             coverPhotoUrl: 'cover-photo-url',
-            advertiserName,
             floor: 1,
             furnished: 'furnished',
             heatingTypes: ['district'],
@@ -498,7 +487,6 @@ describe('ApartmentService', () => {
             apartmentId: '60f99390d9982b10',
             providerName: 'cetiriZida',
             coverPhotoUrl: 'cover-photo-url',
-            advertiserName,
             floor: 3,
             furnished: 'furnished',
             heatingTypes: ['district'],
@@ -597,11 +585,6 @@ describe('ApartmentService', () => {
               previousPrice: 300,
               bookmarkCount: 3,
               registered: 'yes',
-              author: {
-                agency: {
-                  title: 'agency',
-                },
-              },
               address: 'Dalmatinska',
               allowedVirtualSightseeing: false,
               featuredExpiresAt: '2021-08-25T19:01:41+02:00',
@@ -629,11 +612,6 @@ describe('ApartmentService', () => {
               id: '60f99390d9982b10',
               for: 'rent',
               price: 500,
-              author: {
-                agency: {
-                  title: 'agency',
-                },
-              },
               address: 'Kursulina',
               deposit: 1,
               paymentTerm: 'month',
@@ -671,7 +649,6 @@ describe('ApartmentService', () => {
         providerName: 'cetiriZida',
         address: 'Dalmatinska',
         coverPhotoUrl: 'cover-photo-url',
-        advertiserName: 'agency',
         floor: 1,
         furnished: 'furnished',
         heatingTypes: ['district'],
@@ -692,7 +669,6 @@ describe('ApartmentService', () => {
           apartmentId: '60f99390d9982b10',
           providerName: 'cetiriZida',
           coverPhotoUrl: 'cover-photo-url',
-          advertiserName,
           floor: 3,
           furnished: 'furnished',
           heatingTypes: ['district'],
@@ -937,11 +913,6 @@ describe('ApartmentService', () => {
               previousPrice: 300,
               bookmarkCount: 3,
               registered: 'yes',
-              author: {
-                agency: {
-                  title: 'agency',
-                },
-              },
               address: 'Dalmatinska',
               allowedVirtualSightseeing: false,
               featuredExpiresAt: '2021-08-25T19:01:41+02:00',
@@ -973,7 +944,6 @@ describe('ApartmentService', () => {
           providerName: 'cetiriZida',
           address: 'Dalmatinska',
           coverPhotoUrl: 'cover-photo-url',
-          advertiserName,
           floor: 1,
           furnished: 'furnished',
           heatingTypes: ['district'],
