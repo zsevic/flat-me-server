@@ -22,7 +22,7 @@
         span #{apartment.size}m², 
         span #{apartment.structure}, 
         span #{apartment.floor}
-        if apartment.furnished
+        if apartment.isForRent
           span , #{apartment.furnished}
       p(style='margin:0;font-family:Arial,sans-serif;')
         a(href=`${apartment.url}`, target='_blank', rel='noopener noreferrer', style='background: #ffffff; border: 2px solid #3366CC; text-decoration: none; padding: 10px 25px; color: #000000; border-radius: 4px; display:inline-block; mso-padding-alt:0;text-underline-color:#ffffff')

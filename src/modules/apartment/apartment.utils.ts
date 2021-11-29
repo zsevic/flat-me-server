@@ -44,4 +44,5 @@ export const localizeApartment = (apartment: Apartment) => ({
   furnished: furnishedMap[apartment.furnished],
   structure: structuresMap[apartment.structure],
   areAddressAndPlaceValid: areAddressAndPlaceValid(apartment),
+  isForRent: apartment.rentOrSale === 'rent',
 });
