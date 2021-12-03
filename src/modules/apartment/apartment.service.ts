@@ -137,14 +137,7 @@ export class ApartmentService {
   ): Promise<Apartment[]> => {
     const foundAparments = [];
     for (const apartment of apartments) {
-      if (!apartment.price) continue;
-
       const apartmentInfo = provider.parseApartmentInfo(apartment);
-      const isValidApartmentInfo = requiredFields.every(
-        field => !!apartmentInfo[field],
-      );
-      if (!isValidApartmentInfo) continue;
-
       const isApartmentAlreadySaved = await this.apartmentRepository.findOne({
         id: apartmentInfo.id,
       });
@@ -159,6 +152,11 @@ export class ApartmentService {
         ).request;
         if (!apartmentData) continue;
         provider.updateInfoFromApartment(apartmentData, apartmentInfo);
+
+        const isValidApartmentInfo = requiredFields.every(
+          field => !!apartmentInfo[field],
+        );
+        if (!isValidApartmentInfo) continue;
       } catch (error) {
         this.logger.error(error);
       }

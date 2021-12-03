@@ -1,6 +1,7 @@
 import { HttpStatus, Logger } from '@nestjs/common';
 import axios, { AxiosRequestConfig } from 'axios';
 import cheerio from 'cheerio';
+import { JSDOM, VirtualConsole } from 'jsdom';
 import { DEFAULT_TIMEOUT, ECONNABORTED } from 'common/constants';
 import { capitalizeWords } from 'common/utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
@@ -23,14 +24,15 @@ export class HaloOglasiProvider implements Provider {
 
   private readonly atticKey = 'PTK';
   private readonly floor = {
-    SU: 'basement',
+    SUT: 'basement',
+    PSUT: 'semi-basement',
     PR: 'ground floor',
-    NPR: 'low ground floor',
     VPR: 'high ground floor',
     [this.atticKey]: 'attic',
   };
 
   private readonly domainUrl = 'https://www.halooglasi.com';
+  private readonly imageBaseUrl = 'https://img.halooglasi.com';
   private readonly logoUrl = HALO_OGLASI_LOGO_URL;
   private readonly logger = new Logger(HaloOglasiProvider.name);
 
@@ -124,7 +126,6 @@ export class HaloOglasiProvider implements Provider {
       try {
         const apartment = this.parseApartmentInfoFromHtml(element, filter);
         if (Object.keys(apartment).length > 0) {
-          apartment.place = apartment.place || apartment.municipality;
           apartment.rentOrSale = filter.rentOrSale;
           apartment.url = this.domainUrl + apartment.url;
           apartmentList.push(apartment);
@@ -159,30 +160,6 @@ export class HaloOglasiProvider implements Provider {
   parseApartmentInfoFromHtml = (element: any, filter: FilterDto): Apartment => {
     const apartment: any = {};
     element.children.forEach((child: any) => {
-      if (child?.attribs?.class === 'product-logo') {
-        const link = child.children.find(c => c.name === 'a');
-        if (link) {
-          const image = link.children.find(c => c.name === 'img');
-          if (image) {
-            apartment.advertiserLogoUrl = image.attribs.src;
-            return;
-          }
-        }
-      }
-
-      if (child?.attribs?.class === 'central-feature-wrapper') {
-        if (child.children.length) {
-          const elem = child.children.find(
-            c => c.attribs.class === 'central-feature',
-          );
-          if (elem && elem.children.length > 0) {
-            const priceValue = elem.children[0].attribs['data-value'];
-            apartment.price = Number(priceValue.split('.').join(''));
-            return;
-          }
-        }
-      }
-
       const imageWrapper = child?.children?.find(
         c => c.attribs?.class === 'pi-img-wrapper',
       );
@@ -190,47 +167,7 @@ export class HaloOglasiProvider implements Provider {
         const link = imageWrapper.children.find(c => c.name === 'a');
         if (link) {
           apartment.url = link.attribs.href;
-          const img = link.children.find(c => c.name === 'img');
-          if (img) {
-            apartment.coverPhotoUrl = img.attribs.src;
-          }
         }
-      }
-
-      const locationInfo = child?.children?.find(
-        c => c.attribs?.class === 'subtitle-places',
-      );
-      if (locationInfo) {
-        const addressIndex = locationInfo.children.length - 1;
-
-        const municipalityInfo = locationInfo.children[1];
-        const municipalityTextInfo = municipalityInfo.children[0].data;
-        apartment.municipality = municipalityTextInfo.trim();
-
-        if (addressIndex === 3) {
-          const placeInfo = locationInfo.children[2];
-          const placeTextInfo = placeInfo.children[0].data;
-          apartment.place = placeTextInfo.trim();
-        }
-
-        const addressInfo = locationInfo.children[addressIndex];
-        const addressTextInfo = addressInfo.children[0].data;
-        apartment.address = addressTextInfo.trim();
-      }
-
-      const otherDetails = child?.children?.find(
-        c => c.attribs?.class === 'product-features ',
-      );
-      if (otherDetails) {
-        const sizeInfo = otherDetails.children[0];
-        const sizeTextInfo = sizeInfo.children[0].children[0].data;
-        const size = sizeTextInfo.trim().split(' ');
-        const sizeValue = size[0].split(',').join('.');
-        apartment.size = Number(sizeValue);
-
-        const structureInfo = otherDetails.children[1];
-        const structureTextInfo = structureInfo.children[0].children[0].data.trim();
-        apartment.structure = structureTextInfo;
       }
     });
 
@@ -238,31 +175,12 @@ export class HaloOglasiProvider implements Provider {
   };
 
   parseApartmentInfo = (apartmentInfo): Apartment => {
-    const municipalitiesMap = {
-      'Opština Čukarica': 'Čukarica',
-      'Opština Novi Beograd': 'Novi Beograd',
-      'Opština Palilula': 'Palilula',
-      'Opština Rakovica': 'Rakovica',
-      'Opština Savski venac': 'Savski venac',
-      'Opština Stari grad': 'Stari grad',
-      'Opština Voždovac': 'Voždovac',
-      'Opština Vračar': 'Vračar',
-      'Opština Zemun': 'Zemun',
-      'Opština Zvezdara': 'Zvezdara',
-    };
     const apartmentId = this.getIdFromUrl(apartmentInfo.url);
 
     Object.assign(apartmentInfo, {
-      municipality: municipalitiesMap[apartmentInfo.municipality],
       id: `${this.providerName}_${apartmentId}`,
       apartmentId,
       providerName: this.providerName,
-      ...(municipalitiesMap[apartmentInfo.place] && {
-        place: municipalitiesMap[apartmentInfo.place],
-      }),
-      heatingTypes: [],
-      furnished: 'furnished',
-      floor: 1,
     });
 
     return apartmentInfo;
@@ -272,7 +190,101 @@ export class HaloOglasiProvider implements Provider {
     return parseFloor.call(this, floorData, this.atticKey, totalFloors);
   }
 
-  updateInfoFromApartment = (apartmentData, apartmentInfo: Apartment): void => {
-    return;
+  updateInfoFromApartment = (
+    apartmentDataHtml: string,
+    apartmentInfo: Apartment,
+  ): void => {
+    try {
+      const virtualConsole = new VirtualConsole();
+      const dom = new JSDOM(apartmentDataHtml, {
+        runScripts: 'dangerously',
+        virtualConsole,
+      });
+
+      const apartmentData = dom?.window?.QuidditaEnvironment?.CurrentClassified;
+      const advertiserData =
+        dom?.window?.QuidditaEnvironment?.CurrentContactData?.Advertiser;
+
+      const floor = this.parseFloor(
+        apartmentData?.sprat_s,
+        apartmentData?.sprat_od_s,
+      );
+
+      const furnishedMap = {
+        562: 'furnished',
+        563: 'semi-furnished',
+        564: 'empty',
+      };
+
+      const heatingTypesMap: Record<number, string> = {
+        1542: 'district',
+        1543: 'electricity',
+        1544: 'storage heater',
+        1545: 'gas',
+        1546: 'underfloor',
+        1547: 'tile stove',
+        1548: 'norwegian radiators',
+        1549: 'marble radiators',
+        1550: 'thermal pump',
+      };
+
+      const municipalitiesMap = {
+        40381: 'Čukarica',
+        40574: 'Novi Beograd',
+        40761: 'Palilula',
+        40769: 'Rakovica',
+        40772: 'Savski venac',
+        40776: 'Stari grad',
+        40783: 'Voždovac',
+        40784: 'Vračar',
+        40787: 'Zemun',
+        40788: 'Zvezdara',
+      };
+
+      const advertiserName =
+        apartmentData.oglasivac_nekretnine_s !== 'Vlasnik' &&
+        advertiserData?.DisplayName;
+      const address = apartmentData.ulica_t;
+      const [coverPhotoUrl] = apartmentData.ImageURLs;
+      const furnished = furnishedMap[apartmentData.namestenost_id_l];
+
+      const heatingType = heatingTypesMap[apartmentData.grejanje_id_l];
+      const heatingTypes = heatingType ? [heatingType] : [];
+
+      let location;
+      const locationArray = apartmentData.GeoLocationRPT?.split(',');
+      if (locationArray.length === 2) {
+        location = {
+          latitude: locationArray[0],
+          longitude: locationArray[1],
+        };
+      }
+      const municipalityId = apartmentData.lokacija_id_l;
+      const municipality = municipalitiesMap[municipalityId];
+
+      const place = apartmentData.mikrolokacija_s;
+      const price = apartmentData.cena_d;
+      const size = apartmentData.kvadratura_d;
+      const structure = apartmentData.broj_soba_s;
+
+      Object.assign(apartmentInfo, {
+        ...(address && { address: capitalizeWords(address) }),
+        ...(advertiserName && { advertiserName }),
+        ...(coverPhotoUrl && {
+          coverPhotoUrl: this.imageBaseUrl + coverPhotoUrl,
+        }),
+        ...(floor && { floor }),
+        ...(furnished && { furnished }),
+        heatingTypes,
+        ...(location && { location }),
+        ...(municipality && { municipality }),
+        ...(place && { place }),
+        ...(price && { price }),
+        ...(size && { size }),
+        ...(structure && { structure }),
+      });
+    } catch (error) {
+      this.logger.error(error);
+    }
   };
 }

@@ -19,4 +19,6 @@ export const requiredFields = [
   'coverPhotoUrl',
   'floor',
   'municipality',
+  'place',
+  'price',
 ];

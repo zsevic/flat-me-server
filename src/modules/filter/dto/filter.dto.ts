@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import {
+  ArrayNotEmpty,
   IsEnum,
   IsNotEmpty,
   IsOptional,
@@ -16,10 +17,10 @@ import {
 import { RentOrSale } from '../filter.enums';
 
 export class FilterDto {
-  @ValidateIf((dto: FilterDto) => dto.rentOrSale === 'rent')
+  @ValidateIf((dto: FilterDto): boolean => dto.rentOrSale === RentOrSale.rent)
   @Validate(ArrayContainsValidator, FURNISHED)
   @Type(() => String)
-  @IsNotEmpty()
+  @ArrayNotEmpty()
   furnished: string[];
 
   @IsNotEmpty()
@@ -32,7 +33,7 @@ export class FilterDto {
 
   @Validate(ArrayContainsValidator, MUNICIPALITIES)
   @Type(() => String)
-  @IsNotEmpty()
+  @ArrayNotEmpty()
   municipalities: string[];
 
   @IsNotEmpty()
@@ -41,7 +42,7 @@ export class FilterDto {
 
   @Validate(ArrayContainsValidator, STRUCTURES)
   @Type(() => Number)
-  @IsNotEmpty()
+  @ArrayNotEmpty()
   structures: number[];
 
   @Validate(ArrayContainsValidator, Object.keys(floorFilters))

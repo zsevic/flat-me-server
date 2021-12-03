@@ -20,6 +20,7 @@ export const floorFilters = {
   'not-ground-floor': [
     'cellar',
     'basement',
+    'semi-basement',
     'low ground floor',
     'ground floor',
     'high ground floor',
