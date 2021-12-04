@@ -12,7 +12,6 @@ import {
   createRequestForApartment,
   parseFloor,
 } from './utils';
-import { HALO_OGLASI_LOGO_URL } from '../apartment.constants';
 import { Apartment } from '../apartment.interface';
 
 export class HaloOglasiProvider implements Provider {
@@ -33,7 +32,6 @@ export class HaloOglasiProvider implements Provider {
 
   private readonly domainUrl = 'https://www.halooglasi.com';
   private readonly imageBaseUrl = 'https://img.halooglasi.com';
-  private readonly logoUrl = HALO_OGLASI_LOGO_URL;
   private readonly logger = new Logger(HaloOglasiProvider.name);
 
   get baseUrl() {
