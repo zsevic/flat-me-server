@@ -274,6 +274,7 @@ describe('HaloOglasi', () => {
               ulica_t: 'street 23',
               GeoLocationRPT: '40,20',
               ImageURLs: ['/image-url'],
+              ValidFrom: '2021-12-03T11:13:53Z',
             },
             CurrentContactData: {
               Advertiser: {
@@ -295,6 +296,7 @@ describe('HaloOglasi', () => {
         location: { latitude: 40, longitude: 20 },
         municipality: 'Rakovica',
         place: 'Lion',
+        postedAt: '2021-12-03T11:13:53Z',
         price: 250,
         size: 43,
         structure: 1.5,

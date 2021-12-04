@@ -71,10 +71,9 @@ export class ApartmentEntity extends BaseEntity {
 
   @Column({
     name: 'posted_at',
-    nullable: true,
     type: 'timestamp',
   })
-  postedAt?: Date;
+  postedAt: Date;
 
   @Column()
   price: number;

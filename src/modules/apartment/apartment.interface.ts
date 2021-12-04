@@ -27,7 +27,7 @@ export interface Apartment {
 
   place: string;
 
-  postedAt?: Date;
+  postedAt: Date;
 
   price: number;
 

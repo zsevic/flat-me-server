@@ -209,6 +209,10 @@ export class CetiriZidaProvider implements Provider {
       apartmentData?.totalFloors,
     );
 
+    const postedAt =
+      apartmentData?.boostedOrFeaturedOn ||
+      apartmentData?.lastBoostedAt ||
+      apartmentData?.renewedAt;
     let location;
     const { latitude, longitude } = apartmentData;
     if (latitude && longitude) {
@@ -223,6 +227,7 @@ export class CetiriZidaProvider implements Provider {
       ...(advertiserName && { advertiserName }),
       ...(floor && { floor }),
       ...(location?.latitude && location?.longitude && { location }),
+      ...(postedAt && { postedAt: new Date(postedAt) }),
     });
   };
 }

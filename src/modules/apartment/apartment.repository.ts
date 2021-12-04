@@ -91,6 +91,7 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
       where: query,
       skip: getSkip({ pageNumber, limitPerPage }),
       order: {
+        postedAt: 'DESC',
         createdAt: 'DESC',
       },
       take: limitPerPage,

@@ -243,6 +243,7 @@ export class CityExpertProvider implements Provider {
       },
       municipality: apartmentInfo.municipality,
       place: apartmentInfo.municipality,
+      postedAt: new Date(apartmentInfo.firstPublished),
       price: apartmentInfo.price,
       rentOrSale: rentOrSaleField[apartmentInfo.rentOrSale],
       size: apartmentInfo.size,

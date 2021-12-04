@@ -20,6 +20,7 @@ export const requiredFields = [
   'floor',
   'municipality',
   'place',
+  'postedAt',
   'price',
   'structure',
 ];

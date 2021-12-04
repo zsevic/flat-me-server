@@ -254,6 +254,7 @@ export class HaloOglasiProvider implements Provider {
       const municipality = municipalitiesMap[municipalityId];
 
       const place = apartmentData.mikrolokacija_s;
+      const postedAt = apartmentData.ValidFrom;
       const price = apartmentData.cena_d;
       const size = apartmentData.kvadratura_d;
       const structure =
@@ -271,6 +272,7 @@ export class HaloOglasiProvider implements Provider {
         ...(location && { location }),
         ...(municipality && { municipality }),
         ...(place && { place }),
+        ...(postedAt && { postedAt: new Date(postedAt) }),
         ...(price && { price }),
         ...(size && { size }),
         ...(structure && { structure }),

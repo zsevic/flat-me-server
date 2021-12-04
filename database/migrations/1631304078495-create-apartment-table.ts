@@ -72,7 +72,6 @@ export class CreateApartmentTable1631304078495 implements MigrationInterface {
           {
             name: 'posted_at',
             type: 'timestamp',
-            isNullable: true,
           },
           {
             name: 'price',
