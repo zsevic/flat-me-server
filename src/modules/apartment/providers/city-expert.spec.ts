@@ -373,6 +373,7 @@ describe('CityExpert', () => {
         location: { latitude: 44.79498, longitude: 20.47002 },
         municipality: 'Vračar',
         place: 'Vračar',
+        postedAt: new Date('2021-06-28T17:20:08Z'),
         rentOrSale: 'sale',
         size: 37,
         structure: 1.5,

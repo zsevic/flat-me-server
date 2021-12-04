@@ -107,6 +107,7 @@ describe('ApartmentRepository', () => {
         skip: getSkip(defaultPaginationParams),
         take: DEFAULT_LIMIT_PER_PAGE,
         order: {
+          postedAt: 'DESC',
           createdAt: 'DESC',
         },
       });
@@ -162,12 +163,13 @@ describe('ApartmentRepository', () => {
         skip: getSkip(defaultPaginationParams),
         take: DEFAULT_LIMIT_PER_PAGE,
         order: {
+          postedAt: 'DESC',
           createdAt: 'DESC',
         },
       });
     });
 
-    it('should return new apartments', async () => {
+    it('should return new apartments sorted by postedAt value', async () => {
       const filter = {
         rentOrSale: 'rent',
         municipalities: ['Palilula'],
@@ -225,6 +227,7 @@ describe('ApartmentRepository', () => {
         skip: getSkip(defaultPaginationParams),
         take: DEFAULT_LIMIT_PER_PAGE,
         order: {
+          postedAt: 'DESC',
           createdAt: 'DESC',
         },
       });
