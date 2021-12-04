@@ -256,7 +256,8 @@ export class HaloOglasiProvider implements Provider {
       const place = apartmentData.mikrolokacija_s;
       const price = apartmentData.cena_d;
       const size = apartmentData.kvadratura_d;
-      const structure = apartmentData.broj_soba_s;
+      const structure =
+        apartmentData?.broj_soba_s !== '5+' && apartmentData.broj_soba_s;
 
       Object.assign(apartmentInfo, {
         ...(address && { address: capitalizeWords(address) }),

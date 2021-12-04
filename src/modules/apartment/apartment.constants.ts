@@ -21,4 +21,5 @@ export const requiredFields = [
   'municipality',
   'place',
   'price',
+  'structure',
 ];
