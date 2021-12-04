@@ -151,7 +151,7 @@ export class ApartmentService {
           apartmentInfo.url,
         ).request;
         if (!apartmentData) continue;
-        provider.updateInfoFromApartment(apartmentData, apartmentInfo);
+        provider.updateApartmentInfo(apartmentData, apartmentInfo);
 
         const isValidApartmentInfo = requiredFields.every(
           field => !!apartmentInfo[field],

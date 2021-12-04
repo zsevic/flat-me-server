@@ -16,5 +16,5 @@ export interface Provider {
   isApartmentInactive(id: string, url?: string): Promise<boolean>;
   parseApartmentInfo(apartmentInfo): Apartment;
   parseFloor(floorData: string, totalFloor?: number): string;
-  updateInfoFromApartment(apartmentData, apartmentInfo: Apartment): void;
+  updateApartmentInfo(apartmentData, apartmentInfo: Apartment): void;
 }

@@ -294,7 +294,7 @@ describe('CetiriZida', () => {
     });
   });
 
-  describe('updateInfoFromApartment', () => {
+  describe('updateApartmentInfo', () => {
     it('should add location info', () => {
       const provider = new CetiriZidaProvider();
       const apartmentInfo: Partial<Apartment> = {};
@@ -304,7 +304,7 @@ describe('CetiriZida', () => {
       };
 
       // @ts-ignore
-      provider.updateInfoFromApartment(apartmentData, apartmentInfo);
+      provider.updateApartmentInfo(apartmentData, apartmentInfo);
 
       expect(apartmentInfo.location.latitude).toEqual(apartmentData.latitude);
       expect(apartmentInfo.location.longitude).toEqual(apartmentData.longitude);
@@ -321,7 +321,7 @@ describe('CetiriZida', () => {
       };
 
       // @ts-ignore
-      provider.updateInfoFromApartment(apartmentData, apartmentInfo);
+      provider.updateApartmentInfo(apartmentData, apartmentInfo);
 
       expect(apartmentInfo.floor).toEqual('attic');
     });
@@ -336,7 +336,7 @@ describe('CetiriZida', () => {
       };
 
       // @ts-ignore
-      provider.updateInfoFromApartment(apartmentData, apartmentInfo);
+      provider.updateApartmentInfo(apartmentData, apartmentInfo);
 
       expect(apartmentInfo.floor).toEqual('cellar');
     });
@@ -351,7 +351,7 @@ describe('CetiriZida', () => {
       };
 
       // @ts-ignore
-      provider.updateInfoFromApartment(apartmentData, apartmentInfo);
+      provider.updateApartmentInfo(apartmentData, apartmentInfo);
 
       expect(apartmentInfo.floor).toEqual(apartmentData.floor);
     });
@@ -364,7 +364,7 @@ describe('CetiriZida', () => {
       const apartmentData = {};
 
       // @ts-ignore
-      provider.updateInfoFromApartment(apartmentData, apartmentInfo);
+      provider.updateApartmentInfo(apartmentData, apartmentInfo);
 
       expect(apartmentInfo.advertiserName).toEqual(
         apartmentInfo.advertiserName,
@@ -385,7 +385,7 @@ describe('CetiriZida', () => {
       };
 
       // @ts-ignore
-      provider.updateInfoFromApartment(apartmentData, apartmentInfo);
+      provider.updateApartmentInfo(apartmentData, apartmentInfo);
 
       expect(apartmentInfo.advertiserName).toEqual(
         apartmentData.author.agency.title,

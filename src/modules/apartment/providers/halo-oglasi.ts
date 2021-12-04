@@ -1,7 +1,7 @@
 import { HttpStatus, Logger } from '@nestjs/common';
 import axios, { AxiosRequestConfig } from 'axios';
 import cheerio from 'cheerio';
-import { JSDOM, VirtualConsole } from 'jsdom';
+import jsdom from 'jsdom';
 import { DEFAULT_TIMEOUT, ECONNABORTED } from 'common/constants';
 import { capitalizeWords } from 'common/utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
@@ -180,13 +180,13 @@ export class HaloOglasiProvider implements Provider {
     return parseFloor.call(this, floorData, this.atticKey, totalFloors);
   }
 
-  updateInfoFromApartment = (
+  updateApartmentInfo = (
     apartmentDataHtml: string,
     apartmentInfo: Apartment,
   ): void => {
     try {
-      const virtualConsole = new VirtualConsole();
-      const dom = new JSDOM(apartmentDataHtml, {
+      const virtualConsole = new jsdom.VirtualConsole();
+      const dom = new jsdom.JSDOM(apartmentDataHtml, {
         runScripts: 'dangerously',
         virtualConsole,
       });
