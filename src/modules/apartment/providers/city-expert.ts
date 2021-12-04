@@ -238,8 +238,8 @@ export class CityExpertProvider implements Provider {
       furnished: furnished[apartmentInfo.furnished],
       heatingTypes,
       location: {
-        latitude,
-        longitude,
+        latitude: Number(latitude),
+        longitude: Number(longitude),
       },
       municipality: apartmentInfo.municipality,
       place: apartmentInfo.municipality,

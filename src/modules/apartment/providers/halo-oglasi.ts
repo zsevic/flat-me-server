@@ -254,9 +254,10 @@ export class HaloOglasiProvider implements Provider {
       let location;
       const locationArray = apartmentData.GeoLocationRPT?.split(',');
       if (locationArray.length === 2) {
+        const [latitude, longitude] = locationArray;
         location = {
-          latitude: locationArray[0],
-          longitude: locationArray[1],
+          latitude: Number(latitude),
+          longitude: Number(longitude),
         };
       }
       const municipalityId = apartmentData.lokacija_id_l;
