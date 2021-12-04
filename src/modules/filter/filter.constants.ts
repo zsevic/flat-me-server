@@ -39,14 +39,14 @@ const baseFilter = {
 const rentFilter: FilterDto = {
   ...baseFilter,
   furnished: FURNISHED,
-  maxPrice: 500,
+  maxPrice: 2000,
   rentOrSale: RentOrSale.rent,
 };
 
 const saleFilter: FilterDto = {
   ...baseFilter,
   furnished: [],
-  maxPrice: 200000,
+  maxPrice: 500000,
   rentOrSale: RentOrSale.sale,
 };
 
