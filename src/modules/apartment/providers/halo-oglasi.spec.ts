@@ -1,10 +1,12 @@
 import { HttpStatus } from '@nestjs/common';
 import axios from 'axios';
+import jsdom from 'jsdom';
 import { DEFAULT_TIMEOUT, ECONNABORTED } from 'common/constants';
 import { RentOrSale } from 'modules/filter/filter.enums';
 import { HaloOglasiProvider } from './halo-oglasi';
 
 jest.mock('axios');
+jest.mock('jsdom');
 
 describe('HaloOglasi', () => {
   describe('createRequestConfig', () => {
@@ -250,6 +252,59 @@ describe('HaloOglasi', () => {
       const result = provider.parseApartmentInfo(apartmentInfo);
 
       expect(result).toEqual(parsedApartmentInfo);
+    });
+  });
+
+  describe('updateApartmentInfo', () => {
+    it('should update apartment info', () => {
+      const dom = {
+        window: {
+          QuidditaEnvironment: {
+            CurrentClassified: {
+              broj_soba_s: 1.5,
+              cena_d: 250,
+              grejanje_id_l: 1542,
+              kvadratura_d: 43,
+              lokacija_id_l: 40769,
+              mikrolokacija_s: 'Lion',
+              namestenost_id_l: 562,
+              oglasivac_nekretnine_s: 'Agencija',
+              sprat_s: 2,
+              sprat_od_s: 5,
+              ulica_t: 'street 23',
+              GeoLocationRPT: '40,20',
+              ImageURLs: ['/image-url'],
+            },
+            CurrentContactData: {
+              Advertiser: {
+                DisplayName: 'Agencija',
+              },
+            },
+          },
+        },
+      };
+      jsdom.JSDOM.mockReturnValue(dom);
+      const apartmentInfo = {};
+      const updatedApartmentInfo = {
+        address: 'Street 23',
+        advertiserName: 'Agencija',
+        coverPhotoUrl: 'https://img.halooglasi.com/image-url',
+        floor: 2,
+        furnished: 'furnished',
+        heatingTypes: ['district'],
+        location: { latitude: 40, longitude: 20 },
+        municipality: 'Rakovica',
+        place: 'Lion',
+        price: 250,
+        size: 43,
+        structure: 1.5,
+      };
+
+      const provider = new HaloOglasiProvider();
+      // @ts-ignore
+      provider.updateApartmentInfo('html', apartmentInfo);
+
+      expect(apartmentInfo).toEqual(updatedApartmentInfo);
     });
   });
 });

@@ -235,7 +235,7 @@ export class HaloOglasiProvider implements Provider {
         apartmentData.oglasivac_nekretnine_s !== 'Vlasnik' &&
         advertiserData?.DisplayName;
       const address = apartmentData.ulica_t;
-      const [coverPhotoUrl] = apartmentData.ImageURLs;
+      const photosUrls = apartmentData?.ImageURLs;
       const furnished = furnishedMap[apartmentData.namestenost_id_l];
 
       const heatingType = heatingTypesMap[apartmentData.grejanje_id_l];
@@ -243,7 +243,7 @@ export class HaloOglasiProvider implements Provider {
 
       let location;
       const locationArray = apartmentData.GeoLocationRPT?.split(',');
-      if (locationArray.length === 2) {
+      if (locationArray?.length === 2) {
         const [latitude, longitude] = locationArray;
         location = {
           latitude: Number(latitude),
@@ -261,8 +261,8 @@ export class HaloOglasiProvider implements Provider {
       Object.assign(apartmentInfo, {
         ...(address && { address: capitalizeWords(address) }),
         ...(advertiserName && { advertiserName }),
-        ...(coverPhotoUrl && {
-          coverPhotoUrl: this.imageBaseUrl + coverPhotoUrl,
+        ...(photosUrls?.length > 0 && {
+          coverPhotoUrl: this.imageBaseUrl + photosUrls[0],
         }),
         ...(floor && { floor }),
         ...(furnished && { furnished }),
