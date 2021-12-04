@@ -97,7 +97,6 @@ export class TasksService {
   @Transactional()
   private async sendNewApartmentsByFilter(filter: Filter): Promise<void> {
     await this.tokenService.deleteTokenByFilterId(filter.id);
-    this.logger.log(`Filter: ${JSON.stringify(filter)}`);
 
     const apartmentList = await this.apartmentService.getApartmentListFromDatabaseByFilter(
       filter,
