@@ -90,6 +90,37 @@ describe('HaloOglasi', () => {
     });
   });
 
+  describe('getResults', () => {
+    it("should return empty apartment list when apartments can't be parsed from html", () => {
+      const apartmentUrl = '/url';
+      const html = `<div><a href="${apartmentUrl}">link</a></div>`;
+      const result = [];
+
+      const provider = new HaloOglasiProvider();
+      // @ts-ignore
+      const apartmentList = provider.getResults(html, { rentOrSale: 'rent' });
+
+      expect(apartmentList).toEqual(result);
+    });
+
+    it('should return apartment list', () => {
+      const apartmentUrl = '/url';
+      const html = `<div class="product-title"><a href="${apartmentUrl}">link</a></div>`;
+      const result = [
+        {
+          url: 'https://www.halooglasi.com' + apartmentUrl,
+          rentOrSale: 'rent',
+        },
+      ];
+
+      const provider = new HaloOglasiProvider();
+      // @ts-ignore
+      const apartmentList = provider.getResults(html, { rentOrSale: 'rent' });
+
+      expect(apartmentList).toEqual(result);
+    });
+  });
+
   describe('hasNextPage', () => {
     it('should return true', () => {
       const provider = new HaloOglasiProvider();
