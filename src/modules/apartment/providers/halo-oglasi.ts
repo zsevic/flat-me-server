@@ -38,10 +38,6 @@ export class HaloOglasiProvider implements Provider {
     return this.domainUrl + '/nekretnine';
   }
 
-  getSearchUrl(rentOrSale: string) {
-    return `${this.baseUrl}/${rentOrSale}-stanova`;
-  }
-
   createRequest(filter: FilterDto) {
     return createRequest.call(this, filter);
   }
@@ -104,6 +100,12 @@ export class HaloOglasiProvider implements Provider {
     apartmentId: string,
     url: string,
   ): AxiosRequestConfig {
+    if (!url) {
+      throw new Error(
+        `Can't create request configuration for apartment ${apartmentId}, url is missing`,
+      );
+    }
+
     return createRequestConfigForApartment.call(this, apartmentId, url);
   }
 
@@ -135,6 +137,10 @@ export class HaloOglasiProvider implements Provider {
 
     return apartmentList;
   };
+
+  private getSearchUrl(rentOrSale: string) {
+    return `${this.baseUrl}/${rentOrSale}-stanova`;
+  }
 
   hasNextPage = (): boolean => true;
 

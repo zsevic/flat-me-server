@@ -68,6 +68,28 @@ describe('HaloOglasi', () => {
     });
   });
 
+  describe('createRequestConfigForApartment', () => {
+    it('should throw an error when url for apartment is missing', () => {
+      const provider = new HaloOglasiProvider();
+
+      expect(() =>
+        provider.createRequestConfigForApartment('id', null),
+      ).toThrowError();
+    });
+
+    it('should create request config for given apartment', () => {
+      const provider = new HaloOglasiProvider();
+      const config = {
+        url: 'url',
+        method: 'GET',
+      };
+
+      expect(
+        provider.createRequestConfigForApartment('id', config.url),
+      ).toEqual(config);
+    });
+  });
+
   describe('hasNextPage', () => {
     it('should return true', () => {
       const provider = new HaloOglasiProvider();
