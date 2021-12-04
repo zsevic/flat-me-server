@@ -369,7 +369,7 @@ describe('CityExpert', () => {
         floor: 'high ground floor',
         furnished: 'semi-furnished',
         heatingTypes: ['underfloor'],
-        location: { latitude: '44.79498', longitude: '20.47002' },
+        location: { latitude: 44.79498, longitude: 20.47002 },
         municipality: 'Vračar',
         place: 'Vračar',
         rentOrSale: 'sale',
