@@ -203,7 +203,7 @@ export class CetiriZidaProvider implements Provider {
     return parseFloor.call(this, floorData, this.atticKey, totalFloors);
   }
 
-  updateInfoFromApartment = (apartmentData, apartmentInfo: Apartment): void => {
+  updateApartmentInfo = (apartmentData, apartmentInfo: Apartment): void => {
     const floor = this.parseFloor(
       apartmentData.floor,
       apartmentData?.totalFloors,

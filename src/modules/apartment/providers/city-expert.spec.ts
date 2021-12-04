@@ -218,6 +218,7 @@ describe('CityExpert', () => {
 
   describe('isApartmentInactive', () => {
     const id = '3546-BR';
+    const providerPrefix = 'cityExpert';
 
     it('should return undefined for invalid id', async () => {
       const provider = new CityExpertProvider();
@@ -236,7 +237,7 @@ describe('CityExpert', () => {
       });
 
       const isApartmentInactive = await provider.isApartmentInactive(
-        `cityExpert_${id}`,
+        `${providerPrefix}_${id}`,
       );
 
       expect(isApartmentInactive).toEqual(true);
@@ -255,7 +256,7 @@ describe('CityExpert', () => {
       });
 
       const isApartmentInactive = await provider.isApartmentInactive(
-        `cityExpert_${id}`,
+        `${providerPrefix}_${id}`,
       );
 
       expect(isApartmentInactive).toEqual(true);
@@ -274,7 +275,7 @@ describe('CityExpert', () => {
       });
 
       const isApartmentInactive = await provider.isApartmentInactive(
-        `cityExpert_${id}`,
+        `${providerPrefix}_${id}`,
       );
 
       expect(isApartmentInactive).toEqual(true);
@@ -293,7 +294,7 @@ describe('CityExpert', () => {
       });
 
       const isApartmentInactive = await provider.isApartmentInactive(
-        `cityExpert_${id}`,
+        `${providerPrefix}_${id}`,
       );
 
       expect(isApartmentInactive).toEqual(true);
@@ -310,7 +311,7 @@ describe('CityExpert', () => {
       });
 
       const isApartmentInactive = await provider.isApartmentInactive(
-        `cityExpert_${id}`,
+        `${providerPrefix}_${id}`,
       );
 
       expect(isApartmentInactive).toEqual(undefined);
@@ -369,7 +370,7 @@ describe('CityExpert', () => {
         floor: 'high ground floor',
         furnished: 'semi-furnished',
         heatingTypes: ['underfloor'],
-        location: { latitude: '44.79498', longitude: '20.47002' },
+        location: { latitude: 44.79498, longitude: 20.47002 },
         municipality: 'Vračar',
         place: 'Vračar',
         rentOrSale: 'sale',
@@ -406,7 +407,7 @@ describe('CityExpert', () => {
     });
   });
 
-  describe('updateInfoFromApartment', () => {
+  describe('updateApartmentInfo', () => {
     it('should update floor value with attic', () => {
       const provider = new CityExpertProvider();
       const apartmentInfo = {
@@ -420,7 +421,7 @@ describe('CityExpert', () => {
       };
 
       // @ts-ignore
-      provider.updateInfoFromApartment(apartmentData, apartmentInfo);
+      provider.updateApartmentInfo(apartmentData, apartmentInfo);
 
       expect(apartmentInfo.floor).toEqual('attic');
     });
@@ -435,7 +436,7 @@ describe('CityExpert', () => {
       };
 
       // @ts-ignore
-      provider.updateInfoFromApartment(apartmentData, apartmentInfo);
+      provider.updateApartmentInfo(apartmentData, apartmentInfo);
 
       expect(apartmentInfo.floor).toEqual('basement');
     });
@@ -450,7 +451,7 @@ describe('CityExpert', () => {
       };
 
       // @ts-ignore
-      provider.updateInfoFromApartment(apartmentData, apartmentInfo);
+      provider.updateApartmentInfo(apartmentData, apartmentInfo);
 
       expect(apartmentInfo.floor).toEqual(apartmentData.floor);
     });
@@ -465,7 +466,7 @@ describe('CityExpert', () => {
       };
 
       // @ts-ignore
-      provider.updateInfoFromApartment(apartmentData, apartmentInfo);
+      provider.updateApartmentInfo(apartmentData, apartmentInfo);
 
       expect(apartmentInfo.place).toEqual(apartmentData.neighbourhoods[0]);
     });
@@ -478,7 +479,7 @@ describe('CityExpert', () => {
       const apartmentData = {};
 
       // @ts-ignore
-      provider.updateInfoFromApartment(apartmentData, apartmentInfo);
+      provider.updateApartmentInfo(apartmentData, apartmentInfo);
 
       expect(apartmentInfo.place).toEqual(apartmentInfo.place);
     });

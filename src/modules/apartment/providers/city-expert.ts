@@ -238,8 +238,8 @@ export class CityExpertProvider implements Provider {
       furnished: furnished[apartmentInfo.furnished],
       heatingTypes,
       location: {
-        latitude,
-        longitude,
+        latitude: Number(latitude),
+        longitude: Number(longitude),
       },
       municipality: apartmentInfo.municipality,
       place: apartmentInfo.municipality,
@@ -255,7 +255,7 @@ export class CityExpertProvider implements Provider {
     return parseFloor.call(this, floorData, this.atticKey, totalFloors);
   }
 
-  updateInfoFromApartment = (apartmentData, apartmentInfo: Apartment): void => {
+  updateApartmentInfo = (apartmentData, apartmentInfo: Apartment): void => {
     const floor = this.parseFloor(
       apartmentData.floor,
       apartmentData?.onsite?.basInfFloorTotal,

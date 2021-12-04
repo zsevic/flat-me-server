@@ -115,6 +115,7 @@ describe('CetiriZida', () => {
 
   describe('isApartmentInactive', () => {
     const id = 'id';
+    const providerPrefix = 'cetiriZida';
 
     it('should return undefined for invalid id', async () => {
       const provider = new CetiriZidaProvider();
@@ -136,7 +137,7 @@ describe('CetiriZida', () => {
       });
 
       const isApartmentInactive = await provider.isApartmentInactive(
-        `cetiriZida_${id}`,
+        `${providerPrefix}_${id}`,
       );
 
       expect(isApartmentInactive).toEqual(true);
@@ -153,7 +154,7 @@ describe('CetiriZida', () => {
       });
 
       const isApartmentInactive = await provider.isApartmentInactive(
-        `cetiriZida_${id}`,
+        `${providerPrefix}_${id}`,
       );
 
       expect(isApartmentInactive).toEqual(undefined);
@@ -162,13 +163,13 @@ describe('CetiriZida', () => {
       });
     });
 
-    it('should return undefined when connection is aborted', async () => {
+    it('should return undefined when error is thrown', async () => {
       const provider = new CetiriZidaProvider();
       // @ts-ignore
       axios.get.mockRejectedValue(new Error('error'));
 
       const isApartmentInactive = await provider.isApartmentInactive(
-        `cetiriZida_${id}`,
+        `${providerPrefix}_${id}`,
       );
 
       expect(isApartmentInactive).toEqual(undefined);
@@ -183,7 +184,7 @@ describe('CetiriZida', () => {
       axios.get.mockResolvedValue(undefined);
 
       const isApartmentInactive = await provider.isApartmentInactive(
-        `cetiriZida_${id}`,
+        `${providerPrefix}_${id}`,
       );
 
       expect(isApartmentInactive).toEqual(undefined);
@@ -293,7 +294,7 @@ describe('CetiriZida', () => {
     });
   });
 
-  describe('updateInfoFromApartment', () => {
+  describe('updateApartmentInfo', () => {
     it('should add location info', () => {
       const provider = new CetiriZidaProvider();
       const apartmentInfo: Partial<Apartment> = {};
@@ -303,7 +304,7 @@ describe('CetiriZida', () => {
       };
 
       // @ts-ignore
-      provider.updateInfoFromApartment(apartmentData, apartmentInfo);
+      provider.updateApartmentInfo(apartmentData, apartmentInfo);
 
       expect(apartmentInfo.location.latitude).toEqual(apartmentData.latitude);
       expect(apartmentInfo.location.longitude).toEqual(apartmentData.longitude);
@@ -320,7 +321,7 @@ describe('CetiriZida', () => {
       };
 
       // @ts-ignore
-      provider.updateInfoFromApartment(apartmentData, apartmentInfo);
+      provider.updateApartmentInfo(apartmentData, apartmentInfo);
 
       expect(apartmentInfo.floor).toEqual('attic');
     });
@@ -335,7 +336,7 @@ describe('CetiriZida', () => {
       };
 
       // @ts-ignore
-      provider.updateInfoFromApartment(apartmentData, apartmentInfo);
+      provider.updateApartmentInfo(apartmentData, apartmentInfo);
 
       expect(apartmentInfo.floor).toEqual('cellar');
     });
@@ -350,7 +351,7 @@ describe('CetiriZida', () => {
       };
 
       // @ts-ignore
-      provider.updateInfoFromApartment(apartmentData, apartmentInfo);
+      provider.updateApartmentInfo(apartmentData, apartmentInfo);
 
       expect(apartmentInfo.floor).toEqual(apartmentData.floor);
     });
@@ -363,7 +364,7 @@ describe('CetiriZida', () => {
       const apartmentData = {};
 
       // @ts-ignore
-      provider.updateInfoFromApartment(apartmentData, apartmentInfo);
+      provider.updateApartmentInfo(apartmentData, apartmentInfo);
 
       expect(apartmentInfo.advertiserName).toEqual(
         apartmentInfo.advertiserName,
@@ -384,7 +385,7 @@ describe('CetiriZida', () => {
       };
 
       // @ts-ignore
-      provider.updateInfoFromApartment(apartmentData, apartmentInfo);
+      provider.updateApartmentInfo(apartmentData, apartmentInfo);
 
       expect(apartmentInfo.advertiserName).toEqual(
         apartmentData.author.agency.title,

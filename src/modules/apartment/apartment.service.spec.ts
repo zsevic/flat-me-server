@@ -167,7 +167,7 @@ describe('ApartmentService', () => {
         lastCheckedAt,
       );
 
-      expect(isApartmentInactiveSpy).toBeCalledWith(apartmentId);
+      expect(isApartmentInactiveSpy).toBeCalledWith(apartmentId, undefined);
       expect(deleteApartmentSpy).not.toBeCalled();
     });
 
@@ -188,7 +188,7 @@ describe('ApartmentService', () => {
         lastCheckedAt,
       );
 
-      expect(isApartmentInactiveSpy).toBeCalledWith(apartmentId);
+      expect(isApartmentInactiveSpy).toBeCalledWith(apartmentId, undefined);
       expect(deleteApartmentSpy).toBeCalledWith(apartmentId);
     });
   });
@@ -464,7 +464,7 @@ describe('ApartmentService', () => {
             floor: 'high ground floor',
             furnished: 'furnished',
             heatingTypes: ['district'],
-            location: { latitude: '45.79825', longitude: '21.48652' },
+            location: { latitude: 45.79825, longitude: 21.48652 },
             municipality: 'Vračar',
             place: 'Vračar',
             rentOrSale: 'rent',
@@ -508,7 +508,7 @@ describe('ApartmentService', () => {
             floor: 'basement',
             furnished: 'furnished',
             heatingTypes: ['electricity'],
-            location: { latitude: '44.79498', longitude: '20.47002' },
+            location: { latitude: 44.79498, longitude: 20.47002 },
             municipality: 'Vračar',
             place: 'Vračar',
             rentOrSale: 'sale',
@@ -710,185 +710,6 @@ describe('ApartmentService', () => {
       expect(apartmentRepository.saveApartmentList).toHaveBeenCalledWith(
         savedApartmentList,
       );
-    });
-
-    it('should skip saving invalid apartments', async () => {
-      const firstProviderResults = [
-        {
-          total: 2,
-          ads: [
-            {
-              m2: 69,
-              floor: 1,
-              totalFloors: 3,
-              furnished: 'yes',
-              heatingType: 'district',
-              id: '60993e3e7906cd3a4c6832fd',
-              for: 'rent',
-              price: 420,
-              previousPrice: 300,
-              bookmarkCount: 3,
-              registered: 'yes',
-              address: 'Dalmatinska',
-              allowedVirtualSightseeing: false,
-              featuredExpiresAt: '2021-08-25T19:01:41+02:00',
-              featuredCounter: 5,
-              authorId: 57,
-              createdAt: '2021-05-10T16:07:58+02:00',
-              roomCount: 3,
-              description100: 'description',
-              type: 'apartment',
-              structureName: 'Trosoban stan',
-              structureAbbreviation: '3.0 stan',
-              title: 'Dalmatinska',
-              urlPath: '/url',
-              placeNames: ['Zvezdara opština'],
-              agencyAvatarUrlTemplate: 'url',
-              agencyUrl: 'url',
-              imageCount: 15,
-            },
-          ],
-        },
-        {
-          info: {
-            hasNextPage: true,
-          },
-          result: [
-            {
-              uniqueID: '23-BR',
-              propId: 23,
-              statusId: 51,
-              cityId: 1,
-              location: '45.79825, 21.48652',
-              street: 'Cara Nikolaja II',
-              floor: 'VPR',
-              size: 33,
-              structure: '1.5',
-              polygons: ['Vračar'],
-              ptId: 1,
-              price: 450,
-              coverPhoto: 'url.jpg',
-              rentOrSale: 'r',
-              caseId: 57364,
-              caseType: 'BR',
-              underConstruction: false,
-              filed: 0,
-              furnished: 1,
-              ceiling: 2,
-              furnishingArray: [],
-              bldgOptsArray: [],
-              heatingArray: [1],
-              parkingArray: [5],
-              yearOfConstruction: 2,
-              joineryArray: [2],
-              petsArray: [3],
-              otherArray: [],
-              availableFrom: '2021-08-09T11:04:13Z',
-              firstPublished: '2021-08-09T09:22:38Z',
-              pricePerSize: 13.636364,
-            },
-          ],
-        },
-      ];
-      const secondProviderResults = [
-        {
-          total: 2,
-          ads: [
-            {
-              m2: 62,
-              totalFloors: 5,
-              furnished: 'yes',
-              heatingType: 'district',
-              id: '60f99390d9982b10',
-              for: 'rent',
-              price: 500,
-              address: 'Kursulina',
-              deposit: 1,
-              paymentTerm: 'month',
-              allowedVirtualSightseeing: false,
-              featuredExpiresAt: '2021-08-24T09:38:53+02:00',
-              featuredCounter: 3,
-              authorId: 149,
-              createdAt: '2020-04-22T17:49:36+02:00',
-              roomCount: 3,
-              description100: 'description',
-              type: 'apartment',
-              structureName: 'Dvosoban stan',
-              structureAbbreviation: '2.0 stan',
-              title: 'Hram Svetog Save',
-              urlPath: '/url2',
-              placeNames: ['Vračar'],
-              agencyAvatarUrlTemplate: 'url',
-              agencyUrl: 'url',
-              image: { search: { '380x0_fill_0_webp': 'cover-photo-url' } },
-              imageCount: 11,
-            },
-          ],
-        },
-        {
-          info: {
-            hasNextPage: false,
-          },
-          result: [
-            {
-              uniqueID: '44352-BS',
-              propId: 44352,
-              statusId: 51,
-              cityId: 1,
-              location: '44.79498, 20.47002',
-              floor: 'SU',
-              size: 37,
-              structure: '1.5',
-              municipality: 'Vračar',
-              polygons: ['Vračar'],
-              ptId: 1,
-              price: 450,
-              coverPhoto: 'cover.jpg',
-              rentOrSale: 's',
-              caseId: 56305,
-              caseType: 'BS',
-              underConstruction: false,
-              filed: 2,
-              furnished: 1,
-              ceiling: 2,
-              furnishingArray: [],
-              bldgOptsArray: [],
-              heatingArray: [4],
-              parkingArray: [5],
-              yearOfConstruction: 1,
-              joineryArray: [2],
-              petsArray: [],
-              otherArray: [],
-              availableFrom: '0001-01-01T00:00:00Z',
-              firstPublished: '2021-06-28T17:20:08Z',
-              pricePerSize: 2162.162,
-            },
-          ],
-        },
-      ];
-      jest.spyOn(baseProvider, 'getProviderRequests').mockReturnValue([
-        // @ts-ignore
-        { request: {}, provider: cetiriZidaProvider },
-        // @ts-ignore
-        { request: {}, provider: cityExpertProvider },
-      ]);
-
-      jest
-        .spyOn(baseProvider, 'getProviderResults')
-        .mockResolvedValueOnce(firstProviderResults)
-        .mockResolvedValueOnce(secondProviderResults);
-
-      await apartmentService.saveApartmentListFromProviders({
-        furnished: ['furnished'],
-        municipalities: ['Vračar', 'Zvezdara'],
-        minPrice: 400,
-        maxPrice: 500,
-        structures: [1.5, 3.0],
-        rentOrSale: RentOrSale.rent,
-        pageNumber: 1,
-      });
-
-      expect(apartmentRepository.saveApartmentList).not.toHaveBeenCalled();
     });
 
     it('should handle failed requests from providers', async () => {

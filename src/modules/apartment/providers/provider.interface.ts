@@ -5,13 +5,16 @@ import { Apartment } from '../apartment.interface';
 export interface Provider {
   createRequest(filter: FilterDto);
   createRequestConfig(filter: FilterDto): AxiosRequestConfig;
-  createRequestForApartment(apartmentId: string);
-  createRequestConfigForApartment(apartmentId: string): AxiosRequestConfig;
-  getApartmentUrl(apartmentId: string): string;
-  getResults(data);
+  createRequestForApartment(apartmentId: string, url?: string);
+  createRequestConfigForApartment(
+    apartmentId: string,
+    url?: string,
+  ): AxiosRequestConfig;
+  getApartmentUrl?(apartmentId: string): string;
+  getResults(data, filter?: FilterDto);
   hasNextPage(data, pageNumber?: number): boolean;
-  isApartmentInactive(id: string): Promise<boolean>;
+  isApartmentInactive(id: string, url?: string): Promise<boolean>;
   parseApartmentInfo(apartmentInfo): Apartment;
   parseFloor(floorData: string, totalFloor?: number): string;
-  updateInfoFromApartment(apartmentData, apartmentInfo: Apartment): void;
+  updateApartmentInfo(apartmentData, apartmentInfo: Apartment): void;
 }
