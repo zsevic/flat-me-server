@@ -218,6 +218,7 @@ describe('CityExpert', () => {
 
   describe('isApartmentInactive', () => {
     const id = '3546-BR';
+    const providerPrefix = 'cityExpert';
 
     it('should return undefined for invalid id', async () => {
       const provider = new CityExpertProvider();
@@ -236,7 +237,7 @@ describe('CityExpert', () => {
       });
 
       const isApartmentInactive = await provider.isApartmentInactive(
-        `cityExpert_${id}`,
+        `${providerPrefix}_${id}`,
       );
 
       expect(isApartmentInactive).toEqual(true);
@@ -255,7 +256,7 @@ describe('CityExpert', () => {
       });
 
       const isApartmentInactive = await provider.isApartmentInactive(
-        `cityExpert_${id}`,
+        `${providerPrefix}_${id}`,
       );
 
       expect(isApartmentInactive).toEqual(true);
@@ -274,7 +275,7 @@ describe('CityExpert', () => {
       });
 
       const isApartmentInactive = await provider.isApartmentInactive(
-        `cityExpert_${id}`,
+        `${providerPrefix}_${id}`,
       );
 
       expect(isApartmentInactive).toEqual(true);
@@ -293,7 +294,7 @@ describe('CityExpert', () => {
       });
 
       const isApartmentInactive = await provider.isApartmentInactive(
-        `cityExpert_${id}`,
+        `${providerPrefix}_${id}`,
       );
 
       expect(isApartmentInactive).toEqual(true);
@@ -310,7 +311,7 @@ describe('CityExpert', () => {
       });
 
       const isApartmentInactive = await provider.isApartmentInactive(
-        `cityExpert_${id}`,
+        `${providerPrefix}_${id}`,
       );
 
       expect(isApartmentInactive).toEqual(undefined);

@@ -1,4 +1,6 @@
-import { DEFAULT_TIMEOUT } from 'common/constants';
+import { HttpStatus } from '@nestjs/common';
+import axios from 'axios';
+import { DEFAULT_TIMEOUT, ECONNABORTED } from 'common/constants';
 import { RentOrSale } from 'modules/filter/filter.enums';
 import { HaloOglasiProvider } from './halo-oglasi';
 
@@ -63,6 +65,90 @@ describe('HaloOglasi', () => {
       const requestConfig = provider.createRequestConfig(filter);
 
       expect(requestConfig).toEqual(request);
+    });
+  });
+
+  describe('isApartmentInactive', () => {
+    const id = 'id';
+    const url = 'url';
+    const providerPrefix = 'haloOglasi';
+
+    it('should return undefined when url is missing', async () => {
+      const provider = new HaloOglasiProvider();
+
+      const isApartmentInactive = await provider.isApartmentInactive('id');
+
+      expect(isApartmentInactive).toEqual(undefined);
+    });
+
+    it('should return true when apartment is not found', async () => {
+      const provider = new HaloOglasiProvider();
+      // @ts-ignore
+      axios.get.mockRejectedValue({
+        response: {
+          status: HttpStatus.NOT_FOUND,
+        },
+      });
+
+      const isApartmentInactive = await provider.isApartmentInactive(
+        `${providerPrefix}_${id}`,
+        url,
+      );
+
+      expect(isApartmentInactive).toEqual(true);
+      expect(axios.get).toHaveBeenCalledWith(url, {
+        timeout: DEFAULT_TIMEOUT,
+      });
+    });
+
+    it('should return undefined when connection is aborted', async () => {
+      const provider = new HaloOglasiProvider();
+      // @ts-ignore
+      axios.get.mockRejectedValue({
+        code: ECONNABORTED,
+      });
+
+      const isApartmentInactive = await provider.isApartmentInactive(
+        `${providerPrefix}_${id}`,
+        url,
+      );
+
+      expect(isApartmentInactive).toEqual(undefined);
+      expect(axios.get).toHaveBeenCalledWith(url, {
+        timeout: DEFAULT_TIMEOUT,
+      });
+    });
+
+    it('should return undefined when error is thrown', async () => {
+      const provider = new HaloOglasiProvider();
+      // @ts-ignore
+      axios.get.mockRejectedValue(new Error('error'));
+
+      const isApartmentInactive = await provider.isApartmentInactive(
+        `${providerPrefix}_${id}`,
+        url,
+      );
+
+      expect(isApartmentInactive).toEqual(undefined);
+      expect(axios.get).toHaveBeenCalledWith(url, {
+        timeout: DEFAULT_TIMEOUT,
+      });
+    });
+
+    it('should return undefined when apartment is active', async () => {
+      const provider = new HaloOglasiProvider();
+      // @ts-ignore
+      axios.get.mockResolvedValue(undefined);
+
+      const isApartmentInactive = await provider.isApartmentInactive(
+        `${providerPrefix}_${id}`,
+        url,
+      );
+
+      expect(isApartmentInactive).toEqual(undefined);
+      expect(axios.get).toHaveBeenCalledWith(url, {
+        timeout: DEFAULT_TIMEOUT,
+      });
     });
   });
 

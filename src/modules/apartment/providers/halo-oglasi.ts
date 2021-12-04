@@ -140,6 +140,9 @@ export class HaloOglasiProvider implements Provider {
 
   async isApartmentInactive(id: string, url?: string): Promise<boolean> {
     try {
+      if (!url) {
+        throw new Error(`Url for apartment ${id} is missing`);
+      }
       await axios.get(url, {
         timeout: DEFAULT_TIMEOUT,
       });

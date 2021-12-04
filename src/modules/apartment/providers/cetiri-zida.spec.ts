@@ -115,6 +115,7 @@ describe('CetiriZida', () => {
 
   describe('isApartmentInactive', () => {
     const id = 'id';
+    const providerPrefix = 'cetiriZida';
 
     it('should return undefined for invalid id', async () => {
       const provider = new CetiriZidaProvider();
@@ -136,7 +137,7 @@ describe('CetiriZida', () => {
       });
 
       const isApartmentInactive = await provider.isApartmentInactive(
-        `cetiriZida_${id}`,
+        `${providerPrefix}_${id}`,
       );
 
       expect(isApartmentInactive).toEqual(true);
@@ -153,7 +154,7 @@ describe('CetiriZida', () => {
       });
 
       const isApartmentInactive = await provider.isApartmentInactive(
-        `cetiriZida_${id}`,
+        `${providerPrefix}_${id}`,
       );
 
       expect(isApartmentInactive).toEqual(undefined);
@@ -162,13 +163,13 @@ describe('CetiriZida', () => {
       });
     });
 
-    it('should return undefined when connection is aborted', async () => {
+    it('should return undefined when error is thrown', async () => {
       const provider = new CetiriZidaProvider();
       // @ts-ignore
       axios.get.mockRejectedValue(new Error('error'));
 
       const isApartmentInactive = await provider.isApartmentInactive(
-        `cetiriZida_${id}`,
+        `${providerPrefix}_${id}`,
       );
 
       expect(isApartmentInactive).toEqual(undefined);
@@ -183,7 +184,7 @@ describe('CetiriZida', () => {
       axios.get.mockResolvedValue(undefined);
 
       const isApartmentInactive = await provider.isApartmentInactive(
-        `cetiriZida_${id}`,
+        `${providerPrefix}_${id}`,
       );
 
       expect(isApartmentInactive).toEqual(undefined);
