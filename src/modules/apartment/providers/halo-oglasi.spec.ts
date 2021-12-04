@@ -68,6 +68,14 @@ describe('HaloOglasi', () => {
     });
   });
 
+  describe('hasNextPage', () => {
+    it('should return true', () => {
+      const provider = new HaloOglasiProvider();
+
+      expect(provider.hasNextPage()).toEqual(true);
+    });
+  });
+
   describe('isApartmentInactive', () => {
     const id = 'id';
     const url = 'url';
