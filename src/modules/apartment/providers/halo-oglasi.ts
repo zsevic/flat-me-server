@@ -118,16 +118,16 @@ export class HaloOglasiProvider implements Provider {
 
   getResults = (html: string, filter?: FilterDto) => {
     const $ = cheerio.load(html);
-    const items = $('.product-item');
+    const links = $('.product-title > a');
     const apartmentList = [];
-    items.each((_, element) => {
-      if (!element.children) return;
-
+    links.each((_, element) => {
       try {
-        const apartment = this.parseApartmentInfoFromHtml(element, filter);
-        if (Object.keys(apartment).length > 0) {
-          apartment.rentOrSale = filter.rentOrSale;
-          apartment.url = this.domainUrl + apartment.url;
+        const link = element.attribs.href;
+        if (link) {
+          const apartment = {
+            rentOrSale: filter.rentOrSale,
+            url: this.domainUrl + link,
+          };
           apartmentList.push(apartment);
         }
       } catch (error) {
@@ -156,23 +156,6 @@ export class HaloOglasiProvider implements Provider {
       }
     }
   }
-
-  parseApartmentInfoFromHtml = (element: any, filter: FilterDto): Apartment => {
-    const apartment: any = {};
-    element.children.forEach((child: any) => {
-      const imageWrapper = child?.children?.find(
-        c => c.attribs?.class === 'pi-img-wrapper',
-      );
-      if (imageWrapper) {
-        const link = imageWrapper.children.find(c => c.name === 'a');
-        if (link) {
-          apartment.url = link.attribs.href;
-        }
-      }
-    });
-
-    return apartment;
-  };
 
   parseApartmentInfo = (apartmentInfo): Apartment => {
     const apartmentId = this.getIdFromUrl(apartmentInfo.url);
