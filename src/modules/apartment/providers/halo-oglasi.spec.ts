@@ -179,4 +179,24 @@ describe('HaloOglasi', () => {
       expect(provider.parseFloor('4', 4)).toEqual('attic');
     });
   });
+
+  describe('parseApartmentInfo', () => {
+    it('should return parsed apartment info', () => {
+      const provider = new HaloOglasiProvider();
+
+      const apartmentInfo = {
+        url: 'url/id',
+      };
+      const parsedApartmentInfo = {
+        id: 'haloOglasi_id',
+        apartmentId: 'id',
+        providerName: 'haloOglasi',
+        url: apartmentInfo.url,
+      };
+
+      const result = provider.parseApartmentInfo(apartmentInfo);
+
+      expect(result).toEqual(parsedApartmentInfo);
+    });
+  });
 });

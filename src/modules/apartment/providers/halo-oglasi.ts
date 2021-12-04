@@ -107,7 +107,7 @@ export class HaloOglasiProvider implements Provider {
     return createRequestConfigForApartment.call(this, apartmentId, url);
   }
 
-  getIdFromUrl = (url: string) => {
+  private getApartmentIdFromUrl = (url: string) => {
     const urlParts = url.split('/');
     const [id] = urlParts[urlParts.length - 1].split('?');
 
@@ -159,7 +159,7 @@ export class HaloOglasiProvider implements Provider {
   }
 
   parseApartmentInfo = (apartmentInfo): Apartment => {
-    const apartmentId = this.getIdFromUrl(apartmentInfo.url);
+    const apartmentId = this.getApartmentIdFromUrl(apartmentInfo.url);
 
     Object.assign(apartmentInfo, {
       id: `${this.providerName}_${apartmentId}`,
