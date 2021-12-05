@@ -1,3 +1,4 @@
 export const DEFAULT_TIMEOUT = 3000;
 
 export const ECONNABORTED = 'ECONNABORTED';
+export const ECONNRESET = 'ECONNRESET';

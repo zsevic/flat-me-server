@@ -1,7 +1,7 @@
 import { HttpStatus } from '@nestjs/common';
 import axios from 'axios';
 import jsdom from 'jsdom';
-import { DEFAULT_TIMEOUT, ECONNABORTED } from 'common/constants';
+import { DEFAULT_TIMEOUT, ECONNABORTED, ECONNRESET } from 'common/constants';
 import { RentOrSale } from 'modules/filter/filter.enums';
 import { HaloOglasiProvider } from './halo-oglasi';
 import { apartmentStatusPaused } from '../apartment.constants';
@@ -170,6 +170,24 @@ describe('HaloOglasi', () => {
       // @ts-ignore
       axios.get.mockRejectedValue({
         code: ECONNABORTED,
+      });
+
+      const isApartmentInactive = await provider.isApartmentInactive(
+        `${providerPrefix}_${id}`,
+        url,
+      );
+
+      expect(isApartmentInactive).toEqual(undefined);
+      expect(axios.get).toHaveBeenCalledWith(url, {
+        timeout: DEFAULT_TIMEOUT,
+      });
+    });
+
+    it('should return undefined when connection is aborted', async () => {
+      const provider = new HaloOglasiProvider();
+      // @ts-ignore
+      axios.get.mockRejectedValue({
+        code: ECONNRESET,
       });
 
       const isApartmentInactive = await provider.isApartmentInactive(

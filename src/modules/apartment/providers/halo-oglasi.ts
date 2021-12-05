@@ -2,7 +2,7 @@ import { HttpStatus, Logger } from '@nestjs/common';
 import axios, { AxiosRequestConfig } from 'axios';
 import cheerio from 'cheerio';
 import jsdom from 'jsdom';
-import { DEFAULT_TIMEOUT, ECONNABORTED } from 'common/constants';
+import { DEFAULT_TIMEOUT, ECONNABORTED, ECONNRESET } from 'common/constants';
 import { capitalizeWords } from 'common/utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { Provider } from './provider.interface';
@@ -163,7 +163,7 @@ export class HaloOglasiProvider implements Provider {
       if (apartmentData?.StateId === apartmentStatusPaused) return true;
     } catch (error) {
       if (error.response?.status === HttpStatus.NOT_FOUND) return true;
-      if (error.code === ECONNABORTED) {
+      if ([ECONNABORTED, ECONNRESET].includes(error.code)) {
         this.logger.error(
           `Connection aborted for apartment id ${id}, provider ${this.providerName}`,
         );
