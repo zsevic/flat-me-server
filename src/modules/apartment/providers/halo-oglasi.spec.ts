@@ -4,6 +4,7 @@ import jsdom from 'jsdom';
 import { DEFAULT_TIMEOUT, ECONNABORTED } from 'common/constants';
 import { RentOrSale } from 'modules/filter/filter.enums';
 import { HaloOglasiProvider } from './halo-oglasi';
+import { apartmentStatusPaused } from '../apartment.constants';
 
 jest.mock('axios');
 jest.mock('jsdom');
@@ -209,6 +210,33 @@ describe('HaloOglasi', () => {
       );
 
       expect(isApartmentInactive).toEqual(undefined);
+      expect(axios.get).toHaveBeenCalledWith(url, {
+        timeout: DEFAULT_TIMEOUT,
+      });
+    });
+
+    it('should return true when apartment ad is paused', async () => {
+      const provider = new HaloOglasiProvider();
+      // @ts-ignore
+      axios.get.mockResolvedValue({ data: 'html' });
+
+      const dom = {
+        window: {
+          QuidditaEnvironment: {
+            CurrentClassified: {
+              StateId: apartmentStatusPaused,
+            },
+          },
+        },
+      };
+      jsdom.JSDOM.mockReturnValue(dom);
+
+      const isApartmentInactive = await provider.isApartmentInactive(
+        `${providerPrefix}_${id}`,
+        url,
+      );
+
+      expect(isApartmentInactive).toEqual(true);
       expect(axios.get).toHaveBeenCalledWith(url, {
         timeout: DEFAULT_TIMEOUT,
       });

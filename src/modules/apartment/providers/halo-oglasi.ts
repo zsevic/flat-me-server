@@ -12,6 +12,7 @@ import {
   createRequestForApartment,
   parseFloor,
 } from './utils';
+import { apartmentStatusPaused } from '../apartment.constants';
 import { Apartment } from '../apartment.interface';
 
 export class HaloOglasiProvider implements Provider {
@@ -149,9 +150,17 @@ export class HaloOglasiProvider implements Provider {
       if (!url) {
         throw new Error(`Url for apartment ${id} is missing`);
       }
-      await axios.get(url, {
+      const apartmentDataHtml = await axios.get(url, {
         timeout: DEFAULT_TIMEOUT,
       });
+      const virtualConsole = new jsdom.VirtualConsole();
+      const dom = new jsdom.JSDOM(apartmentDataHtml.data, {
+        runScripts: 'dangerously',
+        virtualConsole,
+      });
+
+      const apartmentData = dom?.window?.QuidditaEnvironment?.CurrentClassified;
+      if (apartmentData?.StateId === apartmentStatusPaused) return true;
     } catch (error) {
       if (error.response?.status === HttpStatus.NOT_FOUND) return true;
       if (error.code === ECONNABORTED) {

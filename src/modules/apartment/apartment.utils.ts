@@ -29,11 +29,14 @@ const structuresMap = {
   3.0: 'trosoban',
 };
 
-const areAddressAndPlaceValid = (apartment: Apartment): boolean =>
+const showMunicipality = (apartment: Apartment): boolean =>
+  !apartment.place ||
+  latinize(apartment.place) !== latinize(apartment.municipality);
+
+const showPlace = (apartment: Apartment): boolean =>
   apartment.place &&
   apartment.address &&
-  latinize(apartment.place) !== latinize(apartment.address) &&
-  apartment.place !== apartment.municipality;
+  latinize(apartment.place) !== latinize(apartment.address);
 
 export const localizeApartment = (apartment: Apartment) => ({
   ...apartment,
@@ -43,6 +46,7 @@ export const localizeApartment = (apartment: Apartment) => ({
   floor: handleFloor(apartment.floor),
   furnished: furnishedMap[apartment.furnished],
   structure: structuresMap[apartment.structure],
-  areAddressAndPlaceValid: areAddressAndPlaceValid(apartment),
+  showMunicipality: showMunicipality(apartment),
+  showPlace: showPlace(apartment),
   isForRent: apartment.rentOrSale === 'rent',
 });

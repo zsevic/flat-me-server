@@ -7,6 +7,8 @@ export const apartmentStatusNotAvailable = 'NOT-AVAILABLE';
 export const apartmentStatusPublished = 'PUBLISHED';
 export const apartmentStatusReserved = 'KAPARISANA';
 
+export const apartmentStatusPaused = 111;
+
 export const CETIRI_ZIDA_LOGO_URL =
   'https://www.4zida.rs/assets/images/logos/deo-is-grupe-gray.png';
 export const CITY_EXPERT_LOGO_URL =
