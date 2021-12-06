@@ -168,6 +168,8 @@ export class ApartmentService {
   async getValidApartmentList(
     apartmentListParamsDto: ApartmentListParamsDto,
   ): Promise<CursorPaginatedResponse<Apartment>> {
+    await this.validateApartmentListFromDatabase(apartmentListParamsDto);
+
     return this.apartmentRepository.getCursorPaginatedApartmentList(
       apartmentListParamsDto,
     );
@@ -177,9 +179,9 @@ export class ApartmentService {
     apartmentId: string,
     lastCheckedAt: Date,
     apartmentUrl?: string,
-  ): Promise<void> {
+  ): Promise<string> {
     try {
-      if (!this.isCheckableApartment(lastCheckedAt)) return;
+      if (!this.isCheckableApartment(lastCheckedAt)) return apartmentId;
 
       const isApartmentInactive = await this.isApartmentInactive(
         apartmentId,
@@ -187,11 +189,11 @@ export class ApartmentService {
       );
       if (!isApartmentInactive) {
         await this.apartmentRepository.updateLastCheckedDatetime(apartmentId);
-        return;
+        return apartmentId;
       }
 
       this.logger.log(`Deleting apartment: ${apartmentId}`);
-      return this.deleteApartment(apartmentId);
+      await this.deleteApartment(apartmentId);
     } catch (error) {
       this.logger.error(error);
     }
@@ -222,6 +224,41 @@ export class ApartmentService {
       const providerRequests = this.baseProvider.getProviderRequests(filter);
 
       return this.findAndSaveApartmentsFromProviders(providerRequests, filter);
+    } catch (error) {
+      this.logger.error(error);
+    }
+  }
+
+  async validateApartmentListFromDatabase(
+    filter: ApartmentListParamsDto,
+  ): Promise<void> {
+    try {
+      const hasNextPage = false;
+      let apartmentListLength = 0;
+      const cursorFilter = Object.assign({}, filter);
+
+      do {
+        const {
+          data: apartmentList,
+          pageInfo,
+        } = await this.apartmentRepository.getCursorPaginatedApartmentList(
+          cursorFilter,
+        );
+        const apartmentsIds = await Promise.all(
+          apartmentList.map(apartment =>
+            this.handleDeletingInactiveApartment(
+              apartment.id,
+              new Date(apartment.lastCheckedAt),
+              apartment.url,
+            ),
+          ),
+        );
+        const activeApartmentsIds = apartmentsIds.filter(
+          apartmentId => !!apartmentId,
+        );
+        cursorFilter.cursor = pageInfo.endCursor;
+        apartmentListLength += activeApartmentsIds.length;
+      } while (hasNextPage && apartmentListLength < filter.limitPerPage);
     } catch (error) {
       this.logger.error(error);
     }
