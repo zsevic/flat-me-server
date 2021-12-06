@@ -3,6 +3,7 @@ import {
   Between,
   EntityRepository,
   In,
+  LessThan,
   MoreThan,
   Not,
   Repository,
@@ -16,7 +17,11 @@ import {
   PaginatedResponse,
   PaginationParams,
 } from 'modules/pagination/pagination.interfaces';
-import { getSkip } from 'modules/pagination/pagination.utils';
+import {
+  fromCursorHash,
+  getSkip,
+  toCursorHash,
+} from 'modules/pagination/pagination.utils';
 import { ApartmentEntity } from './apartment.entity';
 import { Apartment } from './apartment.interface';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
@@ -24,29 +29,39 @@ import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
 @Injectable()
 @EntityRepository(ApartmentEntity)
 export class ApartmentRepository extends Repository<ApartmentEntity> {
-  createQueryForApartmentList = (
+  private createQueryForApartmentList = (
     filter: ApartmentListParamsDto,
     skippedApartments?: string[],
     dateFilter?: Date,
-    floor?: string[],
-  ) => ({
-    ...(skippedApartments &&
-      Array.isArray(skippedApartments) &&
-      skippedApartments.length > 0 && {
-        id: Not(In(skippedApartments)),
+  ) => {
+    const floor =
+      filter.floor?.reduce((acc: string[], current: string): string[] => {
+        acc.push(...floorFilters[current]);
+        return acc;
+      }, []) || null;
+
+    return {
+      ...(filter.cursor && {
+        postedAt: LessThan(new Date(fromCursorHash(filter.cursor))),
       }),
-    ...(dateFilter && {
-      createdAt: MoreThan(dateFilter),
-    }),
-    ...(floor && { floor: Not(In(floor)) }),
-    ...(filter.rentOrSale === 'rent' && {
-      furnished: In(filter.furnished),
-    }),
-    municipality: In(filter.municipalities),
-    price: Between(filter.minPrice, filter.maxPrice),
-    rentOrSale: filter.rentOrSale,
-    structure: In(filter.structures),
-  });
+      ...(skippedApartments &&
+        Array.isArray(skippedApartments) &&
+        skippedApartments.length > 0 && {
+          id: Not(In(skippedApartments)),
+        }),
+      ...(dateFilter && {
+        createdAt: MoreThan(dateFilter),
+      }),
+      ...(floor && { floor: Not(In(floor)) }),
+      ...(filter.rentOrSale === 'rent' && {
+        furnished: In(filter.furnished),
+      }),
+      municipality: In(filter.municipalities),
+      price: Between(filter.minPrice, filter.maxPrice),
+      rentOrSale: filter.rentOrSale,
+      structure: In(filter.structures),
+    };
+  };
 
   async deleteApartment(id: string): Promise<void> {
     await this.delete({ id });
@@ -64,6 +79,33 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
     return { data: apartmentList.map(apartment => apartment.id), total };
   }
 
+  async getCursorPaginatedApartmentList(filter: ApartmentListParamsDto) {
+    const query = this.createQueryForApartmentList(filter);
+
+    const apartments = await this.find({
+      where: query,
+      order: {
+        postedAt: 'DESC',
+        createdAt: 'DESC',
+      },
+      take: filter.limitPerPage + 1,
+    });
+
+    const hasNextPage = apartments.length > filter.limitPerPage;
+    const data = hasNextPage ? apartments.slice(0, -1) : apartments;
+
+    const endCursor =
+      hasNextPage && toCursorHash(data[data.length - 1].postedAt.toString());
+
+    return {
+      data,
+      pageInfo: {
+        hasNextPage,
+        endCursor,
+      },
+    };
+  }
+
   async getApartmentList(
     filter: ApartmentListParamsDto,
     skippedApartments?: string[],
@@ -74,17 +116,10 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
       pageNumber = DEFAULT_PAGE_NUMBER,
     } = filter;
 
-    const floor =
-      filter.floor?.reduce((acc: string[], current: string): string[] => {
-        acc.push(...floorFilters[current]);
-        return acc;
-      }, []) || null;
-
     const query = this.createQueryForApartmentList(
       filter,
       skippedApartments,
       dateFilter,
-      floor,
     );
 
     const [data, total] = await this.findAndCount({

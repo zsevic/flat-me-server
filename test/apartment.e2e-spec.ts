@@ -52,7 +52,6 @@ describe('ApartmentController (e2e)', () => {
           maxPrice: 300,
           rentOrSale: 'rent',
           limitPerPage: 2,
-          pageNumber: 1,
         })
         .expect(HttpStatus.BAD_REQUEST);
     });
@@ -68,7 +67,6 @@ describe('ApartmentController (e2e)', () => {
           maxPrice: 300,
           rentOrSale: 'rent',
           limitPerPage: 2,
-          pageNumber: 1,
         })
         .expect(HttpStatus.OK);
     });
