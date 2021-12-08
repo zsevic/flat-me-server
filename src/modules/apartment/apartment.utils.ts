@@ -36,7 +36,8 @@ const showMunicipality = (apartment: Apartment): boolean =>
 const showPlace = (apartment: Apartment): boolean =>
   apartment.place &&
   apartment.address &&
-  latinize(apartment.place) !== latinize(apartment.address);
+  latinize(apartment.place.toLowerCase()) !==
+    latinize(apartment.address.toLowerCase());
 
 export const localizeApartment = (apartment: Apartment) => ({
   ...apartment,
