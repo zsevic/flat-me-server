@@ -57,7 +57,6 @@ describe('CetiriZida', () => {
           placeIds: [139],
           priceFrom: filter.minPrice,
           priceTo: filter.maxPrice,
-          registered: 1,
           structures: [105],
         },
         url: 'https://api.4zida.rs/v6/search/apartments',

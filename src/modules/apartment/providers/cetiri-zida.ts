@@ -88,7 +88,6 @@ export class CetiriZidaProvider implements Provider {
       placeIds: Object.keys(placesIds)
         .filter(place => filter.municipalities.includes(place))
         .map(place => placesIds[place]),
-      ...(filter.rentOrSale === rentOrSale.sale && { registered: 1 }),
       structures: Object.keys(structures)
         .map(structure => Number(structure))
         .filter(structure => filter.structures.indexOf(structure) !== -1)

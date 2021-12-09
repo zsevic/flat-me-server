@@ -86,7 +86,7 @@ export class CityExpertProvider implements Provider {
       sort: 'datedsc',
       structure: filter.structures,
       propIds: [],
-      filed: filter.rentOrSale === 'sale' ? [2] : [],
+      filed: [],
       ceiling: [],
       bldgOptsArray: [],
       joineryArray: [],

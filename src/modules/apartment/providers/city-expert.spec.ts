@@ -127,7 +127,7 @@ describe('CityExpert', () => {
           sort: 'datedsc',
           structure: filter.structures,
           propIds: [],
-          filed: [2],
+          filed: [],
           ceiling: [],
           bldgOptsArray: [],
           joineryArray: [],
