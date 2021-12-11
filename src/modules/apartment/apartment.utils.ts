@@ -22,11 +22,17 @@ const furnishedMap = {
 };
 const structuresMap = {
   0.5: 'garsonjera',
-  1: 'jednosoban',
+  1.0: 'jednosoban',
+  '1.0': 'jednosoban',
   1.5: 'jednoiposoban',
-  2: 'dvosoban',
+  2.0: 'dvosoban',
+  '2.0': 'dvosoban',
   2.5: 'dvoiposoban',
   3.0: 'trosoban',
+  '3.0': 'trosoban',
+  3.5: 'troiposoban',
+  4.0: 'četvorosoban',
+  '4.0': 'četvorosoban',
 };
 
 const showMunicipality = (apartment: Apartment): boolean =>

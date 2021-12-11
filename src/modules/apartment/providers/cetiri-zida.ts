@@ -61,6 +61,8 @@ export class CetiriZidaProvider implements Provider {
       2: 104,
       '2.5': 105,
       3: 106,
+      '3.5': 107,
+      4: 108,
     };
     const placesIds = {
       Čukarica: 28267,

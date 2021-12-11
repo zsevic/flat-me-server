@@ -153,6 +153,8 @@ export class CityExpertProvider implements Provider {
       '2.0': 'dvosoban',
       2.5: 'dvoiposoban',
       '3.0': 'trosoban',
+      3.5: 'troiposoban',
+      '4.0': 'četvorosoban',
     };
 
     return `https://cityexpert.rs/${
