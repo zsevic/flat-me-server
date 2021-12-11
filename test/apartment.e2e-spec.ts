@@ -62,7 +62,7 @@ describe('ApartmentController (e2e)', () => {
         .query({
           minPrice: 200,
           furnished: ['furnished', 'empty'],
-          structures: [2.5, 3.0],
+          structures: [2.5, 3],
           municipalities: ['Zvezdara', 'Palilula'],
           maxPrice: 300,
           rentOrSale: 'rent',

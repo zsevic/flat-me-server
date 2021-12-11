@@ -28,7 +28,7 @@ export const floorFilters = {
   'not-attic': ['attic'],
 };
 
-export const STRUCTURES = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0];
+export const STRUCTURES = [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4];
 
 const baseFilter = {
   minPrice: 0,

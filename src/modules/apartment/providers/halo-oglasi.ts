@@ -267,7 +267,8 @@ export class HaloOglasiProvider implements Provider {
       const price = apartmentData.cena_d;
       const size = apartmentData.kvadratura_d;
       const structure =
-        apartmentData?.broj_soba_s !== '5+' && apartmentData.broj_soba_s;
+        apartmentData?.broj_soba_s !== '5+' &&
+        Number(apartmentData.broj_soba_s);
 
       Object.assign(apartmentInfo, {
         ...(address && { address: capitalizeWords(address) }),

@@ -195,7 +195,7 @@ export class CetiriZidaProvider implements Provider {
       price: apartmentInfo.price,
       rentOrSale: apartmentInfo.for,
       size: apartmentInfo.m2,
-      structure: apartmentInfo.roomCount,
+      structure: Number(apartmentInfo.roomCount),
       url: `https://4zida.rs${apartmentInfo.urlPath}`,
     };
   };

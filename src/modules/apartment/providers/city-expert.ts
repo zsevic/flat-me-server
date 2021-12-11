@@ -62,6 +62,15 @@ export class CityExpertProvider implements Provider {
     const furnishedFilter = filter.furnished.map(
       (filter: string): number => furnished[filter],
     );
+    const structureMap = {
+      1: 1.0,
+      2: 2.0,
+      3: 3.0,
+      4: 4.0,
+    };
+    const structureFilter = filter.structures.map(
+      structure => structureMap[structure] || structure,
+    );
 
     const requestBody = {
       ptId: [1],
@@ -84,7 +93,7 @@ export class CityExpertProvider implements Provider {
       polygonsArray: filter.municipalities,
       searchSource: 'regular',
       sort: 'datedsc',
-      structure: filter.structures,
+      structure: structureFilter,
       propIds: [],
       filed: [],
       ceiling: [],
@@ -147,14 +156,14 @@ export class CityExpertProvider implements Provider {
       s: 'prodaja',
     };
     const structures = {
-      '0.5': 'garsonjera',
-      '1.0': 'jednosoban',
+      0.5: 'garsonjera',
+      1: 'jednosoban',
       1.5: 'jednoiposoban',
-      '2.0': 'dvosoban',
+      2: 'dvosoban',
       2.5: 'dvoiposoban',
-      '3.0': 'trosoban',
+      3: 'trosoban',
       3.5: 'troiposoban',
-      '4.0': 'četvorosoban',
+      4: 'četvorosoban',
     };
 
     return `https://cityexpert.rs/${
