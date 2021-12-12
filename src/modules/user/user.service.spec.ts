@@ -1,4 +1,8 @@
-import { BadRequestException } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Apartment } from 'modules/apartment/apartment.interface';
 import { UserRepository } from './user.repository';
@@ -88,7 +92,7 @@ describe('UserService', () => {
 
       await expect(
         userService.getVerifiedUserOrCreateNewUser(email),
-      ).rejects.toThrowError(BadRequestException);
+      ).rejects.toThrowError(UnprocessableEntityException);
 
       expect(userRepository.getByEmail).toHaveBeenCalledWith(email);
     });
@@ -128,7 +132,7 @@ describe('UserService', () => {
 
       await expect(
         userService.getVerifiedUserOrCreateNewUser(email),
-      ).rejects.toThrowError(BadRequestException);
+      ).rejects.toThrowError(HttpException);
 
       expect(userRepository.getByEmail).toHaveBeenCalledWith(email);
     });
