@@ -1,5 +1,11 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  Injectable,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { LOCKED_STATUS_CODE } from 'common/constants';
 import { Apartment } from 'modules/apartment/apartment.interface';
 import { Subscription } from './subscription.enum';
 import { User } from './user.interface';
@@ -34,7 +40,7 @@ export class UserService {
     if (!user) return;
 
     if (!user.isVerified) {
-      throw new BadRequestException('User is not verified');
+      throw new UnprocessableEntityException('User is not verified');
     }
 
     if (user.subscription !== Subscription.FREE) {
@@ -44,8 +50,9 @@ export class UserService {
     }
 
     if (user.filters.length >= 1) {
-      throw new BadRequestException(
+      throw new HttpException(
         `Filter limit is already filled for ${Subscription.FREE} subscription`,
+        LOCKED_STATUS_CODE,
       );
     }
 
