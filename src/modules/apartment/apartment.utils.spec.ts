@@ -6,7 +6,7 @@ describe('localizeApartment', () => {
     apartmentId: 'id',
     providerName: 'provider',
     coverPhotoUrl: 'photo-url.com',
-    address: 'Bulevar kralja Aleksandra',
+    address: 'Ulica 23',
     floor: 'basement',
     furnished: 'furnished',
     heatingTypes: ['district'],
@@ -25,7 +25,7 @@ describe('localizeApartment', () => {
   };
 
   it('should skip place when place and address have the same value', () => {
-    const address = 'Bulevar kralja Aleksandra';
+    const address = 'Ulica 23';
     const apartment = {
       ...testApartment,
       address,
@@ -33,13 +33,12 @@ describe('localizeApartment', () => {
     };
     const localizedApartment = {
       ...apartment,
+      addressValue: 'Ulica 23, Zemun',
       floor: 'u suterenu',
       furnished: 'namešten',
       isForRent: true,
       locationUrl: 'http://www.google.com/maps/place/40,20',
       structure: 'jednoiposoban',
-      showMunicipality: true,
-      showPlace: false,
     };
     expect(localizeApartment(apartment)).toEqual(localizedApartment);
   });
@@ -52,13 +51,12 @@ describe('localizeApartment', () => {
     };
     const localizedApartment = {
       ...apartment,
+      addressValue: 'Ulica 23, Zemun',
       floor: 'u suterenu',
       furnished: 'namešten',
       isForRent: true,
       locationUrl: 'http://www.google.com/maps/place/40,20',
       structure: 'jednoiposoban',
-      showMunicipality: false,
-      showPlace: true,
     };
     expect(localizeApartment(apartment)).toEqual(localizedApartment);
   });

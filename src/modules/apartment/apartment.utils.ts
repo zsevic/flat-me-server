@@ -31,15 +31,27 @@ const structuresMap = {
   4: 'četvorosoban',
 };
 
-const showMunicipality = (apartment: Apartment): boolean =>
+const isMunicipalityIncluded = (apartment: Apartment): boolean =>
   !apartment.place ||
   latinize(apartment.place) !== latinize(apartment.municipality);
 
-const showPlace = (apartment: Apartment): boolean =>
+const isPlaceIncluded = (apartment: Apartment): boolean =>
   apartment.place &&
   apartment.address &&
   latinize(apartment.place.toLowerCase()) !==
     latinize(apartment.address.toLowerCase());
+
+const getAddressValue = (apartment: Apartment): string => {
+  let addressValue = apartment.address;
+  if (isPlaceIncluded(apartment)) {
+    addressValue += `, ${apartment.place}`;
+  }
+  if (isMunicipalityIncluded(apartment)) {
+    addressValue += `, ${apartment.municipality}`;
+  }
+
+  return addressValue;
+};
 
 export const localizeApartment = (apartment: Apartment) => ({
   ...apartment,
@@ -49,7 +61,6 @@ export const localizeApartment = (apartment: Apartment) => ({
   floor: handleFloor(apartment.floor),
   furnished: furnishedMap[apartment.furnished],
   structure: structuresMap[apartment.structure],
-  showMunicipality: showMunicipality(apartment),
-  showPlace: showPlace(apartment),
+  addressValue: getAddressValue(apartment),
   isForRent: apartment.rentOrSale === 'rent',
 });

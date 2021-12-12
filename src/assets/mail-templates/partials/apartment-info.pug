@@ -6,7 +6,7 @@
   .column(style='width:100%;max-width:330px;display:inline-block;vertical-align:middle;')
     div(style='padding:10px;')
       p(style='margin:0;font-family:Arial,sans-serif;font-size:14px;line-height:18px;')
-        img(src=apartment.coverPhotoUrl, width='310', alt='stan', style='display:block;width:310px;max-width:100%;height:auto;')
+        img(src=apartment.coverPhotoUrl, width='310', alt=`stan: ${apartment.addressValue}`, style='display:block;width:310px;max-width:100%;height:auto;')
   //if mso
     td(style='width:50%;padding:10px;', valign='middle')
   .column(style='width:100%;max-width:330px;display:inline-block;vertical-align:middle;')
@@ -14,9 +14,9 @@
       p(style='margin-top:0;margin-bottom:12px;font-family:Arial,sans-serif;font-weight:bold;white-space:initial;')
         if apartment.locationUrl
           a(href=`${apartment.locationUrl}`, style='color:#3366CC;text-decoration:underline;')
-            include ./apartment-address
+            span #{apartment.addressValue}
         else
-          include ./apartment-address
+          span #{apartment.addressValue}
       p(style='margin-top:0;margin-bottom:14px;font-family:Arial,sans-serif;')
         span #{apartment.price}€, 
         span #{apartment.size}m², 
