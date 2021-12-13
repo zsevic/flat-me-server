@@ -1,6 +1,5 @@
-import { BadRequestException } from '@nestjs/common';
+import { NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { MoreThan } from 'typeorm';
 import { TokenEntity } from './token.entity';
 import { TokenRepository } from './token.repository';
 
@@ -16,46 +15,64 @@ describe('TokenRepository', () => {
   });
 
   describe('getUnexpiredToken', () => {
-    it('should throw an error if unexpired token is not found', async () => {
+    it('should throw an error when token is not found', async () => {
       const token = 'token';
-      const date = new Date(1629843303410);
       const query = {
         where: {
-          expiresAt: MoreThan(date),
           value: token,
         },
       };
       const findOneSpy = jest
         .spyOn(tokenRepository, 'findOne')
         .mockResolvedValue(null);
-      // @ts-ignore
-      jest.spyOn(global, 'Date').mockReturnValue(date);
 
       await expect(
         tokenRepository.getUnexpiredToken(token),
-      ).rejects.toThrowError(BadRequestException);
+      ).rejects.toThrowError(NotFoundException);
       expect(findOneSpy).toHaveBeenCalledWith(query);
     });
 
-    it('should return unexpired token', async () => {
+    it('should throw an error when token is expired', async () => {
       const tokenValue = 'token';
-      const date = new Date(1629843303410);
       const query = {
         where: {
-          expiresAt: MoreThan(date),
           value: tokenValue,
         },
       };
       const token = {
         value: tokenValue,
+        expiresAt: new Date(1629843303409),
         filterId: 'filterid',
         userId: 'userid',
       };
       const findOneSpy = jest
         .spyOn(tokenRepository, 'findOne')
         .mockResolvedValue(token as TokenEntity);
-      // @ts-ignore
-      jest.spyOn(global, 'Date').mockReturnValue(date);
+      jest.spyOn(tokenRepository, 'isTokenExpired').mockReturnValue(true);
+
+      await expect(
+        tokenRepository.getUnexpiredToken(tokenValue),
+      ).rejects.toThrowError(UnauthorizedException);
+      expect(findOneSpy).toHaveBeenCalledWith(query);
+    });
+
+    it('should return unexpired token', async () => {
+      const tokenValue = 'token';
+      const query = {
+        where: {
+          value: tokenValue,
+        },
+      };
+      const token = {
+        value: tokenValue,
+        expiresAt: new Date(1629843303411),
+        filterId: 'filterid',
+        userId: 'userid',
+      };
+      const findOneSpy = jest
+        .spyOn(tokenRepository, 'findOne')
+        .mockResolvedValue(token as TokenEntity);
+      jest.spyOn(tokenRepository, 'isTokenExpired').mockReturnValue(false);
 
       const unexpiredToken = await tokenRepository.getUnexpiredToken(
         tokenValue,

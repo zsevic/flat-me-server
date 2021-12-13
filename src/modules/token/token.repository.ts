@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { EntityRepository, MoreThan, Repository } from 'typeorm';
 import { TokenEntity } from './token.entity';
 import { Token } from './token.interface';
@@ -10,14 +14,18 @@ export class TokenRepository extends Repository<TokenEntity> {
     await this.delete({ id: tokenId });
   }
 
+  isTokenExpired = (expiresAt: Date): boolean => expiresAt < new Date();
+
   async getUnexpiredToken(token: string): Promise<Token> {
     const validToken = await this.findOne({
       where: {
         value: token,
-        expiresAt: MoreThan(new Date()),
       },
     });
-    if (!validToken) throw new BadRequestException('Token is not valid');
+    if (!validToken) throw new NotFoundException('Token is not found');
+
+    if (this.isTokenExpired(new Date(validToken.expiresAt)))
+      throw new UnauthorizedException('Token expired');
 
     return validToken;
   }
