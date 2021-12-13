@@ -123,7 +123,11 @@ describe('UserService', () => {
       const userData = {
         subscription: 'FREE',
         receivedApartments: [],
-        filters: ['id1'],
+        filters: [
+          {
+            isActive: true,
+          },
+        ],
         isVerified: true,
         id: userId,
         email,
@@ -134,6 +138,31 @@ describe('UserService', () => {
         userService.getVerifiedUserOrCreateNewUser(email),
       ).rejects.toThrowError(HttpException);
 
+      expect(userRepository.getByEmail).toHaveBeenCalledWith(email);
+    });
+
+    it('should return verified user when user has inactive filters', async () => {
+      const email = 'test@example.com';
+      const userId = 'userid';
+      const userData = {
+        subscription: 'FREE',
+        receivedApartments: [],
+        filters: [
+          {
+            isActive: false,
+          },
+        ],
+        isVerified: true,
+        id: userId,
+        email,
+      };
+      jest.spyOn(userRepository, 'getByEmail').mockResolvedValue(userData);
+
+      const verifiedUser = await userService.getVerifiedUserOrCreateNewUser(
+        email,
+      );
+
+      expect(verifiedUser).toEqual(userData);
       expect(userRepository.getByEmail).toHaveBeenCalledWith(email);
     });
 

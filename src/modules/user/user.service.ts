@@ -49,7 +49,8 @@ export class UserService {
       );
     }
 
-    if (user.filters.length >= 1) {
+    const activeFilters = user.filters.filter(filter => filter.isActive);
+    if (activeFilters.length >= 1) {
       throw new HttpException(
         `Filter limit is already filled for ${Subscription.FREE} subscription`,
         LOCKED_STATUS_CODE,
