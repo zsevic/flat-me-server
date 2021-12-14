@@ -1,4 +1,5 @@
 import axios, { AxiosRequestConfig } from 'axios';
+import { DEFAULT_TIMEOUT } from 'common/constants';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { Provider } from './provider.interface';
 
@@ -33,6 +34,7 @@ export function createRequestConfigForApartment(
   return {
     url: url ? url : this.getApartmentUrl(apartmentId),
     method: 'GET',
+    timeout: DEFAULT_TIMEOUT,
   };
 }
 

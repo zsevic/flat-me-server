@@ -85,6 +85,7 @@ describe('HaloOglasi', () => {
       const config = {
         url: 'url',
         method: 'GET',
+        timeout: DEFAULT_TIMEOUT,
       };
 
       expect(
