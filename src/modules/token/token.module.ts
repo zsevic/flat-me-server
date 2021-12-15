@@ -12,7 +12,7 @@ import { TokenService } from './token.service';
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        secret: configService.get('JWT_SECRET'),
+        secret: configService.get('JWT_SECRET') || 'secret',
         signOptions: {
           expiresIn: tokenDefaultExpiration,
         },
