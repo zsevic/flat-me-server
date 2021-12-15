@@ -38,7 +38,7 @@ describe('FilterController (e2e)', () => {
     it('should return 400 status code when token is not valid', () => {
       return request(app.getHttpServer())
         .post('/filters/verify/token')
-        .expect(HttpStatus.NOT_FOUND);
+        .expect(HttpStatus.BAD_REQUEST);
     });
   });
 
@@ -46,7 +46,7 @@ describe('FilterController (e2e)', () => {
     it('should return 400 status code when token is not valid', () => {
       return request(app.getHttpServer())
         .post('/filters/deactivate/token')
-        .expect(HttpStatus.NOT_FOUND);
+        .expect(HttpStatus.BAD_REQUEST);
     });
   });
 
