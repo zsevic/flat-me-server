@@ -36,6 +36,7 @@ import { ThrottlerStorageService } from 'modules/throttler-storage/throttler-sto
           DATABASE_URL: Joi.string()
             .uri()
             .required(),
+          JWT_SECRET: Joi.string().required(),
           NODE_ENV: Joi.string()
             .valid('production', 'development', 'test')
             .default('development')

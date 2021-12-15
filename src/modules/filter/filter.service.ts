@@ -6,6 +6,7 @@ import {
   PaginationParams,
 } from 'modules/pagination/pagination.interfaces';
 import { MailService } from 'modules/mail/mail.service';
+import { TokenType } from 'modules/token/token.enums';
 import { Token } from 'modules/token/token.interface';
 import { TokenService } from 'modules/token/token.service';
 import { UserService } from 'modules/user/user.service';
@@ -44,6 +45,7 @@ export class FilterService {
     const token = await this.tokenService.createAndSaveToken({
       filterId: savedFilter.id,
       userId: user.id,
+      type: TokenType.VERIFICATION,
     });
     await this.mailService.sendFilterVerificationMail(email, token.value);
   }
@@ -62,7 +64,10 @@ export class FilterService {
 
   @Transactional()
   async deactivateFilterByToken(token: string): Promise<void> {
-    const validToken = await this.tokenService.getValidToken(token);
+    const validToken = await this.tokenService.getValidToken({
+      value: token,
+      type: TokenType.DEACTIVATION,
+    });
 
     await this.filterRepository.deactivateFilter(validToken.filterId);
     await this.tokenService.deleteToken(validToken.id);
@@ -89,7 +94,10 @@ export class FilterService {
       filterId,
       userId,
       id: tokenId,
-    } = await this.tokenService.getValidToken(token);
+    } = await this.tokenService.getValidToken({
+      value: token,
+      type: TokenType.VERIFICATION,
+    });
 
     await this.verifyAndActivateFilter(filterId);
     await this.userService.verifyUser(userId);

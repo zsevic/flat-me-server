@@ -14,18 +14,14 @@ export class TokenRepository extends Repository<TokenEntity> {
     await this.delete({ id: tokenId });
   }
 
-  isTokenExpired = (expiresAt: Date): boolean => expiresAt < new Date();
-
-  async getUnexpiredToken(token: string): Promise<Token> {
+  async getToken(token: Partial<Token>): Promise<Token> {
     const validToken = await this.findOne({
       where: {
-        value: token,
+        type: token.type,
+        value: token.value,
       },
     });
     if (!validToken) throw new NotFoundException('Token is not found');
-
-    if (this.isTokenExpired(new Date(validToken.expiresAt)))
-      throw new UnauthorizedException('Token expired');
 
     return validToken;
   }
@@ -33,7 +29,6 @@ export class TokenRepository extends Repository<TokenEntity> {
   async getUnexpiredTokenByFilterId(filterId: string): Promise<Token> {
     return this.findOne({
       where: {
-        expiresAt: MoreThan(new Date()),
         filter: filterId,
       },
     });

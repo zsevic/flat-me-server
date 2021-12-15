@@ -11,6 +11,7 @@ import { MailService } from 'modules/mail/mail.service';
 import { defaultPaginationParams } from 'modules/pagination/pagination.constants';
 import { getSkip } from 'modules/pagination/pagination.utils';
 import { FILTER_DEACTIVATION_TOKEN_EXPIRATION_HOURS } from 'modules/token/token.constants';
+import { TokenType } from 'modules/token/token.enums';
 import { TokenService } from 'modules/token/token.service';
 import { Subscription } from 'modules/user/subscription.enum';
 import { UserService } from 'modules/user/user.service';
@@ -116,6 +117,7 @@ export class TasksService {
       {
         filterId: filter.id,
         userId: filter.userId,
+        type: TokenType.DEACTIVATION,
       },
       FILTER_DEACTIVATION_TOKEN_EXPIRATION_HOURS,
     );

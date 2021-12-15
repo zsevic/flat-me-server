@@ -23,8 +23,8 @@ export class CreateTokenTable1631306132573 implements MigrationInterface {
             type: 'uuid',
           },
           {
-            name: 'expires_at',
-            type: 'timestamp',
+            name: 'type',
+            type: 'varchar',
           },
           {
             name: 'value',

@@ -1,30 +1,35 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { randomBytes } from 'crypto';
-import { promisify } from 'util';
-import { TOKEN_LENGTH } from './token.constants';
+import { TOKEN_DEFAULT_EXPIRATION_HOURS } from './token.constants';
 import { Token } from './token.interface';
 import { TokenRepository } from './token.repository';
-
-const randomBytesAsync = promisify(randomBytes);
 
 @Injectable()
 export class TokenService {
   constructor(
     @InjectRepository(TokenRepository)
     private readonly tokenRepository: TokenRepository,
+    private readonly jwtService: JwtService,
   ) {}
 
   async createAndSaveToken(
     token: Partial<Token>,
-    validHours = 1,
+    validHours = TOKEN_DEFAULT_EXPIRATION_HOURS,
   ): Promise<Token> {
-    const generatedToken = await this.generateToken();
-    const expiresAt = this.generateExpiresAt(validHours);
+    const value = this.jwtService.sign(
+      {
+        type: token.type,
+        filterId: token.filterId,
+      },
+      {
+        expiresIn: `${validHours}h`,
+      },
+    );
 
     return this.tokenRepository.saveToken({
-      expiresAt,
-      value: generatedToken,
+      type: token.type,
+      value,
       filterId: token.filterId,
       userId: token.userId,
     });
@@ -43,20 +48,12 @@ export class TokenService {
     return this.deleteToken(validToken.id);
   }
 
-  private generateToken = async (): Promise<string> => {
-    return (await randomBytesAsync(TOKEN_LENGTH))
-      .toString('base64')
-      .replace(/\W/g, '');
-  };
-
-  private generateExpiresAt = (validHours: number): Date => {
-    const expiresAt = new Date();
-    expiresAt.setHours(expiresAt.getHours() + validHours);
-
-    return expiresAt;
-  };
-
-  public async getValidToken(token: string): Promise<Token> {
-    return this.tokenRepository.getUnexpiredToken(token);
+  public async getValidToken(token: Partial<Token>): Promise<Token> {
+    try {
+      this.jwtService.verify(token.value);
+      return this.tokenRepository.getToken(token);
+    } catch (error) {
+      throw new BadRequestException('Token is not valid');
+    }
   }
 }

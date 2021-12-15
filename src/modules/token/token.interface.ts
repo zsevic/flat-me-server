@@ -1,7 +1,7 @@
 export interface Token {
   id?: string;
 
-  expiresAt: Date;
+  type: string;
 
   value: string;
 

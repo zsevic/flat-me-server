@@ -16,10 +16,8 @@ export class TokenEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
 
-  @Column({
-    name: 'expires_at',
-  })
-  expiresAt: Date;
+  @Column()
+  type: string;
 
   @Column()
   value: string;
