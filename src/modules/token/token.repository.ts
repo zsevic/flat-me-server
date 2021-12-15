@@ -21,7 +21,7 @@ export class TokenRepository extends Repository<TokenEntity> {
         value: token.value,
       },
     });
-    if (!validToken) throw new NotFoundException('Token is not found');
+    if (!validToken) throw new NotFoundException('Token is already used');
 
     return validToken;
   }

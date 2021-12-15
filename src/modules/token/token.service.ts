@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TOKEN_DEFAULT_EXPIRATION_HOURS } from './token.constants';
@@ -7,6 +7,8 @@ import { TokenRepository } from './token.repository';
 
 @Injectable()
 export class TokenService {
+  private readonly logger = new Logger(TokenService.name);
+
   constructor(
     @InjectRepository(TokenRepository)
     private readonly tokenRepository: TokenRepository,
@@ -50,10 +52,15 @@ export class TokenService {
 
   public async getValidToken(token: Partial<Token>): Promise<Token> {
     try {
-      this.jwtService.verify(token.value);
-      return this.tokenRepository.getToken(token);
+      const verifiedToken = this.jwtService.verify(token.value);
+      if (verifiedToken.type !== token.type) {
+        throw new Error('Token type is not valid');
+      }
     } catch (error) {
+      this.logger.error(error);
       throw new BadRequestException('Token is not valid');
     }
+
+    return this.tokenRepository.getToken(token);
   }
 }
