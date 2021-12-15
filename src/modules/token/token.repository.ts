@@ -1,9 +1,5 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { EntityRepository, MoreThan, Repository } from 'typeorm';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { EntityRepository, Repository } from 'typeorm';
 import { TokenEntity } from './token.entity';
 import { Token } from './token.interface';
 
@@ -21,7 +17,7 @@ export class TokenRepository extends Repository<TokenEntity> {
         value: token.value,
       },
     });
-    if (!validToken) throw new NotFoundException('Token is already used');
+    if (!validToken) throw new UnauthorizedException('Token is already used');
 
     return validToken;
   }
