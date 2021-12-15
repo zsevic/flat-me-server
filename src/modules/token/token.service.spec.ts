@@ -1,3 +1,4 @@
+import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TokenRepository } from './token.repository';
 import { TokenService } from './token.service';
@@ -5,6 +6,11 @@ import { TokenService } from './token.service';
 const tokenRepository = {
   deleteToken: jest.fn(),
   getUnexpiredTokenByFilterId: jest.fn(),
+};
+
+const jwtService = {
+  sign: jest.fn(),
+  verify: jest.fn(),
 };
 
 describe('TokenService', () => {
@@ -17,6 +23,10 @@ describe('TokenService', () => {
         {
           provide: TokenRepository,
           useValue: tokenRepository,
+        },
+        {
+          provide: JwtService,
+          useValue: jwtService,
         },
       ],
     }).compile();

@@ -9,6 +9,7 @@ import {
   emptyPaginatedResponse,
 } from 'modules/pagination/pagination.constants';
 import { FILTER_DEACTIVATION_TOKEN_EXPIRATION_HOURS } from 'modules/token/token.constants';
+import { TokenType } from 'modules/token/token.enums';
 import { TokenService } from 'modules/token/token.service';
 import { Subscription } from 'modules/user/subscription.enum';
 import { UserService } from 'modules/user/user.service';
@@ -225,6 +226,7 @@ describe('TasksService', () => {
         {
           filterId: foundFilter.id,
           userId: foundFilter.userId,
+          type: TokenType.DEACTIVATION,
         },
         FILTER_DEACTIVATION_TOKEN_EXPIRATION_HOURS,
       );

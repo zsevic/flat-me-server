@@ -1,6 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MailService } from 'modules/mail/mail.service';
+import { TokenType } from 'modules/token/token.enums';
 import { Token } from 'modules/token/token.interface';
 import { TokenService } from 'modules/token/token.service';
 import { UserService } from 'modules/user/user.service';
@@ -126,6 +127,7 @@ describe('FilterService', () => {
       expect(tokenService.createAndSaveToken).toHaveBeenCalledWith({
         filterId,
         userId,
+        type: TokenType.VERIFICATION,
       });
       expect(mailService.sendFilterVerificationMail).toHaveBeenCalledWith(
         email,
@@ -144,7 +146,10 @@ describe('FilterService', () => {
       await expect(
         filterService.deactivateFilterByToken(token),
       ).rejects.toThrowError(BadRequestException);
-      expect(tokenService.getValidToken).toHaveBeenCalledWith(token);
+      expect(tokenService.getValidToken).toHaveBeenCalledWith({
+        value: token,
+        type: TokenType.DEACTIVATION,
+      });
     });
 
     it('should throw an error when filter is not found', async () => {
@@ -161,7 +166,10 @@ describe('FilterService', () => {
       await expect(
         filterService.deactivateFilterByToken(token.value),
       ).rejects.toThrowError(BadRequestException);
-      expect(tokenService.getValidToken).toHaveBeenCalledWith(token.value);
+      expect(tokenService.getValidToken).toHaveBeenCalledWith({
+        value: token.value,
+        type: TokenType.DEACTIVATION,
+      });
       expect(filterRepository.deactivateFilter).toHaveBeenCalledWith(
         token.filterId,
       );
@@ -189,7 +197,10 @@ describe('FilterService', () => {
 
       await filterService.deactivateFilterByToken(token.value);
 
-      expect(tokenService.getValidToken).toHaveBeenCalledWith(token.value);
+      expect(tokenService.getValidToken).toHaveBeenCalledWith({
+        value: token.value,
+        type: TokenType.DEACTIVATION,
+      });
       expect(filterRepository.deactivateFilter).toHaveBeenCalledWith(
         foundFilter.id,
       );
@@ -303,7 +314,10 @@ describe('FilterService', () => {
         filterService.verifyFilter(token.value),
       ).rejects.toThrowError(BadRequestException);
 
-      expect(tokenService.getValidToken).toHaveBeenCalledWith(token.value);
+      expect(tokenService.getValidToken).toHaveBeenCalledWith({
+        value: token.value,
+        type: TokenType.VERIFICATION,
+      });
       expect(filterRepository.verifyAndActivateFilter).toHaveBeenCalledWith(
         foundFilter,
       );
@@ -336,7 +350,10 @@ describe('FilterService', () => {
 
       await filterService.verifyFilter(token.value);
 
-      expect(tokenService.getValidToken).toHaveBeenCalledWith(token.value);
+      expect(tokenService.getValidToken).toHaveBeenCalledWith({
+        value: token.value,
+        type: TokenType.VERIFICATION,
+      });
       expect(filterRepository.verifyAndActivateFilter).toHaveBeenCalledWith(
         foundFilter,
       );

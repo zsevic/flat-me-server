@@ -27,31 +27,9 @@ describe('TokenRepository', () => {
         .mockResolvedValue(null);
 
       await expect(
-        tokenRepository.getUnexpiredToken(token),
-      ).rejects.toThrowError(NotFoundException);
-      expect(findOneSpy).toHaveBeenCalledWith(query);
-    });
-
-    it('should throw an error when token is expired', async () => {
-      const tokenValue = 'token';
-      const query = {
-        where: {
-          value: tokenValue,
-        },
-      };
-      const token = {
-        value: tokenValue,
-        expiresAt: new Date(1629843303409),
-        filterId: 'filterid',
-        userId: 'userid',
-      };
-      const findOneSpy = jest
-        .spyOn(tokenRepository, 'findOne')
-        .mockResolvedValue(token as TokenEntity);
-      jest.spyOn(tokenRepository, 'isTokenExpired').mockReturnValue(true);
-
-      await expect(
-        tokenRepository.getUnexpiredToken(tokenValue),
+        tokenRepository.getToken({
+          value: token,
+        }),
       ).rejects.toThrowError(UnauthorizedException);
       expect(findOneSpy).toHaveBeenCalledWith(query);
     });
@@ -65,18 +43,16 @@ describe('TokenRepository', () => {
       };
       const token = {
         value: tokenValue,
-        expiresAt: new Date(1629843303411),
         filterId: 'filterid',
         userId: 'userid',
       };
       const findOneSpy = jest
         .spyOn(tokenRepository, 'findOne')
         .mockResolvedValue(token as TokenEntity);
-      jest.spyOn(tokenRepository, 'isTokenExpired').mockReturnValue(false);
 
-      const unexpiredToken = await tokenRepository.getUnexpiredToken(
-        tokenValue,
-      );
+      const unexpiredToken = await tokenRepository.getToken({
+        value: tokenValue,
+      });
 
       expect(unexpiredToken).toEqual(token);
       expect(findOneSpy).toHaveBeenCalledWith(query);
