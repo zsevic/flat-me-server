@@ -31,7 +31,7 @@ export class MailService {
     token: string,
   ): Promise<void> {
     const url = `${process.env.CLIENT_URL}/filters/verification/${token}`;
-    console.log('verfilurl', url);
+    this.logger.log(`verification url: ${url}`);
 
     const mailInfo = await this.mailerService.sendMail({
       to: email,
@@ -45,7 +45,7 @@ export class MailService {
     if (!isEnvironment('production')) {
       this.logger.log(`Mail preview URL: ${getTestMessageUrl(mailInfo)}`);
     } else {
-      this.logger.log('Mail is sent');
+      this.logger.log(`Mail is sent to ${email}`);
     }
   }
 
@@ -76,7 +76,7 @@ export class MailService {
     if (!isEnvironment('production')) {
       this.logger.log(`Mail preview URL: ${getTestMessageUrl(mailInfo)}`);
     } else {
-      this.logger.log('Mail is sent');
+      this.logger.log(`Mail is sent to ${email}`);
     }
   }
 }
