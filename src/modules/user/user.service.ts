@@ -2,18 +2,28 @@ import {
   BadRequestException,
   HttpException,
   Injectable,
+  Logger,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LOCKED_STATUS_CODE } from 'common/constants';
+import { LOCKED_STATUS_CODE, TOKEN_EXPIRATION } from 'common/constants';
 import { Apartment } from 'modules/apartment/apartment.interface';
+import { FilterRepository } from 'modules/filter/filter.repository';
+import { TokenType } from 'modules/token/token.enums';
+import { TokenRepository } from 'modules/token/token.repository';
 import { Subscription } from './subscription.enum';
 import { User } from './user.interface';
 import { UserRepository } from './user.repository';
 
 @Injectable()
 export class UserService {
+  private readonly logger = new Logger(UserService.name);
+
   constructor(
+    @InjectRepository(FilterRepository)
+    private readonly filterRepository: FilterRepository,
+    @InjectRepository(TokenRepository)
+    private readonly tokenRepository: TokenRepository,
     @InjectRepository(UserRepository)
     private readonly userRepository: UserRepository,
   ) {}
@@ -40,6 +50,33 @@ export class UserService {
     if (!user) return;
 
     if (!user.isVerified) {
+      const token = await this.tokenRepository.findOne(
+        {
+          userId: user.id,
+          type: TokenType.VERIFICATION,
+        },
+        {
+          order: {
+            createdAt: 'DESC',
+          },
+        },
+      );
+      if (!token) return user;
+
+      const tokenExpirationDifference =
+        new Date().getTime() - new Date(token.createdAt).getTime();
+      if (tokenExpirationDifference > TOKEN_EXPIRATION) {
+        this.logger.log(
+          'Token expired, removing token and unverified filters...',
+        );
+        await this.tokenRepository.remove(token);
+        await this.filterRepository.delete({
+          userId: user.id,
+          isVerified: false,
+        });
+        return user;
+      }
+
       throw new UnprocessableEntityException('User is not verified');
     }
 
