@@ -5,8 +5,19 @@ import {
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Apartment } from 'modules/apartment/apartment.interface';
+import { FilterRepository } from 'modules/filter/filter.repository';
+import { TokenRepository } from 'modules/token/token.repository';
 import { UserRepository } from './user.repository';
 import { UserService } from './user.service';
+
+const filterRepository = {
+  delete: jest.fn(),
+};
+
+const tokenRepository = {
+  findOne: jest.fn(),
+  remove: jest.fn(),
+};
 
 const userRepository = {
   getByEmail: jest.fn(),
@@ -24,6 +35,14 @@ describe('UserService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UserService,
+        {
+          provide: FilterRepository,
+          useValue: filterRepository,
+        },
+        {
+          provide: TokenRepository,
+          useValue: tokenRepository,
+        },
         {
           provide: UserRepository,
           useValue: userRepository,
@@ -77,7 +96,7 @@ describe('UserService', () => {
       expect(userRepository.saveUser).toHaveBeenCalledWith(email);
     });
 
-    it('should throw an error when user is found but found user is not verified', async () => {
+    it('should return user when unverified user is found and there is no token', async () => {
       const email = 'test@example.com';
       const userId = 'userid';
       const userData = {
@@ -90,11 +109,68 @@ describe('UserService', () => {
       };
       jest.spyOn(userRepository, 'getByEmail').mockResolvedValue(userData);
 
+      const user = await userService.getVerifiedUserOrCreateNewUser(email);
+
+      expect(user).toMatchObject(userData);
+      expect(userRepository.getByEmail).toHaveBeenCalledWith(email);
+      expect(tokenRepository.remove).not.toHaveBeenCalled();
+      expect(filterRepository.delete).not.toHaveBeenCalled();
+    });
+
+    it('should return user and delete token and unverified filters when unverified user is found and token is expired', async () => {
+      const email = 'test@example.com';
+      const userId = 'userid';
+      const tokenData = {
+        createdAt: '2021-12-21',
+      };
+      const userData = {
+        subscription: 'FREE',
+        receivedApartments: [],
+        filters: [],
+        isVerified: false,
+        id: userId,
+        email,
+      };
+      jest.spyOn(userRepository, 'getByEmail').mockResolvedValue(userData);
+      jest.spyOn(tokenRepository, 'findOne').mockResolvedValue(tokenData);
+
+      const user = await userService.getVerifiedUserOrCreateNewUser(email);
+
+      expect(user).toMatchObject(userData);
+      expect(tokenRepository.remove).toHaveBeenCalledWith(tokenData);
+      expect(filterRepository.delete).toHaveBeenCalledWith({
+        userId,
+        isVerified: false,
+      });
+    });
+
+    it('should throw an error when user is found but found user is not verified and token is not expired', async () => {
+      const email = 'test@example.com';
+      const userId = 'userid';
+      const tokenData = {
+        createdAt: '2021-12-21T12:00:00.000Z',
+      };
+      const userData = {
+        subscription: 'FREE',
+        receivedApartments: [],
+        filters: [],
+        isVerified: false,
+        id: userId,
+        email,
+      };
+      jest.spyOn(userRepository, 'getByEmail').mockResolvedValue(userData);
+      jest.spyOn(tokenRepository, 'findOne').mockResolvedValue(tokenData);
+      jest.useFakeTimers('modern');
+      jest.setSystemTime(new Date('2021-12-21T12:30:00.000Z'));
+
       await expect(
         userService.getVerifiedUserOrCreateNewUser(email),
       ).rejects.toThrowError(UnprocessableEntityException);
 
       expect(userRepository.getByEmail).toHaveBeenCalledWith(email);
+      expect(tokenRepository.remove).not.toHaveBeenCalled();
+      expect(filterRepository.delete).not.toHaveBeenCalled();
+      jest.useRealTimers();
     });
 
     it("should throw an error when user is verified but user's subscription is not allowed", async () => {
