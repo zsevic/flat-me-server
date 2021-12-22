@@ -325,7 +325,7 @@ describe('HaloOglasi', () => {
             },
             CurrentContactData: {
               Advertiser: {
-                DisplayName: 'Agencija',
+                DisplayName: 'Preduzece &quot;Menadzer-nekretnine&quot; d.o.o.',
               },
             },
           },
@@ -335,7 +335,7 @@ describe('HaloOglasi', () => {
       const apartmentInfo = {};
       const updatedApartmentInfo = {
         address: 'Street 23',
-        advertiserName: 'Agencija',
+        advertiserName: 'Preduzece "Menadzer-nekretnine" d.o.o.',
         coverPhotoUrl: 'https://img.halooglasi.com/image-url',
         floor: 2,
         furnished: 'furnished',
