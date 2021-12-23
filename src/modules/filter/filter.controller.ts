@@ -15,7 +15,6 @@ import { FilterService } from './filter.service';
 export class FilterController {
   constructor(private readonly filterService: FilterService) {}
 
-  @UseGuards(ThrottlerGuard)
   @Throttle(FILTER_SAVING_LIMIT, FILTER_SAVING_TTL)
   @Post()
   async saveFilters(@Body() saveFilterDto: SaveFilterDto): Promise<void> {
@@ -24,14 +23,12 @@ export class FilterController {
     );
   }
 
-  @UseGuards(ThrottlerGuard)
   @Throttle(FILTER_VERIFICATION_LIMIT, FILTER_VERIFICATION_TTL)
   @Post('verify/:token')
   async verifyFilter(@Param('token') token: string): Promise<void> {
     return this.filterService.verifyFilter(token);
   }
 
-  @UseGuards(ThrottlerGuard)
   @Throttle(FILTER_DEACTIVATION_LIMIT, FILTER_DEACTIVATION_TTL)
   @Post('deactivate/:token')
   async deactivateFilter(@Param('token') token: string): Promise<void> {
