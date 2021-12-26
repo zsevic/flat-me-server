@@ -241,7 +241,7 @@ export class HaloOglasiProvider implements Provider {
       };
 
       const advertiserName =
-        apartmentData.oglasivac_nekretnine_s !== 'Vlasnik' &&
+        apartmentData.oglasivac_nekretnine_s === 'Agencija' &&
         advertiserData?.DisplayName?.replace(/&quot;/g, '"');
       const address = apartmentData.ulica_t;
       const photosUrls = apartmentData?.ImageURLs;

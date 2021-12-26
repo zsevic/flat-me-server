@@ -355,5 +355,57 @@ describe('HaloOglasi', () => {
 
       expect(apartmentInfo).toEqual(updatedApartmentInfo);
     });
+
+    it('should skip updating advertiser name for non-agency ads', () => {
+      const dom = {
+        window: {
+          QuidditaEnvironment: {
+            CurrentClassified: {
+              broj_soba_s: 1.5,
+              cena_d: 250,
+              grejanje_id_l: 1542,
+              kvadratura_d: 43,
+              lokacija_id_l: 40769,
+              mikrolokacija_s: 'Lion',
+              namestenost_id_l: 562,
+              oglasivac_nekretnine_s: 'Investitor',
+              sprat_s: 2,
+              sprat_od_s: 5,
+              ulica_t: 'street 23',
+              GeoLocationRPT: '40,20',
+              ImageURLs: ['/image-url'],
+              ValidFrom: '2021-12-03T11:13:53Z',
+            },
+            CurrentContactData: {
+              Advertiser: {
+                DisplayName: 'investitor',
+              },
+            },
+          },
+        },
+      };
+      jsdom.JSDOM.mockReturnValue(dom);
+      const apartmentInfo = {};
+      const updatedApartmentInfo = {
+        address: 'Street 23',
+        coverPhotoUrl: 'https://img.halooglasi.com/image-url',
+        floor: 2,
+        furnished: 'furnished',
+        heatingTypes: ['district'],
+        location: { latitude: 40, longitude: 20 },
+        municipality: 'Rakovica',
+        place: 'Lion',
+        postedAt: new Date('2021-12-03T11:13:53Z'),
+        price: 250,
+        size: 43,
+        structure: 1.5,
+      };
+
+      const provider = new HaloOglasiProvider();
+      // @ts-ignore
+      provider.updateApartmentInfo('html', apartmentInfo);
+
+      expect(apartmentInfo).toEqual(updatedApartmentInfo);
+    });
   });
 });
