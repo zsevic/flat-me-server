@@ -9,6 +9,7 @@ import { MailService } from 'modules/mail/mail.service';
 import { TokenType } from 'modules/token/token.enums';
 import { Token } from 'modules/token/token.interface';
 import { TokenService } from 'modules/token/token.service';
+import { Subscription } from 'modules/user/subscription.enum';
 import { UserService } from 'modules/user/user.service';
 import { FilterDto } from './dto/filter.dto';
 import { SaveFilterDto } from './dto/save-filter.dto';
@@ -73,12 +74,12 @@ export class FilterService {
     await this.tokenService.deleteToken(validToken.id);
   }
 
-  async getFilterListBySubscriptionName(
-    subscriptionName: string,
+  async getFilterListBySubscriptionType(
+    subscriptionType: Subscription,
     paginationParams: PaginationParams,
   ): Promise<PaginatedResponse<Filter>> {
-    return this.filterRepository.getFilterListBySubscriptionName(
-      subscriptionName,
+    return this.filterRepository.getFilterListBySubscriptionType(
+      subscriptionType,
       paginationParams,
     );
   }

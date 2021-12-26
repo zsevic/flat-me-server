@@ -1,6 +1,6 @@
 export const FURNISHED = ['yes', 1];
 
-export const RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION = 10;
+export const RECEIVED_APARTMENTS_SIZE = 10;
 
 export const apartmentStatusFinished = 'FINISHED';
 export const apartmentStatusNotAvailable = 'NOT-AVAILABLE';

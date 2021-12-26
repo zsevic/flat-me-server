@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION } from 'modules/apartment/apartment.constants';
+import { RECEIVED_APARTMENTS_SIZE } from 'modules/apartment/apartment.constants';
 import { ApartmentService } from 'modules/apartment/apartment.service';
 import { filters } from 'modules/filter/filter.constants';
 import { FilterService } from 'modules/filter/filter.service';
@@ -26,7 +26,7 @@ const apartmentService = {
 
 const filterService = {
   createTokenAndDeactivationUrl: jest.fn(),
-  getFilterListBySubscriptionName: jest.fn(),
+  getFilterListBySubscriptionType: jest.fn(),
   getInitialFilter: filters => ({ ...filters, pageNumber: 1 }),
 };
 
@@ -99,17 +99,17 @@ describe('TasksService', () => {
     });
   });
 
-  describe('handleSendingNewApartmentsForFreeSubscriptionUsers', () => {
+  describe('handleSendingNewApartments', () => {
     it('should not send any new apartments to the users when there are no saved filters', async () => {
       jest
-        .spyOn(filterService, 'getFilterListBySubscriptionName')
+        .spyOn(filterService, 'getFilterListBySubscriptionType')
         .mockResolvedValue(emptyPaginatedResponse);
 
-      await tasksService.handleSendingNewApartmentsForFreeSubscriptionUsers();
+      await tasksService.handleSendingNewApartments(Subscription.BETA);
 
       expect(
-        filterService.getFilterListBySubscriptionName,
-      ).toHaveBeenCalledWith(Subscription.FREE, defaultPaginationParams);
+        filterService.getFilterListBySubscriptionType,
+      ).toHaveBeenCalledWith(Subscription.BETA, defaultPaginationParams);
       expect(
         apartmentService.getApartmentListFromDatabaseByFilter,
       ).not.toHaveBeenCalled();
@@ -128,16 +128,16 @@ describe('TasksService', () => {
         createdAt: '2021-08-18T00:52:18.296Z',
       };
       jest
-        .spyOn(filterService, 'getFilterListBySubscriptionName')
+        .spyOn(filterService, 'getFilterListBySubscriptionType')
         .mockResolvedValue({ data: [foundFilter], total: 1 });
       jest
         .spyOn(apartmentService, 'getApartmentListFromDatabaseByFilter')
         .mockResolvedValue({ data: [] });
 
-      await tasksService.handleSendingNewApartmentsForFreeSubscriptionUsers();
+      await tasksService.handleSendingNewApartments();
 
       expect(
-        filterService.getFilterListBySubscriptionName,
+        filterService.getFilterListBySubscriptionType,
       ).toHaveBeenCalledWith(Subscription.FREE, defaultPaginationParams);
       expect(tokenService.deleteTokenByFilterId).toHaveBeenCalledWith(
         foundFilter.id,
@@ -202,7 +202,7 @@ describe('TasksService', () => {
       const email = 'test@example.com';
       const filterDeactivationUrl = 'url';
       jest
-        .spyOn(filterService, 'getFilterListBySubscriptionName')
+        .spyOn(filterService, 'getFilterListBySubscriptionType')
         .mockResolvedValue({ data: [foundFilter], total: 1 });
       jest
         .spyOn(apartmentService, 'getApartmentListFromDatabaseByFilter')
@@ -214,10 +214,10 @@ describe('TasksService', () => {
         .spyOn(filterService, 'createTokenAndDeactivationUrl')
         .mockResolvedValue(filterDeactivationUrl);
 
-      await tasksService.handleSendingNewApartmentsForFreeSubscriptionUsers();
+      await tasksService.handleSendingNewApartments();
 
       expect(
-        filterService.getFilterListBySubscriptionName,
+        filterService.getFilterListBySubscriptionType,
       ).toHaveBeenCalledWith(Subscription.FREE, defaultPaginationParams);
       expect(tokenService.deleteTokenByFilterId).toHaveBeenCalledWith(
         foundFilter.id,
@@ -258,17 +258,17 @@ describe('TasksService', () => {
         createdAt: '2021-08-18T00:52:18.296Z',
       };
       jest
-        .spyOn(filterService, 'getFilterListBySubscriptionName')
+        .spyOn(filterService, 'getFilterListBySubscriptionType')
         .mockResolvedValue({ data: [foundFilter], total: 51 });
       jest
         .spyOn(apartmentService, 'getApartmentListFromDatabaseByFilter')
         .mockResolvedValue({ data: [] });
 
-      await tasksService.handleSendingNewApartmentsForFreeSubscriptionUsers();
+      await tasksService.handleSendingNewApartments();
 
       [1, 2].forEach(pageNumber => {
         expect(
-          filterService.getFilterListBySubscriptionName,
+          filterService.getFilterListBySubscriptionType,
         ).toHaveBeenNthCalledWith(pageNumber, Subscription.FREE, {
           limitPerPage: defaultPaginationParams.limitPerPage,
           pageNumber,
@@ -306,7 +306,7 @@ describe('TasksService', () => {
         },
       ];
       jest
-        .spyOn(filterService, 'getFilterListBySubscriptionName')
+        .spyOn(filterService, 'getFilterListBySubscriptionType')
         .mockResolvedValue({ data: foundFilters, total: foundFilters.length });
       jest
         .spyOn(tokenService, 'deleteTokenByFilterId')
@@ -315,10 +315,10 @@ describe('TasksService', () => {
         .spyOn(apartmentService, 'getApartmentListFromDatabaseByFilter')
         .mockResolvedValue({ data: [] });
 
-      await tasksService.handleSendingNewApartmentsForFreeSubscriptionUsers();
+      await tasksService.handleSendingNewApartments();
 
       expect(
-        filterService.getFilterListBySubscriptionName,
+        filterService.getFilterListBySubscriptionType,
       ).toHaveBeenCalledWith(Subscription.FREE, defaultPaginationParams);
       foundFilters.forEach(filter => {
         expect(tokenService.deleteTokenByFilterId).toHaveBeenCalledWith(
@@ -328,16 +328,10 @@ describe('TasksService', () => {
       expect(tokenService.deleteTokenByFilterId).toHaveBeenCalledTimes(2);
       expect(
         apartmentService.getApartmentListFromDatabaseByFilter,
-      ).not.toHaveBeenCalledWith(
-        foundFilters[0],
-        RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION,
-      );
+      ).not.toHaveBeenCalledWith(foundFilters[0], RECEIVED_APARTMENTS_SIZE);
       expect(
         apartmentService.getApartmentListFromDatabaseByFilter,
-      ).toHaveBeenCalledWith(
-        foundFilters[1],
-        RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION,
-      );
+      ).toHaveBeenCalledWith(foundFilters[1], RECEIVED_APARTMENTS_SIZE);
       expect(mailService.sendMailWithNewApartments).not.toHaveBeenCalled();
     });
   });

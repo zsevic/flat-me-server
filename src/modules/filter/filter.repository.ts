@@ -4,6 +4,7 @@ import {
   PaginationParams,
 } from 'modules/pagination/pagination.interfaces';
 import { getSkip } from 'modules/pagination/pagination.utils';
+import { Subscription } from 'modules/user/subscription.enum';
 import { EntityRepository, Repository } from 'typeorm';
 import { FilterEntity } from './filter.entity';
 import { Filter } from './filter.interface';
@@ -33,8 +34,8 @@ export class FilterRepository extends Repository<FilterEntity> {
     return filter;
   }
 
-  async getFilterListBySubscriptionName(
-    subscriptionName: string,
+  async getFilterListBySubscriptionType(
+    subscriptionType: Subscription,
     paginationParams: PaginationParams,
   ): Promise<PaginatedResponse<Filter>> {
     const skip = getSkip(paginationParams);
@@ -43,8 +44,8 @@ export class FilterRepository extends Repository<FilterEntity> {
       .leftJoinAndSelect('user.apartments', 'apartments')
       .where('filter.isActive = :isActive', { isActive: true })
       .andWhere('user.isVerified = :isVerified', { isVerified: true })
-      .andWhere('user.subscription = :subscription', {
-        subscription: subscriptionName,
+      .andWhere('user.subscription = :subscriptionType', {
+        subscriptionType,
       })
       .select([
         'filter.id',

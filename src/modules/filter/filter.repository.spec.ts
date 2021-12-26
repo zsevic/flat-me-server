@@ -65,8 +65,8 @@ describe('FilterRepository', () => {
     });
   });
 
-  describe('getFilterListBySubscriptionName', () => {
-    it('should return filter list by subscription name', async () => {
+  describe('getFilterListBySubscriptionType', () => {
+    it('should return filter list by subscription type', async () => {
       const data = [];
       const total = 0;
       const filters = { data, total };
@@ -86,7 +86,7 @@ describe('FilterRepository', () => {
         .spyOn(SelectQueryBuilder.prototype, 'getManyAndCount')
         .mockResolvedValue([data, total]);
 
-      const result = await filterRepository.getFilterListBySubscriptionName(
+      const result = await filterRepository.getFilterListBySubscriptionType(
         Subscription.FREE,
         defaultPaginationParams,
       );

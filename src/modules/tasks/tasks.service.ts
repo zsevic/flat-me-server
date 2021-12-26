@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
-import { RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION } from 'modules/apartment/apartment.constants';
+import { RECEIVED_APARTMENTS_SIZE } from 'modules/apartment/apartment.constants';
 import { ApartmentService } from 'modules/apartment/apartment.service';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { filters } from 'modules/filter/filter.constants';
@@ -15,10 +15,7 @@ import { TokenType } from 'modules/token/token.enums';
 import { TokenService } from 'modules/token/token.service';
 import { Subscription } from 'modules/user/subscription.enum';
 import { UserService } from 'modules/user/user.service';
-import {
-  SAVING_APARTMENT_LIST_FROM_PROVIDERS_CRON_JOB,
-  SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB,
-} from './tasks.constants';
+import { SAVING_APARTMENT_LIST_FROM_PROVIDERS_CRON_JOB } from './tasks.constants';
 
 @Injectable()
 export class TasksService {
@@ -54,7 +51,7 @@ export class TasksService {
 
     try {
       await Promise.all(saveApartmentListFromProviders);
-      await this.handleSendingNewApartmentsForFreeSubscriptionUsers();
+      await this.handleSendingNewApartments(Subscription.BETA);
     } catch (error) {
       this.logger.error(error);
     }
@@ -62,8 +59,16 @@ export class TasksService {
     this.logCronJobFinished(SAVING_APARTMENT_LIST_FROM_PROVIDERS_CRON_JOB);
   }
 
-  async handleSendingNewApartmentsForFreeSubscriptionUsers(): Promise<void> {
-    this.logCronJobStarted(SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB);
+  @Cron(CronExpression.EVERY_DAY_AT_8AM, {
+    name: 'SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB',
+    timeZone: 'Europe/Belgrade',
+  })
+  async handleSendingNewApartments(
+    subscriptionType: Subscription = Subscription.FREE,
+  ): Promise<void> {
+    this.logCronJobStarted(
+      `SENDING_NEW_APARTMENTS_${subscriptionType}_SUBSCRIPTION_CRON_JOB`,
+    );
 
     try {
       const limitPerPage = defaultPaginationParams.limitPerPage;
@@ -75,8 +80,8 @@ export class TasksService {
         ({
           data: filters,
           total,
-        } = await this.filterService.getFilterListBySubscriptionName(
-          Subscription.FREE,
+        } = await this.filterService.getFilterListBySubscriptionType(
+          subscriptionType,
           { limitPerPage, pageNumber },
         ));
         await Promise.all(
@@ -92,7 +97,9 @@ export class TasksService {
       this.logger.error(error);
     }
 
-    this.logCronJobFinished(SENDING_NEW_APARTMENTS_FREE_SUBSCRIPTION_CRON_JOB);
+    this.logCronJobFinished(
+      `SENDING_NEW_APARTMENTS_${subscriptionType}_SUBSCRIPTION_CRON_JOB`,
+    );
   }
 
   @Transactional()
@@ -101,7 +108,7 @@ export class TasksService {
 
     const apartmentList = await this.apartmentService.getApartmentListFromDatabaseByFilter(
       filter,
-      RECEIVED_APARTMENTS_SIZE_FREE_SUBSCRIPTION,
+      RECEIVED_APARTMENTS_SIZE,
     );
     if (apartmentList.data.length === 0) {
       this.logger.log('There are no apartments to send to the user');

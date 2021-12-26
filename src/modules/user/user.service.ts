@@ -80,16 +80,10 @@ export class UserService {
       throw new UnprocessableEntityException('User is not verified');
     }
 
-    if (user.subscription !== Subscription.FREE) {
-      throw new BadRequestException(
-        `Subscription ${user.subscription} is not allowed`,
-      );
-    }
-
     const activeFilters = user.filters.filter(filter => filter.isActive);
     if (activeFilters.length >= 1) {
       throw new HttpException(
-        `Filter limit is already filled for ${Subscription.FREE} subscription`,
+        `Filter limit is already filled`,
         LOCKED_STATUS_CODE,
       );
     }
