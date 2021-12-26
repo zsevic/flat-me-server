@@ -35,11 +35,15 @@ const isMunicipalityIncluded = (apartment: Apartment): boolean =>
   !apartment.place ||
   latinize(apartment.place) !== latinize(apartment.municipality);
 
-const isPlaceIncluded = (apartment: Apartment): boolean =>
-  apartment.place &&
-  apartment.address &&
-  latinize(apartment.place.toLowerCase()) !==
-    latinize(apartment.address.toLowerCase());
+const isPlaceIncluded = (apartment: Apartment): boolean => {
+  const apartmentAddressLatinized = latinize(apartment.address.toLowerCase());
+  const apartmentPlaceLatinized = latinize(apartment.place.toLowerCase());
+
+  return (
+    apartmentPlaceLatinized !== apartmentAddressLatinized &&
+    !apartmentAddressLatinized.startsWith(apartmentPlaceLatinized)
+  );
+};
 
 const getAddressValue = (apartment: Apartment): string => {
   let addressValue = apartment.address;

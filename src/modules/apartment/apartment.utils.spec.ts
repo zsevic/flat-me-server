@@ -43,6 +43,25 @@ describe('localizeApartment', () => {
     expect(localizeApartment(apartment)).toEqual(localizedApartment);
   });
 
+  it('should skip place when address starts with place value', () => {
+    const address = 'Ulica 23';
+    const apartment = {
+      ...testApartment,
+      address,
+      place: 'Ulica',
+    };
+    const localizedApartment = {
+      ...apartment,
+      addressValue: 'Ulica 23, Zemun',
+      floor: 'u suterenu',
+      furnished: 'namešten',
+      isForRent: true,
+      locationUrl: 'http://www.google.com/maps/place/40,20',
+      structure: 'jednoiposoban',
+    };
+    expect(localizeApartment(apartment)).toEqual(localizedApartment);
+  });
+
   it('should skip municipality when place and municipality have the same value', () => {
     const apartment = {
       ...testApartment,
