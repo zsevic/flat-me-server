@@ -173,26 +173,6 @@ describe('UserService', () => {
       jest.useRealTimers();
     });
 
-    it("should throw an error when user is verified but user's subscription is not allowed", async () => {
-      const email = 'test@example.com';
-      const userId = 'userid';
-      const userData = {
-        subscription: 'Test',
-        receivedApartments: [],
-        filters: [],
-        isVerified: true,
-        id: userId,
-        email,
-      };
-      jest.spyOn(userRepository, 'getByEmail').mockResolvedValue(userData);
-
-      await expect(
-        userService.getVerifiedUserOrCreateNewUser(email),
-      ).rejects.toThrowError(BadRequestException);
-
-      expect(userRepository.getByEmail).toHaveBeenCalledWith(email);
-    });
-
     it('should throw an error when user is verified but adding more filters is not allowed', async () => {
       const email = 'test@example.com';
       const userId = 'userid';
