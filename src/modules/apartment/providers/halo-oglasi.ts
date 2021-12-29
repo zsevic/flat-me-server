@@ -159,8 +159,14 @@ export class HaloOglasiProvider implements Provider {
         virtualConsole,
       });
 
-      const apartmentData = dom?.window?.QuidditaEnvironment?.CurrentClassified;
-      if (apartmentData?.StateId === apartmentStatusPaused) return true;
+      const quidditaEnvironment = dom?.window?.QuidditaEnvironment;
+      if (quidditaEnvironment && !quidditaEnvironment?.CurrentClassified)
+        return true;
+      if (
+        quidditaEnvironment?.CurrentClassified?.StateId ===
+        apartmentStatusPaused
+      )
+        return true;
     } catch (error) {
       if (error.response?.status === HttpStatus.NOT_FOUND) return true;
       if ([ECONNABORTED, ECONNRESET].includes(error.code)) {

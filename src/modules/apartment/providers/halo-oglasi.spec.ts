@@ -260,6 +260,50 @@ describe('HaloOglasi', () => {
         timeout: DEFAULT_TIMEOUT,
       });
     });
+
+    it('should return true when there is no apartment data', async () => {
+      const provider = new HaloOglasiProvider();
+      // @ts-ignore
+      axios.get.mockResolvedValue({ data: 'html' });
+
+      const dom = {
+        window: {
+          QuidditaEnvironment: {},
+        },
+      };
+      jsdom.JSDOM.mockReturnValue(dom);
+
+      const isApartmentInactive = await provider.isApartmentInactive(
+        `${providerPrefix}_${id}`,
+        url,
+      );
+
+      expect(isApartmentInactive).toEqual(true);
+      expect(axios.get).toHaveBeenCalledWith(url, {
+        timeout: DEFAULT_TIMEOUT,
+      });
+    });
+
+    it('should return undefined when there is no environment data', async () => {
+      const provider = new HaloOglasiProvider();
+      // @ts-ignore
+      axios.get.mockResolvedValue({ data: 'html' });
+
+      const dom = {
+        window: {},
+      };
+      jsdom.JSDOM.mockReturnValue(dom);
+
+      const isApartmentInactive = await provider.isApartmentInactive(
+        `${providerPrefix}_${id}`,
+        url,
+      );
+
+      expect(isApartmentInactive).toEqual(undefined);
+      expect(axios.get).toHaveBeenCalledWith(url, {
+        timeout: DEFAULT_TIMEOUT,
+      });
+    });
   });
 
   describe('parseFloor', () => {
