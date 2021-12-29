@@ -20,10 +20,10 @@ export class MailService {
       filter.rentOrSale === 'rent' ? 'iznajmljivanje' : 'kupovinu';
     const projectName = 'FlatMe';
     if (apartmentListLength === 1)
-      return `[${projectName}] 1 novi stan za ${rentOrSale}`;
+      return `${projectName} | 1 novi stan za ${rentOrSale}`;
     if (apartmentListLength <= 4)
-      return `[${projectName}] ${apartmentListLength} nova stana za ${rentOrSale}`;
-    return `[${projectName}] ${apartmentListLength} novih stanova za ${rentOrSale}`;
+      return `${projectName} | ${apartmentListLength} nova stana za ${rentOrSale}`;
+    return `${projectName} | ${apartmentListLength} novih stanova za ${rentOrSale}`;
   };
 
   async sendFilterVerificationMail(
