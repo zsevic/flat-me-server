@@ -12,7 +12,10 @@ import {
   createRequestForApartment,
   parseFloor,
 } from './utils';
-import { apartmentStatusPaused } from '../apartment.constants';
+import {
+  apartmentStatusExpired,
+  apartmentStatusPaused,
+} from '../apartment.constants';
 import { Apartment } from '../apartment.interface';
 
 export class HaloOglasiProvider implements Provider {
@@ -163,8 +166,9 @@ export class HaloOglasiProvider implements Provider {
       if (quidditaEnvironment && !quidditaEnvironment?.CurrentClassified)
         return true;
       if (
-        quidditaEnvironment?.CurrentClassified?.StateId ===
-        apartmentStatusPaused
+        [apartmentStatusPaused, apartmentStatusExpired].includes(
+          quidditaEnvironment?.CurrentClassified?.StateId,
+        )
       )
         return true;
     } catch (error) {
