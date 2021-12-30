@@ -99,20 +99,51 @@ describe('HaloOglasi', () => {
 
   describe('getResults', () => {
     it("should return empty apartment list when apartments can't be parsed from html", () => {
-      const apartmentUrl = '/url';
-      const html = `<div><a href="${apartmentUrl}">link</a></div>`;
+      const dom = {
+        window: {},
+      };
+      jsdom.JSDOM.mockReturnValue(dom);
       const result = [];
 
       const provider = new HaloOglasiProvider();
       // @ts-ignore
-      const apartmentList = provider.getResults(html, { rentOrSale: 'rent' });
+      const apartmentList = provider.getResults('html', { rentOrSale: 'rent' });
+
+      expect(apartmentList).toEqual(result);
+    });
+
+    it('should skip ads without relative urls', () => {
+      const dom = {
+        window: {
+          serverListData: {
+            Ads: [{}],
+          },
+        },
+      };
+      jsdom.JSDOM.mockReturnValue(dom);
+      const result = [];
+
+      const provider = new HaloOglasiProvider();
+      // @ts-ignore
+      const apartmentList = provider.getResults('html', { rentOrSale: 'rent' });
 
       expect(apartmentList).toEqual(result);
     });
 
     it('should return apartment list', () => {
       const apartmentUrl = '/url';
-      const html = `<div class="product-title"><a href="${apartmentUrl}">link</a></div>`;
+      const dom = {
+        window: {
+          serverListData: {
+            Ads: [
+              {
+                RelativeUrl: apartmentUrl,
+              },
+            ],
+          },
+        },
+      };
+      jsdom.JSDOM.mockReturnValue(dom);
       const result = [
         {
           url: 'https://www.halooglasi.com' + apartmentUrl,
@@ -122,7 +153,7 @@ describe('HaloOglasi', () => {
 
       const provider = new HaloOglasiProvider();
       // @ts-ignore
-      const apartmentList = provider.getResults(html, { rentOrSale: 'rent' });
+      const apartmentList = provider.getResults('html', { rentOrSale: 'rent' });
 
       expect(apartmentList).toEqual(result);
     });

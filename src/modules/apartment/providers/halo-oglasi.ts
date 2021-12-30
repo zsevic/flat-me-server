@@ -1,6 +1,5 @@
 import { HttpStatus, Logger } from '@nestjs/common';
 import axios, { AxiosRequestConfig } from 'axios';
-import cheerio from 'cheerio';
 import jsdom from 'jsdom';
 import { DEFAULT_TIMEOUT, ECONNABORTED, ECONNRESET } from 'common/constants';
 import { capitalizeWords } from 'common/utils';
@@ -121,25 +120,27 @@ export class HaloOglasiProvider implements Provider {
   };
 
   getResults = (html: string, filter?: FilterDto) => {
-    const $ = cheerio.load(html);
-    const links = $('.product-title > a');
-    const apartmentList = [];
-    links.each((_, element) => {
-      try {
-        const link = element.attribs.href;
-        if (link) {
-          const apartment = {
-            rentOrSale: filter.rentOrSale,
-            url: this.domainUrl + link,
-          };
-          apartmentList.push(apartment);
-        }
-      } catch (error) {
-        this.logger.error('Apartment parsing failed', error);
-      }
-    });
+    try {
+      const virtualConsole = new jsdom.VirtualConsole();
+      const htmlWithApartmentList = html.replace(
+        'QuidditaEnvironment.serverListData',
+        'var serverListData=QuidditaEnvironment.serverListData',
+      );
+      const dom = new jsdom.JSDOM(htmlWithApartmentList, {
+        runScripts: 'dangerously',
+        virtualConsole,
+      });
 
-    return apartmentList;
+      const apartmentList = dom?.window?.serverListData?.Ads || [];
+      return apartmentList
+        .filter(apartment => !!apartment.RelativeUrl)
+        .map(apartment => ({
+          rentOrSale: filter.rentOrSale,
+          url: this.domainUrl + apartment.RelativeUrl,
+        }));
+    } catch (error) {
+      this.logger.error(error);
+    }
   };
 
   private getSearchUrl(rentOrSale: string) {
