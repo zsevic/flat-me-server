@@ -1,6 +1,7 @@
 import { Type } from 'class-transformer';
 import {
   ArrayNotEmpty,
+  IsArray,
   IsEnum,
   IsNotEmpty,
   IsOptional,
@@ -42,8 +43,8 @@ export class FilterDto {
 
   @Validate(ArrayContainsValidator, STRUCTURES)
   @Type(() => Number)
-  @ArrayNotEmpty()
-  structures: number[];
+  @IsArray()
+  structures: number[] = STRUCTURES;
 
   @Validate(ArrayContainsValidator, Object.keys(floorFilters))
   @IsOptional()

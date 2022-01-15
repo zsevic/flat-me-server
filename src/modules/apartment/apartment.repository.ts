@@ -59,7 +59,9 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
       municipality: In(filter.municipalities),
       price: Between(filter.minPrice, filter.maxPrice),
       rentOrSale: filter.rentOrSale,
-      structure: In(filter.structures),
+      ...(filter.structures.length > 0 && {
+        structure: In(filter.structures),
+      }),
     };
   };
 
