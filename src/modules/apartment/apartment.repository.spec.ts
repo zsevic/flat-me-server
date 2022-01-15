@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { STRUCTURES } from 'modules/filter/filter.constants';
 import {
   defaultPaginationParams,
   DEFAULT_LIMIT_PER_PAGE,
@@ -59,7 +60,7 @@ describe('ApartmentRepository', () => {
       const filter = {
         rentOrSale: 'rent',
         municipalities: ['Palilula'],
-        structures: [1, 1.5],
+        structures: [],
         furnished: ['semi-furnished'],
         minPrice: 200,
         maxPrice: 300,
@@ -91,7 +92,7 @@ describe('ApartmentRepository', () => {
         municipality: In(filter.municipalities),
         price: Between(filter.minPrice, filter.maxPrice),
         rentOrSale: filter.rentOrSale,
-        structure: In(filter.structures),
+        structure: In(STRUCTURES),
       };
       const findAndCountSpy = jest
         .spyOn(apartmentRepository, 'findAndCount')

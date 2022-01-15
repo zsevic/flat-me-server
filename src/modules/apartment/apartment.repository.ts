@@ -8,7 +8,7 @@ import {
   Not,
   Repository,
 } from 'typeorm';
-import { floorFilters } from 'modules/filter/filter.constants';
+import { floorFilters, STRUCTURES } from 'modules/filter/filter.constants';
 import {
   DEFAULT_LIMIT_PER_PAGE,
   DEFAULT_PAGE_NUMBER,
@@ -59,9 +59,8 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
       municipality: In(filter.municipalities),
       price: Between(filter.minPrice, filter.maxPrice),
       rentOrSale: filter.rentOrSale,
-      ...(filter.structures.length > 0 && {
-        structure: In(filter.structures),
-      }),
+      structure:
+        filter.structures.length > 0 ? In(filter.structures) : In(STRUCTURES),
     };
   };
 
