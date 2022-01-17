@@ -4,6 +4,7 @@ import { Apartment } from './apartment.interface';
 
 const floorsLocaleMap = {
   cellar: 'u podrumu',
+  'semi-basement': 'u polusuterenu',
   basement: 'u suterenu',
   'low ground floor': 'na niskom prizemlju',
   'ground floor': 'na prizemlju',
