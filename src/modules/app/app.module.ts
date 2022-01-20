@@ -16,6 +16,10 @@ import { Subject } from 'rxjs';
 import { Connection } from 'typeorm';
 import databaseConfig from 'common/config/database';
 import { PostgresConfigService } from 'common/config/database/postgres-config.service';
+import {
+  FILTER_SAVING_LIMIT,
+  FILTER_SAVING_TTL,
+} from 'common/config/rate-limiter';
 import { isEnvironment } from 'common/utils';
 import { ApartmentModule } from 'modules/apartment/apartment.module';
 import { FilterModule } from 'modules/filter/filter.module';
@@ -64,8 +68,8 @@ import { ThrottlerStorageService } from 'modules/throttler-storage/throttler-sto
       imports: [ThrottlerStorageModule],
       useFactory: (throttlerStorage: ThrottlerStorageService) => {
         return {
-          ttl: 60 * 60 * 24,
-          limit: 3,
+          ttl: FILTER_SAVING_TTL,
+          limit: FILTER_SAVING_LIMIT,
           storage: throttlerStorage,
         };
       },
