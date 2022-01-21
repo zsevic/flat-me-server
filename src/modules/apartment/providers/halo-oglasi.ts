@@ -16,6 +16,7 @@ import {
   apartmentStatusPaused,
 } from '../apartment.constants';
 import { Apartment } from '../apartment.interface';
+import { AdvertiserType } from '../enums/advertiser-type.enum';
 
 export class HaloOglasiProvider implements Provider {
   private readonly providerName = 'haloOglasi';
@@ -251,9 +252,17 @@ export class HaloOglasiProvider implements Provider {
         40788: 'Zvezdara',
       };
 
+      const advertiserTypeMap = {
+        Agencija: AdvertiserType.Agency,
+        Investitor: AdvertiserType.Investor,
+        Vlasnik: AdvertiserType.Owner,
+      };
+
+      const advertiser = apartmentData.oglasivac_nekretnine_s;
       const advertiserName =
-        apartmentData.oglasivac_nekretnine_s === 'Agencija' &&
+        advertiser === 'Agencija' &&
         advertiserData?.DisplayName?.replace(/&quot;/g, '"');
+      const advertiserType = advertiserTypeMap[advertiser];
       const address = apartmentData.ulica_t;
       const photosUrls = apartmentData?.ImageURLs;
       const furnished = furnishedMap[apartmentData.namestenost_id_l];
@@ -284,6 +293,7 @@ export class HaloOglasiProvider implements Provider {
       Object.assign(apartmentInfo, {
         ...(address && { address: capitalizeWords(address) }),
         ...(advertiserName && { advertiserName }),
+        ...(advertiserType && { advertiserType }),
         ...(photosUrls?.length > 0 && {
           coverPhotoUrl: this.imageBaseUrl + photosUrls[0],
         }),

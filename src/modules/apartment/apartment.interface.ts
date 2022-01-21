@@ -1,4 +1,5 @@
 import { Location } from 'common/interfaces/location.interface';
+import { AdvertiserType } from './enums/advertiser-type.enum';
 
 export interface Apartment {
   id: string;
@@ -14,6 +15,8 @@ export interface Apartment {
   coverPhotoUrl: string;
 
   advertiserName?: string;
+
+  advertiserType?: AdvertiserType;
 
   floor: string;
 

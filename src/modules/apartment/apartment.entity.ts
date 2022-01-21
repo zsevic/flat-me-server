@@ -1,6 +1,7 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 import { BaseEntity } from 'common/entities/base.entity';
 import { Location } from 'common/interfaces/location.interface';
+import { AdvertiserType } from './enums/advertiser-type.enum';
 
 @Entity({
   name: 'apartment',
@@ -39,6 +40,11 @@ export class ApartmentEntity extends BaseEntity {
     nullable: true,
   })
   advertiserName?: string;
+
+  @Column({
+    name: 'advertiser_type',
+  })
+  advertiserType?: AdvertiserType;
 
   @Column()
   floor: string;

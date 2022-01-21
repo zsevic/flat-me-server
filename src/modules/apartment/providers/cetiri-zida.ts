@@ -12,6 +12,7 @@ import {
 } from './utils';
 import { CETIRI_ZIDA_LOGO_URL } from '../apartment.constants';
 import { Apartment } from '../apartment.interface';
+import { AdvertiserType } from '../enums/advertiser-type.enum';
 
 export class CetiriZidaProvider implements Provider {
   private readonly providerName = 'cetiriZida';
@@ -223,9 +224,13 @@ export class CetiriZidaProvider implements Provider {
       };
     }
     const advertiserName = apartmentData?.author?.agency?.title;
+    const advertiserType = apartmentData?.author?.agency
+      ? AdvertiserType.Agency
+      : AdvertiserType.Owner;
 
     Object.assign(apartmentInfo, {
       ...(advertiserName && { advertiserName }),
+      ...(advertiserType && { advertiserType }),
       ...(floor && { floor }),
       ...(location?.latitude && location?.longitude && { location }),
       ...(postedAt && { postedAt: new Date(postedAt) }),

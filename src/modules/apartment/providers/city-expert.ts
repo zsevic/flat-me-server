@@ -12,6 +12,7 @@ import {
 } from './utils';
 import { apartmentStatusPublished } from '../apartment.constants';
 import { Apartment } from '../apartment.interface';
+import { AdvertiserType } from '../enums/advertiser-type.enum';
 
 export class CityExpertProvider implements Provider {
   private readonly providerName = 'cityExpert';
@@ -242,6 +243,7 @@ export class CityExpertProvider implements Provider {
       ...(apartmentInfo.street && {
         address: capitalizeWords(apartmentInfo.street),
       }),
+      advertiserType: AdvertiserType.Owner,
       availableFrom: apartmentInfo.availableFrom,
       coverPhotoUrl: `https://img.cityexpert.rs/sites/default/files/styles/1920x/public/image/${apartmentInfo.coverPhoto}`,
       advertiserName: this.advertiserName,
