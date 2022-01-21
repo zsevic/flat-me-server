@@ -91,7 +91,7 @@ describe('ApartmentRepository', () => {
         },
       ];
       const query = {
-        advertiserTypes: In(ADVERTISER_TYPES),
+        advertiserType: In(ADVERTISER_TYPES),
         furnished: In(filter.furnished),
         municipality: In(filter.municipalities),
         price: Between(filter.minPrice, filter.maxPrice),
@@ -151,7 +151,7 @@ describe('ApartmentRepository', () => {
         },
       ];
       const query = {
-        advertiserTypes: In(filter.advertiserTypes),
+        advertiserType: In(filter.advertiserTypes),
         municipality: In(filter.municipalities),
         price: Between(filter.minPrice, filter.maxPrice),
         rentOrSale: filter.rentOrSale,
