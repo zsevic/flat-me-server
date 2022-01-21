@@ -12,7 +12,7 @@ export class AddAdvertiserTypesFilterColumn1642779515749
         name: COLUMN_NAME,
         type: 'varchar',
         isArray: true,
-        default: [],
+        default: 'array[]::varchar[]',
       }),
     );
   }

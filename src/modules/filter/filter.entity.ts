@@ -20,7 +20,6 @@ export class FilterEntity extends BaseEntity {
   @Column({
     name: 'advertiser_types',
     array: true,
-    default: [],
     type: 'varchar',
   })
   advertiserTypes: string[];
