@@ -49,6 +49,7 @@ export class FilterRepository extends Repository<FilterEntity> {
       })
       .select([
         'filter.id',
+        'filter.advertiserTypes',
         'filter.furnished',
         'filter.floor',
         'filter.minPrice',
