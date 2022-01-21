@@ -1,3 +1,4 @@
+import { AdvertiserType } from 'modules/apartment/enums/advertiser-type.enum';
 import { FilterDto } from './dto/filter.dto';
 import { RentOrSale } from './filter.enums';
 
@@ -30,7 +31,10 @@ export const floorFilters = {
 
 export const STRUCTURES = [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4];
 
+export const ADVERTISER_TYPES = Object.values(AdvertiserType);
+
 const baseFilter = {
+  advertiserTypes: ADVERTISER_TYPES,
   minPrice: 0,
   structures: STRUCTURES,
   municipalities: MUNICIPALITIES,

@@ -17,6 +17,14 @@ export class FilterEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
 
+  @Column({
+    name: 'advertiser_types',
+    array: true,
+    default: [],
+    type: 'varchar',
+  })
+  advertiserTypes: string[];
+
   @Column('varchar', { array: true })
   floor: string[];
 

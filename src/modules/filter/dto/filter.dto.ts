@@ -10,6 +10,7 @@ import {
 } from 'class-validator';
 import { ArrayContainsValidator } from 'common/validators/array-contains.validator';
 import {
+  ADVERTISER_TYPES,
   floorFilters,
   FURNISHED,
   MUNICIPALITIES,
@@ -18,6 +19,10 @@ import {
 import { RentOrSale } from '../filter.enums';
 
 export class FilterDto {
+  @Validate(ArrayContainsValidator, ADVERTISER_TYPES)
+  @IsArray()
+  advertiserTypes: string[] = ADVERTISER_TYPES;
+
   @ValidateIf((dto: FilterDto): boolean => dto.rentOrSale === RentOrSale.rent)
   @Validate(ArrayContainsValidator, FURNISHED)
   @Type(() => String)

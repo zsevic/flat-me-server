@@ -3,6 +3,8 @@ import { User } from 'modules/user/user.interface';
 export interface Filter {
   id?: string;
 
+  advertiserTypes?: string[];
+
   furnished: string[];
 
   floor?: string[];

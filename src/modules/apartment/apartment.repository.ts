@@ -8,7 +8,11 @@ import {
   Not,
   Repository,
 } from 'typeorm';
-import { floorFilters, STRUCTURES } from 'modules/filter/filter.constants';
+import {
+  ADVERTISER_TYPES,
+  floorFilters,
+  STRUCTURES,
+} from 'modules/filter/filter.constants';
 import {
   DEFAULT_LIMIT_PER_PAGE,
   DEFAULT_PAGE_NUMBER,
@@ -49,6 +53,10 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
         skippedApartments.length > 0 && {
           id: Not(In(skippedApartments)),
         }),
+      advertiserTypes:
+        filter.advertiserTypes.length > 0
+          ? In(filter.advertiserTypes)
+          : In(ADVERTISER_TYPES),
       ...(dateFilter && {
         createdAt: MoreThan(dateFilter),
       }),
