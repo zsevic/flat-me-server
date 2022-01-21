@@ -108,6 +108,14 @@ export class CetiriZidaProvider implements Provider {
     return createRequestConfigForApartment.call(this, apartmentId);
   }
 
+  private getAdvertiserType = (apartmentData): AdvertiserType => {
+    if (apartmentData?.state === 'in_progress') return AdvertiserType.Investor;
+
+    return apartmentData?.author?.agency
+      ? AdvertiserType.Agency
+      : AdvertiserType.Owner;
+  };
+
   getApartmentUrl(apartmentId: string): string {
     return `${this.apartmentBaseUrl}/${apartmentId}`;
   }
@@ -224,9 +232,7 @@ export class CetiriZidaProvider implements Provider {
       };
     }
     const advertiserName = apartmentData?.author?.agency?.title;
-    const advertiserType = apartmentData?.author?.agency
-      ? AdvertiserType.Agency
-      : AdvertiserType.Owner;
+    const advertiserType = this.getAdvertiserType(apartmentData);
 
     Object.assign(apartmentInfo, {
       ...(advertiserName && { advertiserName }),

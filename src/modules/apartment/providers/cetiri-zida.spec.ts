@@ -3,6 +3,7 @@ import axios from 'axios';
 import { DEFAULT_TIMEOUT, ECONNABORTED } from 'common/constants';
 import { RentOrSale } from 'modules/filter/filter.enums';
 import { Apartment } from '../apartment.interface';
+import { AdvertiserType } from '../enums/advertiser-type.enum';
 import { CetiriZidaProvider } from './cetiri-zida';
 
 jest.mock('axios');
@@ -325,6 +326,45 @@ describe('CetiriZida', () => {
       provider.updateApartmentInfo(apartmentData, apartmentInfo);
 
       expect(apartmentInfo.floor).toEqual('attic');
+    });
+
+    it('should update advertiser type to investor when state is in progress', () => {
+      const provider = new CetiriZidaProvider();
+      const apartmentInfo: any = {};
+      const apartmentData = {
+        state: 'in_progress',
+      };
+
+      // @ts-ignore
+      provider.updateApartmentInfo(apartmentData, apartmentInfo);
+
+      expect(apartmentInfo.advertiserType).toEqual(AdvertiserType.Investor);
+    });
+
+    it('should update advertiser type to agency when there is agency info', () => {
+      const provider = new CetiriZidaProvider();
+      const apartmentInfo: any = {};
+      const apartmentData = {
+        author: {
+          agency: 'agency info',
+        },
+      };
+
+      // @ts-ignore
+      provider.updateApartmentInfo(apartmentData, apartmentInfo);
+
+      expect(apartmentInfo.advertiserType).toEqual(AdvertiserType.Agency);
+    });
+
+    it('should update advertiser type to owner as default state', () => {
+      const provider = new CetiriZidaProvider();
+      const apartmentInfo: any = {};
+      const apartmentData = {};
+
+      // @ts-ignore
+      provider.updateApartmentInfo(apartmentData, apartmentInfo);
+
+      expect(apartmentInfo.advertiserType).toEqual(AdvertiserType.Owner);
     });
 
     it('should update floor value when total floors value is undefined', () => {
