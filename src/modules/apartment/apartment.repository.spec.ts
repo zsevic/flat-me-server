@@ -214,7 +214,7 @@ describe('ApartmentRepository', () => {
       const dateFilter = new Date(2020, 8, 10);
       const query = {
         id: Not(In(skippedApartments)),
-        advertiserTypes: In(ADVERTISER_TYPES),
+        advertiserType: In(ADVERTISER_TYPES),
         createdAt: MoreThan(dateFilter),
         furnished: In(filter.furnished),
         municipality: In(filter.municipalities),
