@@ -275,8 +275,11 @@ export class CityExpertProvider implements Provider {
       apartmentData?.onsite?.basInfFloorTotal,
     );
     const place = apartmentData?.neighbourhoods?.[0];
+    const advertiserType =
+      apartmentData?.newDevelopment && AdvertiserType.Investor;
 
     Object.assign(apartmentInfo, {
+      ...(advertiserType && { advertiserType }),
       ...(floor && { floor }),
       ...(place && { place }),
     });

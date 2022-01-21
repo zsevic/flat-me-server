@@ -446,6 +446,21 @@ describe('CityExpert', () => {
       expect(apartmentInfo.floor).toEqual('basement');
     });
 
+    it('should update advertiser type to investor when apartment is in development', () => {
+      const provider = new CityExpertProvider();
+      const apartmentInfo = {
+        advertiserType: AdvertiserType.Owner,
+      };
+      const apartmentData = {
+        newDevelopment: true,
+      };
+
+      // @ts-ignore
+      provider.updateApartmentInfo(apartmentData, apartmentInfo);
+
+      expect(apartmentInfo.advertiserType).toEqual(AdvertiserType.Investor);
+    });
+
     it('should update floor value when total floors value is undefined', () => {
       const provider = new CityExpertProvider();
       const apartmentInfo = {
