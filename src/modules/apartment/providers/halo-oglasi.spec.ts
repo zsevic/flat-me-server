@@ -17,6 +17,7 @@ describe('HaloOglasi', () => {
   describe('createRequestConfig', () => {
     it('should return request config for rent', () => {
       const filter = {
+        advertiserTypes: [],
         rentOrSale: RentOrSale.rent,
         municipalities: ['Palilula', 'Novi Beograd'],
         structures: [],
@@ -47,6 +48,7 @@ describe('HaloOglasi', () => {
 
     it('should return request config for sale', () => {
       const filter = {
+        advertiserTypes: [],
         rentOrSale: RentOrSale.sale,
         municipalities: ['Palilula'],
         structures: [],

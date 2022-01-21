@@ -240,6 +240,7 @@ describe('FilterService', () => {
   describe('getInitialFilter', () => {
     it('should return initial filter', () => {
       const filter = {
+        advertiserTypes: [],
         structures: [1, 2, 0.5, 1.5],
         municipalities: ['Savski venac', 'Zemun'],
         furnished: ['semi-furnished'],

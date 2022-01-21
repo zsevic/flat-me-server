@@ -54,7 +54,7 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
           id: Not(In(skippedApartments)),
         }),
       advertiserTypes:
-        filter.advertiserTypes.length > 0
+        filter.advertiserTypes?.length > 0
           ? In(filter.advertiserTypes)
           : In(ADVERTISER_TYPES),
       ...(dateFilter && {

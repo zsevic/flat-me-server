@@ -553,6 +553,7 @@ describe('ApartmentService', () => {
         });
 
       await apartmentService.saveApartmentListFromProviders({
+        advertiserTypes: [],
         furnished: ['furnished'],
         municipalities: ['Vračar', 'Zvezdara'],
         minPrice: 400,
@@ -710,6 +711,7 @@ describe('ApartmentService', () => {
         .mockResolvedValueOnce(alreadySavedApartment);
 
       await apartmentService.saveApartmentListFromProviders({
+        advertiserTypes: [],
         furnished: ['furnished'],
         municipalities: ['Vračar', 'Zvezdara'],
         minPrice: 400,
@@ -796,6 +798,7 @@ describe('ApartmentService', () => {
         .mockResolvedValueOnce(providerResults);
 
       await apartmentService.saveApartmentListFromProviders({
+        advertiserTypes: [],
         furnished: ['furnished'],
         municipalities: ['Vračar', 'Zvezdara'],
         minPrice: 400,

@@ -16,6 +16,7 @@ describe('CityExpert', () => {
   describe('createRequestConfig', () => {
     it('should return request config for rent', () => {
       const filter = {
+        advertiserTypes: [],
         rentOrSale: RentOrSale.rent,
         municipalities: ['Palilula'],
         structures: [0.5, 1, 1.5],
@@ -91,6 +92,7 @@ describe('CityExpert', () => {
 
     it('should return request config for sale', () => {
       const filter = {
+        advertiserTypes: [],
         rentOrSale: RentOrSale.sale,
         municipalities: ['Novi Beograd', 'Stari Grad'],
         structures: [2, 2.5],

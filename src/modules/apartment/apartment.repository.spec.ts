@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { STRUCTURES } from 'modules/filter/filter.constants';
+import { ADVERTISER_TYPES, STRUCTURES } from 'modules/filter/filter.constants';
 import {
   defaultPaginationParams,
   DEFAULT_LIMIT_PER_PAGE,
@@ -9,6 +9,7 @@ import { Between, In, MoreThan, Not } from 'typeorm';
 import { ApartmentEntity } from './apartment.entity';
 import { ApartmentRepository } from './apartment.repository';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
+import { AdvertiserType } from './enums/advertiser-type.enum';
 
 describe('ApartmentRepository', () => {
   let apartmentRepository: ApartmentRepository;
@@ -58,6 +59,7 @@ describe('ApartmentRepository', () => {
   describe('getApartmentList', () => {
     it('should return apartment list for rent', async () => {
       const filter = {
+        advertiserTypes: [],
         rentOrSale: 'rent',
         municipalities: ['Palilula'],
         structures: [],
@@ -71,6 +73,7 @@ describe('ApartmentRepository', () => {
           id: 'cetiriZida_id1',
           price: 350,
           apartmentId: 'id',
+          advertiserType: AdvertiserType.Agency,
           providerName: 'cetiriZida',
           address: 'street',
           coverPhotoUrl: 'url',
@@ -88,6 +91,7 @@ describe('ApartmentRepository', () => {
         },
       ];
       const query = {
+        advertiserTypes: In(ADVERTISER_TYPES),
         furnished: In(filter.furnished),
         municipality: In(filter.municipalities),
         price: Between(filter.minPrice, filter.maxPrice),
@@ -116,6 +120,7 @@ describe('ApartmentRepository', () => {
 
     it('should return apartment list for sale', async () => {
       const filter = {
+        advertiserTypes: [AdvertiserType.Agency],
         rentOrSale: 'sale',
         municipalities: ['Palilula'],
         structures: [1, 1.5],
@@ -128,6 +133,7 @@ describe('ApartmentRepository', () => {
           heatingTypes: ['central'],
           id: 'cetiriZida_id1',
           price: 350,
+          advertiserType: AdvertiserType.Agency,
           apartmentId: 'id',
           providerName: 'cetiriZida',
           address: 'street',
@@ -145,6 +151,7 @@ describe('ApartmentRepository', () => {
         },
       ];
       const query = {
+        advertiserTypes: In(filter.advertiserTypes),
         municipality: In(filter.municipalities),
         price: Between(filter.minPrice, filter.maxPrice),
         rentOrSale: filter.rentOrSale,
@@ -172,6 +179,7 @@ describe('ApartmentRepository', () => {
 
     it('should return new apartments sorted by postedAt value', async () => {
       const filter = {
+        advertiserTypes: [],
         rentOrSale: 'rent',
         municipalities: ['Palilula'],
         structures: [1, 1.5],
@@ -186,6 +194,7 @@ describe('ApartmentRepository', () => {
           id: 'cetiriZida_id1',
           price: 350,
           apartmentId: 'id',
+          advertiserType: AdvertiserType.Agency,
           providerName: 'cetiriZida',
           address: 'street',
           coverPhotoUrl: 'url',
@@ -205,6 +214,7 @@ describe('ApartmentRepository', () => {
       const dateFilter = new Date(2020, 8, 10);
       const query = {
         id: Not(In(skippedApartments)),
+        advertiserTypes: In(ADVERTISER_TYPES),
         createdAt: MoreThan(dateFilter),
         furnished: In(filter.furnished),
         municipality: In(filter.municipalities),
