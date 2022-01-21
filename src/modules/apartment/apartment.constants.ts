@@ -19,6 +19,7 @@ export const HALO_OGLASI_LOGO_URL =
 
 export const requiredFields = [
   'address',
+  'advertiserType',
   'coverPhotoUrl',
   'floor',
   'municipality',

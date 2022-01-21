@@ -8,6 +8,7 @@ import {
   apartmentStatusExpired,
   apartmentStatusPaused,
 } from '../apartment.constants';
+import { AdvertiserType } from '../enums/advertiser-type.enum';
 
 jest.mock('axios');
 jest.mock('jsdom');
@@ -441,6 +442,7 @@ describe('HaloOglasi', () => {
       const updatedApartmentInfo = {
         address: 'Street 23',
         advertiserName: 'Preduzece "Menadzer-nekretnine" d.o.o.',
+        advertiserType: AdvertiserType.Agency,
         coverPhotoUrl: 'https://img.halooglasi.com/image-url',
         floor: 2,
         furnished: 'furnished',
@@ -494,6 +496,7 @@ describe('HaloOglasi', () => {
       const updatedApartmentInfo = {
         address: 'Street 23',
         coverPhotoUrl: 'https://img.halooglasi.com/image-url',
+        advertiserType: AdvertiserType.Investor,
         floor: 2,
         furnished: 'furnished',
         heatingTypes: ['district'],

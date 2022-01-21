@@ -7,6 +7,7 @@ import {
   apartmentStatusNotAvailable,
   apartmentStatusReserved,
 } from '../apartment.constants';
+import { AdvertiserType } from '../enums/advertiser-type.enum';
 import { CityExpertProvider } from './city-expert';
 
 jest.mock('axios');
@@ -361,6 +362,7 @@ describe('CityExpert', () => {
         price: 450,
         id: 'cityExpert_123-BS',
         apartmentId: '123-BS',
+        advertiserType: AdvertiserType.Owner,
         providerName: 'cityExpert',
         address: 'Internacionalnih Brigada',
         availableFrom: '0001-01-01T00:00:00Z',

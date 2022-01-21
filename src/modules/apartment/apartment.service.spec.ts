@@ -3,6 +3,7 @@ import { RentOrSale } from 'modules/filter/filter.enums';
 import { UserService } from 'modules/user/user.service';
 import { ApartmentRepository } from './apartment.repository';
 import { ApartmentService } from './apartment.service';
+import { AdvertiserType } from './enums/advertiser-type.enum';
 import {
   BaseProvider,
   CetiriZidaProvider,
@@ -435,6 +436,7 @@ describe('ApartmentService', () => {
             price: 420,
             id: 'cetiriZida_60993e3e7906cd3a4c6832fd',
             apartmentId: '60993e3e7906cd3a4c6832fd',
+            advertiserType: AdvertiserType.Owner,
             providerName: 'cetiriZida',
             address: 'Dalmatinska',
             coverPhotoUrl: 'cover-photo-url',
@@ -455,6 +457,7 @@ describe('ApartmentService', () => {
             price: 450,
             id: 'cityExpert_23-BR',
             apartmentId: '23-BR',
+            advertiserType: AdvertiserType.Owner,
             providerName: 'cityExpert',
             address: 'Cara Nikolaja Ii',
             availableFrom: '2021-08-09T11:04:13Z',
@@ -481,6 +484,7 @@ describe('ApartmentService', () => {
             id: 'cetiriZida_60f99390d9982b10',
             address: 'Kursulina',
             apartmentId: '60f99390d9982b10',
+            advertiserType: AdvertiserType.Owner,
             providerName: 'cetiriZida',
             coverPhotoUrl: 'cover-photo-url',
             floor: 3,
@@ -502,6 +506,7 @@ describe('ApartmentService', () => {
             apartmentId: '44352-BS',
             providerName: 'cityExpert',
             address: 'Internacionalnih Brigada',
+            advertiserType: AdvertiserType.Owner,
             availableFrom: '0001-01-01T00:00:00Z',
             coverPhotoUrl:
               'https://img.cityexpert.rs/sites/default/files/styles/1920x/public/image/cover.jpg',
@@ -587,6 +592,9 @@ describe('ApartmentService', () => {
               featuredExpiresAt: '2021-08-25T19:01:41+02:00',
               featuredCounter: 5,
               authorId: 57,
+              autor: {
+                agency: 'agency info',
+              },
               createdAt: '2021-05-10T16:07:58+02:00',
               roomCount: 3,
               description100: 'description',
@@ -645,6 +653,7 @@ describe('ApartmentService', () => {
         apartmentId: '60993e3e7906cd3a4c6832fd',
         providerName: 'cetiriZida',
         address: 'Dalmatinska',
+        advertiserType: AdvertiserType.Agency,
         coverPhotoUrl: 'cover-photo-url',
         floor: 1,
         furnished: 'furnished',
@@ -664,6 +673,7 @@ describe('ApartmentService', () => {
           id: 'cetiriZida_60f99390d9982b10',
           address: 'Kursulina',
           apartmentId: '60f99390d9982b10',
+          advertiserType: AdvertiserType.Owner,
           providerName: 'cetiriZida',
           coverPhotoUrl: 'cover-photo-url',
           floor: 3,
