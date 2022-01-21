@@ -2,6 +2,7 @@ import { HttpStatus } from '@nestjs/common';
 import axios from 'axios';
 import { DEFAULT_TIMEOUT, ECONNABORTED } from 'common/constants';
 import { RentOrSale } from 'modules/filter/filter.enums';
+import { apartmentStateInProgress } from '../apartment.constants';
 import { Apartment } from '../apartment.interface';
 import { AdvertiserType } from '../enums/advertiser-type.enum';
 import { CetiriZidaProvider } from './cetiri-zida';
@@ -332,7 +333,8 @@ describe('CetiriZida', () => {
       const provider = new CetiriZidaProvider();
       const apartmentInfo: any = {};
       const apartmentData = {
-        state: 'in_progress',
+        state: apartmentStateInProgress,
+        for: RentOrSale.sale,
       };
 
       // @ts-ignore

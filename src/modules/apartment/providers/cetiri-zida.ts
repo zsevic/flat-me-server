@@ -3,6 +3,7 @@ import axios, { AxiosRequestConfig } from 'axios';
 import { DEFAULT_TIMEOUT, ECONNABORTED } from 'common/constants';
 import { capitalizeWords } from 'common/utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
+import { RentOrSale } from 'modules/filter/filter.enums';
 import { Provider } from './provider.interface';
 import {
   createRequest,
@@ -10,7 +11,10 @@ import {
   createRequestForApartment,
   parseFloor,
 } from './utils';
-import { CETIRI_ZIDA_LOGO_URL } from '../apartment.constants';
+import {
+  apartmentStateInProgress,
+  CETIRI_ZIDA_LOGO_URL,
+} from '../apartment.constants';
 import { Apartment } from '../apartment.interface';
 import { AdvertiserType } from '../enums/advertiser-type.enum';
 
@@ -109,7 +113,11 @@ export class CetiriZidaProvider implements Provider {
   }
 
   private getAdvertiserType = (apartmentData): AdvertiserType => {
-    if (apartmentData?.state === 'in_progress') return AdvertiserType.Investor;
+    if (
+      apartmentData?.state === apartmentStateInProgress &&
+      apartmentData?.for === RentOrSale.sale
+    )
+      return AdvertiserType.Investor;
 
     return apartmentData?.author?.agency
       ? AdvertiserType.Agency
