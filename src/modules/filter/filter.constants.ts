@@ -18,14 +18,8 @@ export const MUNICIPALITIES = [
 ];
 
 export const floorFilters = {
-  'not-ground-floor': [
-    'cellar',
-    'basement',
-    'semi-basement',
-    'low ground floor',
-    'ground floor',
-    'high ground floor',
-  ],
+  'not-basement': ['cellar', 'basement', 'semi-basement'],
+  'not-ground-floor': ['low ground floor', 'ground floor', 'high ground floor'],
   'not-attic': ['attic'],
 };
 
