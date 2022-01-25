@@ -1,6 +1,7 @@
 import { ConflictException, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
+import { isEnvironment } from 'common/utils';
 
 @Injectable()
 export class SubscriptionService {
@@ -10,6 +11,8 @@ export class SubscriptionService {
 
   async subscribeByEmail(email: string) {
     try {
+      if (!isEnvironment('production')) return;
+
       await axios({
         url: 'https://api.sendgrid.com/v3/marketing/contacts',
         method: 'PUT',
