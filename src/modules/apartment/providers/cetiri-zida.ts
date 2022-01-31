@@ -208,7 +208,7 @@ export class CetiriZidaProvider implements Provider {
       furnished: furnished[apartmentInfo.furnished],
       heatingTypes,
       municipality: this.getMunicipality(apartmentInfo),
-      place: apartmentInfo?.placeNames?.[0],
+      place: capitalizeWords(apartmentInfo?.placeNames?.[0]),
       postedAt: new Date(apartmentInfo.createdAt),
       price: apartmentInfo.price,
       rentOrSale: apartmentInfo.for,

@@ -256,7 +256,7 @@ export class CityExpertProvider implements Provider {
         longitude: Number(longitude),
       },
       municipality: apartmentInfo.municipality,
-      place: apartmentInfo.municipality,
+      place: capitalizeWords(apartmentInfo.municipality),
       postedAt: new Date(apartmentInfo.firstPublished),
       price: apartmentInfo.price,
       rentOrSale: rentOrSaleField[apartmentInfo.rentOrSale],
@@ -282,7 +282,7 @@ export class CityExpertProvider implements Provider {
     Object.assign(apartmentInfo, {
       ...(advertiserType && { advertiserType }),
       ...(floor && { floor }),
-      ...(place && { place }),
+      ...(place && { place: capitalizeWords(place) }),
     });
   };
 }

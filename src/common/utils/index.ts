@@ -1,4 +1,6 @@
 export function capitalizeWords(words: string): string {
+  if (!words) return;
+
   return words
     .split(' ')
     .filter(word => word.length !== 0)

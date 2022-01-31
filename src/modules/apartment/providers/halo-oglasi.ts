@@ -303,7 +303,7 @@ export class HaloOglasiProvider implements Provider {
         heatingTypes,
         ...(location && { location }),
         ...(municipality && { municipality }),
-        ...(place && { place }),
+        ...(place && { place: capitalizeWords(place) }),
         ...(postedAt && { postedAt: new Date(postedAt) }),
         ...(price && { price }),
         ...(size && { size }),
