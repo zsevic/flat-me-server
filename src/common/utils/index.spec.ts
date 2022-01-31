@@ -32,6 +32,12 @@ describe('utils', () => {
       expect(capitalizedWords).toEqual('Test Ab');
     });
 
+    it('should return capitalized words from the given input with a slash', () => {
+      const capitalizedWords = capitalizeWords('Cvetni Trg / Manjež');
+
+      expect(capitalizedWords).toEqual('Cvetni Trg - Manjež');
+    });
+
     it('should return capitalized words from the given input with open bracket without space', () => {
       const capitalizedWords = capitalizeWords('Blok 67(belvil)');
 

@@ -17,7 +17,8 @@ export function capitalizeWords(words: string): string {
       const lastLetterIndex = isWithClosedBracket ? wordLength - 1 : wordLength;
       return (firstLetter + word.substring(1, lastLetterIndex)).trim();
     })
-    .join(' - ');
+    .join(' - ')
+    .replace('/', '-');
 }
 
 export function isEnvironment(environment: string): boolean {
