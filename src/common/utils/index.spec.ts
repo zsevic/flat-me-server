@@ -2,10 +2,28 @@ import { capitalizeWords, isEnvironment } from '.';
 
 describe('utils', () => {
   describe('capitalizeWords', () => {
-    it('should return capitalized words from the given input', () => {
-      const capitalizedWords = capitalizeWords('two words');
+    it('should return capitalized words from the given input with open bracket', () => {
+      const capitalizedWords = capitalizeWords('Blok 67 (belvil)');
 
-      expect(capitalizedWords).toEqual('Two Words');
+      expect(capitalizedWords).toEqual('Blok 67 - Belvil');
+    });
+
+    it('should return capitalized words from the given input with open bracket without space', () => {
+      const capitalizedWords = capitalizeWords('Blok 67(belvil)');
+
+      expect(capitalizedWords).toEqual('Blok 67 - Belvil');
+    });
+
+    it('should return capitalized words from the given input with handled hyphen', () => {
+      const capitalizedWords = capitalizeWords('Blok 25 - Arena');
+
+      expect(capitalizedWords).toEqual('Blok 25 - Arena');
+    });
+
+    it('should return capitalized words from the given input', () => {
+      const capitalizedWords = capitalizeWords('Gradska bolnica');
+
+      expect(capitalizedWords).toEqual('Gradska Bolnica');
     });
   });
 

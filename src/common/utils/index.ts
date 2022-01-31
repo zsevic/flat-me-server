@@ -5,7 +5,16 @@ export function capitalizeWords(words: string): string {
     .split(' ')
     .filter(word => word.length !== 0)
     .map(word => word[0].toUpperCase() + word.substr(1).toLowerCase())
-    .join(' ');
+    .join(' ')
+    .split('(')
+    .map(word => {
+      const { length: wordLength } = word;
+      const firstLetter = word[0].toUpperCase();
+      const isWithClosedBracket = word.lastIndexOf(')') === wordLength - 1;
+      const lastLetterIndex = isWithClosedBracket ? wordLength - 1 : wordLength;
+      return (firstLetter + word.substring(1, lastLetterIndex)).trim();
+    })
+    .join(' - ');
 }
 
 export function isEnvironment(environment: string): boolean {
