@@ -8,6 +8,24 @@ describe('utils', () => {
       expect(capitalizedWords).toEqual('Blok 67 - Belvil');
     });
 
+    it('should return capitalized words from the given input with single-letter words', () => {
+      const capitalizedWords = capitalizeWords('test a');
+
+      expect(capitalizedWords).toEqual('Test A');
+    });
+
+    it('should return capitalized words from the given input with short words', () => {
+      const capitalizedWords = capitalizeWords('test ab');
+
+      expect(capitalizedWords).toEqual('Test Ab');
+    });
+
+    it('should return capitalized words from the given input with unclosed brackets', () => {
+      const capitalizedWords = capitalizeWords('test ab(');
+
+      expect(capitalizedWords).toEqual('Test Ab');
+    });
+
     it('should return capitalized words from the given input with open bracket without space', () => {
       const capitalizedWords = capitalizeWords('Blok 67(belvil)');
 

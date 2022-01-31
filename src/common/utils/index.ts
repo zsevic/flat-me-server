@@ -7,8 +7,11 @@ export function capitalizeWords(words: string): string {
     .map(word => word[0].toUpperCase() + word.substr(1).toLowerCase())
     .join(' ')
     .split('(')
+    .filter(word => word.length !== 0)
     .map(word => {
       const { length: wordLength } = word;
+      if (wordLength === 1) return word.toUpperCase();
+
       const firstLetter = word[0].toUpperCase();
       const isWithClosedBracket = word.lastIndexOf(')') === wordLength - 1;
       const lastLetterIndex = isWithClosedBracket ? wordLength - 1 : wordLength;
