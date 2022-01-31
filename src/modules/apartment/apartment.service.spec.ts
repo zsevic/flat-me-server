@@ -459,7 +459,7 @@ describe('ApartmentService', () => {
             apartmentId: '23-BR',
             advertiserType: AdvertiserType.Owner,
             providerName: 'cityExpert',
-            address: 'Cara Nikolaja Ii',
+            address: 'Cara Nikolaja II',
             availableFrom: '2021-08-09T11:04:13Z',
             coverPhotoUrl:
               'https://img.cityexpert.rs/sites/default/files/styles/1920x/public/image/url.jpg',
