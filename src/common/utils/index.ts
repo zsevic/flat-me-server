@@ -1,3 +1,5 @@
+const romanNumbers = ['II', 'III', 'IV'];
+
 export function capitalizeWords(words: string): string {
   if (!words) return;
 
@@ -5,7 +7,7 @@ export function capitalizeWords(words: string): string {
     .split(' ')
     .filter(word => word.length !== 0)
     .map(word =>
-      word === 'II'
+      romanNumbers.includes(word)
         ? word
         : word[0].toUpperCase() + word.substring(1).toLowerCase(),
     )
