@@ -1,5 +1,6 @@
 import { HttpStatus, Logger } from '@nestjs/common';
 import axios, { AxiosRequestConfig } from 'axios';
+import latinize from 'latinize';
 import { DEFAULT_TIMEOUT, ECONNABORTED } from 'common/constants';
 import { capitalizeWords } from 'common/utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
@@ -241,7 +242,7 @@ export class CityExpertProvider implements Provider {
       apartmentId: apartmentInfo.uniqueID,
       providerName: this.providerName,
       ...(apartmentInfo.street && {
-        address: capitalizeWords(apartmentInfo.street),
+        address: capitalizeWords(latinize(apartmentInfo.street)),
       }),
       advertiserType: AdvertiserType.Owner,
       availableFrom: apartmentInfo.availableFrom,

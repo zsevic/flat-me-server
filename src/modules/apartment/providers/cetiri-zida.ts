@@ -1,5 +1,6 @@
 import { HttpStatus, Logger } from '@nestjs/common';
 import axios, { AxiosRequestConfig } from 'axios';
+import latinize from 'latinize';
 import { DEFAULT_TIMEOUT, ECONNABORTED } from 'common/constants';
 import { capitalizeWords } from 'common/utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
@@ -200,7 +201,7 @@ export class CetiriZidaProvider implements Provider {
       apartmentId: apartmentInfo.id,
       providerName: this.providerName,
       ...(apartmentInfo.address && {
-        address: capitalizeWords(apartmentInfo.address),
+        address: capitalizeWords(latinize(apartmentInfo.address)),
       }),
       coverPhotoUrl: apartmentInfo?.image?.search['380x0_fill_0_webp'],
       floor: this.parseFloor(apartmentInfo.floor),

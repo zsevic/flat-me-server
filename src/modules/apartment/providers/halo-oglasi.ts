@@ -1,6 +1,7 @@
 import { HttpStatus, Logger } from '@nestjs/common';
 import axios, { AxiosRequestConfig } from 'axios';
 import jsdom from 'jsdom';
+import latinize from 'latinize';
 import { DEFAULT_TIMEOUT, ECONNABORTED, ECONNRESET } from 'common/constants';
 import { capitalizeWords } from 'common/utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
@@ -263,7 +264,7 @@ export class HaloOglasiProvider implements Provider {
         advertiser === 'Agencija' &&
         advertiserData?.DisplayName?.replace(/&quot;/g, '"');
       const advertiserType = advertiserTypeMap[advertiser];
-      const address = apartmentData.ulica_t;
+      const address = latinize(apartmentData.ulica_t);
       const photosUrls = apartmentData?.ImageURLs;
       const furnished = furnishedMap[apartmentData.namestenost_id_l];
 
