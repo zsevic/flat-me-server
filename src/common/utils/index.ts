@@ -4,7 +4,11 @@ export function capitalizeWords(words: string): string {
   return words
     .split(' ')
     .filter(word => word.length !== 0)
-    .map(word => word[0].toUpperCase() + word.substr(1).toLowerCase())
+    .map(word =>
+      word === 'II'
+        ? word
+        : word[0].toUpperCase() + word.substring(1).toLowerCase(),
+    )
     .join(' ')
     .split('(')
     .filter(word => word.length !== 0)

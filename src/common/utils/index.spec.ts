@@ -55,6 +55,12 @@ describe('utils', () => {
 
       expect(capitalizedWords).toEqual('Gradska Bolnica');
     });
+
+    it('should handle Roman numbers', () => {
+      const capitalizedWords = capitalizeWords('Karaburma II');
+
+      expect(capitalizedWords).toEqual('Karaburma II');
+    });
   });
 
   describe('isEnvironment', () => {
