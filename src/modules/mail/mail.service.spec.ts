@@ -77,7 +77,7 @@ describe('MailService', () => {
           furnished: 'furnished',
           heatingTypes: ['district'],
           municipality: 'Zvezdara',
-          place: 'Zvezdara opština',
+          place: 'Zvezdara Opština',
           postedAt: new Date('2021-05-10T16:07:58+02:00'),
           rentOrSale: 'rent',
           size: 69,
