@@ -46,7 +46,10 @@ const createTestAccountAsync = promisify(createTestAccount);
         return {
           transport,
           defaults: {
-            from: 'info@flat-me.com',
+            from: {
+              name: 'FlatMe',
+              address: 'info@flat-me.com',
+            },
           },
           template: {
             dir: path.join(process.cwd(), 'dist/assets/mail-templates'),
