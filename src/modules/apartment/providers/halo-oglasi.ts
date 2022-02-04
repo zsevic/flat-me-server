@@ -136,10 +136,13 @@ export class HaloOglasiProvider implements Provider {
       const apartmentList = dom?.window?.serverListData?.Ads || [];
       return apartmentList
         .filter(apartment => !!apartment.RelativeUrl)
-        .map(apartment => ({
-          rentOrSale: filter.rentOrSale,
-          url: this.domainUrl + apartment.RelativeUrl,
-        }));
+        .map(apartment => {
+          const [relativeUrl] = apartment.RelativeUrl.split('?');
+          return {
+            rentOrSale: filter.rentOrSale,
+            url: this.domainUrl + relativeUrl,
+          };
+        });
     } catch (error) {
       this.logger.error(error);
     }

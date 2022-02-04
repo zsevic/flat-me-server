@@ -140,7 +140,7 @@ describe('HaloOglasi', () => {
           serverListData: {
             Ads: [
               {
-                RelativeUrl: apartmentUrl,
+                RelativeUrl: apartmentUrl + '?kid=4',
               },
             ],
           },
