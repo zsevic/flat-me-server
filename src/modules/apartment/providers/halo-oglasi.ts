@@ -159,9 +159,13 @@ export class HaloOglasiProvider implements Provider {
       if (!url) {
         throw new Error(`Url for apartment ${id} is missing`);
       }
-      const apartmentDataHtml = await axios.get(url, {
+      const [requestUrl] = url.split('?');
+      const apartmentDataHtml = await axios.get(requestUrl, {
         timeout: DEFAULT_TIMEOUT,
       });
+      const responseUrl = apartmentDataHtml.request?.res?.responseUrl;
+      if (requestUrl !== responseUrl) return true;
+
       const virtualConsole = new jsdom.VirtualConsole();
       const dom = new jsdom.JSDOM(apartmentDataHtml.data, {
         runScripts: 'dangerously',

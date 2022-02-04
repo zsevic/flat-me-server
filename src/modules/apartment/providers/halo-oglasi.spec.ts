@@ -274,7 +274,10 @@ describe('HaloOglasi', () => {
     it('should return true when apartment ad is paused', async () => {
       const provider = new HaloOglasiProvider();
       // @ts-ignore
-      axios.get.mockResolvedValue({ data: 'html' });
+      axios.get.mockResolvedValue({
+        data: 'html',
+        request: { res: { responseUrl: url } },
+      });
 
       const dom = {
         window: {
@@ -298,10 +301,32 @@ describe('HaloOglasi', () => {
       });
     });
 
+    it('should return true when apartment ad is redirected to other ad', async () => {
+      const provider = new HaloOglasiProvider();
+      // @ts-ignore
+      axios.get.mockResolvedValue({
+        data: 'html',
+        request: { res: { responseUrl: 'redirected-url' } },
+      });
+
+      const isApartmentInactive = await provider.isApartmentInactive(
+        `${providerPrefix}_${id}`,
+        url,
+      );
+
+      expect(isApartmentInactive).toEqual(true);
+      expect(axios.get).toHaveBeenCalledWith(url, {
+        timeout: DEFAULT_TIMEOUT,
+      });
+    });
+
     it('should return true when apartment ad is expired', async () => {
       const provider = new HaloOglasiProvider();
       // @ts-ignore
-      axios.get.mockResolvedValue({ data: 'html' });
+      axios.get.mockResolvedValue({
+        data: 'html',
+        request: { res: { responseUrl: url } },
+      });
 
       const dom = {
         window: {
@@ -328,7 +353,10 @@ describe('HaloOglasi', () => {
     it('should return true when there is no apartment data', async () => {
       const provider = new HaloOglasiProvider();
       // @ts-ignore
-      axios.get.mockResolvedValue({ data: 'html' });
+      axios.get.mockResolvedValue({
+        data: 'html',
+        request: { res: { responseUrl: url } },
+      });
 
       const dom = {
         window: {
@@ -351,7 +379,10 @@ describe('HaloOglasi', () => {
     it('should return undefined when there is no environment data', async () => {
       const provider = new HaloOglasiProvider();
       // @ts-ignore
-      axios.get.mockResolvedValue({ data: 'html' });
+      axios.get.mockResolvedValue({
+        data: 'html',
+        request: { res: { responseUrl: url } },
+      });
 
       const dom = {
         window: {},
