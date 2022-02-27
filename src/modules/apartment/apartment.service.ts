@@ -49,9 +49,6 @@ export class ApartmentService {
           provider,
         );
         if (foundApartments.length === 0) {
-          this.logger.log(
-            `Skipping saving for provider ${provider.providerName}, there are no found apartments for ${filter.rentOrSale}`,
-          );
           continue;
         }
 

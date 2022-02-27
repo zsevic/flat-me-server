@@ -111,7 +111,6 @@ export class TasksService {
       RECEIVED_APARTMENTS_SIZE,
     );
     if (apartmentList.data.length === 0) {
-      this.logger.log('There are no apartments to send to the user');
       return;
     }
 
