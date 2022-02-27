@@ -66,6 +66,8 @@ export class TasksService {
   async handleSendingNewApartments(
     subscriptionType: Subscription = Subscription.FREE,
   ): Promise<void> {
+    if (!this.shouldRunCronJob()) return;
+
     this.logCronJobStarted(
       `SENDING_NEW_APARTMENTS_${subscriptionType}_SUBSCRIPTION_CRON_JOB`,
     );
