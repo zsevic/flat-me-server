@@ -72,5 +72,7 @@ jobs:
         env:
           DATABASE_URL: postgres://${{ matrix.database-user }}:${{ matrix.database-password }}@${{ matrix.database-host }}:${{ matrix.database-port }}/${{ matrix.database-name }}
           REDIS_URL: redis://${{ matrix.redis-host }}:${{ matrix.redis-port }}
+          FAKE_EMAIL_USERNAME: ${{ secrets.FAKE_EMAIL_USERNAME }}
+          FAKE_EMAIL_PASSWORD: ${{ secrets.FAKE_EMAIL_PASSWORD }}
 
       - run: npm audit --audit-level=critical
