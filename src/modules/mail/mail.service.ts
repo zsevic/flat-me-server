@@ -1,7 +1,5 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable, Logger } from '@nestjs/common';
-import { getTestMessageUrl } from 'nodemailer';
-import { isEnvironment } from 'common/utils';
 import { Apartment } from 'modules/apartment/apartment.interface';
 import { localizeApartment } from 'modules/apartment/apartment.utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
@@ -31,7 +29,7 @@ export class MailService {
     const url = `${process.env.CLIENT_URL}/filters/verification/${token}`;
     this.logger.log(`verification url: ${url}`);
 
-    const mailInfo = await this.mailerService.sendMail({
+    await this.mailerService.sendMail({
       to: email,
       subject: 'Potvrda pretrage',
       template: './filter-verification',
@@ -40,11 +38,7 @@ export class MailService {
       },
     });
 
-    if (!isEnvironment('production')) {
-      this.logger.log(`Mail preview URL: ${getTestMessageUrl(mailInfo)}`);
-    } else {
-      this.logger.log(`Mail is sent to ${email}`);
-    }
+    this.logger.log(`Mail is sent to ${email}`);
   }
 
   async sendMailWithNewApartments(
@@ -56,7 +50,7 @@ export class MailService {
     this.logger.log(
       `Sending ${apartmentList.length} new apartment(s) to ${email}...`,
     );
-    const mailInfo = await this.mailerService.sendMail({
+    await this.mailerService.sendMail({
       to: email,
       subject: this.getMailSubjectForNewApartments(
         filter,
@@ -71,10 +65,6 @@ export class MailService {
       },
     });
 
-    if (!isEnvironment('production')) {
-      this.logger.log(`Mail preview URL: ${getTestMessageUrl(mailInfo)}`);
-    } else {
-      this.logger.log(`Mail is sent to ${email}`);
-    }
+    this.logger.log(`Mail is sent to ${email}`);
   }
 }

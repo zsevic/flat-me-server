@@ -17,21 +17,14 @@ const createTestAccountAsync = promisify(createTestAccount);
       useFactory: async (
         configService: ConfigService,
       ): Promise<MailerOptions> => {
-        const {
-          pass,
-          user,
-          smtp: { host, port, secure },
-        } = await createTestAccountAsync();
-
         const transport = !isEnvironment('production')
           ? {
               auth: {
-                pass,
-                user,
+                pass: configService.get('FAKE_EMAIL_PASSWORD'),
+                user: configService.get('FAKE_EMAIL_USERNAME'),
               },
-              host,
-              port,
-              secure,
+              host: 'smtp.mailtrap.io',
+              port: 2525,
             }
           : {
               auth: {
