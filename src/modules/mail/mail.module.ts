@@ -20,8 +20,8 @@ const createTestAccountAsync = promisify(createTestAccount);
         const transport = !isEnvironment('production')
           ? {
               auth: {
-                pass: configService.get('FAKE_EMAIL_PASSWORD'),
-                user: configService.get('FAKE_EMAIL_USERNAME'),
+                pass: configService.get('MAILTRAP_PASSWORD'),
+                user: configService.get('MAILTRAP_USERNAME'),
               },
               host: 'smtp.mailtrap.io',
               port: 2525,

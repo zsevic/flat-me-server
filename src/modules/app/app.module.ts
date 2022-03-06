@@ -42,8 +42,8 @@ import { ThrottlerStorageService } from 'modules/throttler-storage/throttler-sto
             .uri()
             .required(),
           ...(isEnvironment('development') && {
-            FAKE_EMAIL_USERNAME: Joi.string().required(),
-            FAKE_EMAIL_PASSWORD: Joi.string().required(),
+            MAILTRAP_USERNAME: Joi.string().required(),
+            MAILTRAP_PASSWORD: Joi.string().required(),
           }),
           JWT_SECRET: Joi.string().required(),
           NODE_ENV: Joi.string()
