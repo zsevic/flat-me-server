@@ -3,12 +3,7 @@ import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { MailerModule, MailerOptions } from '@nestjs-modules/mailer';
 import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
-import { createTestAccount } from 'nodemailer';
-import { isEnvironment } from 'common/utils';
-import { promisify } from 'util';
 import { MailService } from './mail.service';
-
-const createTestAccountAsync = promisify(createTestAccount);
 
 @Module({
   imports: [
@@ -17,24 +12,15 @@ const createTestAccountAsync = promisify(createTestAccount);
       useFactory: async (
         configService: ConfigService,
       ): Promise<MailerOptions> => {
-        const transport = !isEnvironment('production')
-          ? {
-              auth: {
-                pass: configService.get('MAILTRAP_PASSWORD'),
-                user: configService.get('MAILTRAP_USERNAME'),
-              },
-              host: 'smtp.mailtrap.io',
-              port: 2525,
-            }
-          : {
-              auth: {
-                user: 'apikey',
-                pass: configService.get('SENDGRID_API_KEY'),
-              },
-              host: 'smtp.sendgrid.net',
-              port: 465,
-              secure: true,
-            };
+        const transport = {
+          auth: {
+            pass: configService.get('EMAIL_PASSWORD'),
+            user: configService.get('EMAIL_USERNAME'),
+          },
+          host: configService.get('EMAIL_HOST'),
+          port: configService.get('EMAIL_PORT'),
+          secure: configService.get('EMAIL_SECURE'),
+        };
 
         return {
           transport,

@@ -72,7 +72,9 @@ jobs:
         env:
           DATABASE_URL: postgres://${{ matrix.database-user }}:${{ matrix.database-password }}@${{ matrix.database-host }}:${{ matrix.database-port }}/${{ matrix.database-name }}
           REDIS_URL: redis://${{ matrix.redis-host }}:${{ matrix.redis-port }}
-          MAILTRAP_USERNAME: ${{ secrets.MAILTRAP_USERNAME }}
-          MAILTRAP_PASSWORD: ${{ secrets.MAILTRAP_PASSWORD }}
+          EMAIL_HOST: smtp.mailtrap.io
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          EMAIL_PORT: 2525
+          EMAIL_USERNAME: ${{ secrets.EMAIL_USERNAME }}
 
       - run: npm audit --audit-level=critical
