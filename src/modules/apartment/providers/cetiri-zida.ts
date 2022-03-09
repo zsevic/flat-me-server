@@ -204,7 +204,10 @@ export class CetiriZidaProvider implements Provider {
         address: capitalizeWords(latinize(apartmentInfo.address)),
       }),
       coverPhotoUrl: apartmentInfo?.image?.search['380x0_fill_0_webp'],
-      floor: this.parseFloor(apartmentInfo.floor),
+      floor: this.parseFloor(
+        apartmentInfo.redactedFloor,
+        apartmentInfo?.redactedTotalFloors,
+      ),
       furnished: furnished[apartmentInfo.furnished],
       heatingTypes,
       municipality: this.getMunicipality(apartmentInfo),
@@ -223,11 +226,6 @@ export class CetiriZidaProvider implements Provider {
   }
 
   updateApartmentInfo = (apartmentData, apartmentInfo: Apartment): void => {
-    const floor = this.parseFloor(
-      apartmentData.floor,
-      apartmentData?.totalFloors,
-    );
-
     const postedAt =
       apartmentData?.boostedOrFeaturedOn ||
       apartmentData?.lastBoostedAt ||
@@ -246,7 +244,6 @@ export class CetiriZidaProvider implements Provider {
     Object.assign(apartmentInfo, {
       ...(advertiserName && { advertiserName }),
       ...(advertiserType && { advertiserType }),
-      ...(floor && { floor }),
       ...(location?.latitude && location?.longitude && { location }),
       ...(postedAt && { postedAt: new Date(postedAt) }),
     });

@@ -279,8 +279,8 @@ describe('ApartmentService', () => {
           ads: [
             {
               m2: 69,
-              floor: 1,
-              totalFloors: 3,
+              redactedFloor: 1,
+              redactedTotalFloors: 3,
               furnished: 'yes',
               heatingType: 'district',
               id: '60993e3e7906cd3a4c6832fd',
@@ -358,8 +358,8 @@ describe('ApartmentService', () => {
           ads: [
             {
               m2: 62,
-              floor: 3,
-              totalFloors: 5,
+              redactedFloor: 3,
+              redactedTotalFloors: 5,
               furnished: 'yes',
               heatingType: 'district',
               id: '60f99390d9982b10',
@@ -578,8 +578,8 @@ describe('ApartmentService', () => {
           ads: [
             {
               m2: 69,
-              floor: 1,
-              totalFloors: 3,
+              redactedFloor: 1,
+              redactedTotalFloors: 3,
               furnished: 'yes',
               heatingType: 'district',
               id: '60993e3e7906cd3a4c6832fd',
@@ -611,8 +611,8 @@ describe('ApartmentService', () => {
             },
             {
               m2: 62,
-              floor: 3,
-              totalFloors: 5,
+              redactedFloor: 3,
+              redactedTotalFloors: 5,
               furnished: 'yes',
               heatingType: 'district',
               id: '60f99390d9982b10',
@@ -733,8 +733,8 @@ describe('ApartmentService', () => {
           ads: [
             {
               m2: 69,
-              floor: 1,
-              totalFloors: 3,
+              redactedFloor: 1,
+              redactedTotalFloors: 3,
               furnished: 'yes',
               heatingType: 'district',
               id: '60993e3e7906cd3a4c6832fd',

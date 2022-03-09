@@ -200,8 +200,8 @@ describe('CetiriZida', () => {
   describe('parseApartmentInfo', () => {
     const apartmentInfo = {
       m2: 69,
-      floor: -3,
-      totalFloors: 3,
+      redactedFloor: -3,
+      redactedTotalFloors: 3,
       furnished: 'yes',
       heatingType: 'thermalPump',
       id: 'id',
@@ -313,22 +313,6 @@ describe('CetiriZida', () => {
       expect(apartmentInfo.location.longitude).toEqual(apartmentData.longitude);
     });
 
-    it('should update floor value with attic', () => {
-      const provider = new CetiriZidaProvider();
-      const apartmentInfo = {
-        floor: 2,
-      };
-      const apartmentData = {
-        floor: 2,
-        totalFloors: 2,
-      };
-
-      // @ts-ignore
-      provider.updateApartmentInfo(apartmentData, apartmentInfo);
-
-      expect(apartmentInfo.floor).toEqual('attic');
-    });
-
     it('should update advertiser type to investor when state is in progress', () => {
       const provider = new CetiriZidaProvider();
       const apartmentInfo: any = {};
@@ -367,36 +351,6 @@ describe('CetiriZida', () => {
       provider.updateApartmentInfo(apartmentData, apartmentInfo);
 
       expect(apartmentInfo.advertiserType).toEqual(AdvertiserType.Owner);
-    });
-
-    it('should update floor value when total floors value is undefined', () => {
-      const provider = new CetiriZidaProvider();
-      const apartmentInfo = {
-        floor: 2,
-      };
-      const apartmentData = {
-        floor: '-4',
-      };
-
-      // @ts-ignore
-      provider.updateApartmentInfo(apartmentData, apartmentInfo);
-
-      expect(apartmentInfo.floor).toEqual('cellar');
-    });
-
-    it('should update floor value when total floors value is undefined', () => {
-      const provider = new CetiriZidaProvider();
-      const apartmentInfo = {
-        floor: 2,
-      };
-      const apartmentData = {
-        floor: 3,
-      };
-
-      // @ts-ignore
-      provider.updateApartmentInfo(apartmentData, apartmentInfo);
-
-      expect(apartmentInfo.floor).toEqual(apartmentData.floor);
     });
 
     it("shouldn't update advertiser name field when there is no value for it", () => {
