@@ -34,6 +34,22 @@ describe('ApartmentController (e2e)', () => {
     await app.close();
   });
 
+  describe('/apartments/:id (GET)', () => {
+    it('should return 400 status code when apartment id is not valid', () => {
+      return request(app.getHttpServer())
+        .get('/apartments/id')
+        .expect(HttpStatus.BAD_REQUEST);
+    });
+
+    it('should return isValid value false when apartment is not stored', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/apartments/haloOglasi_id')
+        .expect(HttpStatus.OK);
+
+      expect(response.body.isValid).toEqual(false);
+    });
+  });
+
   describe('/apartments (GET)', () => {
     it('should return 400 status code when params are missing', () => {
       return request(app.getHttpServer())
