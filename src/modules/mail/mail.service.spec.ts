@@ -1,9 +1,14 @@
 import { MailerService } from '@nestjs-modules/mailer';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Apartment } from 'modules/apartment/apartment.interface';
 import { localizeApartment } from 'modules/apartment/apartment.utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { MailService } from './mail.service';
+
+const configService = {
+  get: jest.fn(),
+};
 
 const mailerService = {
   sendMail: jest.fn(),
@@ -27,10 +32,6 @@ describe('MailService', () => {
   };
   const token = 'token';
 
-  beforeAll(() => {
-    process.env.CLIENT_URL = clientUrl;
-  });
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -38,6 +39,10 @@ describe('MailService', () => {
         {
           provide: MailerService,
           useValue: mailerService,
+        },
+        {
+          provide: ConfigService,
+          useValue: configService,
         },
       ],
     }).compile();
@@ -47,6 +52,8 @@ describe('MailService', () => {
 
   describe('sendFilterVerificationMail', () => {
     it('should send filter verification mail', async () => {
+      const clientUrl = 'client-url';
+      jest.spyOn(configService, 'get').mockReturnValue(clientUrl);
       jest.spyOn(mailerService, 'sendMail').mockResolvedValue(mailInfo);
 
       await mailService.sendFilterVerificationMail(email, token);
@@ -56,7 +63,7 @@ describe('MailService', () => {
         subject: 'Potvrda pretrage',
         template: './filter-verification',
         context: {
-          url: `client-url/filters/verification/${token}`,
+          url: `${clientUrl}/filters/verification/${token}`,
         },
       });
     });

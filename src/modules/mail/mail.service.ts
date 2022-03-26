@@ -1,5 +1,6 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Apartment } from 'modules/apartment/apartment.interface';
 import { localizeApartment } from 'modules/apartment/apartment.utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
@@ -8,7 +9,10 @@ import { FilterDto } from 'modules/filter/dto/filter.dto';
 export class MailService {
   private readonly logger = new Logger(MailService.name);
 
-  constructor(private readonly mailerService: MailerService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly mailerService: MailerService,
+  ) {}
 
   private getMailSubjectForNewApartments = (
     filter: FilterDto,
@@ -26,7 +30,9 @@ export class MailService {
     email: string,
     token: string,
   ): Promise<void> {
-    const url = `${process.env.CLIENT_URL}/filters/verification/${token}`;
+    const url = `${this.configService.get(
+      'CLIENT_URL',
+    )}/filters/verification/${token}`;
     this.logger.log(`verification url: ${url}`);
 
     await this.mailerService.sendMail({
@@ -62,6 +68,7 @@ export class MailService {
         apartmentList: apartmentList.map(localizeApartment),
         apartment: localizeApartment(apartmentList[0]),
         deactivationUrl,
+        clientUrl: this.configService.get('CLIENT_URL'),
       },
     });
 

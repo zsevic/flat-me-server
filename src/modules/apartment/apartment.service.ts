@@ -8,7 +8,7 @@ import {
   PaginationParams,
 } from 'modules/pagination/pagination.interfaces';
 import { requiredFields } from './apartment.constants';
-import { Apartment } from './apartment.interface';
+import { Apartment, ApartmentStatus } from './apartment.interface';
 import { ApartmentRepository } from './apartment.repository';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
 import { BaseProvider } from './providers';
@@ -224,6 +224,37 @@ export class ApartmentService {
     } catch (error) {
       this.logger.error(error);
     }
+  }
+
+  async validateApartment(apartmentId: string): Promise<ApartmentStatus> {
+    const apartmentInfo = await this.apartmentRepository.findOne(
+      {
+        id: apartmentId,
+      },
+      {
+        select: ['url'],
+      },
+    );
+    if (!apartmentInfo) {
+      return {
+        isValid: false,
+      };
+    }
+
+    const isInactive = await this.isApartmentInactive(
+      apartmentId,
+      apartmentInfo.url,
+    );
+    if (isInactive) {
+      return {
+        isValid: false,
+      };
+    }
+
+    return {
+      isValid: !isInactive,
+      url: apartmentInfo.url,
+    };
   }
 
   async validateApartmentListFromDatabase(

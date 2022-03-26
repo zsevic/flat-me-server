@@ -25,7 +25,7 @@
         if apartment.isForRent
           span , #{apartment.furnished}
       p(style='margin:0;font-family:Arial,sans-serif;')
-        a(href=`${apartment.url}`, target='_blank', rel='noopener noreferrer', style='background: #ffffff; border: 2px solid #3366CC; text-decoration: none; padding: 10px 25px; color: #000000; border-radius: 4px; display:inline-block; mso-padding-alt:0;text-underline-color:#ffffff')
+        a(href=`${clientUrl}/apartments/${apartment.id}`, target='_blank', rel='noopener noreferrer', style='background: #ffffff; border: 2px solid #3366CC; text-decoration: none; padding: 10px 25px; color: #000000; border-radius: 4px; display:inline-block; mso-padding-alt:0;text-underline-color:#ffffff')
           //if mso
             i(style='letter-spacing: 25px;mso-font-width:-100%;mso-text-raise:20pt') &nbsp;
           span(style='mso-text-raise:10pt;font-weight:bold;') saznaj više

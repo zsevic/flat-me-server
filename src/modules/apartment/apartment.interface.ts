@@ -42,3 +42,9 @@ export interface Apartment {
 
   url: string;
 }
+
+export interface ApartmentStatus {
+  isValid: boolean;
+
+  url?: string;
+}

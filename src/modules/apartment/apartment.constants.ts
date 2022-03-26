@@ -1,5 +1,7 @@
 export const FURNISHED = ['yes', 1];
 
+export const PROVIDERS = ['cetiriZida', 'cityExpert', 'haloOglasi'];
+
 export const RECEIVED_APARTMENTS_SIZE = 10;
 
 export const apartmentStatusFinished = 'FINISHED';

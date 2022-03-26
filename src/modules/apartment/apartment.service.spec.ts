@@ -813,4 +813,50 @@ describe('ApartmentService', () => {
       );
     });
   });
+
+  describe('validateApartment', () => {
+    it('should return false when apartment is not stored', async () => {
+      const apartmentValidation = await apartmentService.validateApartment(
+        'id',
+      );
+
+      expect(apartmentValidation).toEqual({
+        isValid: false,
+      });
+    });
+
+    it('should return false when apartment is stored but it is not valid', async () => {
+      jest.spyOn(apartmentRepository, 'findOne').mockResolvedValue({
+        url: 'url',
+      });
+      jest
+        .spyOn(apartmentService, 'isApartmentInactive')
+        .mockResolvedValue(true);
+      const apartmentValidation = await apartmentService.validateApartment(
+        'id',
+      );
+
+      expect(apartmentValidation).toEqual({
+        isValid: false,
+      });
+    });
+
+    it('should return true when apartment is valid', async () => {
+      const url = 'url';
+      jest.spyOn(apartmentRepository, 'findOne').mockResolvedValue({
+        url,
+      });
+      jest
+        .spyOn(apartmentService, 'isApartmentInactive')
+        .mockResolvedValue(false);
+      const apartmentValidation = await apartmentService.validateApartment(
+        'id',
+      );
+
+      expect(apartmentValidation).toEqual({
+        isValid: true,
+        url,
+      });
+    });
+  });
 });
