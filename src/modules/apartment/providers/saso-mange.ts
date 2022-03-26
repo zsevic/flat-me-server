@@ -1,9 +1,7 @@
 import { HttpStatus, Logger } from '@nestjs/common';
 import axios, { AxiosRequestConfig } from 'axios';
 import jsdom from 'jsdom';
-import latinize from 'latinize';
 import { DEFAULT_TIMEOUT, ECONNABORTED, ECONNRESET } from 'common/constants';
-import { capitalizeWords } from 'common/utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { Provider } from './provider.interface';
 import {
@@ -17,14 +15,9 @@ import {
   apartmentStatusPaused,
 } from '../apartment.constants';
 import { Apartment } from '../apartment.interface';
-import { AdvertiserType } from '../enums/advertiser-type.enum';
 
 export class SasoMangeProvider implements Provider {
   private readonly providerName = 'sasoMange';
-  private readonly rentOrSaleMapForUrl = {
-    rent: 'iznajmljivanje',
-    sale: 'prodaja',
-  };
 
   private readonly atticKey = 'PTK';
   private readonly floor = {
@@ -36,14 +29,9 @@ export class SasoMangeProvider implements Provider {
   };
 
   private readonly domainUrl = 'https://sasomange.rs';
-  private readonly imageBaseUrl = 'https://img.halooglasi.com';
   private readonly logger = new Logger(SasoMangeProvider.name);
 
-  get baseUrl() {
-    return this.domainUrl + '/c/stanovi';
-  }
-
-  get searchUrl() {
+  get apiUrl() {
     return `${this.domainUrl}/hybris/classified/v1/products/extended`;
   }
 
@@ -56,49 +44,19 @@ export class SasoMangeProvider implements Provider {
   }
 
   createRequestConfig(filter: FilterDto): AxiosRequestConfig {
-    const furnished = {
-      furnished: 562,
-      'semi-furnished': 563,
-      empty: 564,
+    const rentOrSaleMap = {
+      rent: 'stanovi-iznajmljivanje',
+      sale: 'stanovi-prodaja',
     };
-    const municipalities = {
-      Čukarica: 40381,
-      'Novi Beograd': 40574,
-      Palilula: 40761,
-      Rakovica: 40769,
-      'Savski venac': 40772,
-      'Stari grad': 40776,
-      Voždovac: 40783,
-      Vračar: 40784,
-      Zemun: 40787,
-      Zvezdara: 40788,
-    };
-    const furnishedFilter =
-      filter.furnished.length === 1
-        ? furnished[filter.furnished[0]]
-        : filter.furnished
-            .map((filter: string): number => furnished[filter])
-            .join(',');
-    const municipalitiesFilter =
-      filter.municipalities.length === 1
-        ? municipalities[filter.municipalities[0]]
-        : filter.municipalities
-            .map((filter: string): number => municipalities[filter])
-            .join(',');
 
     const params = {
-      'grad_id_l-lokacija_id_l-mikrolokacija_id_l': municipalitiesFilter,
-      cena_d_from: filter.minPrice,
-      cena_d_to: filter.maxPrice,
-      cena_d_unit: 4,
-      ...(filter.rentOrSale === 'rent' && {
-        namestenost_id_l: furnishedFilter,
-      }),
-      page: filter.pageNumber,
+      productsSort: 'newnessDesc',
+      currentPage: filter.pageNumber - 1,
+      category: rentOrSaleMap[filter.rentOrSale],
     };
 
     return {
-      url: this.searchUrl,
+      url: this.apiUrl,
       params,
       method: 'GET',
       timeout: DEFAULT_TIMEOUT,
@@ -118,7 +76,19 @@ export class SasoMangeProvider implements Provider {
     return createRequestConfigForApartment.call(this, apartmentId, url);
   }
 
-  getResults = data => data?.products?.products || [];
+  getResults = data => {
+    const rentOrSaleMap = {
+      'stanovi-iznajmljivanje': 'rent',
+      'stanovi-prodaja': 'sale',
+    };
+
+    return (
+      data?.products?.products?.map(product => ({
+        ...product,
+        rentOrSale: rentOrSaleMap[data?.products?.categoryCode],
+      })) || []
+    );
+  };
 
   hasNextPage = (data): boolean => {
     return (
@@ -190,16 +160,19 @@ export class SasoMangeProvider implements Provider {
       id: `${this.providerName}_${apartmentId}`,
       apartmentId,
       providerName: this.providerName,
-      address: 'street',
+      address: microlocation?.name,
       coverPhotoUrl: apartmentInfo.images.find(
         image => image.format === 'smThumbnailFormat',
       )?.url,
       floor: '2',
-      municipality,
+      heatingTypes: [],
+      municipality: municipality.name,
       place: microlocation?.name,
-      postedAt: apartmentInfo.originalPublishedDate,
-      price: apartmentInfo.price,
+      postedAt: new Date(apartmentInfo.originalPublishedDate),
+      price: apartmentInfo.price.value,
+      rentOrSale: apartmentInfo.rentOrSale,
       size: size && Number(size),
+      structure: 2,
       url: this.domainUrl + '/p' + apartmentInfo.url,
     };
   };
@@ -213,107 +186,11 @@ export class SasoMangeProvider implements Provider {
     apartmentInfo: Apartment,
   ): void => {
     try {
+      console.log('info', apartmentInfo);
       const virtualConsole = new jsdom.VirtualConsole();
       const dom = new jsdom.JSDOM(apartmentDataHtml, {
         runScripts: 'dangerously',
         virtualConsole,
-      });
-
-      const apartmentData = dom?.window?.QuidditaEnvironment?.CurrentClassified;
-      const advertiserData =
-        dom?.window?.QuidditaEnvironment?.CurrentContactData?.Advertiser;
-
-      const floor = this.parseFloor(
-        apartmentData?.sprat_s,
-        apartmentData?.sprat_od_s,
-      );
-
-      const furnishedMap = {
-        562: 'furnished',
-        563: 'semi-furnished',
-        564: 'empty',
-      };
-
-      const heatingTypesMap: Record<number, string> = {
-        1542: 'district',
-        1543: 'electricity',
-        1544: 'storage heater',
-        1545: 'gas',
-        1546: 'underfloor',
-        1547: 'tile stove',
-        1548: 'norwegian radiators',
-        1549: 'marble radiators',
-        1550: 'thermal pump',
-      };
-
-      const municipalitiesMap = {
-        40381: 'Čukarica',
-        40574: 'Novi Beograd',
-        40761: 'Palilula',
-        40769: 'Rakovica',
-        40772: 'Savski venac',
-        40776: 'Stari grad',
-        40783: 'Voždovac',
-        40784: 'Vračar',
-        40787: 'Zemun',
-        40788: 'Zvezdara',
-      };
-
-      const advertiserTypeMap = {
-        Agencija: AdvertiserType.Agency,
-        Investitor: AdvertiserType.Investor,
-        Vlasnik: AdvertiserType.Owner,
-      };
-
-      const advertiser = apartmentData.oglasivac_nekretnine_s;
-      const advertiserName =
-        advertiser === 'Agencija' &&
-        advertiserData?.DisplayName?.replace(/&quot;/g, '"');
-      const advertiserType = advertiserTypeMap[advertiser];
-      const address = latinize(apartmentData.ulica_t);
-      const photosUrls = apartmentData?.ImageURLs;
-      const furnished = furnishedMap[apartmentData.namestenost_id_l];
-
-      const heatingType = heatingTypesMap[apartmentData.grejanje_id_l];
-      const heatingTypes = heatingType ? [heatingType] : [];
-
-      let location;
-      const locationArray = apartmentData.GeoLocationRPT?.split(',');
-      if (locationArray?.length === 2) {
-        const [latitude, longitude] = locationArray;
-        location = {
-          latitude: Number(latitude),
-          longitude: Number(longitude),
-        };
-      }
-      const municipalityId = apartmentData.lokacija_id_l;
-      const municipality = municipalitiesMap[municipalityId];
-
-      const place = apartmentData.mikrolokacija_s;
-      const postedAt = apartmentData.ValidFrom;
-      const price = apartmentData.cena_d;
-      const size = apartmentData.kvadratura_d;
-      const structure =
-        apartmentData?.broj_soba_s !== '5+' &&
-        Number(apartmentData.broj_soba_s);
-
-      Object.assign(apartmentInfo, {
-        ...(address && { address: capitalizeWords(address) }),
-        ...(advertiserName && { advertiserName }),
-        ...(advertiserType && { advertiserType }),
-        ...(photosUrls?.length > 0 && {
-          coverPhotoUrl: this.imageBaseUrl + photosUrls[0],
-        }),
-        ...(floor && { floor }),
-        ...(furnished && { furnished }),
-        heatingTypes,
-        ...(location && { location }),
-        ...(municipality && { municipality }),
-        ...(place && { place: capitalizeWords(place) }),
-        ...(postedAt && { postedAt: new Date(postedAt) }),
-        ...(price && { price }),
-        ...(size && { size }),
-        ...(structure && { structure }),
       });
     } catch (error) {
       this.logger.error(error);
