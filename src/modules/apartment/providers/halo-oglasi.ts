@@ -18,6 +18,7 @@ import {
 } from '../apartment.constants';
 import { Apartment } from '../apartment.interface';
 import { AdvertiserType } from '../enums/advertiser-type.enum';
+import { Floor } from '../enums/floor.enum';
 import { Furnished } from '../enums/furnished.enum';
 import { HeatingType } from '../enums/heating-type.enum';
 
@@ -30,11 +31,11 @@ export class HaloOglasiProvider implements Provider {
 
   private readonly atticKey = 'PTK';
   private readonly floor = {
-    SUT: 'basement',
-    PSUT: 'semi-basement',
-    PR: 'ground floor',
-    VPR: 'high ground floor',
-    [this.atticKey]: 'attic',
+    SUT: Floor.Basement,
+    PSUT: Floor.SemiBasement,
+    PR: Floor.GroundFloor,
+    VPR: Floor.HighGroundFloor,
+    [this.atticKey]: Floor.Attic,
   };
 
   private readonly domainUrl = 'https://www.halooglasi.com';

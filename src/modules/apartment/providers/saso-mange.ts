@@ -16,19 +16,21 @@ import {
 } from '../apartment.constants';
 import { Apartment } from '../apartment.interface';
 import { AdvertiserType } from '../enums/advertiser-type.enum';
+import { Floor } from '../enums/floor.enum';
 import { Furnished } from '../enums/furnished.enum';
 import { HeatingType } from '../enums/heating-type.enum';
 
 export class SasoMangeProvider implements Provider {
   private readonly providerName = 'sasoMange';
 
-  private readonly atticKey = 'PTK';
-  private readonly floor = {
-    SUT: 'basement',
-    PSUT: 'semi-basement',
-    PR: 'ground floor',
-    VPR: 'high ground floor',
-    [this.atticKey]: 'attic',
+  private readonly atticKey = 'floor_attic';
+  private readonly floorMap = {
+    floor_basement: Floor.Basement,
+    floor_low_ground_floor: Floor.LowGroundFloor,
+    floor_ground_floor: Floor.GroundFloor,
+    floor_high_floor: Floor.HighGroundFloor,
+    floor_after_15: '15+',
+    [this.atticKey]: Floor.Attic,
   };
 
   private readonly domainUrl = 'https://sasomange.rs';
@@ -181,8 +183,12 @@ export class SasoMangeProvider implements Provider {
     };
   };
 
-  parseFloor(floorData, totalFloors?: number) {
-    return parseFloor.call(this, floorData, this.atticKey, totalFloors);
+  parseFloor(floorValue: string): string {
+    if (this.floorMap[floorValue]) {
+      return this.floorMap[floorValue];
+    }
+    const [, floor] = floorValue.split('_');
+    return floor;
   }
 
   updateApartmentInfo = (
@@ -247,6 +253,9 @@ export class SasoMangeProvider implements Provider {
       const advertiserName =
         apartmentData?.vendorBasicInfoStatus?.legalEntityName;
 
+      const floorValue = getFeatureValue(`${fullClassificationCode}.floor`);
+      const floor = this.parseFloor(floorValue);
+
       const furnishedValue = getFeatureValue(
         `${fullClassificationCode}.furnished`,
       );
@@ -273,6 +282,7 @@ export class SasoMangeProvider implements Provider {
         ...(advertiserType && {
           advertiserType,
         }),
+        ...(floor && { floor }),
         ...(furnished && { furnished }),
         heatingTypes,
         ...(structure && { structure }),

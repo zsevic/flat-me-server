@@ -14,6 +14,7 @@ import {
 import { apartmentStatusPublished } from '../apartment.constants';
 import { Apartment } from '../apartment.interface';
 import { AdvertiserType } from '../enums/advertiser-type.enum';
+import { Floor } from '../enums/floor.enum';
 import { Furnished } from '../enums/furnished.enum';
 import { HeatingType } from '../enums/heating-type.enum';
 
@@ -27,11 +28,11 @@ export class CityExpertProvider implements Provider {
 
   private readonly atticKey = 'PTK';
   private readonly floor = {
-    SU: 'basement',
-    PR: 'ground floor',
-    NPR: 'low ground floor',
-    VPR: 'high ground floor',
-    [this.atticKey]: 'attic',
+    SU: Floor.Basement,
+    PR: Floor.GroundFloor,
+    NPR: Floor.LowGroundFloor,
+    VPR: Floor.HighGroundFloor,
+    [this.atticKey]: Floor.Attic,
   };
 
   private readonly apiBaseUrl = 'https://cityexpert.rs/api';

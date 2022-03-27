@@ -18,6 +18,7 @@ import {
 } from '../apartment.constants';
 import { Apartment } from '../apartment.interface';
 import { AdvertiserType } from '../enums/advertiser-type.enum';
+import { Floor } from '../enums/floor.enum';
 import { Furnished } from '../enums/furnished.enum';
 import { HeatingType } from '../enums/heating-type.enum';
 
@@ -29,12 +30,12 @@ export class CetiriZidaProvider implements Provider {
 
   private readonly atticKey = 100;
   private readonly floor = {
-    '-4': 'cellar',
-    '-3': 'basement',
-    '-2': 'low ground floor',
-    '-1': 'ground floor',
-    '0': 'high ground floor',
-    [this.atticKey]: 'attic',
+    '-4': Floor.Cellar,
+    '-3': Floor.Basement,
+    '-2': Floor.LowGroundFloor,
+    '-1': Floor.GroundFloor,
+    '0': Floor.HighGroundFloor,
+    [this.atticKey]: Floor.Attic,
   };
 
   get apartmentBaseUrl() {
