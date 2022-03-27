@@ -105,6 +105,30 @@ export class SasoMangeProvider implements Provider {
     return createRequestConfigForApartment.call(this, apartmentId, url);
   }
 
+  private getClassificationCode(rentOrSale: string): string {
+    return `general_flats_${rentOrSale}`;
+  }
+
+  private getFullClassificationCode(rentOrSale: string): string {
+    const classificationCode = this.getClassificationCode(rentOrSale);
+    return `smrsClassificationCatalog/1.0/${classificationCode}`;
+  }
+
+  private getFeatureValue(
+    code: string,
+    rentOrSale: string,
+    apartmentData,
+  ): string {
+    const classificationCode = this.getClassificationCode(rentOrSale);
+
+    const features = apartmentData?.product?.classifications?.find(
+      classification => classification?.code === classificationCode,
+    ).features;
+
+    return features?.find(feature => feature.code === code)?.featureValues?.[0]
+      ?.value;
+  }
+
   getResults = data => {
     const rentOrSaleMap = {
       'stanovi-iznajmljivanje': 'rent',
@@ -182,8 +206,12 @@ export class SasoMangeProvider implements Provider {
       address => address.type === 'SUBLOCATION',
     );
     const { highlightedAttributes: attributes } = apartmentInfo;
-    const size = attributes.find(attribute => attribute.name === 'Površina')
-      ?.featureValues[0].value;
+    const fullClassificationCode = this.getFullClassificationCode(
+      apartmentInfo.rentOrSale,
+    );
+    const size = attributes.find(
+      attribute => attribute.code === fullClassificationCode,
+    )?.featureValues[0].value;
 
     return {
       id: `${this.providerName}_${apartmentId}`,
@@ -261,38 +289,47 @@ export class SasoMangeProvider implements Provider {
         three_and_half_room_estate_structure: 3.5,
         four_rooms_estate_structure: 4,
       };
-      const classificationCode = `general_flats_${apartmentInfo.rentOrSale}`;
-      const features = apartmentData?.product?.classifications?.find(
-        classification => classification?.code === classificationCode,
-      ).features;
-      const getFeatureValue = (code: string): string =>
-        features?.find(feature => feature.code === code)?.featureValues?.[0]
-          ?.value;
 
-      const fullClassificationCode = `smrsClassificationCatalog/1.0/${classificationCode}`;
-      const advertiser = getFeatureValue(
+      const { rentOrSale } = apartmentInfo;
+
+      const fullClassificationCode = this.getFullClassificationCode(
+        apartmentInfo.rentOrSale,
+      );
+      const advertiser = this.getFeatureValue(
         `${fullClassificationCode}.advertiser`,
+        rentOrSale,
+        apartmentData,
       );
       const advertiserType = advertiserTypeMap[advertiser];
       const advertiserName =
         apartmentData?.vendorBasicInfoStatus?.legalEntityName;
 
-      const floorValue = getFeatureValue(`${fullClassificationCode}.floor`);
+      const floorValue = this.getFeatureValue(
+        `${fullClassificationCode}.floor`,
+        rentOrSale,
+        apartmentData,
+      );
       const floor = floorValue && this.parseFloor(floorValue);
 
-      const furnishedValue = getFeatureValue(
+      const furnishedValue = this.getFeatureValue(
         `${fullClassificationCode}.furnished`,
+        rentOrSale,
+        apartmentData,
       );
       const furnished = furnishedMap[furnishedValue];
 
-      const heatingTypeValue = getFeatureValue(
+      const heatingTypeValue = this.getFeatureValue(
         `${fullClassificationCode}.land_heating`,
+        rentOrSale,
+        apartmentData,
       );
       const heatingType = heatingTypesMap[heatingTypeValue];
       const heatingTypes = heatingType ? [heatingType] : [];
 
-      const structureValue = getFeatureValue(
+      const structureValue = this.getFeatureValue(
         `${fullClassificationCode}.estate_structure`,
+        rentOrSale,
+        apartmentData,
       );
       const structure = structureMap[structureValue];
 
