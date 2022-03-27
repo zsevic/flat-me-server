@@ -53,11 +53,35 @@ export class SasoMangeProvider implements Provider {
       rent: 'stanovi-iznajmljivanje',
       sale: 'stanovi-prodaja',
     };
+    const municipalityMap = {
+      Čukarica: 'beograd-cukarica',
+      'Novi Beograd': 'beograd-novi-beograd',
+      Palilula: 'beograd-palilula',
+      Rakovica: 'beograd-rakovica',
+      'Savski venac': 'beograd-savski-venac',
+      'Stari grad': 'beograd-stari-grad',
+      Voždovac: 'beograd-vozdovac',
+      Vračar: 'beograd-vracar',
+      Zemun: 'beograd-zemun',
+      Zvezdara: 'beograd-zvezdara',
+    };
+
+    const locationParam = [];
+    filter.municipalities.forEach(municipality => {
+      locationParam.push(`location:${municipalityMap[municipality]}`);
+    });
+
+    const flatParam = 'flat_type_sale:Stan+u+zgradi';
+    const priceParam = `priceValue:(${filter.minPrice}-${filter.maxPrice})`;
+    const filterParams = [flatParam, priceParam, ...locationParam];
+
+    const productsFacetsFlattened = filterParams.join(',');
 
     const params = {
       productsSort: 'newnessDesc',
       currentPage: filter.pageNumber - 1,
       category: rentOrSaleMap[filter.rentOrSale],
+      productsFacetsFlattened,
     };
 
     return {
