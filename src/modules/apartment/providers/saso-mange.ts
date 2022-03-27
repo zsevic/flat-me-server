@@ -63,22 +63,49 @@ export class SasoMangeProvider implements Provider {
       Zemun: 'beograd-zemun',
       Zvezdara: 'beograd-zvezdara',
     };
+    const structureMap = {
+      0.5: 'garsonjera',
+      1: 'jednosoban',
+      1.5: 'jednoiposoban',
+      2: 'dvosoban',
+      2.5: 'dvoiposoban',
+      3: 'trosoban',
+      3.5: 'troiposoban',
+      4: 'cetvorosoban',
+    };
 
-    const locationParam = [];
+    const { rentOrSale } = filter;
+    const locationParams = [];
     filter.municipalities.forEach(municipality => {
-      locationParam.push(`location:${municipalityMap[municipality]}`);
+      const mappedMunicipality = municipalityMap[municipality];
+      if (!mappedMunicipality) return;
+
+      locationParams.push(`location:${mappedMunicipality}`);
     });
 
-    const flatParam = 'flat_type_sale:Stan+u+zgradi';
-    const priceParam = `priceValue:(${filter.minPrice}-${filter.maxPrice})`;
-    const filterParams = [flatParam, priceParam, ...locationParam];
+    const structureParams = [];
+    filter.structures.forEach(structure => {
+      const mappedStructure = structureMap[structure];
+      if (!mappedStructure) return;
 
+      structureParams.push(`flats_structure_${rentOrSale}:${mappedStructure}`);
+    });
+
+    const flatTypeParam = `flat_type_${rentOrSale}:Stan+u+zgradi`;
+    const priceParam = `priceValue:(${filter.minPrice}-${filter.maxPrice})`;
+
+    const filterParams = [
+      flatTypeParam,
+      priceParam,
+      ...locationParams,
+      ...structureParams,
+    ];
     const productsFacetsFlattened = filterParams.join(',');
 
     const params = {
       productsSort: 'newnessDesc',
       currentPage: filter.pageNumber - 1,
-      category: rentOrSaleMap[filter.rentOrSale],
+      category: rentOrSaleMap[rentOrSale],
       productsFacetsFlattened,
     };
 
