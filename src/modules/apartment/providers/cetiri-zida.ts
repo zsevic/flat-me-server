@@ -19,6 +19,7 @@ import {
 import { Apartment } from '../apartment.interface';
 import { AdvertiserType } from '../enums/advertiser-type.enum';
 import { Furnished } from '../enums/furnished.enum';
+import { HeatingType } from '../enums/heating-type.enum';
 
 export class CetiriZidaProvider implements Provider {
   private readonly providerName = 'cetiriZida';
@@ -184,15 +185,15 @@ export class CetiriZidaProvider implements Provider {
     };
 
     const heatingTypesMap = {
-      central: 'central',
-      district: 'district',
-      electricity: 'electricity',
-      gas: 'gas',
-      norwegianRadiators: 'norwegian radiators',
-      storageHeater: 'storage heater',
-      thermalPump: 'thermal pump',
-      tileStove: 'tile stove',
-      underfloor: 'underfloor',
+      central: HeatingType.Central,
+      district: HeatingType.District,
+      electricity: HeatingType.Electricity,
+      gas: HeatingType.Gas,
+      norwegianRadiators: HeatingType.NorwegianRadiators,
+      storageHeater: HeatingType.StorageHeater,
+      thermalPump: HeatingType.ThermalPump,
+      tileStove: HeatingType.TileStove,
+      underfloor: HeatingType.Underfloor,
     };
     const heatingType = heatingTypesMap[apartmentInfo.heatingType];
     const heatingTypes = heatingType ? [heatingType] : [];

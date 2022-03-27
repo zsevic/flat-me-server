@@ -19,6 +19,7 @@ import {
 import { Apartment } from '../apartment.interface';
 import { AdvertiserType } from '../enums/advertiser-type.enum';
 import { Furnished } from '../enums/furnished.enum';
+import { HeatingType } from '../enums/heating-type.enum';
 
 export class HaloOglasiProvider implements Provider {
   private readonly providerName = 'haloOglasi';
@@ -237,15 +238,15 @@ export class HaloOglasiProvider implements Provider {
       };
 
       const heatingTypesMap: Record<number, string> = {
-        1542: 'district',
-        1543: 'electricity',
-        1544: 'storage heater',
-        1545: 'gas',
-        1546: 'underfloor',
-        1547: 'tile stove',
-        1548: 'norwegian radiators',
-        1549: 'marble radiators',
-        1550: 'thermal pump',
+        1542: HeatingType.District,
+        1543: HeatingType.Electricity,
+        1544: HeatingType.StorageHeater,
+        1545: HeatingType.Gas,
+        1546: HeatingType.Underfloor,
+        1547: HeatingType.TileStove,
+        1548: HeatingType.NorwegianRadiators,
+        1549: HeatingType.MarbleRadiators,
+        1550: HeatingType.ThermalPump,
       };
 
       const municipalitiesMap = {

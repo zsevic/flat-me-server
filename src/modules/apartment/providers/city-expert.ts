@@ -15,6 +15,7 @@ import { apartmentStatusPublished } from '../apartment.constants';
 import { Apartment } from '../apartment.interface';
 import { AdvertiserType } from '../enums/advertiser-type.enum';
 import { Furnished } from '../enums/furnished.enum';
+import { HeatingType } from '../enums/heating-type.enum';
 
 export class CityExpertProvider implements Provider {
   private readonly providerName = 'cityExpert';
@@ -217,12 +218,12 @@ export class CityExpertProvider implements Provider {
       3: Furnished.Empty,
     };
     const heatingTypesMap: Record<number, string> = {
-      1: 'district',
-      4: 'electricity',
-      10: 'storage heater',
-      21: 'underfloor',
-      26: 'thermal pump',
-      99: 'central',
+      1: HeatingType.District,
+      4: HeatingType.Electricity,
+      10: HeatingType.StorageHeater,
+      21: HeatingType.Underfloor,
+      26: HeatingType.ThermalPump,
+      99: HeatingType.Central,
     };
     const rentOrSaleField = {
       r: 'rent',

@@ -17,6 +17,7 @@ import {
 import { Apartment } from '../apartment.interface';
 import { AdvertiserType } from '../enums/advertiser-type.enum';
 import { Furnished } from '../enums/furnished.enum';
+import { HeatingType } from '../enums/heating-type.enum';
 
 export class SasoMangeProvider implements Provider {
   private readonly providerName = 'sasoMange';
@@ -209,6 +210,16 @@ export class SasoMangeProvider implements Provider {
         furnished_semi: Furnished.Semi,
         furnished_empty: Furnished.Empty,
       };
+      const heatingTypesMap = {
+        land_heating_central: HeatingType.District,
+        land_heating_electricity: HeatingType.Electricity,
+        land_heating_floors: HeatingType.Central,
+        land_heating_ta: HeatingType.StorageHeater,
+        land_heating_gas: HeatingType.Gas,
+        land_heating_norwegian_radiators: HeatingType.NorwegianRadiators,
+        land_heating_floor: HeatingType.Underfloor,
+        land_heating_marble_radiators: HeatingType.MarbleRadiators,
+      };
       const structureMap = {
         large_studio_estate_structure: 0.5,
         one_room_estate_structure: 1,
@@ -238,6 +249,12 @@ export class SasoMangeProvider implements Provider {
       );
       const furnished = furnishedMap[furnishedValue];
 
+      const heatingTypeValue = getFeatureValue(
+        'smrsClassificationCatalog/1.0/general_flats_rent.land_heating',
+      );
+      const heatingType = heatingTypesMap[heatingTypeValue];
+      const heatingTypes = heatingType ? [heatingType] : [];
+
       const structureValue = getFeatureValue(
         'smrsClassificationCatalog/1.0/general_flats_rent.estate_structure',
       );
@@ -254,6 +271,7 @@ export class SasoMangeProvider implements Provider {
           advertiserType,
         }),
         ...(furnished && { furnished }),
+        heatingTypes,
         ...(structure && { structure }),
       });
 
