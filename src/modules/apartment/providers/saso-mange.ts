@@ -167,15 +167,15 @@ export class SasoMangeProvider implements Provider {
       coverPhotoUrl: apartmentInfo.images.find(
         image => image.format === 'smThumbnailFormat',
       )?.url,
-      floor: '2',
-      heatingTypes: [],
+      floor: null,
+      heatingTypes: null,
       municipality: municipality.name,
       place: microlocation?.name,
       postedAt: new Date(apartmentInfo.originalPublishedDate),
       price: apartmentInfo.price?.value,
       rentOrSale: apartmentInfo.rentOrSale,
       size: size && Number(size),
-      structure: 2,
+      structure: null,
       url: this.domainUrl + '/p' + apartmentInfo.url,
     };
   };
@@ -235,28 +235,30 @@ export class SasoMangeProvider implements Provider {
         classification => classification?.code === classificationCode,
       ).features;
       const getFeatureValue = (code: string): string =>
-        features?.find(feature => feature.code === code).featureValues?.[0]
+        features?.find(feature => feature.code === code)?.featureValues?.[0]
           ?.value;
 
+      const fullClassificationCode = `smrsClassificationCatalog/1.0/${classificationCode}`;
       const advertiser = getFeatureValue(
-        'smrsClassificationCatalog/1.0/general_flats_sale.advertiser',
+        `${fullClassificationCode}.advertiser`,
       );
       const advertiserType = advertiserTypeMap[advertiser];
-      const advertiserName = apartmentData?.vendorBasicInfoStatus?.name;
+      const advertiserName =
+        apartmentData?.vendorBasicInfoStatus?.legalEntityName;
 
       const furnishedValue = getFeatureValue(
-        'smrsClassificationCatalog/1.0/general_flats_rent.furnished',
+        `${fullClassificationCode}.furnished`,
       );
       const furnished = furnishedMap[furnishedValue];
 
       const heatingTypeValue = getFeatureValue(
-        'smrsClassificationCatalog/1.0/general_flats_rent.land_heating',
+        `${fullClassificationCode}.land_heating`,
       );
       const heatingType = heatingTypesMap[heatingTypeValue];
       const heatingTypes = heatingType ? [heatingType] : [];
 
       const structureValue = getFeatureValue(
-        'smrsClassificationCatalog/1.0/general_flats_rent.estate_structure',
+        `${fullClassificationCode}.estate_structure`,
       );
       const structure = structureMap[structureValue];
 
@@ -265,7 +267,7 @@ export class SasoMangeProvider implements Provider {
           address,
         }),
         ...(advertiserName && {
-          advertiserName,
+          advertiserName: advertiserName.replace(new RegExp('\t', 'g'), ''),
         }),
         ...(advertiserType && {
           advertiserType,
@@ -275,7 +277,7 @@ export class SasoMangeProvider implements Provider {
         ...(structure && { structure }),
       });
 
-      console.log('data', apartmentData);
+      console.log('data', apartmentInfo);
     } catch (error) {
       this.logger.error(error);
     }
