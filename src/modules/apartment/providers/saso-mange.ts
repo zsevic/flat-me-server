@@ -210,7 +210,7 @@ export class SasoMangeProvider implements Provider {
       apartmentInfo.rentOrSale,
     );
     const size = attributes.find(
-      attribute => attribute.code === fullClassificationCode,
+      attribute => attribute.code === `${fullClassificationCode}.estate_area`,
     )?.featureValues[0].value;
 
     return {
