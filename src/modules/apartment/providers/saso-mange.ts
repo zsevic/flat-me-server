@@ -174,8 +174,8 @@ export class SasoMangeProvider implements Provider {
     let location;
     if (microlocation) {
       location = {
-        latitude: microlocation.latitude,
-        longitude: microlocation.longitude,
+        latitude: Number(microlocation.latitude),
+        longitude: Number(microlocation.longitude),
       };
     }
     const municipality = apartmentInfoLocation.find(

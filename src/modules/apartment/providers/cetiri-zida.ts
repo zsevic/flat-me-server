@@ -237,8 +237,8 @@ export class CetiriZidaProvider implements Provider {
     const { latitude, longitude } = apartmentData;
     if (latitude && longitude) {
       location = {
-        latitude,
-        longitude,
+        latitude: Number(latitude),
+        longitude: Number(longitude),
       };
     }
     const advertiserName = apartmentData?.author?.agency?.title;
