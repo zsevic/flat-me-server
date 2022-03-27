@@ -1,14 +1,15 @@
 import { HttpStatus, Logger } from '@nestjs/common';
 import axios, { AxiosRequestConfig } from 'axios';
 import jsdom from 'jsdom';
+import latinize from 'latinize';
 import { DEFAULT_TIMEOUT, ECONNABORTED, ECONNRESET } from 'common/constants';
+import { capitalizeWords } from 'common/utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { Provider } from './provider.interface';
 import {
   createRequest,
   createRequestConfigForApartment,
   createRequestForApartment,
-  parseFloor,
 } from './utils';
 import {
   apartmentStatusExpired,
@@ -217,7 +218,8 @@ export class SasoMangeProvider implements Provider {
       id: `${this.providerName}_${apartmentId}`,
       apartmentId,
       providerName: this.providerName,
-      address: microlocation?.name,
+      address:
+        microlocation?.name && capitalizeWords(latinize(microlocation.name)),
       coverPhotoUrl: apartmentInfo.images.find(
         image => image.format === 'smThumbnailFormat',
       )?.url,
@@ -225,7 +227,7 @@ export class SasoMangeProvider implements Provider {
       heatingTypes: null,
       location,
       municipality: municipality.name,
-      place: microlocation?.name,
+      place: capitalizeWords(microlocation?.name),
       postedAt: new Date(apartmentInfo.originalPublishedDate),
       price: apartmentInfo.price?.value,
       rentOrSale: apartmentInfo.rentOrSale,
@@ -335,10 +337,12 @@ export class SasoMangeProvider implements Provider {
 
       Object.assign(apartmentInfo, {
         ...(address && {
-          address,
+          address: capitalizeWords(latinize(address)),
         }),
         ...(advertiserName && {
-          advertiserName: advertiserName.replace(new RegExp('\t', 'g'), ''),
+          advertiserName: capitalizeWords(
+            latinize(advertiserName.replace(new RegExp('\t', 'g'), '')),
+          ),
         }),
         ...(advertiserType && {
           advertiserType,
