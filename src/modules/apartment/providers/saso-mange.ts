@@ -379,8 +379,6 @@ export class SasoMangeProvider implements Provider {
         heatingTypes,
         ...(structure && { structure }),
       });
-
-      console.log('data', apartmentInfo);
     } catch (error) {
       this.logger.error(error);
     }
