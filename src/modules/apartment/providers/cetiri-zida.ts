@@ -18,6 +18,7 @@ import {
 } from '../apartment.constants';
 import { Apartment } from '../apartment.interface';
 import { AdvertiserType } from '../enums/advertiser-type.enum';
+import { Furnished } from '../enums/furnished.enum';
 
 export class CetiriZidaProvider implements Provider {
   private readonly providerName = 'cetiriZida';
@@ -53,9 +54,9 @@ export class CetiriZidaProvider implements Provider {
 
   createRequestConfig(filter: FilterDto): AxiosRequestConfig {
     const furnished = {
-      empty: 'no',
-      furnished: 'yes',
-      'semi-furnished': 'semi',
+      [Furnished.Empty]: 'no',
+      [Furnished.Full]: 'yes',
+      [Furnished.Semi]: 'semi',
     };
     const furnishedFilter = filter.furnished.map(
       (filter: string): string => furnished[filter],
@@ -177,9 +178,9 @@ export class CetiriZidaProvider implements Provider {
 
   parseApartmentInfo = (apartmentInfo): Apartment => {
     const furnished = {
-      no: 'empty',
-      semi: 'semi-furnished',
-      yes: 'furnished',
+      no: Furnished.Empty,
+      semi: Furnished.Semi,
+      yes: Furnished.Full,
     };
 
     const heatingTypesMap = {

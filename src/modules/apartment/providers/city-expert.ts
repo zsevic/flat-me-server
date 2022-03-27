@@ -14,6 +14,7 @@ import {
 import { apartmentStatusPublished } from '../apartment.constants';
 import { Apartment } from '../apartment.interface';
 import { AdvertiserType } from '../enums/advertiser-type.enum';
+import { Furnished } from '../enums/furnished.enum';
 
 export class CityExpertProvider implements Provider {
   private readonly providerName = 'cityExpert';
@@ -57,9 +58,9 @@ export class CityExpertProvider implements Provider {
       sale: 's',
     };
     const furnished = {
-      furnished: 1,
-      'semi-furnished': 2,
-      empty: 3,
+      [Furnished.Full]: 1,
+      [Furnished.Semi]: 2,
+      [Furnished.Empty]: 3,
     };
     const furnishedFilter = filter.furnished.map(
       (filter: string): number => furnished[filter],
@@ -211,9 +212,9 @@ export class CityExpertProvider implements Provider {
   parseApartmentInfo = (apartmentInfo): Apartment => {
     const [latitude, longitude] = apartmentInfo.location.split(', ');
     const furnished = {
-      1: 'furnished',
-      2: 'semi-furnished',
-      3: 'empty',
+      1: Furnished.Full,
+      2: Furnished.Semi,
+      3: Furnished.Empty,
     };
     const heatingTypesMap: Record<number, string> = {
       1: 'district',

@@ -15,6 +15,8 @@ import {
   apartmentStatusPaused,
 } from '../apartment.constants';
 import { Apartment } from '../apartment.interface';
+import { AdvertiserType } from '../enums/advertiser-type.enum';
+import { Furnished } from '../enums/furnished.enum';
 
 export class SasoMangeProvider implements Provider {
   private readonly providerName = 'sasoMange';
@@ -169,7 +171,7 @@ export class SasoMangeProvider implements Provider {
       municipality: municipality.name,
       place: microlocation?.name,
       postedAt: new Date(apartmentInfo.originalPublishedDate),
-      price: apartmentInfo.price.value,
+      price: apartmentInfo.price?.value,
       rentOrSale: apartmentInfo.rentOrSale,
       size: size && Number(size),
       structure: 2,
@@ -186,12 +188,76 @@ export class SasoMangeProvider implements Provider {
     apartmentInfo: Apartment,
   ): void => {
     try {
-      console.log('info', apartmentInfo);
       const virtualConsole = new jsdom.VirtualConsole();
       const dom = new jsdom.JSDOM(apartmentDataHtml, {
         runScripts: 'dangerously',
         virtualConsole,
       });
+      const apartmentData = JSON.parse(
+        dom?.window?.document.getElementById('HybrisClassifiedProductExtended')
+          .value,
+      );
+
+      const address = apartmentData?.product?.addresses?.[0]?.streetName;
+      const advertiserTypeMap = {
+        advertiser_agency: AdvertiserType.Agency,
+        advertiser_investor: AdvertiserType.Investor,
+        advertiser_owner: AdvertiserType.Owner,
+      };
+      const furnishedMap = {
+        furnished_full: Furnished.Full,
+        furnished_semi: Furnished.Semi,
+        furnished_empty: Furnished.Empty,
+      };
+      const structureMap = {
+        large_studio_estate_structure: 0.5,
+        one_room_estate_structure: 1,
+        one_and_half_room_estate_structure: 1.5,
+        two_rooms_estate_structure: 2,
+        two_and_half_room_estate_structure: 2.5,
+        three_rooms_estate_structure: 3,
+        three_and_half_room_estate_structure: 3.5,
+        four_rooms_estate_structure: 4,
+      };
+      const classificationCode = `general_flats_${apartmentInfo.rentOrSale}`;
+      const features = apartmentData?.product?.classifications?.find(
+        classification => classification?.code === classificationCode,
+      ).features;
+      const getFeatureValue = (code: string): string =>
+        features?.find(feature => feature.code === code).featureValues?.[0]
+          ?.value;
+
+      const advertiser = getFeatureValue(
+        'smrsClassificationCatalog/1.0/general_flats_sale.advertiser',
+      );
+      const advertiserType = advertiserTypeMap[advertiser];
+      const advertiserName = apartmentData?.vendorBasicInfoStatus?.name;
+
+      const furnishedValue = getFeatureValue(
+        'smrsClassificationCatalog/1.0/general_flats_rent.furnished',
+      );
+      const furnished = furnishedMap[furnishedValue];
+
+      const structureValue = getFeatureValue(
+        'smrsClassificationCatalog/1.0/general_flats_rent.estate_structure',
+      );
+      const structure = structureMap[structureValue];
+
+      Object.assign(apartmentInfo, {
+        ...(address && {
+          address,
+        }),
+        ...(advertiserName && {
+          advertiserName,
+        }),
+        ...(advertiserType && {
+          advertiserType,
+        }),
+        ...(furnished && { furnished }),
+        ...(structure && { structure }),
+      });
+
+      console.log('data', apartmentData);
     } catch (error) {
       this.logger.error(error);
     }

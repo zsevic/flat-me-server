@@ -18,6 +18,7 @@ import {
 } from '../apartment.constants';
 import { Apartment } from '../apartment.interface';
 import { AdvertiserType } from '../enums/advertiser-type.enum';
+import { Furnished } from '../enums/furnished.enum';
 
 export class HaloOglasiProvider implements Provider {
   private readonly providerName = 'haloOglasi';
@@ -53,9 +54,9 @@ export class HaloOglasiProvider implements Provider {
 
   createRequestConfig(filter: FilterDto): AxiosRequestConfig {
     const furnished = {
-      furnished: 562,
-      'semi-furnished': 563,
-      empty: 564,
+      [Furnished.Full]: 562,
+      [Furnished.Semi]: 563,
+      [Furnished.Empty]: 564,
     };
     const municipalities = {
       Čukarica: 40381,
@@ -230,9 +231,9 @@ export class HaloOglasiProvider implements Provider {
       );
 
       const furnishedMap = {
-        562: 'furnished',
-        563: 'semi-furnished',
-        564: 'empty',
+        562: Furnished.Full,
+        563: Furnished.Semi,
+        564: Furnished.Empty,
       };
 
       const heatingTypesMap: Record<number, string> = {
