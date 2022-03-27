@@ -169,6 +169,7 @@ export class SasoMangeProvider implements Provider {
       )?.url,
       floor: null,
       heatingTypes: null,
+      location,
       municipality: municipality.name,
       place: microlocation?.name,
       postedAt: new Date(apartmentInfo.originalPublishedDate),
