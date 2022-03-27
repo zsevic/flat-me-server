@@ -254,7 +254,7 @@ export class SasoMangeProvider implements Provider {
         apartmentData?.vendorBasicInfoStatus?.legalEntityName;
 
       const floorValue = getFeatureValue(`${fullClassificationCode}.floor`);
-      const floor = this.parseFloor(floorValue);
+      const floor = floorValue && this.parseFloor(floorValue);
 
       const furnishedValue = getFeatureValue(
         `${fullClassificationCode}.furnished`,
