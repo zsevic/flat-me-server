@@ -11,10 +11,7 @@ import {
   createRequestConfigForApartment,
   createRequestForApartment,
 } from './utils';
-import {
-  apartmentStatusExpired,
-  apartmentStatusPaused,
-} from '../apartment.constants';
+import { apartmentStatusActive } from '../apartment.constants';
 import { Apartment } from '../apartment.interface';
 import { AdvertiserType } from '../enums/advertiser-type.enum';
 import { Floor } from '../enums/floor.enum';
@@ -106,6 +103,15 @@ export class SasoMangeProvider implements Provider {
     return createRequestConfigForApartment.call(this, apartmentId, url);
   }
 
+  private getApartmentDataFromDom(dom) {
+    const data = dom?.window?.document.getElementById(
+      'HybrisClassifiedProductExtended',
+    ).value;
+    if (!data) return;
+
+    return JSON.parse(data);
+  }
+
   private getClassificationCode(rentOrSale: string): string {
     return `general_flats_${rentOrSale}`;
   }
@@ -169,15 +175,12 @@ export class SasoMangeProvider implements Provider {
         virtualConsole,
       });
 
-      const quidditaEnvironment = dom?.window?.QuidditaEnvironment;
-      if (quidditaEnvironment && !quidditaEnvironment?.CurrentClassified)
+      const apartmentData = this.getApartmentDataFromDom(dom);
+      if (!apartmentData) return true;
+
+      if (apartmentData.product.status !== apartmentStatusActive) {
         return true;
-      if (
-        [apartmentStatusPaused, apartmentStatusExpired].includes(
-          quidditaEnvironment?.CurrentClassified?.StateId,
-        )
-      )
-        return true;
+      }
     } catch (error) {
       if (error.response?.status === HttpStatus.NOT_FOUND) return true;
       if ([ECONNABORTED, ECONNRESET].includes(error.code)) {
@@ -255,10 +258,7 @@ export class SasoMangeProvider implements Provider {
         runScripts: 'dangerously',
         virtualConsole,
       });
-      const apartmentData = JSON.parse(
-        dom?.window?.document.getElementById('HybrisClassifiedProductExtended')
-          .value,
-      );
+      const apartmentData = this.getApartmentDataFromDom(dom);
 
       const address = apartmentData?.product?.addresses?.[0]?.streetName;
       const advertiserTypeMap = {
