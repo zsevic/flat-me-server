@@ -369,6 +369,16 @@ export class SasoMangeProvider implements Provider {
       const heatingType = heatingTypesMap[heatingTypeValue];
       const heatingTypes = heatingType ? [heatingType] : [];
 
+      const latitude = apartmentData?.product?.addresses?.[0]?.latitude;
+      const longitude = apartmentData?.product?.addresses?.[0]?.longitude;
+      let location;
+      if (latitude && longitude) {
+        location = {
+          latitude: Number(latitude),
+          longitude: Number(longitude),
+        };
+      }
+
       const structureValue = this.getFeatureValue(
         `${fullClassificationCode}.estate_structure`,
         rentOrSale,
@@ -391,6 +401,7 @@ export class SasoMangeProvider implements Provider {
         ...(floor && { floor }),
         ...(furnished && { furnished }),
         heatingTypes,
+        ...(location && { location }),
         ...(structure && { structure }),
       });
     } catch (error) {

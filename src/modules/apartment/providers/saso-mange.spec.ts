@@ -1,10 +1,12 @@
+import { HttpStatus } from '@nestjs/common';
 import axios from 'axios';
 import jsdom from 'jsdom';
 import { DEFAULT_TIMEOUT, ECONNABORTED, ECONNRESET } from 'common/constants';
 import { RentOrSale } from 'modules/filter/filter.enums';
 import { SasoMangeProvider } from './saso-mange';
 import { ApartmentStatus, CategoryCode } from './saso-mange.enums';
-import { HttpStatus } from '@nestjs/common';
+import { Furnished } from '../enums/furnished.enum';
+import { HeatingType } from '../enums/heating-type.enum';
 
 jest.mock('axios');
 jest.mock('jsdom');
@@ -355,6 +357,161 @@ describe('SasoMange', () => {
       const provider = new SasoMangeProvider();
 
       const apartmentInfo = {
+        addresses: [
+          {
+            country: {
+              host: true,
+              name: 'Srbija',
+            },
+            location: [
+              {
+                code: 'beograd',
+                hasChildren: true,
+                latitude: 44.1234,
+                longitude: 20.1234,
+                name: 'Beograd',
+                type: 'LOCATION',
+              },
+              {
+                code: 'beograd-vracar',
+                hasChildren: true,
+                latitude: 44.1234,
+                longitude: 20.1234,
+                name: 'Vračar',
+                parentCode: 'beograd',
+                type: 'SUBLOCATION',
+              },
+              {
+                code: 'beograd-vracar-crveni-krst',
+                hasChildren: false,
+                latitude: 44.1234,
+                longitude: 20.5678,
+                name: 'Crveni krst',
+                parentCode: 'beograd-vracar',
+                type: 'MICROLOCATION',
+              },
+            ],
+          },
+        ],
+        code: 'izdavanje-stan-jednosoban-crveni-krst-swbgD',
+        configurable: false,
+        description: 'description',
+        displayDate: '2022-03-13T10:02:09+02:00',
+        highlightedAttributes: [
+          {
+            attributeType: 'number',
+            code:
+              'smrsClassificationCatalog/1.0/general_flats_rent.estate_area',
+            coupled: false,
+            editDisabled: false,
+            featureUnit: {
+              symbol: 'm²',
+            },
+            featureValues: [
+              {
+                name: '36',
+                value: '36',
+              },
+            ],
+            mandatory: true,
+            name: 'Površina',
+            range: true,
+          },
+          {
+            attributeType: 'enum',
+            code: 'smrsClassificationCatalog/1.0/general_flats_rent.flat_type',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: 'Stan u zgradi',
+                value: 'Stan u zgradi',
+              },
+            ],
+            mandatory: false,
+            name: 'Tip stana',
+            range: false,
+          },
+        ],
+        images: [
+          {
+            imageType: 'PRIMARY',
+            format: 'smThumbnailFormat',
+            url: 'url',
+          },
+        ],
+        name: 'Izdavanje, Stan, Jednosoban, Crveni Krst, ID#24820',
+        noDFP: false,
+        numberOfGalleryImages: 8,
+        numberOfMultimedia: 0,
+        numberOfVisits: 378,
+        originalPublishedDate: new Date('2021-11-08T08:59:19.000Z'),
+        price: {
+          priceType: 'BUY',
+          currencyIso: 'EUR',
+          formattedValue: '250,00 €',
+          formattedValueWithoutCurrency: '250,00',
+          value: 250,
+        },
+        priceRange: {},
+        publishedDate: '2022-03-12T10:02:09+02:00',
+        searchScore: 1,
+        smSku: '1234321',
+        url: '/1234321/izdavanje-stan-jednosoban-crveni-krst',
+        vendor: {
+          code: '00003F6N',
+        },
+        vendorSku: '24830',
+        volumePricesFlag: false,
+        rentOrSale: RentOrSale.rent,
+      };
+      const parsedApartmentInfo = {
+        id: 'sasoMange_1234321',
+        address: 'Crveni Krst',
+        apartmentId: '1234321',
+        coverPhotoUrl: 'url',
+        floor: null,
+        heatingTypes: null,
+        location: {
+          latitude: 44.1234,
+          longitude: 20.5678,
+        },
+        municipality: 'Vračar',
+        place: 'Crveni Krst',
+        postedAt: new Date('2021-11-08T08:59:19.000Z'),
+        price: 250,
+        providerName: 'sasoMange',
+        rentOrSale: RentOrSale.rent,
+        size: 36,
+        structure: null,
+        url:
+          'https://sasomange.rs/p/1234321/izdavanje-stan-jednosoban-crveni-krst',
+      };
+
+      const result = provider.parseApartmentInfo(apartmentInfo);
+
+      expect(result).toEqual(parsedApartmentInfo);
+    });
+  });
+
+  describe('parseFloor', () => {
+    it('should return mapped floor', () => {
+      const provider = new SasoMangeProvider();
+
+      expect(provider.parseFloor('floor_ground_floor')).toEqual('ground floor');
+    });
+
+    it('should return unmapped floor', () => {
+      const provider = new SasoMangeProvider();
+      const floor = '5';
+
+      expect(provider.parseFloor(`floor_${floor}`)).toEqual(floor);
+    });
+  });
+
+  describe('updateApartmentInfo', () => {
+    it('should update apartment info', () => {
+      const product = {
         status: 'ACTIVE',
         addresses: [
           {
@@ -963,47 +1120,48 @@ describe('SasoMange', () => {
         vendorSku: '20920',
         rentOrSale: RentOrSale.rent,
       };
-      const parsedApartmentInfo = {
-        id: 'sasoMange_1234321',
-        address: 'Crveni Krst',
-        apartmentId: '1234321',
-        coverPhotoUrl: 'url',
-        floor: null,
-        heatingTypes: null,
+
+      const dom = {
+        window: {
+          document: {
+            getElementById() {
+              return {
+                value: JSON.stringify({
+                  product,
+                  vendorBasicInfoStatus: {
+                    legalEntityName: 'agency name',
+                  },
+                }),
+              };
+            },
+          },
+        },
+      };
+
+      jsdom.JSDOM.mockReturnValue(dom);
+      const apartmentInfo = {
+        providerName: 'sasoMange',
+        rentOrSale: RentOrSale.rent,
+      };
+      const updatedApartmentInfo = {
+        advertiserName: 'Agency Name',
+        floor: '1',
+        furnished: Furnished.Full,
+        heatingTypes: [HeatingType.District],
         location: {
           latitude: 44.1234,
           longitude: 20.5678,
         },
-        municipality: 'Vračar',
-        place: 'Crveni Krst',
-        postedAt: new Date('2021-11-08T08:59:19.000Z'),
-        price: 250,
         providerName: 'sasoMange',
         rentOrSale: RentOrSale.rent,
-        size: 36,
-        structure: null,
-        url:
-          'https://sasomange.rs/p/1234321/izdavanje-stan-jednosoban-crveni-krst',
+        structure: 1,
       };
 
-      const result = provider.parseApartmentInfo(apartmentInfo);
-
-      expect(result).toEqual(parsedApartmentInfo);
-    });
-  });
-
-  describe('parseFloor', () => {
-    it('should return mapped floor', () => {
       const provider = new SasoMangeProvider();
+      // @ts-ignore
+      provider.updateApartmentInfo('html', apartmentInfo);
 
-      expect(provider.parseFloor('floor_ground_floor')).toEqual('ground floor');
-    });
-
-    it('should return unmapped floor', () => {
-      const provider = new SasoMangeProvider();
-      const floor = '5';
-
-      expect(provider.parseFloor(`floor_${floor}`)).toEqual(floor);
+      expect(apartmentInfo).toEqual(updatedApartmentInfo);
     });
   });
 });
