@@ -16,7 +16,6 @@ const mailerService = {
 
 describe('MailService', () => {
   let mailService: MailService;
-  const clientUrl = 'client-url';
   const senderEmail = 'info@flatme.com';
   const email = 'example@example.com';
   const mailInfo = {

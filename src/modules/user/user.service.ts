@@ -11,7 +11,6 @@ import { Apartment } from 'modules/apartment/apartment.interface';
 import { FilterRepository } from 'modules/filter/filter.repository';
 import { TokenType } from 'modules/token/token.enums';
 import { TokenRepository } from 'modules/token/token.repository';
-import { Subscription } from './subscription.enum';
 import { User } from './user.interface';
 import { UserRepository } from './user.repository';
 

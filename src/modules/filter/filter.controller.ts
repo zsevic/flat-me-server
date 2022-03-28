@@ -1,5 +1,5 @@
-import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
-import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { Body, Controller, Param, Post } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import {
   FILTER_DEACTIVATION_LIMIT,
   FILTER_DEACTIVATION_TTL,
