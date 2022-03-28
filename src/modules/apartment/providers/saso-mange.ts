@@ -231,7 +231,7 @@ export class SasoMangeProvider implements Provider {
   parseApartmentInfo = (apartmentInfo): Apartment => {
     const apartmentId = apartmentInfo.smSku;
     const apartmentInfoLocation = apartmentInfo.addresses?.[0]?.location;
-    const microlocation = apartmentInfoLocation.find(
+    const microlocation = apartmentInfoLocation?.find(
       address => address.type === 'MICROLOCATION',
     );
     let location;
@@ -242,7 +242,7 @@ export class SasoMangeProvider implements Provider {
       };
     }
 
-    const municipality = apartmentInfoLocation.find(
+    const municipality = apartmentInfoLocation?.find(
       address => address.type === 'SUBLOCATION',
     );
     if (!MUNICIPALITIES.includes(municipality.name)) {
@@ -254,7 +254,7 @@ export class SasoMangeProvider implements Provider {
     const fullClassificationCode = this.getFullClassificationCode(
       apartmentInfo.rentOrSale,
     );
-    const size = attributes.find(
+    const size = attributes?.find(
       attribute => attribute.code === `${fullClassificationCode}.estate_area`,
     )?.featureValues[0].value;
 
@@ -264,7 +264,7 @@ export class SasoMangeProvider implements Provider {
       providerName: this.providerName,
       address:
         microlocation?.name && capitalizeWords(latinize(microlocation.name)),
-      coverPhotoUrl: apartmentInfo.images.find(
+      coverPhotoUrl: apartmentInfo.images?.find(
         image => image.format === 'smThumbnailFormat',
       )?.url,
       floor: null,
