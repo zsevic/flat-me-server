@@ -38,19 +38,7 @@ export class SasoMangeProvider implements Provider {
     return `${this.domainUrl}/hybris/classified/v1/products/extended`;
   }
 
-  createRequest(filter: FilterDto) {
-    return createRequest.call(this, filter);
-  }
-
-  createRequestForApartment(apartmentId: string, url: string) {
-    return createRequestForApartment.call(this, apartmentId, url);
-  }
-
-  createRequestConfig(filter: FilterDto): AxiosRequestConfig {
-    const rentOrSaleMap = {
-      rent: 'stanovi-iznajmljivanje',
-      sale: 'stanovi-prodaja',
-    };
+  private createFilterParams(filter: FilterDto): string {
     const municipalityMap = {
       Čukarica: 'beograd-cukarica',
       'Novi Beograd': 'beograd-novi-beograd',
@@ -100,12 +88,30 @@ export class SasoMangeProvider implements Provider {
       ...locationParams,
       ...structureParams,
     ];
-    const productsFacetsFlattened = filterParams.join(',');
+
+    return filterParams.join(',');
+  }
+
+  createRequest(filter: FilterDto) {
+    return createRequest.call(this, filter);
+  }
+
+  createRequestForApartment(apartmentId: string, url: string) {
+    return createRequestForApartment.call(this, apartmentId, url);
+  }
+
+  createRequestConfig(filter: FilterDto): AxiosRequestConfig {
+    const rentOrSaleMap = {
+      rent: 'stanovi-iznajmljivanje',
+      sale: 'stanovi-prodaja',
+    };
+
+    const productsFacetsFlattened = this.createFilterParams(filter);
 
     const params = {
       productsSort: 'newnessDesc',
       currentPage: filter.pageNumber - 1,
-      category: rentOrSaleMap[rentOrSale],
+      category: rentOrSaleMap[filter.rentOrSale],
       productsFacetsFlattened,
     };
 

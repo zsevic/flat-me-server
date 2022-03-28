@@ -1,6 +1,11 @@
 export const FURNISHED = ['yes', 1];
 
-export const PROVIDERS = ['cetiriZida', 'cityExpert', 'haloOglasi'];
+export const PROVIDERS = [
+  'cetiriZida',
+  'cityExpert',
+  'haloOglasi',
+  'sasoMange',
+];
 
 export const RECEIVED_APARTMENTS_SIZE = 10;
 
