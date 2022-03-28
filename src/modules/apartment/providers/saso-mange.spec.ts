@@ -349,4 +349,19 @@ describe('SasoMange', () => {
       });
     });
   });
+
+  describe('parseFloor', () => {
+    it('should return mapped floor', () => {
+      const provider = new SasoMangeProvider();
+
+      expect(provider.parseFloor('floor_ground_floor')).toEqual('ground floor');
+    });
+
+    it('should return unmapped floor', () => {
+      const provider = new SasoMangeProvider();
+      const floor = '5';
+
+      expect(provider.parseFloor(`floor_${floor}`)).toEqual(floor);
+    });
+  });
 });
