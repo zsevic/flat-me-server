@@ -165,7 +165,7 @@ export class SasoMangeProvider implements Provider {
 
     const features = apartmentData?.product?.classifications?.find(
       classification => classification?.code === classificationCode,
-    ).features;
+    )?.features;
 
     return features?.find(feature => feature.code === code)?.featureValues?.[0]
       ?.value;
