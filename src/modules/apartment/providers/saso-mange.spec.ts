@@ -93,4 +93,38 @@ describe('SasoMange', () => {
       expect(results).toEqual(ads);
     });
   });
+
+  describe('hasNextPage', () => {
+    it('should return true when provider has next page', () => {
+      const data = {
+        products: {
+          pagination: {
+            currentPage: 3,
+            totalPages: 6,
+          },
+        },
+      };
+
+      const provider = new SasoMangeProvider();
+      const hasNextPage = provider.hasNextPage(data);
+
+      expect(hasNextPage).toEqual(true);
+    });
+
+    it("should return false when provider doesn't have next page", () => {
+      const data = {
+        products: {
+          pagination: {
+            currentPage: 5,
+            totalPages: 6,
+          },
+        },
+      };
+
+      const provider = new SasoMangeProvider();
+      const hasNextPage = provider.hasNextPage(data);
+
+      expect(hasNextPage).toEqual(false);
+    });
+  });
 });
