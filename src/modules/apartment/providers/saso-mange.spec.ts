@@ -1,7 +1,13 @@
-import { DEFAULT_TIMEOUT } from 'common/constants';
+import axios from 'axios';
+import jsdom from 'jsdom';
+import { DEFAULT_TIMEOUT, ECONNABORTED, ECONNRESET } from 'common/constants';
 import { RentOrSale } from 'modules/filter/filter.enums';
 import { SasoMangeProvider } from './saso-mange';
-import { CategoryCode } from './saso-mange.enums';
+import { ApartmentStatus, CategoryCode } from './saso-mange.enums';
+import { HttpStatus } from '@nestjs/common';
+
+jest.mock('axios');
+jest.mock('jsdom');
 
 describe('SasoMange', () => {
   describe('createRequestConfig', () => {
@@ -148,6 +154,199 @@ describe('SasoMange', () => {
       const hasNextPage = provider.hasNextPage(data);
 
       expect(hasNextPage).toEqual(false);
+    });
+  });
+
+  describe('isApartmentInactive', () => {
+    const id = 'id';
+    const url = 'url';
+    const providerPrefix = 'sasoMange';
+
+    it('should return undefined when url is missing', async () => {
+      const provider = new SasoMangeProvider();
+
+      const isApartmentInactive = await provider.isApartmentInactive('id');
+
+      expect(isApartmentInactive).toEqual(undefined);
+    });
+
+    it('should return true when apartment is not found', async () => {
+      const provider = new SasoMangeProvider();
+      // @ts-ignore
+      axios.get.mockRejectedValue({
+        response: {
+          status: HttpStatus.NOT_FOUND,
+        },
+      });
+
+      const isApartmentInactive = await provider.isApartmentInactive(
+        `${providerPrefix}_${id}`,
+        url,
+      );
+
+      expect(isApartmentInactive).toEqual(true);
+      expect(axios.get).toHaveBeenCalledWith(url, {
+        timeout: DEFAULT_TIMEOUT,
+      });
+    });
+
+    it('should return undefined when connection is aborted', async () => {
+      const provider = new SasoMangeProvider();
+      // @ts-ignore
+      axios.get.mockRejectedValue({
+        code: ECONNABORTED,
+      });
+
+      const isApartmentInactive = await provider.isApartmentInactive(
+        `${providerPrefix}_${id}`,
+        url,
+      );
+
+      expect(isApartmentInactive).toEqual(undefined);
+      expect(axios.get).toHaveBeenCalledWith(url, {
+        timeout: DEFAULT_TIMEOUT,
+      });
+    });
+
+    it('should return undefined when connection is aborted', async () => {
+      const provider = new SasoMangeProvider();
+      // @ts-ignore
+      axios.get.mockRejectedValue({
+        code: ECONNRESET,
+      });
+
+      const isApartmentInactive = await provider.isApartmentInactive(
+        `${providerPrefix}_${id}`,
+        url,
+      );
+
+      expect(isApartmentInactive).toEqual(undefined);
+      expect(axios.get).toHaveBeenCalledWith(url, {
+        timeout: DEFAULT_TIMEOUT,
+      });
+    });
+
+    it('should return undefined when error is thrown', async () => {
+      const provider = new SasoMangeProvider();
+      // @ts-ignore
+      axios.get.mockRejectedValue(new Error('error'));
+
+      const isApartmentInactive = await provider.isApartmentInactive(
+        `${providerPrefix}_${id}`,
+        url,
+      );
+
+      expect(isApartmentInactive).toEqual(undefined);
+      expect(axios.get).toHaveBeenCalledWith(url, {
+        timeout: DEFAULT_TIMEOUT,
+      });
+    });
+
+    it('should return undefined when apartment is active', async () => {
+      const provider = new SasoMangeProvider();
+      // @ts-ignore
+      axios.get.mockResolvedValue({
+        data: 'html',
+        request: { res: { responseUrl: url } },
+      });
+
+      const dom = {
+        window: {
+          document: {
+            getElementById() {
+              return {
+                value: `{"product":{"status": "${ApartmentStatus.Active}"}}`,
+              };
+            },
+          },
+        },
+      };
+      jsdom.JSDOM.mockReturnValue(dom);
+
+      const isApartmentInactive = await provider.isApartmentInactive(
+        `${providerPrefix}_${id}`,
+        url,
+      );
+
+      expect(isApartmentInactive).toEqual(undefined);
+      expect(axios.get).toHaveBeenCalledWith(url, {
+        timeout: DEFAULT_TIMEOUT,
+      });
+    });
+
+    it('should return true when apartment ad is redirected to other ad', async () => {
+      const provider = new SasoMangeProvider();
+      // @ts-ignore
+      axios.get.mockResolvedValue({
+        data: 'html',
+        request: { res: { responseUrl: 'redirected-url' } },
+      });
+
+      const isApartmentInactive = await provider.isApartmentInactive(
+        `${providerPrefix}_${id}`,
+        url,
+      );
+
+      expect(isApartmentInactive).toEqual(true);
+      expect(axios.get).toHaveBeenCalledWith(url, {
+        timeout: DEFAULT_TIMEOUT,
+      });
+    });
+
+    it('should return true when there is no apartment data', async () => {
+      const provider = new SasoMangeProvider();
+      // @ts-ignore
+      axios.get.mockResolvedValue({
+        data: 'html',
+        request: { res: { responseUrl: url } },
+      });
+
+      const dom = {
+        window: {},
+      };
+      jsdom.JSDOM.mockReturnValue(dom);
+
+      const isApartmentInactive = await provider.isApartmentInactive(
+        `${providerPrefix}_${id}`,
+        url,
+      );
+
+      expect(isApartmentInactive).toEqual(undefined);
+      expect(axios.get).toHaveBeenCalledWith(url, {
+        timeout: DEFAULT_TIMEOUT,
+      });
+    });
+
+    it('should return true when apartment is not active', async () => {
+      const provider = new SasoMangeProvider();
+      // @ts-ignore
+      axios.get.mockResolvedValue({
+        data: 'html',
+        request: { res: { responseUrl: url } },
+      });
+
+      const dom = {
+        window: {
+          document: {
+            getElementById() {
+              return {
+                value: '{"product":{"status": "PAUSED"}}',
+              };
+            },
+          },
+        },
+      };
+      jsdom.JSDOM.mockReturnValue(dom);
+
+      const isApartmentInactive = await provider.isApartmentInactive(
+        `${providerPrefix}_${id}`,
+        url,
+      );
+
+      expect(isApartmentInactive).toEqual(undefined);
+      expect(axios.get).toHaveBeenCalledWith(url, {
+        timeout: DEFAULT_TIMEOUT,
+      });
     });
   });
 });

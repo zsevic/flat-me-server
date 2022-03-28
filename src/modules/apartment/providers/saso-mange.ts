@@ -7,7 +7,7 @@ import { capitalizeWords } from 'common/utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { RentOrSale } from 'modules/filter/filter.enums';
 import { Provider } from './provider.interface';
-import { CategoryCode } from './saso-mange.enums';
+import { ApartmentStatus, CategoryCode } from './saso-mange.enums';
 import {
   createRequest,
   createRequestConfigForApartment,
@@ -139,9 +139,9 @@ export class SasoMangeProvider implements Provider {
   }
 
   private getApartmentDataFromDom(dom) {
-    const data = dom?.window?.document.getElementById(
+    const data = dom?.window?.document?.getElementById(
       'HybrisClassifiedProductExtended',
-    ).value;
+    )?.value;
     if (!data) return;
 
     return JSON.parse(data);
@@ -211,10 +211,10 @@ export class SasoMangeProvider implements Provider {
       });
 
       const apartmentData = this.getApartmentDataFromDom(dom);
-      if (!apartmentData) return true;
+      if (!apartmentData) return;
 
-      if (apartmentData.product.status !== apartmentStatusActive) {
-        return true;
+      if (apartmentData.product.status === ApartmentStatus.Active) {
+        return;
       }
     } catch (error) {
       if (error.response?.status === HttpStatus.NOT_FOUND) return true;
