@@ -5,7 +5,9 @@ import latinize from 'latinize';
 import { DEFAULT_TIMEOUT, ECONNABORTED, ECONNRESET } from 'common/constants';
 import { capitalizeWords } from 'common/utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
+import { RentOrSale } from 'modules/filter/filter.enums';
 import { Provider } from './provider.interface';
+import { CategoryCode } from './saso-mange.enums';
 import {
   createRequest,
   createRequestConfigForApartment,
@@ -102,8 +104,8 @@ export class SasoMangeProvider implements Provider {
 
   createRequestConfig(filter: FilterDto): AxiosRequestConfig {
     const rentOrSaleMap = {
-      rent: 'stanovi-iznajmljivanje',
-      sale: 'stanovi-prodaja',
+      rent: CategoryCode.Rent,
+      sale: CategoryCode.Sale,
     };
 
     const productsFacetsFlattened = this.createFilterParams(filter);
@@ -171,8 +173,8 @@ export class SasoMangeProvider implements Provider {
 
   getResults = data => {
     const rentOrSaleMap = {
-      'stanovi-iznajmljivanje': 'rent',
-      'stanovi-prodaja': 'sale',
+      [CategoryCode.Rent]: RentOrSale.rent,
+      [CategoryCode.Sale]: RentOrSale.sale,
     };
 
     return (

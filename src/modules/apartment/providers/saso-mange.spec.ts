@@ -1,6 +1,7 @@
 import { DEFAULT_TIMEOUT } from 'common/constants';
 import { RentOrSale } from 'modules/filter/filter.enums';
 import { SasoMangeProvider } from './saso-mange';
+import { CategoryCode } from './saso-mange.enums';
 
 describe('SasoMange', () => {
   describe('createRequestConfig', () => {
@@ -63,6 +64,33 @@ describe('SasoMange', () => {
       const requestConfig = provider.createRequestConfig(filter);
 
       expect(requestConfig).toEqual(request);
+    });
+  });
+
+  describe('getResults', () => {
+    it('should return the results from the provider', () => {
+      const url = 'url';
+      const ads = [
+        {
+          rentOrSale: RentOrSale.rent,
+          url,
+        },
+      ];
+      const data = {
+        products: {
+          products: [
+            {
+              url,
+            },
+          ],
+          categoryCode: CategoryCode.Rent,
+        },
+      };
+      const provider = new SasoMangeProvider();
+
+      const results = provider.getResults(data);
+
+      expect(results).toEqual(ads);
     });
   });
 });
