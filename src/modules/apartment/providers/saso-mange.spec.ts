@@ -67,6 +67,29 @@ describe('SasoMange', () => {
     });
   });
 
+  describe('createRequestConfigForApartment', () => {
+    it('should throw an error when url for apartment is missing', () => {
+      const provider = new SasoMangeProvider();
+
+      expect(() =>
+        provider.createRequestConfigForApartment('id', null),
+      ).toThrowError();
+    });
+
+    it('should create request config for given apartment', () => {
+      const provider = new SasoMangeProvider();
+      const config = {
+        url: 'url',
+        method: 'GET',
+        timeout: DEFAULT_TIMEOUT,
+      };
+
+      expect(
+        provider.createRequestConfigForApartment('id', config.url),
+      ).toEqual(config);
+    });
+  });
+
   describe('getResults', () => {
     it('should return the results from the provider', () => {
       const url = 'url';
