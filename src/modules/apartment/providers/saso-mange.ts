@@ -4,6 +4,7 @@ import jsdom from 'jsdom';
 import latinize from 'latinize';
 import { DEFAULT_TIMEOUT, ECONNABORTED, ECONNRESET } from 'common/constants';
 import { capitalizeWords } from 'common/utils';
+import { MUNICIPALITIES } from 'modules/filter/filter.constants';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { RentOrSale } from 'modules/filter/filter.enums';
 import { Provider } from './provider.interface';
@@ -13,7 +14,6 @@ import {
   createRequestConfigForApartment,
   createRequestForApartment,
 } from './utils';
-import { apartmentStatusActive } from '../apartment.constants';
 import { Apartment } from '../apartment.interface';
 import { AdvertiserType } from '../enums/advertiser-type.enum';
 import { Floor } from '../enums/floor.enum';
@@ -241,9 +241,15 @@ export class SasoMangeProvider implements Provider {
         longitude: Number(microlocation.longitude),
       };
     }
+
     const municipality = apartmentInfoLocation.find(
       address => address.type === 'SUBLOCATION',
     );
+    if (!MUNICIPALITIES.includes(municipality.name)) {
+      this.logger.warn(`Municipality ${municipality.name} is not valid`);
+      return;
+    }
+
     const { highlightedAttributes: attributes } = apartmentInfo;
     const fullClassificationCode = this.getFullClassificationCode(
       apartmentInfo.rentOrSale,
