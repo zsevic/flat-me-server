@@ -153,11 +153,11 @@ export class ApartmentService {
           field => !!apartmentInfo[field],
         );
         if (!isValidApartmentInfo) continue;
+
+        foundAparments.push(apartmentInfo);
       } catch (error) {
         this.logger.error(error);
       }
-
-      foundAparments.push(apartmentInfo);
     }
     return foundAparments;
   };

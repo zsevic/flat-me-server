@@ -18,6 +18,9 @@ import {
 } from '../apartment.constants';
 import { Apartment } from '../apartment.interface';
 import { AdvertiserType } from '../enums/advertiser-type.enum';
+import { Floor } from '../enums/floor.enum';
+import { Furnished } from '../enums/furnished.enum';
+import { HeatingType } from '../enums/heating-type.enum';
 
 export class CetiriZidaProvider implements Provider {
   private readonly providerName = 'cetiriZida';
@@ -27,12 +30,12 @@ export class CetiriZidaProvider implements Provider {
 
   private readonly atticKey = 100;
   private readonly floor = {
-    '-4': 'cellar',
-    '-3': 'basement',
-    '-2': 'low ground floor',
-    '-1': 'ground floor',
-    '0': 'high ground floor',
-    [this.atticKey]: 'attic',
+    '-4': Floor.Cellar,
+    '-3': Floor.Basement,
+    '-2': Floor.LowGroundFloor,
+    '-1': Floor.GroundFloor,
+    '0': Floor.HighGroundFloor,
+    [this.atticKey]: Floor.Attic,
   };
 
   get apartmentBaseUrl() {
@@ -53,9 +56,9 @@ export class CetiriZidaProvider implements Provider {
 
   createRequestConfig(filter: FilterDto): AxiosRequestConfig {
     const furnished = {
-      empty: 'no',
-      furnished: 'yes',
-      'semi-furnished': 'semi',
+      [Furnished.Empty]: 'no',
+      [Furnished.Full]: 'yes',
+      [Furnished.Semi]: 'semi',
     };
     const furnishedFilter = filter.furnished.map(
       (filter: string): string => furnished[filter],
@@ -177,21 +180,21 @@ export class CetiriZidaProvider implements Provider {
 
   parseApartmentInfo = (apartmentInfo): Apartment => {
     const furnished = {
-      no: 'empty',
-      semi: 'semi-furnished',
-      yes: 'furnished',
+      no: Furnished.Empty,
+      semi: Furnished.Semi,
+      yes: Furnished.Full,
     };
 
     const heatingTypesMap = {
-      central: 'central',
-      district: 'district',
-      electricity: 'electricity',
-      gas: 'gas',
-      norwegianRadiators: 'norwegian radiators',
-      storageHeater: 'storage heater',
-      thermalPump: 'thermal pump',
-      tileStove: 'tile stove',
-      underfloor: 'underfloor',
+      central: HeatingType.Central,
+      district: HeatingType.District,
+      electricity: HeatingType.Electricity,
+      gas: HeatingType.Gas,
+      norwegianRadiators: HeatingType.NorwegianRadiators,
+      storageHeater: HeatingType.StorageHeater,
+      thermalPump: HeatingType.ThermalPump,
+      tileStove: HeatingType.TileStove,
+      underfloor: HeatingType.Underfloor,
     };
     const heatingType = heatingTypesMap[apartmentInfo.heatingType];
     const heatingTypes = heatingType ? [heatingType] : [];
@@ -234,8 +237,8 @@ export class CetiriZidaProvider implements Provider {
     const { latitude, longitude } = apartmentData;
     if (latitude && longitude) {
       location = {
-        latitude,
-        longitude,
+        latitude: Number(latitude),
+        longitude: Number(longitude),
       };
     }
     const advertiserName = apartmentData?.author?.agency?.title;

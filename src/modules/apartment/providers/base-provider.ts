@@ -4,12 +4,14 @@ import { CetiriZidaProvider } from './cetiri-zida';
 import { CityExpertProvider } from './city-expert';
 import { HaloOglasiProvider } from './halo-oglasi';
 import { Provider } from './provider.interface';
+import { SasoMangeProvider } from './saso-mange';
 
 export class BaseProvider {
   private readonly providers = {
     cetiriZida: CetiriZidaProvider,
     cityExpert: CityExpertProvider,
     haloOglasi: HaloOglasiProvider,
+    sasoMange: SasoMangeProvider,
   };
   private readonly logger = new Logger(BaseProvider.name);
 

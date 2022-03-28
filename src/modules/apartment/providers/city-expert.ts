@@ -14,6 +14,9 @@ import {
 import { apartmentStatusPublished } from '../apartment.constants';
 import { Apartment } from '../apartment.interface';
 import { AdvertiserType } from '../enums/advertiser-type.enum';
+import { Floor } from '../enums/floor.enum';
+import { Furnished } from '../enums/furnished.enum';
+import { HeatingType } from '../enums/heating-type.enum';
 
 export class CityExpertProvider implements Provider {
   private readonly providerName = 'cityExpert';
@@ -25,11 +28,11 @@ export class CityExpertProvider implements Provider {
 
   private readonly atticKey = 'PTK';
   private readonly floor = {
-    SU: 'basement',
-    PR: 'ground floor',
-    NPR: 'low ground floor',
-    VPR: 'high ground floor',
-    [this.atticKey]: 'attic',
+    SU: Floor.Basement,
+    PR: Floor.GroundFloor,
+    NPR: Floor.LowGroundFloor,
+    VPR: Floor.HighGroundFloor,
+    [this.atticKey]: Floor.Attic,
   };
 
   private readonly apiBaseUrl = 'https://cityexpert.rs/api';
@@ -57,9 +60,9 @@ export class CityExpertProvider implements Provider {
       sale: 's',
     };
     const furnished = {
-      furnished: 1,
-      'semi-furnished': 2,
-      empty: 3,
+      [Furnished.Full]: 1,
+      [Furnished.Semi]: 2,
+      [Furnished.Empty]: 3,
     };
     const furnishedFilter = filter.furnished.map(
       (filter: string): number => furnished[filter],
@@ -211,17 +214,17 @@ export class CityExpertProvider implements Provider {
   parseApartmentInfo = (apartmentInfo): Apartment => {
     const [latitude, longitude] = apartmentInfo.location.split(', ');
     const furnished = {
-      1: 'furnished',
-      2: 'semi-furnished',
-      3: 'empty',
+      1: Furnished.Full,
+      2: Furnished.Semi,
+      3: Furnished.Empty,
     };
     const heatingTypesMap: Record<number, string> = {
-      1: 'district',
-      4: 'electricity',
-      10: 'storage heater',
-      21: 'underfloor',
-      26: 'thermal pump',
-      99: 'central',
+      1: HeatingType.District,
+      4: HeatingType.Electricity,
+      10: HeatingType.StorageHeater,
+      21: HeatingType.Underfloor,
+      26: HeatingType.ThermalPump,
+      99: HeatingType.Central,
     };
     const rentOrSaleField = {
       r: 'rent',

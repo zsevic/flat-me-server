@@ -11,6 +11,7 @@ jest.mock('axios');
 
 describe('CetiriZida', () => {
   describe('createRequestConfig', () => {
+    const url = 'https://api.4zida.rs/v6/search/apartments';
     it('should return request config for rent', () => {
       const filter = {
         advertiserTypes: [],
@@ -32,7 +33,7 @@ describe('CetiriZida', () => {
           priceTo: filter.maxPrice,
           structures: [102, 101, 103],
         },
-        url: 'https://api.4zida.rs/v6/search/apartments',
+        url,
         timeout: DEFAULT_TIMEOUT,
       };
       const provider = new CetiriZidaProvider();
@@ -63,7 +64,7 @@ describe('CetiriZida', () => {
           priceTo: filter.maxPrice,
           structures: [105],
         },
-        url: 'https://api.4zida.rs/v6/search/apartments',
+        url,
         timeout: DEFAULT_TIMEOUT,
       };
       const provider = new CetiriZidaProvider();
