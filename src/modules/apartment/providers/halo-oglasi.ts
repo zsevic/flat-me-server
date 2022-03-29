@@ -126,10 +126,6 @@ export class HaloOglasiProvider implements Provider {
 
   getResults = (html: string, filter?: FilterDto) => {
     try {
-      if (typeof html !== 'string') {
-        this.logger.warn(html);
-        return [];
-      }
       const virtualConsole = new jsdom.VirtualConsole();
       const htmlWithApartmentList = html.replace(
         'QuidditaEnvironment.serverListData',
@@ -151,7 +147,11 @@ export class HaloOglasiProvider implements Provider {
           };
         });
     } catch (error) {
-      this.logger.error(error);
+      // skipping error html.replace is a not function
+      if (!(error instanceof TypeError)) {
+        this.logger.error(error);
+      }
+      return [];
     }
   };
 
