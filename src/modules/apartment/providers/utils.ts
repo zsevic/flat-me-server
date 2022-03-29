@@ -20,7 +20,10 @@ export function createRequestForApartment(apartmentId: string, url?: string) {
     request: axios(this.createRequestConfigForApartment(apartmentId, url))
       .then(response => response.data)
       .catch(error => {
-        this.logger.error(`Request failed for apartment ${apartmentId}`, error);
+        this.logger.error(
+          `Request failed for apartment ${this.providerName}_${apartmentId}`,
+          error,
+        );
         return null;
       }),
     provider: this as Provider,
