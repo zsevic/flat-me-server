@@ -101,6 +101,16 @@ describe('HaloOglasi', () => {
   });
 
   describe('getResults', () => {
+    it('should return empty apartment list when html is not a string', () => {
+      const result = [];
+
+      const provider = new HaloOglasiProvider();
+      // @ts-ignore
+      const apartmentList = provider.getResults(null, { rentOrSale: 'rent' });
+
+      expect(apartmentList).toEqual(result);
+    });
+
     it("should return empty apartment list when apartments can't be parsed from html", () => {
       const dom = {
         window: {},
