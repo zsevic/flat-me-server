@@ -101,12 +101,12 @@ describe('HaloOglasi', () => {
   });
 
   describe('getResults', () => {
-    it('should return empty apartment list when html is not a string', () => {
+    it('should return empty apartment list when request fails', () => {
       const result = [];
 
       const provider = new HaloOglasiProvider();
       // @ts-ignore
-      const apartmentList = provider.getResults(null, { rentOrSale: 'rent' });
+      const apartmentList = provider.getResults({}, { rentOrSale: 'rent' });
 
       expect(apartmentList).toEqual(result);
     });
