@@ -35,7 +35,7 @@ export function createRequestConfigForApartment(
   url?: string,
 ): AxiosRequestConfig {
   return {
-    url: url ? url : this.getApartmentUrl(apartmentId),
+    url: url || this.getApartmentUrl(apartmentId),
     method: 'GET',
     timeout: DEFAULT_TIMEOUT,
   };
