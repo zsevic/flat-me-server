@@ -126,6 +126,8 @@ export class HaloOglasiProvider implements Provider {
 
   getResults = (html: string, filter?: FilterDto) => {
     try {
+      if (!html) return [];
+
       const virtualConsole = new jsdom.VirtualConsole();
       const htmlWithApartmentList = html.replace(
         'QuidditaEnvironment.serverListData',
