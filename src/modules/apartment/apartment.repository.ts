@@ -154,7 +154,7 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
   async updateLastCheckedDatetime(apartmentId: string): Promise<void> {
     const apartment = await this.findOne({ id: apartmentId });
     if (!apartment) {
-      throw new Error('Apartment is not found');
+      throw new Error(`Apartment ${apartmentId} is not found`);
     }
 
     await this.save({
