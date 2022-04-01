@@ -281,11 +281,16 @@ export class SasoMangeProvider implements Provider {
     };
   };
 
-  parseFloor(floorValue: string): string {
+  parseFloor(floorValue: string, totalFloors?: number): string {
     if (this.floorMap[floorValue]) {
       return this.floorMap[floorValue];
     }
     const [, floor] = floorValue.split('_');
+
+    if (Number(floor) === Number(totalFloors) && !isNaN(totalFloors)) {
+      return this.floorMap[this.atticKey];
+    }
+
     return floor;
   }
 
@@ -352,7 +357,13 @@ export class SasoMangeProvider implements Provider {
         rentOrSale,
         apartmentData,
       );
-      const floor = floorValue && this.parseFloor(floorValue);
+      const totalFloorsValue = this.getFeatureValue(
+        `${fullClassificationCode}.number_storeys`,
+        rentOrSale,
+        apartmentData,
+      );
+      const floor =
+        floorValue && this.parseFloor(floorValue, Number(totalFloorsValue));
 
       const furnishedValue = this.getFeatureValue(
         `${fullClassificationCode}.furnished`,

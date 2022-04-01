@@ -652,12 +652,28 @@ describe('SasoMange', () => {
                 editDisabled: false,
                 featureValues: [
                   {
-                    name: '1',
-                    value: 'floor_1',
+                    name: '3',
+                    value: 'floor_3',
                   },
                 ],
                 mandatory: false,
                 name: 'Sprat',
+                range: false,
+              },
+              {
+                attributeType: 'number',
+                code:
+                  'smrsClassificationCatalog/1.0/general_flats_rent.number_storeys',
+                coupled: false,
+                editDisabled: false,
+                featureValues: [
+                  {
+                    name: '3',
+                    value: '3',
+                  },
+                ],
+                mandatory: false,
+                name: 'Spratnost',
                 range: false,
               },
             ],
@@ -1145,7 +1161,7 @@ describe('SasoMange', () => {
       };
       const updatedApartmentInfo = {
         advertiserName: 'Agency Name',
-        floor: '1',
+        floor: 'attic',
         furnished: Furnished.Full,
         heatingTypes: [HeatingType.District],
         location: {
