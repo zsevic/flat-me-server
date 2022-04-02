@@ -241,18 +241,8 @@ export class ApartmentService {
       };
     }
 
-    const isInactive = await this.isApartmentInactive(
-      apartmentId,
-      apartmentInfo.url,
-    );
-    if (isInactive) {
-      return {
-        isValid: false,
-      };
-    }
-
     return {
-      isValid: !isInactive,
+      isValid: true,
       url: apartmentInfo.url,
     };
   }
