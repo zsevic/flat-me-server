@@ -12,3 +12,8 @@ export const FILTER_VERIFICATION_LIMIT = !isEnvironment('production')
   ? Infinity
   : 3;
 export const FILTER_VERIFICATION_TTL = 60 * 60 * 24;
+
+export const DEACTIVATION_FEEDBACK_LIMIT = !isEnvironment('production')
+  ? Infinity
+  : 1;
+export const DEACTIVATION_FEEDBACK_TTL = 60 * 60 * 24;

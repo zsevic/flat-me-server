@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { Apartment } from 'modules/apartment/apartment.interface';
 import { localizeApartment } from 'modules/apartment/apartment.utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
+import { DEACTIVATION_FEEDBACK_EMAIL_ADDRESS } from './mail.constants';
 
 @Injectable()
 export class MailService {
@@ -45,6 +46,17 @@ export class MailService {
     });
 
     this.logger.log(`Mail is sent to ${email}`);
+  }
+
+  async sendMailWithFeedback(feedback: string): Promise<void> {
+    this.logger.log('Sending mail with deactivation feedback...');
+    await this.mailerService.sendMail({
+      to: DEACTIVATION_FEEDBACK_EMAIL_ADDRESS,
+      subject: 'Deaktiviran filter',
+      html: feedback,
+    });
+
+    this.logger.log('Mail with deactivation feedback is sent');
   }
 
   async sendMailWithNewApartments(

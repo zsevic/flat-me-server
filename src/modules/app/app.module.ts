@@ -22,6 +22,7 @@ import {
 } from 'common/config/rate-limiter';
 import { isEnvironment } from 'common/utils';
 import { ApartmentModule } from 'modules/apartment/apartment.module';
+import { FeedbackModule } from 'modules/feedback/feedback.module';
 import { FilterModule } from 'modules/filter/filter.module';
 import { HealthCheckModule } from 'modules/health-check/health-check.module';
 import { SubscriptionModule } from 'modules/subscription/subscription.module';
@@ -88,6 +89,7 @@ import { ThrottlerStorageService } from 'modules/throttler-storage/throttler-sto
     HealthCheckModule,
     ScheduleModule.forRoot(),
     ApartmentModule,
+    FeedbackModule,
     FilterModule,
     TasksModule,
     SubscriptionModule,

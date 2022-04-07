@@ -4,6 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Apartment } from 'modules/apartment/apartment.interface';
 import { localizeApartment } from 'modules/apartment/apartment.utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
+import { DEACTIVATION_FEEDBACK_EMAIL_ADDRESS } from './mail.constants';
 import { MailService } from './mail.service';
 
 const configService = {
@@ -64,6 +65,20 @@ describe('MailService', () => {
         context: {
           url: `${clientUrl}/filters/verification/${token}`,
         },
+      });
+    });
+  });
+
+  describe('sendMailWithFeedback', () => {
+    it('should send mail with feedback', async () => {
+      const feedback = 'feedback';
+
+      await mailService.sendMailWithFeedback(feedback);
+
+      expect(mailerService.sendMail).toHaveBeenCalledWith({
+        to: DEACTIVATION_FEEDBACK_EMAIL_ADDRESS,
+        subject: 'Deaktiviran filter',
+        html: feedback,
       });
     });
   });
