@@ -77,4 +77,4 @@ jobs:
           EMAIL_PORT: 2525
           EMAIL_USERNAME: ${{ secrets.EMAIL_USERNAME }}
 
-      - run: npm audit --audit-level=critical
+      # - run: npm audit --audit-level=critical
