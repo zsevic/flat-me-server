@@ -44,6 +44,9 @@ describe('FeedbackController (e2e)', () => {
     it('should return 200 status code when feedback is sent', () => {
       return request(app.getHttpServer())
         .post('/feedbacks')
+        .send({
+          text: 'feedback',
+        })
         .expect(HttpStatus.OK);
     });
   });
