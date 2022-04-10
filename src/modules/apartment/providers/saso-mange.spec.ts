@@ -14,22 +14,24 @@ jest.mock('jsdom');
 describe('SasoMange', () => {
   describe('createRequestConfig', () => {
     const url = 'https://sasomange.rs/hybris/classified/v1/products/extended';
+    const productsSort = 'newnessDesc';
+
     it('should return request config for rent', () => {
       const filter = {
         advertiserTypes: [],
         rentOrSale: RentOrSale.rent,
         municipalities: ['Palilula'],
-        structures: [0.5, 1, 1.5],
+        structures: [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4],
         furnished: ['semi-furnished'],
         minPrice: 200,
         maxPrice: 300,
         pageNumber: 2,
       };
-      const filterParams = `flat_type_${filter.rentOrSale}:Stan+u+zgradi,priceValue:(${filter.minPrice}-${filter.maxPrice}),location:beograd-palilula,flats_structure_${filter.rentOrSale}:garsonjera,flats_structure_${filter.rentOrSale}:jednosoban,flats_structure_${filter.rentOrSale}:jednoiposoban`;
+      const filterParams = `priceValue:(${filter.minPrice}-${filter.maxPrice}),location:beograd-palilula,flats_structure_${filter.rentOrSale}:(0.5-4)`;
       const request = {
         method: 'GET',
         params: {
-          productsSort: 'newnessDesc',
+          productsSort,
           currentPage: filter.pageNumber - 1,
           category: 'stanovi-iznajmljivanje',
           productsFacetsFlattened: filterParams,
@@ -49,17 +51,17 @@ describe('SasoMange', () => {
         advertiserTypes: [],
         rentOrSale: RentOrSale.sale,
         municipalities: ['Novi Beograd', 'Stari Grad'],
-        structures: [2.5],
+        structures: [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4],
         furnished: ['furnished', 'empty'],
         minPrice: 200,
         maxPrice: 300,
         pageNumber: 2,
       };
-      const filterParams = `flat_type_${filter.rentOrSale}:Stan+u+zgradi,priceValue:(${filter.minPrice}-${filter.maxPrice}),location:beograd-novi-beograd,flats_structure_${filter.rentOrSale}:dvoiposoban`;
+      const filterParams = `priceValue:(${filter.minPrice}-${filter.maxPrice}),location:beograd-novi-beograd,flats_structure_${filter.rentOrSale}:(0.5-4)`;
       const request = {
         method: 'GET',
         params: {
-          productsSort: 'newnessDesc',
+          productsSort,
           currentPage: filter.pageNumber - 1,
           category: 'stanovi-prodaja',
           productsFacetsFlattened: filterParams,
