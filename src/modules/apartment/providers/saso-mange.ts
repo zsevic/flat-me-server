@@ -140,17 +140,11 @@ export class SasoMangeProvider implements Provider {
 
   private getFeatureValue(
     code: string,
-    rentOrSale: string,
     apartmentData,
   ): string {
-    const classificationCode = this.getClassificationCode(rentOrSale);
-
-    const features = apartmentData?.product?.classifications?.find(
-      classification => classification?.code === classificationCode,
-    )?.features;
-
-    return features?.find(feature => feature.code === code)?.featureValues?.[0]
-      ?.value;
+    return apartmentData?.product?.highlightedAttributes?.find(
+      attribute => attribute.code === code,
+    )?.featureValues?.[0]?.value;
   }
 
   getResults = data => {
@@ -327,7 +321,6 @@ export class SasoMangeProvider implements Provider {
       );
       const advertiser = this.getFeatureValue(
         `${fullClassificationCode}.advertiser`,
-        rentOrSale,
         apartmentData,
       );
       const advertiserType = advertiserTypeMap[advertiser];
@@ -336,12 +329,10 @@ export class SasoMangeProvider implements Provider {
 
       const floorValue = this.getFeatureValue(
         `${fullClassificationCode}.floor`,
-        rentOrSale,
         apartmentData,
       );
       const totalFloorsValue = this.getFeatureValue(
         `${fullClassificationCode}.number_storeys`,
-        rentOrSale,
         apartmentData,
       );
       const floor =
@@ -349,14 +340,12 @@ export class SasoMangeProvider implements Provider {
 
       const furnishedValue = this.getFeatureValue(
         `${fullClassificationCode}.furnished`,
-        rentOrSale,
         apartmentData,
       );
       const furnished = furnishedMap[furnishedValue];
 
       const heatingTypeValue = this.getFeatureValue(
         `${fullClassificationCode}.land_heating`,
-        rentOrSale,
         apartmentData,
       );
       const heatingType = heatingTypesMap[heatingTypeValue];
@@ -374,7 +363,6 @@ export class SasoMangeProvider implements Provider {
 
       const structureValue = this.getFeatureValue(
         `${fullClassificationCode}.estate_structure`,
-        rentOrSale,
         apartmentData,
       );
       const structure = structureMap[structureValue];
