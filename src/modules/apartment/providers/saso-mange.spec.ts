@@ -5,6 +5,7 @@ import { DEFAULT_TIMEOUT, ECONNABORTED, ECONNRESET } from 'common/constants';
 import { RentOrSale } from 'modules/filter/filter.enums';
 import { SasoMangeProvider } from './saso-mange';
 import { ApartmentStatus, CategoryCode } from './saso-mange.enums';
+import { AdvertiserType } from '../enums/advertiser-type.enum';
 import { Furnished } from '../enums/furnished.enum';
 import { HeatingType } from '../enums/heating-type.enum';
 
@@ -602,97 +603,34 @@ describe('SasoMange', () => {
               {
                 attributeType: 'enum',
                 code:
-                  'smrsClassificationCatalog/1.0/general_flats_rent.estate_structure',
+                  'smrsClassificationCatalog/1.0/general_flats_rent.bathrooms',
                 coupled: false,
                 editDisabled: false,
                 featureValues: [
                   {
-                    name: 'Jednosoban',
-                    value: 'one_room_estate_structure',
-                  },
-                ],
-                mandatory: true,
-                name: 'Struktura',
-                range: false,
-              },
-              {
-                attributeType: 'enum',
-                code:
-                  'smrsClassificationCatalog/1.0/general_flats_rent.furnished',
-                coupled: false,
-                editDisabled: false,
-                featureValues: [
-                  {
-                    name: 'Namešteno',
-                    value: 'furnished_full',
+                    name: '1',
+                    value: 'bathrooms_1',
                   },
                 ],
                 mandatory: false,
-                name: 'Nameštenost',
-                range: false,
-              },
-              {
-                attributeType: 'enum',
-                code:
-                  'smrsClassificationCatalog/1.0/general_flats_rent.land_heating',
-                coupled: false,
-                editDisabled: false,
-                featureValues: [
-                  {
-                    name: 'Centralno',
-                    value: 'land_heating_central',
-                  },
-                ],
-                mandatory: false,
-                name: 'Grejanje',
-                range: false,
-              },
-              {
-                attributeType: 'enum',
-                code: 'smrsClassificationCatalog/1.0/general_flats_rent.floor',
-                coupled: false,
-                editDisabled: false,
-                featureValues: [
-                  {
-                    name: '3',
-                    value: 'floor_3',
-                  },
-                ],
-                mandatory: false,
-                name: 'Sprat',
-                range: false,
-              },
-              {
-                attributeType: 'number',
-                code:
-                  'smrsClassificationCatalog/1.0/general_flats_rent.number_storeys',
-                coupled: false,
-                editDisabled: false,
-                featureValues: [
-                  {
-                    name: '3',
-                    value: '3',
-                  },
-                ],
-                mandatory: false,
-                name: 'Spratnost',
+                name: 'Broj kupatila',
                 range: false,
               },
             ],
             name: 'Osnovne informacije',
           },
           {
-            code: 'additional_flats',
+            code: 'included_flats',
             features: [
               {
                 attributeType: 'boolean',
                 featureValues: [
                   {
-                    name: 'false',
-                    value: 'false',
+                    name: 'true',
+                    value: 'true',
                   },
                 ],
-                name: 'Balkon',
+                name: 'Terasa',
                 range: false,
               },
               {
@@ -714,18 +652,7 @@ describe('SasoMange', () => {
                     value: 'false',
                   },
                 ],
-                name: 'Terasa',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Prednji vrt',
+                name: 'Francuski balkon',
                 range: false,
               },
               {
@@ -747,62 +674,29 @@ describe('SasoMange', () => {
                     value: 'false',
                   },
                 ],
+                name: 'Parking mesto',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Lift',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
                 name: 'Podrum',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Garažno mesto',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Javni parking',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Spoljno parking mesto',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Rezervisan parking',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Špajz',
                 range: false,
               },
               {
@@ -824,7 +718,7 @@ describe('SasoMange', () => {
                     value: 'false',
                   },
                 ],
-                name: 'Garderober',
+                name: 'Klima',
                 range: false,
               },
               {
@@ -835,7 +729,7 @@ describe('SasoMange', () => {
                     value: 'false',
                   },
                 ],
-                name: 'Recepcija',
+                name: 'Topla voda',
                 range: false,
               },
               {
@@ -846,7 +740,40 @@ describe('SasoMange', () => {
                     value: 'false',
                   },
                 ],
-                name: 'Alarm',
+                name: 'Bašta',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Telefon',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Kablovska televizija',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Internet',
                 range: false,
               },
               {
@@ -868,7 +795,29 @@ describe('SasoMange', () => {
                     value: 'false',
                   },
                 ],
-                name: 'Kamere',
+                name: 'Video nadzor',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Kamin',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Sauna',
                 range: false,
               },
               {
@@ -893,162 +842,8 @@ describe('SasoMange', () => {
                 name: 'Teretana',
                 range: false,
               },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Sauna',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'true',
-                    value: 'true',
-                  },
-                ],
-                name: 'Lift',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Prilaz za invalidska kolica',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Vešernica',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Voda',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Kanalizacija',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'U centru',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Blizu centra',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Klima',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Struja',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Salonac',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Duplex',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Penthouse',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Potkrovlje',
-                range: false,
-              },
             ],
-            name: 'Dodatne informacije',
+            name: 'Nekretnina sadrži',
           },
         ],
         code: 'izdavanje-stan-jednosoban-crveni-krst',
@@ -1062,35 +857,131 @@ describe('SasoMange', () => {
             coupled: false,
             editDisabled: false,
             featureUnit: {
+              code: 'm2',
+              conversionFactor: 1,
               symbol: 'm²',
             },
             featureValues: [
               {
-                name: '36',
-                value: '36',
-              },
-              {
-                name: '36',
-                value: '36',
+                name: '100',
+                unit: {
+                  code: 'm2',
+                  conversionFactor: 1,
+                  symbol: 'm²',
+                },
+                value: '100',
               },
             ],
             mandatory: true,
             name: 'Površina',
-            range: true,
+            range: false,
           },
           {
             attributeType: 'enum',
-            code: 'smrsClassificationCatalog/1.0/general_flats_rent.flat_type',
+            code:
+              'smrsClassificationCatalog/1.0/general_flats_rent.estate_structure',
             coupled: false,
             editDisabled: false,
             featureValues: [
               {
-                name: 'Stan u zgradi',
-                value: 'estate_type_flat',
+                name: 'Četvorosoban',
+                value: 'four_rooms_estate_structure',
+              },
+            ],
+            mandatory: true,
+            name: 'Struktura',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code: 'smrsClassificationCatalog/1.0/general_flats_rent.floor',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: '3',
+                value: 'floor_3',
               },
             ],
             mandatory: false,
-            name: 'Tip stana',
+            name: 'Sprat',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code:
+              'smrsClassificationCatalog/1.0/general_flats_rent.number_storeys',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: '3',
+                value: '3',
+              },
+            ],
+            mandatory: false,
+            name: 'Ukupna spratnost',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code: 'smrsClassificationCatalog/1.0/general_flats_rent.advertiser',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: 'Agencija',
+                value: 'advertiser_agency',
+              },
+            ],
+            mandatory: true,
+            name: 'Oglašivač',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code: 'smrsClassificationCatalog/1.0/general_flats_rent.filing',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: 'Uknjiženo',
+                value: 'filing_filed',
+              },
+            ],
+            mandatory: false,
+            name: 'Uknjiženost',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code:
+              'smrsClassificationCatalog/1.0/general_flats_rent.land_heating',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: 'Centralno',
+                value: 'land_heating_central',
+              },
+            ],
+            mandatory: false,
+            name: 'Grejanje',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code: 'smrsClassificationCatalog/1.0/general_flats_rent.furnished',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: 'Namešteno',
+                value: 'furnished_full',
+              },
+            ],
+            mandatory: false,
+            name: 'Nameštenost',
             range: false,
           },
         ],
@@ -1162,6 +1053,7 @@ describe('SasoMange', () => {
         rentOrSale: RentOrSale.rent,
       };
       const updatedApartmentInfo = {
+        advertiserType: AdvertiserType.Agency,
         advertiserName: 'Agency Name',
         floor: 'attic',
         furnished: Furnished.Full,
@@ -1172,7 +1064,7 @@ describe('SasoMange', () => {
         },
         providerName: 'sasoMange',
         rentOrSale: RentOrSale.rent,
-        structure: 1,
+        structure: 4,
       };
 
       const provider = new SasoMangeProvider();
@@ -1272,97 +1164,34 @@ describe('SasoMange', () => {
               {
                 attributeType: 'enum',
                 code:
-                  'smrsClassificationCatalog/1.0/general_flats_rent.estate_structure',
+                  'smrsClassificationCatalog/1.0/general_flats_rent.bathrooms',
                 coupled: false,
                 editDisabled: false,
                 featureValues: [
                   {
-                    name: 'Jednosoban',
-                    value: 'one_room_estate_structure',
-                  },
-                ],
-                mandatory: true,
-                name: 'Struktura',
-                range: false,
-              },
-              {
-                attributeType: 'enum',
-                code:
-                  'smrsClassificationCatalog/1.0/general_flats_rent.furnished',
-                coupled: false,
-                editDisabled: false,
-                featureValues: [
-                  {
-                    name: 'Namešteno',
-                    value: 'furnished_full',
+                    name: '1',
+                    value: 'bathrooms_1',
                   },
                 ],
                 mandatory: false,
-                name: 'Nameštenost',
-                range: false,
-              },
-              {
-                attributeType: 'enum',
-                code:
-                  'smrsClassificationCatalog/1.0/general_flats_rent.land_heating',
-                coupled: false,
-                editDisabled: false,
-                featureValues: [
-                  {
-                    name: 'Centralno',
-                    value: 'land_heating_central',
-                  },
-                ],
-                mandatory: false,
-                name: 'Grejanje',
-                range: false,
-              },
-              {
-                attributeType: 'enum',
-                code: 'smrsClassificationCatalog/1.0/general_flats_rent.floor',
-                coupled: false,
-                editDisabled: false,
-                featureValues: [
-                  {
-                    name: '3',
-                    value: 'floor_3',
-                  },
-                ],
-                mandatory: false,
-                name: 'Sprat',
-                range: false,
-              },
-              {
-                attributeType: 'number',
-                code:
-                  'smrsClassificationCatalog/1.0/general_flats_rent.number_storeys',
-                coupled: false,
-                editDisabled: false,
-                featureValues: [
-                  {
-                    name: '3',
-                    value: '4',
-                  },
-                ],
-                mandatory: false,
-                name: 'Spratnost',
+                name: 'Broj kupatila',
                 range: false,
               },
             ],
             name: 'Osnovne informacije',
           },
           {
-            code: 'additional_flats',
+            code: 'included_flats',
             features: [
               {
                 attributeType: 'boolean',
                 featureValues: [
                   {
-                    name: 'false',
-                    value: 'false',
+                    name: 'true',
+                    value: 'true',
                   },
                 ],
-                name: 'Balkon',
+                name: 'Terasa',
                 range: false,
               },
               {
@@ -1384,18 +1213,7 @@ describe('SasoMange', () => {
                     value: 'false',
                   },
                 ],
-                name: 'Terasa',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Prednji vrt',
+                name: 'Francuski balkon',
                 range: false,
               },
               {
@@ -1417,62 +1235,29 @@ describe('SasoMange', () => {
                     value: 'false',
                   },
                 ],
+                name: 'Parking mesto',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Lift',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
                 name: 'Podrum',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Garažno mesto',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Javni parking',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Spoljno parking mesto',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Rezervisan parking',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Špajz',
                 range: false,
               },
               {
@@ -1494,7 +1279,7 @@ describe('SasoMange', () => {
                     value: 'false',
                   },
                 ],
-                name: 'Garderober',
+                name: 'Klima',
                 range: false,
               },
               {
@@ -1505,7 +1290,7 @@ describe('SasoMange', () => {
                     value: 'false',
                   },
                 ],
-                name: 'Recepcija',
+                name: 'Topla voda',
                 range: false,
               },
               {
@@ -1516,7 +1301,40 @@ describe('SasoMange', () => {
                     value: 'false',
                   },
                 ],
-                name: 'Alarm',
+                name: 'Bašta',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Telefon',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Kablovska televizija',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Internet',
                 range: false,
               },
               {
@@ -1538,7 +1356,29 @@ describe('SasoMange', () => {
                     value: 'false',
                   },
                 ],
-                name: 'Kamere',
+                name: 'Video nadzor',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Kamin',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Sauna',
                 range: false,
               },
               {
@@ -1563,162 +1403,8 @@ describe('SasoMange', () => {
                 name: 'Teretana',
                 range: false,
               },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Sauna',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'true',
-                    value: 'true',
-                  },
-                ],
-                name: 'Lift',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Prilaz za invalidska kolica',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Vešernica',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Voda',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Kanalizacija',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'U centru',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Blizu centra',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Klima',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Struja',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Salonac',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Duplex',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Penthouse',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Potkrovlje',
-                range: false,
-              },
             ],
-            name: 'Dodatne informacije',
+            name: 'Nekretnina sadrži',
           },
         ],
         code: 'izdavanje-stan-jednosoban-crveni-krst',
@@ -1732,35 +1418,131 @@ describe('SasoMange', () => {
             coupled: false,
             editDisabled: false,
             featureUnit: {
+              code: 'm2',
+              conversionFactor: 1,
               symbol: 'm²',
             },
             featureValues: [
               {
-                name: '36',
-                value: '36',
-              },
-              {
-                name: '36',
-                value: '36',
+                name: '100',
+                unit: {
+                  code: 'm2',
+                  conversionFactor: 1,
+                  symbol: 'm²',
+                },
+                value: '100',
               },
             ],
             mandatory: true,
             name: 'Površina',
-            range: true,
+            range: false,
           },
           {
             attributeType: 'enum',
-            code: 'smrsClassificationCatalog/1.0/general_flats_rent.flat_type',
+            code:
+              'smrsClassificationCatalog/1.0/general_flats_rent.estate_structure',
             coupled: false,
             editDisabled: false,
             featureValues: [
               {
-                name: 'Stan u zgradi',
-                value: 'estate_type_flat',
+                name: 'Četvorosoban',
+                value: 'four_rooms_estate_structure',
+              },
+            ],
+            mandatory: true,
+            name: 'Struktura',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code: 'smrsClassificationCatalog/1.0/general_flats_rent.floor',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: '3',
+                value: 'floor_3',
               },
             ],
             mandatory: false,
-            name: 'Tip stana',
+            name: 'Sprat',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code:
+              'smrsClassificationCatalog/1.0/general_flats_rent.number_storeys',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: '4',
+                value: 'floor_4',
+              },
+            ],
+            mandatory: false,
+            name: 'Ukupna spratnost',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code: 'smrsClassificationCatalog/1.0/general_flats_rent.advertiser',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: 'Agencija',
+                value: 'advertiser_agency',
+              },
+            ],
+            mandatory: true,
+            name: 'Oglašivač',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code: 'smrsClassificationCatalog/1.0/general_flats_rent.filing',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: 'Uknjiženo',
+                value: 'filing_filed',
+              },
+            ],
+            mandatory: false,
+            name: 'Uknjiženost',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code:
+              'smrsClassificationCatalog/1.0/general_flats_rent.land_heating',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: 'Centralno',
+                value: 'land_heating_central',
+              },
+            ],
+            mandatory: false,
+            name: 'Grejanje',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code: 'smrsClassificationCatalog/1.0/general_flats_rent.furnished',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: 'Namešteno',
+                value: 'furnished_full',
+              },
+            ],
+            mandatory: false,
+            name: 'Nameštenost',
             range: false,
           },
         ],
@@ -1832,6 +1614,7 @@ describe('SasoMange', () => {
         rentOrSale: RentOrSale.rent,
       };
       const updatedApartmentInfo = {
+        advertiserType: AdvertiserType.Agency,
         advertiserName: 'Agency Name',
         floor: '3',
         furnished: Furnished.Full,
@@ -1842,7 +1625,7 @@ describe('SasoMange', () => {
         },
         providerName: 'sasoMange',
         rentOrSale: RentOrSale.rent,
-        structure: 1,
+        structure: 4,
       };
 
       const provider = new SasoMangeProvider();
@@ -1942,81 +1725,34 @@ describe('SasoMange', () => {
               {
                 attributeType: 'enum',
                 code:
-                  'smrsClassificationCatalog/1.0/general_flats_rent.estate_structure',
+                  'smrsClassificationCatalog/1.0/general_flats_rent.bathrooms',
                 coupled: false,
                 editDisabled: false,
                 featureValues: [
                   {
-                    name: 'Jednosoban',
-                    value: 'one_room_estate_structure',
-                  },
-                ],
-                mandatory: true,
-                name: 'Struktura',
-                range: false,
-              },
-              {
-                attributeType: 'enum',
-                code:
-                  'smrsClassificationCatalog/1.0/general_flats_rent.furnished',
-                coupled: false,
-                editDisabled: false,
-                featureValues: [
-                  {
-                    name: 'Namešteno',
-                    value: 'furnished_full',
+                    name: '1',
+                    value: 'bathrooms_1',
                   },
                 ],
                 mandatory: false,
-                name: 'Nameštenost',
-                range: false,
-              },
-              {
-                attributeType: 'enum',
-                code:
-                  'smrsClassificationCatalog/1.0/general_flats_rent.land_heating',
-                coupled: false,
-                editDisabled: false,
-                featureValues: [
-                  {
-                    name: 'Centralno',
-                    value: 'land_heating_central',
-                  },
-                ],
-                mandatory: false,
-                name: 'Grejanje',
-                range: false,
-              },
-              {
-                attributeType: 'enum',
-                code: 'smrsClassificationCatalog/1.0/general_flats_rent.floor',
-                coupled: false,
-                editDisabled: false,
-                featureValues: [
-                  {
-                    name: '3',
-                    value: 'floor_3',
-                  },
-                ],
-                mandatory: false,
-                name: 'Sprat',
+                name: 'Broj kupatila',
                 range: false,
               },
             ],
             name: 'Osnovne informacije',
           },
           {
-            code: 'additional_flats',
+            code: 'included_flats',
             features: [
               {
                 attributeType: 'boolean',
                 featureValues: [
                   {
-                    name: 'false',
-                    value: 'false',
+                    name: 'true',
+                    value: 'true',
                   },
                 ],
-                name: 'Balkon',
+                name: 'Terasa',
                 range: false,
               },
               {
@@ -2038,18 +1774,7 @@ describe('SasoMange', () => {
                     value: 'false',
                   },
                 ],
-                name: 'Terasa',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Prednji vrt',
+                name: 'Francuski balkon',
                 range: false,
               },
               {
@@ -2071,62 +1796,29 @@ describe('SasoMange', () => {
                     value: 'false',
                   },
                 ],
+                name: 'Parking mesto',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Lift',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
                 name: 'Podrum',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Garažno mesto',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Javni parking',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Spoljno parking mesto',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Rezervisan parking',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Špajz',
                 range: false,
               },
               {
@@ -2148,7 +1840,7 @@ describe('SasoMange', () => {
                     value: 'false',
                   },
                 ],
-                name: 'Garderober',
+                name: 'Klima',
                 range: false,
               },
               {
@@ -2159,7 +1851,7 @@ describe('SasoMange', () => {
                     value: 'false',
                   },
                 ],
-                name: 'Recepcija',
+                name: 'Topla voda',
                 range: false,
               },
               {
@@ -2170,7 +1862,40 @@ describe('SasoMange', () => {
                     value: 'false',
                   },
                 ],
-                name: 'Alarm',
+                name: 'Bašta',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Telefon',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Kablovska televizija',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Internet',
                 range: false,
               },
               {
@@ -2192,7 +1917,29 @@ describe('SasoMange', () => {
                     value: 'false',
                   },
                 ],
-                name: 'Kamere',
+                name: 'Video nadzor',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Kamin',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Sauna',
                 range: false,
               },
               {
@@ -2217,162 +1964,8 @@ describe('SasoMange', () => {
                 name: 'Teretana',
                 range: false,
               },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Sauna',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'true',
-                    value: 'true',
-                  },
-                ],
-                name: 'Lift',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Prilaz za invalidska kolica',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Vešernica',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Voda',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Kanalizacija',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'U centru',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Blizu centra',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Klima',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Struja',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Salonac',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Duplex',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Penthouse',
-                range: false,
-              },
-              {
-                attributeType: 'boolean',
-                featureValues: [
-                  {
-                    name: 'false',
-                    value: 'false',
-                  },
-                ],
-                name: 'Potkrovlje',
-                range: false,
-              },
             ],
-            name: 'Dodatne informacije',
+            name: 'Nekretnina sadrži',
           },
         ],
         code: 'izdavanje-stan-jednosoban-crveni-krst',
@@ -2386,35 +1979,115 @@ describe('SasoMange', () => {
             coupled: false,
             editDisabled: false,
             featureUnit: {
+              code: 'm2',
+              conversionFactor: 1,
               symbol: 'm²',
             },
             featureValues: [
               {
-                name: '36',
-                value: '36',
-              },
-              {
-                name: '36',
-                value: '36',
+                name: '100',
+                unit: {
+                  code: 'm2',
+                  conversionFactor: 1,
+                  symbol: 'm²',
+                },
+                value: '100',
               },
             ],
             mandatory: true,
             name: 'Površina',
-            range: true,
+            range: false,
           },
           {
             attributeType: 'enum',
-            code: 'smrsClassificationCatalog/1.0/general_flats_rent.flat_type',
+            code:
+              'smrsClassificationCatalog/1.0/general_flats_rent.estate_structure',
             coupled: false,
             editDisabled: false,
             featureValues: [
               {
-                name: 'Stan u zgradi',
-                value: 'estate_type_flat',
+                name: 'Četvorosoban',
+                value: 'four_rooms_estate_structure',
+              },
+            ],
+            mandatory: true,
+            name: 'Struktura',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code: 'smrsClassificationCatalog/1.0/general_flats_rent.floor',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: '3',
+                value: 'floor_3',
               },
             ],
             mandatory: false,
-            name: 'Tip stana',
+            name: 'Sprat',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code: 'smrsClassificationCatalog/1.0/general_flats_rent.advertiser',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: 'Agencija',
+                value: 'advertiser_agency',
+              },
+            ],
+            mandatory: true,
+            name: 'Oglašivač',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code: 'smrsClassificationCatalog/1.0/general_flats_rent.filing',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: 'Uknjiženo',
+                value: 'filing_filed',
+              },
+            ],
+            mandatory: false,
+            name: 'Uknjiženost',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code:
+              'smrsClassificationCatalog/1.0/general_flats_rent.land_heating',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: 'Centralno',
+                value: 'land_heating_central',
+              },
+            ],
+            mandatory: false,
+            name: 'Grejanje',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code: 'smrsClassificationCatalog/1.0/general_flats_rent.furnished',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: 'Namešteno',
+                value: 'furnished_full',
+              },
+            ],
+            mandatory: false,
+            name: 'Nameštenost',
             range: false,
           },
         ],
@@ -2486,6 +2159,7 @@ describe('SasoMange', () => {
         rentOrSale: RentOrSale.rent,
       };
       const updatedApartmentInfo = {
+        advertiserType: AdvertiserType.Agency,
         advertiserName: 'Agency Name',
         floor: '3',
         furnished: Furnished.Full,
@@ -2496,7 +2170,7 @@ describe('SasoMange', () => {
         },
         providerName: 'sasoMange',
         rentOrSale: RentOrSale.rent,
-        structure: 1,
+        structure: 4,
       };
 
       const provider = new SasoMangeProvider();

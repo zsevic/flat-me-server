@@ -67,11 +67,7 @@ export class SasoMangeProvider implements Provider {
     const priceParam = `priceValue:(${filter.minPrice}-${filter.maxPrice})`;
     const structureParams = `flats_structure_${filter.rentOrSale}:(0.5-4)`;
 
-    const filterParams = [
-      priceParam,
-      ...locationParams,
-      structureParams,
-    ];
+    const filterParams = [priceParam, ...locationParams, structureParams];
 
     return filterParams.join(',');
   }
@@ -138,10 +134,7 @@ export class SasoMangeProvider implements Provider {
     return `smrsClassificationCatalog/1.0/${classificationCode}`;
   }
 
-  private getFeatureValue(
-    code: string,
-    apartmentData,
-  ): string {
+  private getFeatureValue(code: string, apartmentData): string {
     return apartmentData?.product?.highlightedAttributes?.find(
       attribute => attribute.code === code,
     )?.featureValues?.[0]?.value;
@@ -313,8 +306,6 @@ export class SasoMangeProvider implements Provider {
         three_and_half_room_estate_structure: 3.5,
         four_rooms_estate_structure: 4,
       };
-
-      const { rentOrSale } = apartmentInfo;
 
       const fullClassificationCode = this.getFullClassificationCode(
         apartmentInfo.rentOrSale,
