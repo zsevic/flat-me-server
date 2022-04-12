@@ -234,7 +234,8 @@ export class SasoMangeProvider implements Provider {
       address:
         microlocation?.name && capitalizeWords(latinize(microlocation.name)),
       coverPhotoUrl: apartmentInfo.images?.find(
-        image => image.format === 'smThumbnailFormat',
+        image =>
+          image.format === 'smThumbnailFormat' || image.type === 'PRIMARY',
       )?.url,
       floor: null,
       heatingTypes: null,
