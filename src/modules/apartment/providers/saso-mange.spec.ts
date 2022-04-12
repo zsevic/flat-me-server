@@ -987,9 +987,9 @@ describe('SasoMange', () => {
         ],
         images: [
           {
-            imageType: 'PRIMARY',
+            imageType: 'type',
             altText: 'Izdavanje, Stan, Jednosoban, Crveni Krst, ID#24820',
-            format: 'smThumbnailFormat',
+            format: 'smFormat',
             url: 'url',
           },
         ],
@@ -1617,6 +1617,7 @@ describe('SasoMange', () => {
         advertiserType: AdvertiserType.Agency,
         advertiserName: 'Agency Name',
         floor: '3',
+        coverPhotoUrl: 'url',
         furnished: Furnished.Full,
         heatingTypes: [HeatingType.District],
         location: {
@@ -2095,8 +2096,14 @@ describe('SasoMange', () => {
           {
             imageType: 'PRIMARY',
             altText: 'Izdavanje, Stan, Jednosoban, Crveni Krst, ID#24820',
-            format: 'smThumbnailFormat',
+            format: 'smFormat',
             url: 'url',
+          },
+          {
+            imageType: 'type',
+            altText: 'Izdavanje, Stan, Jednosoban, Crveni Krst, ID#24820',
+            format: 'smThumbnailFormat',
+            url: 'test-url',
           },
         ],
         isAssignedToActivePromotions: false,
@@ -2161,6 +2168,7 @@ describe('SasoMange', () => {
       const updatedApartmentInfo = {
         advertiserType: AdvertiserType.Agency,
         advertiserName: 'Agency Name',
+        coverPhotoUrl: 'url',
         floor: '3',
         furnished: Furnished.Full,
         heatingTypes: [HeatingType.District],

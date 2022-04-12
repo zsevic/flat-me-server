@@ -129,6 +129,13 @@ export class SasoMangeProvider implements Provider {
     return `general_flats_${rentOrSale}`;
   }
 
+  private getCoverPhotoUrl(apartmentInfo): string {
+    return apartmentInfo.images?.find(
+      image =>
+        image.format === 'smThumbnailFormat' || image.imageType === 'PRIMARY',
+    )?.url;
+  }
+
   private getFullClassificationCode(rentOrSale: string): string {
     const classificationCode = this.getClassificationCode(rentOrSale);
     return `smrsClassificationCatalog/1.0/${classificationCode}`;
@@ -233,10 +240,7 @@ export class SasoMangeProvider implements Provider {
       providerName: this.providerName,
       address:
         microlocation?.name && capitalizeWords(latinize(microlocation.name)),
-      coverPhotoUrl: apartmentInfo.images?.find(
-        image =>
-          image.format === 'smThumbnailFormat' || image.type === 'PRIMARY',
-      )?.url,
+      coverPhotoUrl: this.getCoverPhotoUrl(apartmentInfo),
       floor: null,
       heatingTypes: null,
       location,
@@ -319,6 +323,8 @@ export class SasoMangeProvider implements Provider {
       const advertiserName =
         apartmentData?.vendorBasicInfoStatus?.legalEntityName;
 
+      const coverPhotoUrl = this.getCoverPhotoUrl(apartmentData?.product);
+
       const floorValue = this.getFeatureValue(
         `${fullClassificationCode}.floor`,
         apartmentData,
@@ -371,6 +377,7 @@ export class SasoMangeProvider implements Provider {
         ...(advertiserType && {
           advertiserType,
         }),
+        ...(coverPhotoUrl && { coverPhotoUrl }),
         ...(floor && { floor }),
         ...(furnished && { furnished }),
         heatingTypes,
