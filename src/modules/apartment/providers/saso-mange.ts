@@ -55,7 +55,6 @@ export class SasoMangeProvider implements Provider {
       Zvezdara: 'beograd-zvezdara',
     };
 
-    const { rentOrSale } = filter;
     const locationParams = [];
     filter.municipalities.forEach(municipality => {
       const mappedMunicipality = municipalityMap[municipality];
@@ -134,6 +133,21 @@ export class SasoMangeProvider implements Provider {
       image =>
         image.format === 'smThumbnailFormat' || image.imageType === 'PRIMARY',
     )?.url;
+  }
+
+  private getFloorValue(code: string, apartmentData: any, rentOrSale?: string) {
+    if (rentOrSale === RentOrSale.sale) {
+      return this.getFeatureValue(code, apartmentData);
+    }
+
+    const classificationCode = this.getClassificationCode(rentOrSale);
+
+    const features = apartmentData?.product?.classifications?.find(
+      classification => classification?.code === classificationCode,
+    )?.features;
+
+    return features?.find(feature => feature.code === code)?.featureValues?.[0]
+      ?.value;
   }
 
   private getFullClassificationCode(rentOrSale: string): string {
@@ -325,13 +339,15 @@ export class SasoMangeProvider implements Provider {
 
       const coverPhotoUrl = this.getCoverPhotoUrl(apartmentData?.product);
 
-      const floorValue = this.getFeatureValue(
+      const floorValue = this.getFloorValue(
         `${fullClassificationCode}.floor`,
         apartmentData,
+        apartmentInfo.rentOrSale,
       );
-      const totalFloorsValue = this.getFeatureValue(
+      const totalFloorsValue = this.getFloorValue(
         `${fullClassificationCode}.number_storeys`,
         apartmentData,
+        apartmentInfo.rentOrSale,
       );
       let totalFloorsParsed;
       if (totalFloorsValue) {

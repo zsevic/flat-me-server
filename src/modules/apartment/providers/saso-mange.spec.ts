@@ -513,7 +513,7 @@ describe('SasoMange', () => {
   });
 
   describe('updateApartmentInfo', () => {
-    it('should update apartment info with attic floor', () => {
+    it('should update apartment (for rent) info with attic floor', () => {
       const product = {
         status: 'ACTIVE',
         addresses: [
@@ -614,6 +614,37 @@ describe('SasoMange', () => {
                 ],
                 mandatory: false,
                 name: 'Broj kupatila',
+                range: false,
+              },
+              {
+                attributeType: 'enum',
+                code: 'smrsClassificationCatalog/1.0/general_flats_rent.floor',
+                coupled: false,
+                editDisabled: false,
+                featureValues: [
+                  {
+                    name: '9',
+                    value: 'floor_9',
+                  },
+                ],
+                mandatory: false,
+                name: 'Sprat',
+                range: false,
+              },
+              {
+                attributeType: 'enum',
+                code:
+                  'smrsClassificationCatalog/1.0/general_flats_rent.number_storeys',
+                coupled: false,
+                editDisabled: false,
+                featureValues: [
+                  {
+                    name: '9',
+                    value: 'floor_9',
+                  },
+                ],
+                mandatory: false,
+                name: 'Ukupna spratnost',
                 range: false,
               },
             ],
@@ -894,37 +925,6 @@ describe('SasoMange', () => {
           },
           {
             attributeType: 'enum',
-            code: 'smrsClassificationCatalog/1.0/general_flats_rent.floor',
-            coupled: false,
-            editDisabled: false,
-            featureValues: [
-              {
-                name: '3',
-                value: 'floor_3',
-              },
-            ],
-            mandatory: false,
-            name: 'Sprat',
-            range: false,
-          },
-          {
-            attributeType: 'enum',
-            code:
-              'smrsClassificationCatalog/1.0/general_flats_rent.number_storeys',
-            coupled: false,
-            editDisabled: false,
-            featureValues: [
-              {
-                name: '3',
-                value: 'floor_3',
-              },
-            ],
-            mandatory: false,
-            name: 'Ukupna spratnost',
-            range: false,
-          },
-          {
-            attributeType: 'enum',
             code: 'smrsClassificationCatalog/1.0/general_flats_rent.advertiser',
             coupled: false,
             editDisabled: false,
@@ -1074,7 +1074,7 @@ describe('SasoMange', () => {
       expect(apartmentInfo).toEqual(updatedApartmentInfo);
     });
 
-    it('should update apartment info when floor is not attic', () => {
+    it('should update apartment (for rent) info when floor is not attic', () => {
       const product = {
         status: 'ACTIVE',
         addresses: [
@@ -1175,6 +1175,37 @@ describe('SasoMange', () => {
                 ],
                 mandatory: false,
                 name: 'Broj kupatila',
+                range: false,
+              },
+              {
+                attributeType: 'enum',
+                code: 'smrsClassificationCatalog/1.0/general_flats_rent.floor',
+                coupled: false,
+                editDisabled: false,
+                featureValues: [
+                  {
+                    name: '3',
+                    value: 'floor_3',
+                  },
+                ],
+                mandatory: false,
+                name: 'Sprat',
+                range: false,
+              },
+              {
+                attributeType: 'enum',
+                code:
+                  'smrsClassificationCatalog/1.0/general_flats_rent.number_storeys',
+                coupled: false,
+                editDisabled: false,
+                featureValues: [
+                  {
+                    name: '9',
+                    value: 'floor_9',
+                  },
+                ],
+                mandatory: false,
+                name: 'Ukupna spratnost',
                 range: false,
               },
             ],
@@ -1636,7 +1667,7 @@ describe('SasoMange', () => {
       expect(apartmentInfo).toEqual(updatedApartmentInfo);
     });
 
-    it('should update apartment info when total floors value is missing', () => {
+    it('should update apartment (for rent) info when total floors value is missing', () => {
       const product = {
         status: 'ACTIVE',
         addresses: [
@@ -1737,6 +1768,21 @@ describe('SasoMange', () => {
                 ],
                 mandatory: false,
                 name: 'Broj kupatila',
+                range: false,
+              },
+              {
+                attributeType: 'enum',
+                code: 'smrsClassificationCatalog/1.0/general_flats_rent.floor',
+                coupled: false,
+                editDisabled: false,
+                featureValues: [
+                  {
+                    name: '3',
+                    value: 'floor_3',
+                  },
+                ],
+                mandatory: false,
+                name: 'Sprat',
                 range: false,
               },
             ],
@@ -2178,6 +2224,1681 @@ describe('SasoMange', () => {
         },
         providerName: 'sasoMange',
         rentOrSale: RentOrSale.rent,
+        structure: 4,
+      };
+
+      const provider = new SasoMangeProvider();
+      // @ts-ignore
+      provider.updateApartmentInfo('html', apartmentInfo);
+
+      expect(apartmentInfo).toEqual(updatedApartmentInfo);
+    });
+
+    it('should update apartment (for sale) info with attic floor', () => {
+      const product = {
+        status: 'ACTIVE',
+        addresses: [
+          {
+            country: {
+              host: true,
+              icon: {
+                code: 'serbiaContainer',
+                images: [
+                  {
+                    url: 'url',
+                  },
+                ],
+              },
+              inEU: false,
+              isocode: 'RS',
+              name: 'Srbija',
+              phoneCode: '+381',
+            },
+            id: '12345',
+            latitude: 44.1234,
+            location: [
+              {
+                code: 'beograd',
+                hasChildren: true,
+                latitude: 44.1234,
+                longitude: 20.1234,
+                name: 'Beograd',
+                type: 'LOCATION',
+              },
+              {
+                code: 'beograd-vracar',
+                hasChildren: true,
+                latitude: 44.1234,
+                longitude: 20.1234,
+                name: 'Vračar',
+                parentCode: 'beograd',
+                type: 'SUBLOCATION',
+              },
+              {
+                code: 'beograd-vracar-crveni-krst',
+                hasChildren: false,
+                latitude: 44.1234,
+                longitude: 20.5678,
+                name: 'Crveni krst',
+                parentCode: 'beograd-vracar',
+                type: 'MICROLOCATION',
+              },
+            ],
+            longitude: 20.5678,
+            radius: 0,
+            streetName: '',
+          },
+        ],
+        availableForPickup: false,
+        breadcrumbs: [
+          {
+            facetCode: 'location',
+            facetDisplayComponentType: 'locationSearchMultiselect',
+            facetName: 'Lokacija',
+            facetValueCode: 'beograd-vracar-crveni-krst',
+            facetValueName: 'Beograd / Vračar / Crveni krst',
+          },
+          {
+            facetCode: 'flats_structure_sale',
+            facetDisplayComponentType: 'dropdownMultiSelect',
+            facetName: 'Struktura',
+            facetValueCode: 'jednosoban',
+            facetValueName: 'Jednosoban',
+          },
+        ],
+        categories: [
+          {
+            code: 'stanovi-prodaja',
+            image: {
+              format: 'smCategoryLogoDesktop',
+              url: 'url',
+            },
+            name: 'Stanovi',
+            url: '/stanovi-prodaja',
+          },
+        ],
+        classifications: [
+          {
+            code: 'general_flats_sale',
+            features: [
+              {
+                attributeType: 'enum',
+                code:
+                  'smrsClassificationCatalog/1.0/general_flats_sale.bathrooms',
+                coupled: false,
+                editDisabled: false,
+                featureValues: [
+                  {
+                    name: '1',
+                    value: 'bathrooms_1',
+                  },
+                ],
+                mandatory: false,
+                name: 'Broj kupatila',
+                range: false,
+              },
+            ],
+            name: 'Osnovne informacije',
+          },
+          {
+            code: 'included_flats',
+            features: [
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'true',
+                    value: 'true',
+                  },
+                ],
+                name: 'Terasa',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Lođa',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Francuski balkon',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Garaža',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Parking mesto',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Lift',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Podrum',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Ostava',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Klima',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Topla voda',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Bašta',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Telefon',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Kablovska televizija',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Internet',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Interfon',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Video nadzor',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Kamin',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Sauna',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Bazen',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Teretana',
+                range: false,
+              },
+            ],
+            name: 'Nekretnina sadrži',
+          },
+        ],
+        code: 'prodaja-stan-jednosoban-crveni-krst',
+        description: 'description',
+        displayDate: '2022-03-14T10:02:09+02:00',
+        highlightedAttributes: [
+          {
+            attributeType: 'number',
+            code:
+              'smrsClassificationCatalog/1.0/general_flats_sale.estate_area',
+            coupled: false,
+            editDisabled: false,
+            featureUnit: {
+              code: 'm2',
+              conversionFactor: 1,
+              symbol: 'm²',
+            },
+            featureValues: [
+              {
+                name: '100',
+                unit: {
+                  code: 'm2',
+                  conversionFactor: 1,
+                  symbol: 'm²',
+                },
+                value: '100',
+              },
+            ],
+            mandatory: true,
+            name: 'Površina',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code:
+              'smrsClassificationCatalog/1.0/general_flats_sale.estate_structure',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: 'Četvorosoban',
+                value: 'four_rooms_estate_structure',
+              },
+            ],
+            mandatory: true,
+            name: 'Struktura',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code: 'smrsClassificationCatalog/1.0/general_flats_sale.advertiser',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: 'Agencija',
+                value: 'advertiser_agency',
+              },
+            ],
+            mandatory: true,
+            name: 'Oglašivač',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code: 'smrsClassificationCatalog/1.0/general_flats_sale.filing',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: 'Uknjiženo',
+                value: 'filing_filed',
+              },
+            ],
+            mandatory: false,
+            name: 'Uknjiženost',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code:
+              'smrsClassificationCatalog/1.0/general_flats_sale.land_heating',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: 'Centralno',
+                value: 'land_heating_central',
+              },
+            ],
+            mandatory: false,
+            name: 'Grejanje',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code: 'smrsClassificationCatalog/1.0/general_flats_sale.furnished',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: 'Namešteno',
+                value: 'furnished_full',
+              },
+            ],
+            mandatory: false,
+            name: 'Nameštenost',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code: 'smrsClassificationCatalog/1.0/general_flats_sale.floor',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: '7',
+                value: 'floor_7',
+              },
+            ],
+            mandatory: false,
+            name: 'Sprat',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code:
+              'smrsClassificationCatalog/1.0/general_flats_sale.number_storeys',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: '7',
+                value: 'floor_7',
+              },
+            ],
+            mandatory: false,
+            name: 'Ukupna spratnost',
+            range: false,
+          },
+        ],
+        images: [
+          {
+            imageType: 'type',
+            altText: 'Izdavanje, Stan, Jednosoban, Crveni Krst, ID#24820',
+            format: 'smFormat',
+            url: 'url',
+          },
+        ],
+        isAssignedToActivePromotions: false,
+        lastModified: '2022-03-14T10:05:29+02:00',
+        mainCategory: {
+          code: 'stanovi-prodaja',
+          image: {
+            format: 'smCategoryLogoDesktop',
+            url: 'url',
+          },
+          name: 'Stanovi',
+          url: '/stanovi-prodaja',
+        },
+        name: 'Izdavanje, Stan, Jednosoban, Crveni Krst, ID#24820',
+        noDFP: false,
+        numberOfGalleryImages: 11,
+        numberOfMultimedia: 0,
+        numberOfVisits: 378,
+        originalPublishedDate: '2021-11-08T09:59:19+01:00',
+        phoneNumber: '+381 60 723 33 32',
+        price: {
+          priceType: 'BUY',
+          currencyIso: 'EUR',
+          formattedValue: '250,00 €',
+          formattedValueWithoutCurrency: '250,00',
+          value: 250,
+        },
+        priceRange: {},
+        publishedDate: '2022-03-14T10:02:09+02:00',
+        showMap: true,
+        smSku: '1234321',
+        url: '/1234321/prodaja-stan-jednosoban-crveni-krst',
+        vendor: {
+          code: '00003U6H',
+        },
+        vendorSku: '20920',
+        rentOrSale: RentOrSale.sale,
+      };
+
+      const dom = {
+        window: {
+          document: {
+            getElementById() {
+              return {
+                value: JSON.stringify({
+                  product,
+                  vendorBasicInfoStatus: {
+                    legalEntityName: 'agency name',
+                  },
+                }),
+              };
+            },
+          },
+        },
+      };
+
+      jsdom.JSDOM.mockReturnValue(dom);
+      const apartmentInfo = {
+        providerName: 'sasoMange',
+        rentOrSale: RentOrSale.sale,
+      };
+      const updatedApartmentInfo = {
+        advertiserType: AdvertiserType.Agency,
+        advertiserName: 'Agency Name',
+        floor: 'attic',
+        furnished: Furnished.Full,
+        heatingTypes: [HeatingType.District],
+        location: {
+          latitude: 44.1234,
+          longitude: 20.5678,
+        },
+        providerName: 'sasoMange',
+        rentOrSale: RentOrSale.sale,
+        structure: 4,
+      };
+
+      const provider = new SasoMangeProvider();
+      // @ts-ignore
+      provider.updateApartmentInfo('html', apartmentInfo);
+
+      expect(apartmentInfo).toEqual(updatedApartmentInfo);
+    });
+
+    it('should update apartment (for sale) info when floor is not attic', () => {
+      const product = {
+        status: 'ACTIVE',
+        addresses: [
+          {
+            country: {
+              host: true,
+              icon: {
+                code: 'serbiaContainer',
+                images: [
+                  {
+                    url: 'url',
+                  },
+                ],
+              },
+              inEU: false,
+              isocode: 'RS',
+              name: 'Srbija',
+              phoneCode: '+381',
+            },
+            id: '12345',
+            latitude: 44.1234,
+            location: [
+              {
+                code: 'beograd',
+                hasChildren: true,
+                latitude: 44.1234,
+                longitude: 20.1234,
+                name: 'Beograd',
+                type: 'LOCATION',
+              },
+              {
+                code: 'beograd-vracar',
+                hasChildren: true,
+                latitude: 44.1234,
+                longitude: 20.1234,
+                name: 'Vračar',
+                parentCode: 'beograd',
+                type: 'SUBLOCATION',
+              },
+              {
+                code: 'beograd-vracar-crveni-krst',
+                hasChildren: false,
+                latitude: 44.1234,
+                longitude: 20.5678,
+                name: 'Crveni krst',
+                parentCode: 'beograd-vracar',
+                type: 'MICROLOCATION',
+              },
+            ],
+            longitude: 20.5678,
+            radius: 0,
+            streetName: '',
+          },
+        ],
+        availableForPickup: false,
+        breadcrumbs: [
+          {
+            facetCode: 'location',
+            facetDisplayComponentType: 'locationSearchMultiselect',
+            facetName: 'Lokacija',
+            facetValueCode: 'beograd-vracar-crveni-krst',
+            facetValueName: 'Beograd / Vračar / Crveni krst',
+          },
+          {
+            facetCode: 'flats_structure_prodaja',
+            facetDisplayComponentType: 'dropdownMultiSelect',
+            facetName: 'Struktura',
+            facetValueCode: 'jednosoban',
+            facetValueName: 'Jednosoban',
+          },
+        ],
+        categories: [
+          {
+            code: 'stanovi-prodaja',
+            image: {
+              format: 'smCategoryLogoDesktop',
+              url: 'url',
+            },
+            name: 'Stanovi',
+            url: '/stanovi-prodaja',
+          },
+        ],
+        classifications: [
+          {
+            code: 'general_flats_sale',
+            features: [
+              {
+                attributeType: 'enum',
+                code:
+                  'smrsClassificationCatalog/1.0/general_flats_sale.bathrooms',
+                coupled: false,
+                editDisabled: false,
+                featureValues: [
+                  {
+                    name: '1',
+                    value: 'bathrooms_1',
+                  },
+                ],
+                mandatory: false,
+                name: 'Broj kupatila',
+                range: false,
+              },
+            ],
+            name: 'Osnovne informacije',
+          },
+          {
+            code: 'included_flats',
+            features: [
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'true',
+                    value: 'true',
+                  },
+                ],
+                name: 'Terasa',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Lođa',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Francuski balkon',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Garaža',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Parking mesto',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Lift',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Podrum',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Ostava',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Klima',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Topla voda',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Bašta',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Telefon',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Kablovska televizija',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Internet',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Interfon',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Video nadzor',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Kamin',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Sauna',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Bazen',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Teretana',
+                range: false,
+              },
+            ],
+            name: 'Nekretnina sadrži',
+          },
+        ],
+        code: 'prodaja-stan-jednosoban-crveni-krst',
+        description: 'description',
+        displayDate: '2022-03-14T10:02:09+02:00',
+        highlightedAttributes: [
+          {
+            attributeType: 'number',
+            code:
+              'smrsClassificationCatalog/1.0/general_flats_sale.estate_area',
+            coupled: false,
+            editDisabled: false,
+            featureUnit: {
+              code: 'm2',
+              conversionFactor: 1,
+              symbol: 'm²',
+            },
+            featureValues: [
+              {
+                name: '100',
+                unit: {
+                  code: 'm2',
+                  conversionFactor: 1,
+                  symbol: 'm²',
+                },
+                value: '100',
+              },
+            ],
+            mandatory: true,
+            name: 'Površina',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code:
+              'smrsClassificationCatalog/1.0/general_flats_sale.estate_structure',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: 'Četvorosoban',
+                value: 'four_rooms_estate_structure',
+              },
+            ],
+            mandatory: true,
+            name: 'Struktura',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code: 'smrsClassificationCatalog/1.0/general_flats_sale.floor',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: '3',
+                value: 'floor_3',
+              },
+            ],
+            mandatory: false,
+            name: 'Sprat',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code:
+              'smrsClassificationCatalog/1.0/general_flats_sale.number_storeys',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: '4',
+                value: 'floor_4',
+              },
+            ],
+            mandatory: false,
+            name: 'Ukupna spratnost',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code: 'smrsClassificationCatalog/1.0/general_flats_sale.advertiser',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: 'Agencija',
+                value: 'advertiser_agency',
+              },
+            ],
+            mandatory: true,
+            name: 'Oglašivač',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code: 'smrsClassificationCatalog/1.0/general_flats_sale.filing',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: 'Uknjiženo',
+                value: 'filing_filed',
+              },
+            ],
+            mandatory: false,
+            name: 'Uknjiženost',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code:
+              'smrsClassificationCatalog/1.0/general_flats_sale.land_heating',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: 'Centralno',
+                value: 'land_heating_central',
+              },
+            ],
+            mandatory: false,
+            name: 'Grejanje',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code: 'smrsClassificationCatalog/1.0/general_flats_sale.furnished',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: 'Namešteno',
+                value: 'furnished_full',
+              },
+            ],
+            mandatory: false,
+            name: 'Nameštenost',
+            range: false,
+          },
+        ],
+        images: [
+          {
+            imageType: 'PRIMARY',
+            altText: 'Prodaja, Stan, Jednosoban, Crveni Krst, ID#24820',
+            format: 'smThumbnailFormat',
+            url: 'url',
+          },
+        ],
+        isAssignedToActivePromotions: false,
+        lastModified: '2022-03-14T10:05:29+02:00',
+        mainCategory: {
+          code: 'stanovi-prodaja',
+          image: {
+            format: 'smCategoryLogoDesktop',
+            url: 'url',
+          },
+          name: 'Stanovi',
+          url: '/stanovi-prodaja',
+        },
+        name: 'Prodaja, Stan, Jednosoban, Crveni Krst, ID#24820',
+        noDFP: false,
+        numberOfGalleryImages: 11,
+        numberOfMultimedia: 0,
+        numberOfVisits: 378,
+        originalPublishedDate: '2021-11-08T09:59:19+01:00',
+        phoneNumber: '+381 60 723 33 32',
+        price: {
+          priceType: 'BUY',
+          currencyIso: 'EUR',
+          formattedValue: '250,00 €',
+          formattedValueWithoutCurrency: '250,00',
+          value: 250,
+        },
+        priceRange: {},
+        publishedDate: '2022-03-14T10:02:09+02:00',
+        showMap: true,
+        smSku: '1234321',
+        url: '/1234321/izdavanje-stan-jednosoban-crveni-krst',
+        vendor: {
+          code: '00003U6H',
+        },
+        vendorSku: '20920',
+        rentOrSale: RentOrSale.sale,
+      };
+
+      const dom = {
+        window: {
+          document: {
+            getElementById() {
+              return {
+                value: JSON.stringify({
+                  product,
+                  vendorBasicInfoStatus: {
+                    legalEntityName: 'agency name',
+                  },
+                }),
+              };
+            },
+          },
+        },
+      };
+
+      jsdom.JSDOM.mockReturnValue(dom);
+      const apartmentInfo = {
+        providerName: 'sasoMange',
+        rentOrSale: RentOrSale.sale,
+      };
+      const updatedApartmentInfo = {
+        advertiserType: AdvertiserType.Agency,
+        advertiserName: 'Agency Name',
+        floor: '3',
+        coverPhotoUrl: 'url',
+        furnished: Furnished.Full,
+        heatingTypes: [HeatingType.District],
+        location: {
+          latitude: 44.1234,
+          longitude: 20.5678,
+        },
+        providerName: 'sasoMange',
+        rentOrSale: RentOrSale.sale,
+        structure: 4,
+      };
+
+      const provider = new SasoMangeProvider();
+      // @ts-ignore
+      provider.updateApartmentInfo('html', apartmentInfo);
+
+      expect(apartmentInfo).toEqual(updatedApartmentInfo);
+    });
+
+    it('should update apartment (for sale) info when total floors value is missing', () => {
+      const product = {
+        status: 'ACTIVE',
+        addresses: [
+          {
+            country: {
+              host: true,
+              icon: {
+                code: 'serbiaContainer',
+                images: [
+                  {
+                    url: 'url',
+                  },
+                ],
+              },
+              inEU: false,
+              isocode: 'RS',
+              name: 'Srbija',
+              phoneCode: '+381',
+            },
+            id: '12345',
+            latitude: 44.1234,
+            location: [
+              {
+                code: 'beograd',
+                hasChildren: true,
+                latitude: 44.1234,
+                longitude: 20.1234,
+                name: 'Beograd',
+                type: 'LOCATION',
+              },
+              {
+                code: 'beograd-vracar',
+                hasChildren: true,
+                latitude: 44.1234,
+                longitude: 20.1234,
+                name: 'Vračar',
+                parentCode: 'beograd',
+                type: 'SUBLOCATION',
+              },
+              {
+                code: 'beograd-vracar-crveni-krst',
+                hasChildren: false,
+                latitude: 44.1234,
+                longitude: 20.5678,
+                name: 'Crveni krst',
+                parentCode: 'beograd-vracar',
+                type: 'MICROLOCATION',
+              },
+            ],
+            longitude: 20.5678,
+            radius: 0,
+            streetName: '',
+          },
+        ],
+        availableForPickup: false,
+        breadcrumbs: [
+          {
+            facetCode: 'location',
+            facetDisplayComponentType: 'locationSearchMultiselect',
+            facetName: 'Lokacija',
+            facetValueCode: 'beograd-vracar-crveni-krst',
+            facetValueName: 'Beograd / Vračar / Crveni krst',
+          },
+          {
+            facetCode: 'flats_structure_sale',
+            facetDisplayComponentType: 'dropdownMultiSelect',
+            facetName: 'Struktura',
+            facetValueCode: 'jednosoban',
+            facetValueName: 'Jednosoban',
+          },
+        ],
+        categories: [
+          {
+            code: 'stanovi-prodaja',
+            image: {
+              format: 'smCategoryLogoDesktop',
+              url: 'url',
+            },
+            name: 'Stanovi',
+            url: '/stanovi-prodaja',
+          },
+        ],
+        classifications: [
+          {
+            code: 'general_flats_sale',
+            features: [
+              {
+                attributeType: 'enum',
+                code:
+                  'smrsClassificationCatalog/1.0/general_flats_sale.bathrooms',
+                coupled: false,
+                editDisabled: false,
+                featureValues: [
+                  {
+                    name: '1',
+                    value: 'bathrooms_1',
+                  },
+                ],
+                mandatory: false,
+                name: 'Broj kupatila',
+                range: false,
+              },
+            ],
+            name: 'Osnovne informacije',
+          },
+          {
+            code: 'included_flats',
+            features: [
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'true',
+                    value: 'true',
+                  },
+                ],
+                name: 'Terasa',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Lođa',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Francuski balkon',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Garaža',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Parking mesto',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Lift',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Podrum',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Ostava',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Klima',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Topla voda',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Bašta',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Telefon',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Kablovska televizija',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Internet',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Interfon',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Video nadzor',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Kamin',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Sauna',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Bazen',
+                range: false,
+              },
+              {
+                attributeType: 'boolean',
+                featureValues: [
+                  {
+                    name: 'false',
+                    value: 'false',
+                  },
+                ],
+                name: 'Teretana',
+                range: false,
+              },
+            ],
+            name: 'Nekretnina sadrži',
+          },
+        ],
+        code: 'prodaja-stan-jednosoban-crveni-krst',
+        description: 'description',
+        displayDate: '2022-03-14T10:02:09+02:00',
+        highlightedAttributes: [
+          {
+            attributeType: 'number',
+            code:
+              'smrsClassificationCatalog/1.0/general_flats_sale.estate_area',
+            coupled: false,
+            editDisabled: false,
+            featureUnit: {
+              code: 'm2',
+              conversionFactor: 1,
+              symbol: 'm²',
+            },
+            featureValues: [
+              {
+                name: '100',
+                unit: {
+                  code: 'm2',
+                  conversionFactor: 1,
+                  symbol: 'm²',
+                },
+                value: '100',
+              },
+            ],
+            mandatory: true,
+            name: 'Površina',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code:
+              'smrsClassificationCatalog/1.0/general_flats_sale.estate_structure',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: 'Četvorosoban',
+                value: 'four_rooms_estate_structure',
+              },
+            ],
+            mandatory: true,
+            name: 'Struktura',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code: 'smrsClassificationCatalog/1.0/general_flats_sale.floor',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: '3',
+                value: 'floor_3',
+              },
+            ],
+            mandatory: false,
+            name: 'Sprat',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code: 'smrsClassificationCatalog/1.0/general_flats_sale.advertiser',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: 'Agencija',
+                value: 'advertiser_agency',
+              },
+            ],
+            mandatory: true,
+            name: 'Oglašivač',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code: 'smrsClassificationCatalog/1.0/general_flats_sale.filing',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: 'Uknjiženo',
+                value: 'filing_filed',
+              },
+            ],
+            mandatory: false,
+            name: 'Uknjiženost',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code:
+              'smrsClassificationCatalog/1.0/general_flats_sale.land_heating',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: 'Centralno',
+                value: 'land_heating_central',
+              },
+            ],
+            mandatory: false,
+            name: 'Grejanje',
+            range: false,
+          },
+          {
+            attributeType: 'enum',
+            code: 'smrsClassificationCatalog/1.0/general_flats_sale.furnished',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: 'Namešteno',
+                value: 'furnished_full',
+              },
+            ],
+            mandatory: false,
+            name: 'Nameštenost',
+            range: false,
+          },
+        ],
+        images: [
+          {
+            imageType: 'PRIMARY',
+            altText: 'Prodaja, Stan, Jednosoban, Crveni Krst, ID#24820',
+            format: 'smFormat',
+            url: 'url',
+          },
+          {
+            imageType: 'type',
+            altText: 'Prodaja, Stan, Jednosoban, Crveni Krst, ID#24820',
+            format: 'smThumbnailFormat',
+            url: 'test-url',
+          },
+        ],
+        isAssignedToActivePromotions: false,
+        lastModified: '2022-03-14T10:05:29+02:00',
+        mainCategory: {
+          code: 'stanovi-prodaja',
+          image: {
+            format: 'smCategoryLogoDesktop',
+            url: 'url',
+          },
+          name: 'Stanovi',
+          url: '/stanovi-prodaja',
+        },
+        name: 'Prodaja, Stan, Jednosoban, Crveni Krst, ID#24820',
+        noDFP: false,
+        numberOfGalleryImages: 11,
+        numberOfMultimedia: 0,
+        numberOfVisits: 378,
+        originalPublishedDate: '2021-11-08T09:59:19+01:00',
+        phoneNumber: '+381 60 723 33 32',
+        price: {
+          priceType: 'BUY',
+          currencyIso: 'EUR',
+          formattedValue: '250,00 €',
+          formattedValueWithoutCurrency: '250,00',
+          value: 250,
+        },
+        priceRange: {},
+        publishedDate: '2022-03-14T10:02:09+02:00',
+        showMap: true,
+        smSku: '1234321',
+        url: '/1234321/prodaja-stan-jednosoban-crveni-krst',
+        vendor: {
+          code: '00003U6H',
+        },
+        vendorSku: '20920',
+        rentOrSale: RentOrSale.sale,
+      };
+
+      const dom = {
+        window: {
+          document: {
+            getElementById() {
+              return {
+                value: JSON.stringify({
+                  product,
+                  vendorBasicInfoStatus: {
+                    legalEntityName: 'agency name',
+                  },
+                }),
+              };
+            },
+          },
+        },
+      };
+
+      jsdom.JSDOM.mockReturnValue(dom);
+      const apartmentInfo = {
+        providerName: 'sasoMange',
+        rentOrSale: RentOrSale.sale,
+      };
+      const updatedApartmentInfo = {
+        advertiserType: AdvertiserType.Agency,
+        advertiserName: 'Agency Name',
+        coverPhotoUrl: 'url',
+        floor: '3',
+        furnished: Furnished.Full,
+        heatingTypes: [HeatingType.District],
+        location: {
+          latitude: 44.1234,
+          longitude: 20.5678,
+        },
+        providerName: 'sasoMange',
+        rentOrSale: RentOrSale.sale,
         structure: 4,
       };
 
