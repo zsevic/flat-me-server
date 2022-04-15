@@ -916,7 +916,7 @@ describe('SasoMange', () => {
             featureValues: [
               {
                 name: '3',
-                value: '3',
+                value: 'floor_3',
               },
             ],
             mandatory: false,

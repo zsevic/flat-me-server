@@ -333,8 +333,12 @@ export class SasoMangeProvider implements Provider {
         `${fullClassificationCode}.number_storeys`,
         apartmentData,
       );
+      let totalFloorsParsed;
+      if (totalFloorsValue) {
+        [, totalFloorsParsed] = totalFloorsValue.split('_');
+      }
       const floor =
-        floorValue && this.parseFloor(floorValue, Number(totalFloorsValue));
+        floorValue && this.parseFloor(floorValue, Number(totalFloorsParsed));
 
       const furnishedValue = this.getFeatureValue(
         `${fullClassificationCode}.furnished`,
