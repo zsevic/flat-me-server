@@ -4,6 +4,7 @@ import {
   PaginationParams,
 } from 'modules/pagination/pagination.interfaces';
 import { getSkip } from 'modules/pagination/pagination.utils';
+import { NotificationSubscriptionDto } from 'modules/subscription/notification-subscription.dto';
 import { Subscription } from 'modules/user/subscription.enum';
 import { EntityRepository, Repository } from 'typeorm';
 import { FilterEntity } from './filter.entity';
@@ -74,6 +75,24 @@ export class FilterRepository extends Repository<FilterEntity> {
 
   async saveFilter(filter: Filter): Promise<Filter> {
     return this.save(filter);
+  }
+
+  async saveFilterForNotificationSubscription(
+    notificationSubscriptionDto: NotificationSubscriptionDto,
+    userId: string,
+  ): Promise<void> {
+    const newFilter: Filter = {
+      ...notificationSubscriptionDto.filter,
+      furnished:
+        notificationSubscriptionDto.filter.rentOrSale === 'sale'
+          ? []
+          : notificationSubscriptionDto.filter.furnished,
+      userId,
+      isActive: true,
+      isVerified: true,
+    };
+
+    await this.saveFilter(newFilter);
   }
 
   async verifyAndActivateFilter(filter: Filter): Promise<void> {
