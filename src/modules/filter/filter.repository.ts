@@ -4,10 +4,11 @@ import {
   PaginationParams,
 } from 'modules/pagination/pagination.interfaces';
 import { getSkip } from 'modules/pagination/pagination.utils';
-import { NotificationSubscriptionDto } from 'modules/subscription/notification-subscription.dto';
 import { Subscription } from 'modules/user/subscription.enum';
 import { EntityRepository, Repository } from 'typeorm';
+import { FilterDto } from './dto/filter.dto';
 import { FilterEntity } from './filter.entity';
+import { RentOrSale } from './filter.enums';
 import { Filter } from './filter.interface';
 
 @Injectable()
@@ -45,6 +46,7 @@ export class FilterRepository extends Repository<FilterEntity> {
       .leftJoinAndSelect('user.apartments', 'apartments')
       .where('filter.isActive = :isActive', { isActive: true })
       .andWhere('user.isVerified = :isVerified', { isVerified: true })
+      .andWhere('user.email IS NOT NULL')
       .andWhere('user.subscription = :subscriptionType', {
         subscriptionType,
       })
@@ -78,15 +80,13 @@ export class FilterRepository extends Repository<FilterEntity> {
   }
 
   async saveFilterForNotificationSubscription(
-    notificationSubscriptionDto: NotificationSubscriptionDto,
+    filterDto: FilterDto,
     userId: string,
   ): Promise<void> {
     const newFilter: Filter = {
-      ...notificationSubscriptionDto.filter,
+      ...filterDto,
       furnished:
-        notificationSubscriptionDto.filter.rentOrSale === 'sale'
-          ? []
-          : notificationSubscriptionDto.filter.furnished,
+        filterDto.rentOrSale === RentOrSale.sale ? [] : filterDto.furnished,
       userId,
       isActive: true,
       isVerified: true,

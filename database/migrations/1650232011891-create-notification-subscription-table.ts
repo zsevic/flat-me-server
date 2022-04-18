@@ -22,8 +22,8 @@ export class CreateNotificationSubscriptionTable1650232011891
             type: 'uuid',
           },
           {
-            name: 'subscription',
-            type: 'jsonb',
+            name: 'token',
+            type: 'varchar',
           },
           {
             name: 'is_valid',

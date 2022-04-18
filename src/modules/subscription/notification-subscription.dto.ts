@@ -1,7 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsNotEmpty } from 'class-validator';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
-import { NotificationSubscription } from './notification-subscription.class';
 
 export class NotificationSubscriptionDto {
   @IsNotEmpty()
@@ -9,6 +8,5 @@ export class NotificationSubscriptionDto {
   filter: FilterDto;
 
   @IsNotEmpty()
-  @Type(() => NotificationSubscription)
-  subscription: NotificationSubscription;
+  token: string;
 }

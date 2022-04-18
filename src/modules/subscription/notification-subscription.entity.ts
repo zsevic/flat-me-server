@@ -6,7 +6,6 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { UserEntity } from 'modules/user/user.entity';
-import { NotificationSubscription } from './notification-subscription.class';
 
 @Entity({
   name: 'notification-subscription',
@@ -21,11 +20,8 @@ export class NotificationSubscriptionEntity {
   })
   userId: string;
 
-  @Column({
-    name: 'subscription',
-    type: 'jsonb',
-  })
-  subscription: NotificationSubscription;
+  @Column()
+  token: string;
 
   @Column({
     name: 'is_valid',

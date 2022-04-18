@@ -49,9 +49,11 @@ export class SubscriptionService {
     subscriptionType = Subscription.FREE,
   ): Promise<void> {
     try {
-      const storedNotificationSubscription = await this.notificationSubscriptionRepository.findOne({
-        subscription: notificationSubscriptionDto.subscription,
-      });
+      const storedNotificationSubscription = await this.notificationSubscriptionRepository.findOne(
+        {
+          token: notificationSubscriptionDto.token,
+        },
+      );
       if (!storedNotificationSubscription) {
         const newUser = await this.userRepository.save({
           isVerified: true,
@@ -59,18 +61,18 @@ export class SubscriptionService {
           receivedApartments: [],
         });
         await this.filterRepository.saveFilterForNotificationSubscription(
-          notificationSubscriptionDto,
+          notificationSubscriptionDto.filter,
           newUser.id,
         );
         await this.notificationSubscriptionRepository.save({
           userId: newUser.id,
-          subscription: notificationSubscriptionDto.subscription,
+          token: notificationSubscriptionDto.token,
         });
         return;
       }
 
       await this.filterRepository.saveFilterForNotificationSubscription(
-        notificationSubscriptionDto,
+        notificationSubscriptionDto.filter,
         storedNotificationSubscription.userId,
       );
     } catch (error) {
