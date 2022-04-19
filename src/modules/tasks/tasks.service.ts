@@ -144,8 +144,8 @@ export class TasksService {
       );
     } else {
       const isNotificationSent = await this.subscriptionService.sendNotification(
-        filter.userId,
-        newApartments,
+        filter,
+        newApartments.length,
       );
       if (!isNotificationSent) return;
     }

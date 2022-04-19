@@ -3,13 +3,14 @@ import { ConfigService } from '@nestjs/config';
 import axios, { AxiosResponse } from 'axios';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { isEnvironment } from 'common/utils';
-import { Apartment } from 'modules/apartment/apartment.interface';
+import { Filter } from 'modules/filter/filter.interface';
 import { FilterRepository } from 'modules/filter/filter.repository';
 import { Subscription } from 'modules/user/subscription.enum';
 import { UserRepository } from 'modules/user/user.repository';
 import { NotificationSubscriptionDto } from './notification-subscription.dto';
 import { NotificationSubscriptionRepository } from './notification-subscription.repository';
 import { NotificationSubscription } from './notification-subscription.interface';
+import { generateNotificationText } from './notification-subscription.utils';
 
 @Injectable()
 export class SubscriptionService {
@@ -55,13 +56,15 @@ export class SubscriptionService {
       return;
     }
 
+    // NotRegistered error
     this.logger.error(results?.[0]?.error);
   }
 
   async sendNotification(
-    userId: string,
-    newApartments: Apartment[],
+    filter: Filter,
+    newApartmentsLength: number,
   ): Promise<boolean> {
+    const { userId } = filter;
     const subscription = await this.getNotificationSubscription(userId);
     if (!subscription) {
       this.logger.log(`Subscription not found, unverifing user ${userId}`);
@@ -77,10 +80,13 @@ export class SubscriptionService {
     }
     const response = await this.sendPushNotification(
       subscription,
-      newApartments,
+      filter.rentOrSale,
+      newApartmentsLength,
     );
     if (response.data?.success === 1) {
-      this.logger.log('Push notification is successfully sent');
+      this.logger.log(
+        `Push notification is successfully sent to user ${userId}`,
+      );
       return true;
     }
 
@@ -89,7 +95,8 @@ export class SubscriptionService {
 
   async sendPushNotification(
     subscription: NotificationSubscription,
-    newApartments: Apartment[],
+    rentOrSale: string,
+    newApartmentsLength: number,
   ) {
     const authorizationHeader = `key=${this.configService.get(
       'PUSH_NOTIFICATIONS_SERVER_KEY',
@@ -100,7 +107,7 @@ export class SubscriptionService {
       {
         notification: {
           title: 'Novi pronađeni stanovi',
-          body: 'test body',
+          body: generateNotificationText(rentOrSale, newApartmentsLength),
           click_action: 'http://localhost:1234/app',
           icon: 'https://www.flat-me.com/icons/icon-128x128.png',
         },
