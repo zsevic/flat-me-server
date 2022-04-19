@@ -12,6 +12,7 @@ export class NotificationSubscriptionRepository extends Repository<
       token,
       userId,
       isValid: true,
+      isActive: true,
     });
   }
 }

@@ -1,6 +1,7 @@
 import { ConflictException, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { isEnvironment } from 'common/utils';
 import { FilterRepository } from 'modules/filter/filter.repository';
 import { Subscription } from 'modules/user/subscription.enum';
@@ -44,6 +45,7 @@ export class SubscriptionService {
     }
   }
 
+  @Transactional()
   async subscribeForNotifications(
     notificationSubscriptionDto: NotificationSubscriptionDto,
     subscriptionType = Subscription.FREE,
@@ -64,10 +66,10 @@ export class SubscriptionService {
           notificationSubscriptionDto.filter,
           newUser.id,
         );
-        await this.notificationSubscriptionRepository.save({
-          userId: newUser.id,
-          token: notificationSubscriptionDto.token,
-        });
+        await this.notificationSubscriptionRepository.saveSubscription(
+          notificationSubscriptionDto.token,
+          newUser.id,
+        );
         return;
       }
 
@@ -76,7 +78,7 @@ export class SubscriptionService {
         storedNotificationSubscription.userId,
       );
     } catch (error) {
-      this.logger.error(`Subscribing for notifications failed`, error);
+      this.logger.error('Subscribing for notifications failed', error);
       throw new ConflictException();
     }
   }

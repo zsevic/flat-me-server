@@ -30,6 +30,10 @@ export class CreateNotificationSubscriptionTable1650232011891
             type: 'boolean',
           },
           {
+            name: 'is_active',
+            type: 'boolean',
+          },
+          {
             name: 'created_at',
             type: 'timestamp',
             default: 'current_timestamp',

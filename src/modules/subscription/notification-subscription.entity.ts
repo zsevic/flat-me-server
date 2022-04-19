@@ -8,7 +8,7 @@ import {
 import { UserEntity } from 'modules/user/user.entity';
 
 @Entity({
-  name: 'notification-subscription',
+  name: 'notification_subscription',
 })
 export class NotificationSubscriptionEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -27,6 +27,11 @@ export class NotificationSubscriptionEntity {
     name: 'is_valid',
   })
   isValid: boolean;
+
+  @Column({
+    name: 'is_active',
+  })
+  isActive: boolean;
 
   @ManyToOne(
     () => UserEntity,
