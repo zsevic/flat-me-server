@@ -73,6 +73,14 @@ export class SubscriptionService {
         return;
       }
 
+      await this.filterRepository.update(
+        {
+          userId: storedNotificationSubscription.userId,
+        },
+        {
+          isActive: false,
+        },
+      );
       await this.filterRepository.saveFilterForNotificationSubscription(
         notificationSubscriptionDto.filter,
         storedNotificationSubscription.userId,
