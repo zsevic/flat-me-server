@@ -1,13 +1,15 @@
 import { ConflictException, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { isEnvironment } from 'common/utils';
+import { Apartment } from 'modules/apartment/apartment.interface';
 import { FilterRepository } from 'modules/filter/filter.repository';
 import { Subscription } from 'modules/user/subscription.enum';
 import { UserRepository } from 'modules/user/user.repository';
 import { NotificationSubscriptionDto } from './notification-subscription.dto';
 import { NotificationSubscriptionRepository } from './notification-subscription.repository';
+import { NotificationSubscription } from './notification-subscription.interface';
 
 @Injectable()
 export class SubscriptionService {
@@ -19,6 +21,99 @@ export class SubscriptionService {
     private readonly notificationSubscriptionRepository: NotificationSubscriptionRepository,
     private readonly userRepository: UserRepository,
   ) {}
+
+  async getNotificationSubscription(
+    userId: string,
+  ): Promise<NotificationSubscription> {
+    const subscription = await this.notificationSubscriptionRepository.findOne({
+      userId,
+      isValid: true,
+      isActive: true,
+    });
+    if (!subscription) return;
+
+    return subscription;
+  }
+
+  private async handleNotificationFailure(
+    response: AxiosResponse,
+    subscription: NotificationSubscription,
+  ): Promise<void> {
+    const { results } = response.data;
+    const { userId } = subscription;
+    this.logger.log(`Sending push notification failed for user ${userId}`);
+    if (results?.[0]?.error === 'InvalidRegistration') {
+      this.logger.log(`Invalidating subscription for user ${userId}`);
+      await this.notificationSubscriptionRepository.update(
+        {
+          token: subscription.token,
+        },
+        {
+          isValid: false,
+        },
+      );
+      return;
+    }
+
+    this.logger.error(results?.[0]?.error);
+  }
+
+  async sendNotification(
+    userId: string,
+    newApartments: Apartment[],
+  ): Promise<boolean> {
+    const subscription = await this.getNotificationSubscription(userId);
+    if (!subscription) {
+      this.logger.log(`Subscription not found, unverifing user ${userId}`);
+      await this.userRepository.update(
+        {
+          id: userId,
+        },
+        {
+          isVerified: false,
+        },
+      );
+      return;
+    }
+    const response = await this.sendPushNotification(
+      subscription,
+      newApartments,
+    );
+    if (response.data?.success === 1) {
+      this.logger.log('Push notification is successfully sent');
+      return true;
+    }
+
+    await this.handleNotificationFailure(response, subscription);
+  }
+
+  async sendPushNotification(
+    subscription: NotificationSubscription,
+    newApartments: Apartment[],
+  ) {
+    const authorizationHeader = `key=${this.configService.get(
+      'PUSH_NOTIFICATIONS_SERVER_KEY',
+    )}`;
+
+    return axios.post(
+      'https://fcm.googleapis.com/fcm/send',
+      {
+        notification: {
+          title: 'Novi pronađeni stanovi',
+          body: 'test body',
+          click_action: 'http://localhost:1234/app',
+          icon: 'https://www.flat-me.com/icons/icon-128x128.png',
+        },
+        to: subscription.token,
+      },
+      {
+        headers: {
+          Authorization: authorizationHeader,
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+  }
 
   async subscribeByEmail(email: string) {
     try {

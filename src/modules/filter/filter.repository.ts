@@ -46,7 +46,6 @@ export class FilterRepository extends Repository<FilterEntity> {
       .leftJoinAndSelect('user.apartments', 'apartments')
       .where('filter.isActive = :isActive', { isActive: true })
       .andWhere('user.isVerified = :isVerified', { isVerified: true })
-      .andWhere('user.email IS NOT NULL')
       .andWhere('user.subscription = :subscriptionType', {
         subscriptionType,
       })

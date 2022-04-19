@@ -10,6 +10,7 @@ import { FilterService } from 'modules/filter/filter.service';
 import { MailService } from 'modules/mail/mail.service';
 import { defaultPaginationParams } from 'modules/pagination/pagination.constants';
 import { getSkip } from 'modules/pagination/pagination.utils';
+import { SubscriptionService } from 'modules/subscription/subscription.service';
 import { FILTER_DEACTIVATION_TOKEN_EXPIRATION_HOURS } from 'modules/token/token.constants';
 import { TokenType } from 'modules/token/token.enums';
 import { TokenService } from 'modules/token/token.service';
@@ -25,6 +26,7 @@ export class TasksService {
     private readonly apartmentService: ApartmentService,
     private readonly filterService: FilterService,
     private readonly mailService: MailService,
+    private readonly subscriptionService: SubscriptionService,
     private readonly tokenService: TokenService,
     private readonly userService: UserService,
   ) {}
@@ -106,7 +108,11 @@ export class TasksService {
 
   @Transactional()
   private async sendNewApartmentsByFilter(filter: Filter): Promise<void> {
-    await this.tokenService.deleteTokenByFilterId(filter.id);
+    const userEmail = await this.userService.getUserEmail(filter.userId);
+
+    if (userEmail) {
+      await this.tokenService.deleteTokenByFilterId(filter.id);
+    }
 
     const apartmentList = await this.apartmentService.getApartmentListFromDatabaseByFilter(
       filter,
@@ -121,21 +127,28 @@ export class TasksService {
         firstApartment.price - secondApartment.price,
     );
 
-    const filterDeactivationUrl = await this.filterService.createTokenAndDeactivationUrl(
-      {
-        filterId: filter.id,
-        userId: filter.userId,
-        type: TokenType.DEACTIVATION,
-      },
-      FILTER_DEACTIVATION_TOKEN_EXPIRATION_HOURS,
-    );
-    const userEmail = await this.userService.getUserEmail(filter.userId);
-    await this.mailService.sendMailWithNewApartments(
-      userEmail,
-      newApartments,
-      filter as FilterDto,
-      filterDeactivationUrl,
-    );
+    if (userEmail) {
+      const filterDeactivationUrl = await this.filterService.createTokenAndDeactivationUrl(
+        {
+          filterId: filter.id,
+          userId: filter.userId,
+          type: TokenType.DEACTIVATION,
+        },
+        FILTER_DEACTIVATION_TOKEN_EXPIRATION_HOURS,
+      );
+      await this.mailService.sendMailWithNewApartments(
+        userEmail,
+        newApartments,
+        filter as FilterDto,
+        filterDeactivationUrl,
+      );
+    } else {
+      const isNotificationSent = await this.subscriptionService.sendNotification(
+        filter.userId,
+        newApartments,
+      );
+      if (!isNotificationSent) return;
+    }
 
     await this.userService.insertReceivedApartments(
       filter.userId,
