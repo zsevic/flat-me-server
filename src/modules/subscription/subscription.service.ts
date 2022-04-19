@@ -108,7 +108,7 @@ export class SubscriptionService {
         notification: {
           title: 'Novi pronađeni stanovi',
           body: generateNotificationText(rentOrSale, newApartmentsLength),
-          click_action: 'http://localhost:1234/app',
+          click_action: `http://localhost:1234/app?tab=2&foundCounter=${newApartmentsLength}`,
           icon: 'https://www.flat-me.com/icons/icon-128x128.png',
         },
         to: subscription.token,
