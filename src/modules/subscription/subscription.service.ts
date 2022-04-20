@@ -101,6 +101,9 @@ export class SubscriptionService {
     const authorizationHeader = `key=${this.configService.get(
       'PUSH_NOTIFICATIONS_SERVER_KEY',
     )}`;
+    const clientUrl = this.configService.get('CLIENT_URL');
+    const notificationUrl = `${clientUrl}/app?tab=2&foundCounter=${newApartmentsLength}`;
+    const notificationIconUrl = `${clientUrl}/icons/icon-128x128.png`;
 
     return axios.post(
       'https://fcm.googleapis.com/fcm/send',
@@ -108,8 +111,8 @@ export class SubscriptionService {
         notification: {
           title: 'Novi pronađeni stanovi',
           body: generateNotificationText(rentOrSale, newApartmentsLength),
-          click_action: `http://localhost:1234/app?tab=2&foundCounter=${newApartmentsLength}`,
-          icon: 'https://www.flat-me.com/icons/icon-128x128.png',
+          click_action: notificationUrl,
+          icon: notificationIconUrl,
         },
         to: subscription.token,
       },
