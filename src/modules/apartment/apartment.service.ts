@@ -1,4 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { Filter } from 'modules/filter/filter.interface';
@@ -7,6 +12,8 @@ import {
   PaginatedResponse,
   PaginationParams,
 } from 'modules/pagination/pagination.interfaces';
+import { NotificationSubscriptionRepository } from 'modules/subscription/notification-subscription.repository';
+import { UserRepository } from 'modules/user/user.repository';
 import { requiredFields } from './apartment.constants';
 import { Apartment, ApartmentStatus } from './apartment.interface';
 import { ApartmentRepository } from './apartment.repository';
@@ -21,6 +28,10 @@ export class ApartmentService {
   constructor(
     @InjectRepository(ApartmentRepository)
     private readonly apartmentRepository: ApartmentRepository,
+    @InjectRepository(NotificationSubscriptionRepository)
+    private readonly notificationSubscriptionRepository: NotificationSubscriptionRepository,
+    @InjectRepository(UserRepository)
+    private readonly userRepository: UserRepository,
     private readonly baseProvider: BaseProvider,
   ) {}
 
@@ -161,6 +172,38 @@ export class ApartmentService {
     }
     return foundAparments;
   };
+
+  async getFoundApartmentList(
+    token: string,
+  ): Promise<CursorPaginatedResponse<Apartment>> {
+    console.log('token', token);
+    const subscription = await this.notificationSubscriptionRepository.findOne({
+      token,
+    });
+    if (!subscription) {
+      throw new UnauthorizedException('Subscription token is not valid');
+    }
+
+    const user = await this.userRepository.findOne(
+      {
+        id: subscription.userId,
+      },
+      {
+        relations: ['apartments'],
+      },
+    );
+    if (!user) {
+      throw new InternalServerErrorException('User is not found');
+    }
+
+    return {
+      data: user.apartments || [],
+      pageInfo: {
+        hasNextPage: false,
+        endCursor: '',
+      },
+    };
+  }
 
   async getValidApartmentList(
     apartmentListParamsDto: ApartmentListParamsDto,
