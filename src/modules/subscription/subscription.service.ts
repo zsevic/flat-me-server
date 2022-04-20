@@ -1,4 +1,9 @@
-import { ConflictException, Injectable, Logger } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios, { AxiosResponse } from 'axios';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
@@ -192,7 +197,9 @@ export class SubscriptionService {
       );
     } catch (error) {
       this.logger.error('Subscribing for notifications failed', error);
-      throw new ConflictException();
+      throw new InternalServerErrorException(
+        'Subscribing for notifications failed',
+      );
     }
   }
 }
