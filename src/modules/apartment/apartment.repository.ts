@@ -178,7 +178,9 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
       });
     }
 
-    const apartments = await queryBuilder.take(filter.limitPerPage).getMany();
+    const apartments = await queryBuilder
+      .take(filter.limitPerPage + 1)
+      .getMany();
 
     return this.getCursorPaginatedData(apartments, filter.limitPerPage);
   }
