@@ -24,7 +24,7 @@ export class Apartment {
 
   furnished?: string;
 
-  lastCheckedAt?: string;
+  lastCheckedAt?: Date;
 
   location?: Location;
 
