@@ -147,6 +147,18 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
     };
   }
 
+  async getFoundApartmentList(
+    userId: string,
+    limitPerPage: number,
+  ): Promise<ApartmentEntity[]> {
+    return this.createQueryBuilder('apartment')
+      .innerJoin('apartment.users', 'user', 'user.id = :userId', {
+        userId,
+      })
+      .take(limitPerPage)
+      .getMany();
+  }
+
   async saveApartmentList(apartments: Apartment[]): Promise<void> {
     await this.save(apartments);
   }

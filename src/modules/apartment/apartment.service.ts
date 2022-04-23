@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { Filter } from 'modules/filter/filter.interface';
@@ -186,13 +181,10 @@ export class ApartmentService {
       throw new UnauthorizedException('Subscription token is not valid');
     }
 
-    const foundApartments = await this.apartmentRepository
-      .createQueryBuilder('apartment')
-      .innerJoin('apartment.users', 'user', 'user.id = :userId', {
-        userId: subscription.userId,
-      })
-      .take(filter.limitPerPage)
-      .getMany();
+    const foundApartments = await this.apartmentRepository.getFoundApartmentList(
+      subscription.userId,
+      filter.limitPerPage,
+    );
 
     return {
       data: foundApartments,
