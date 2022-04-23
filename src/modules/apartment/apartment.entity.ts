@@ -5,6 +5,9 @@ import { AdvertiserType } from './enums/advertiser-type.enum';
 
 @Entity({
   name: 'apartment',
+  orderBy: {
+    postedAt: 'DESC',
+  },
 })
 export class ApartmentEntity extends BaseEntity {
   @PrimaryColumn('varchar')
