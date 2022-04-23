@@ -7,12 +7,12 @@ import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
 import { ApartmentStatusDto } from './dto/apartment-status.dto';
 import { FoundApartmentListParamsDto } from './dto/found-apartment-list-params.dto';
 
-@Controller('apartments')
+@Controller()
 export class ApartmentController {
   constructor(private readonly apartmentService: ApartmentService) {}
 
   @SkipThrottle()
-  @Get()
+  @Get('apartments')
   async getApartmentList(
     @Query() apartmentListParamsDto: ApartmentListParamsDto,
   ): Promise<CursorPaginatedResponse<Apartment>> {
@@ -20,7 +20,7 @@ export class ApartmentController {
   }
 
   @SkipThrottle()
-  @Get('found')
+  @Get('found-apartments')
   async getFoundApartmentList(
     @Query() foundApartmentListParamsDto: FoundApartmentListParamsDto,
   ): Promise<CursorPaginatedResponse<Apartment>> {
@@ -30,7 +30,7 @@ export class ApartmentController {
   }
 
   @SkipThrottle()
-  @Get(':id')
+  @Get('apartments/:id')
   async validateApartment(
     @Param() params: ApartmentStatusDto,
   ): Promise<ApartmentStatus> {
