@@ -5,7 +5,6 @@ import {
   Logger,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { LOCKED_STATUS_CODE, TOKEN_EXPIRATION } from 'common/constants';
 import { Apartment } from 'modules/apartment/apartment.interface';
 import { FilterRepository } from 'modules/filter/filter.repository';
@@ -19,11 +18,8 @@ export class UserService {
   private readonly logger = new Logger(UserService.name);
 
   constructor(
-    @InjectRepository(FilterRepository)
     private readonly filterRepository: FilterRepository,
-    @InjectRepository(TokenRepository)
     private readonly tokenRepository: TokenRepository,
-    @InjectRepository(UserRepository)
     private readonly userRepository: UserRepository,
   ) {}
 

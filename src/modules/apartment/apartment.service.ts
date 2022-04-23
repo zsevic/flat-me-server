@@ -1,5 +1,4 @@
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { Filter } from 'modules/filter/filter.interface';
 import {
@@ -8,7 +7,6 @@ import {
   PaginationParams,
 } from 'modules/pagination/pagination.interfaces';
 import { NotificationSubscriptionRepository } from 'modules/subscription/notification-subscription.repository';
-import { UserRepository } from 'modules/user/user.repository';
 import { requiredFields } from './apartment.constants';
 import { Apartment, ApartmentStatus } from './apartment.interface';
 import { ApartmentRepository } from './apartment.repository';
@@ -22,12 +20,8 @@ export class ApartmentService {
   private readonly logger = new Logger(ApartmentService.name);
 
   constructor(
-    @InjectRepository(ApartmentRepository)
     private readonly apartmentRepository: ApartmentRepository,
-    @InjectRepository(NotificationSubscriptionRepository)
     private readonly notificationSubscriptionRepository: NotificationSubscriptionRepository,
-    @InjectRepository(UserRepository)
-    private readonly userRepository: UserRepository,
     private readonly baseProvider: BaseProvider,
   ) {}
 

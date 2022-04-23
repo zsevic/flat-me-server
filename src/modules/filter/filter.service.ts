@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import {
   PaginatedResponse,
@@ -19,7 +18,6 @@ import { FilterRepository } from './filter.repository';
 @Injectable()
 export class FilterService {
   constructor(
-    @InjectRepository(FilterRepository)
     private readonly filterRepository: FilterRepository,
     private readonly mailService: MailService,
     private readonly tokenService: TokenService,
