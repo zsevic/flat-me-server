@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { plainToClass } from 'class-transformer';
 import {
   Between,
   EntityRepository,
@@ -18,6 +19,7 @@ import {
   DEFAULT_PAGE_NUMBER,
 } from 'modules/pagination/pagination.constants';
 import {
+  CursorPaginatedResponse,
   PaginatedResponse,
   PaginationParams,
 } from 'modules/pagination/pagination.interfaces';
@@ -29,6 +31,7 @@ import {
 import { ApartmentEntity } from './apartment.entity';
 import { Apartment } from './apartment.interface';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
+import { FoundApartmentListParamsDto } from './dto/found-apartment-list-params.dto';
 
 @Injectable()
 @EntityRepository(ApartmentEntity)
@@ -88,7 +91,28 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
     return { data: apartmentList.map(apartment => apartment.id), total };
   }
 
-  async getCursorPaginatedApartmentList(filter: ApartmentListParamsDto) {
+  private getCursorPaginatedData(
+    apartments: ApartmentEntity[],
+    limitPerPage: number,
+  ) {
+    const hasNextPage = apartments.length > limitPerPage;
+    const data = hasNextPage ? apartments.slice(0, -1) : apartments;
+
+    const endCursor =
+      hasNextPage && toCursorHash(data[data.length - 1].postedAt.toString());
+
+    return {
+      data: plainToClass(Apartment, data),
+      pageInfo: {
+        hasNextPage,
+        endCursor,
+      },
+    };
+  }
+
+  async getCursorPaginatedApartmentList(
+    filter: ApartmentListParamsDto,
+  ): Promise<CursorPaginatedResponse<Apartment>> {
     const query = this.createQueryForApartmentList(filter);
 
     const apartments = await this.find({
@@ -100,19 +124,7 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
       take: filter.limitPerPage + 1,
     });
 
-    const hasNextPage = apartments.length > filter.limitPerPage;
-    const data = hasNextPage ? apartments.slice(0, -1) : apartments;
-
-    const endCursor =
-      hasNextPage && toCursorHash(data[data.length - 1].postedAt.toString());
-
-    return {
-      data,
-      pageInfo: {
-        hasNextPage,
-        endCursor,
-      },
-    };
+    return this.getCursorPaginatedData(apartments, filter.limitPerPage);
   }
 
   async getApartmentList(
@@ -142,21 +154,33 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
     });
 
     return {
-      data,
+      data: plainToClass(Apartment, data),
       total,
     };
   }
 
   async getFoundApartmentList(
     userId: string,
-    limitPerPage: number,
-  ): Promise<ApartmentEntity[]> {
-    return this.createQueryBuilder('apartment')
-      .innerJoin('apartment.users', 'user', 'user.id = :userId', {
+    filter: FoundApartmentListParamsDto,
+  ): Promise<CursorPaginatedResponse<Apartment>> {
+    let queryBuilder = this.createQueryBuilder('apartment').innerJoin(
+      'apartment.users',
+      'user',
+      'user.id = :userId',
+      {
         userId,
-      })
-      .take(limitPerPage)
-      .getMany();
+      },
+    );
+
+    if (filter.cursor) {
+      queryBuilder = queryBuilder.where('apartment.postedAt < :date', {
+        date: new Date(fromCursorHash(filter.cursor)),
+      });
+    }
+
+    const apartments = await queryBuilder.take(filter.limitPerPage).getMany();
+
+    return this.getCursorPaginatedData(apartments, filter.limitPerPage);
   }
 
   async saveApartmentList(apartments: Apartment[]): Promise<void> {

@@ -8,6 +8,7 @@ import {
 } from 'modules/pagination/pagination.interfaces';
 import { NotificationSubscriptionRepository } from 'modules/subscription/notification-subscription.repository';
 import { requiredFields } from './apartment.constants';
+import { ApartmentEntity } from './apartment.entity';
 import { Apartment, ApartmentStatus } from './apartment.interface';
 import { ApartmentRepository } from './apartment.repository';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
@@ -175,18 +176,10 @@ export class ApartmentService {
       throw new UnauthorizedException('Subscription token is not valid');
     }
 
-    const foundApartments = await this.apartmentRepository.getFoundApartmentList(
+    return this.apartmentRepository.getFoundApartmentList(
       subscription.userId,
-      filter.limitPerPage,
+      filter,
     );
-
-    return {
-      data: foundApartments,
-      pageInfo: {
-        hasNextPage: false,
-        endCursor: '',
-      },
-    };
   }
 
   async getValidApartmentList(
