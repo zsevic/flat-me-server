@@ -186,14 +186,16 @@ export class ApartmentService {
       throw new UnauthorizedException('Subscription token is not valid');
     }
 
-    const foundApartments = await this.userRepository
-      .createQueryBuilder()
-      .relation('apartments')
-      .of(subscription.userId)
-      .loadMany();
+    const foundApartments = await this.apartmentRepository
+      .createQueryBuilder('apartment')
+      .innerJoin('apartment.users', 'user', 'user.id = :userId', {
+        userId: subscription.userId,
+      })
+      .take(filter.limitPerPage)
+      .getMany();
 
     return {
-      data: foundApartments || [],
+      data: foundApartments,
       pageInfo: {
         hasNextPage: false,
         endCursor: '',

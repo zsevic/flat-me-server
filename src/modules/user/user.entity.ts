@@ -35,7 +35,10 @@ export class UserEntity {
   })
   subscription: string;
 
-  @ManyToMany(() => ApartmentEntity)
+  @ManyToMany(
+    () => ApartmentEntity,
+    apartmentEntity => apartmentEntity.users,
+  )
   @JoinTable({
     name: 'user_received_apartment',
     joinColumn: {
