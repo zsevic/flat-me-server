@@ -18,6 +18,7 @@ import { requiredFields } from './apartment.constants';
 import { Apartment, ApartmentStatus } from './apartment.interface';
 import { ApartmentRepository } from './apartment.repository';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
+import { FoundApartmentListParamsDto } from './dto/found-apartment-list-params.dto';
 import { BaseProvider } from './providers';
 import { Provider } from './providers/provider.interface';
 
@@ -174,30 +175,25 @@ export class ApartmentService {
   };
 
   async getFoundApartmentList(
-    token: string,
+    filter: FoundApartmentListParamsDto,
   ): Promise<CursorPaginatedResponse<Apartment>> {
-    console.log('token', token);
     const subscription = await this.notificationSubscriptionRepository.findOne({
-      token,
+      where: {
+        token: filter.token,
+      },
     });
     if (!subscription) {
       throw new UnauthorizedException('Subscription token is not valid');
     }
 
-    const user = await this.userRepository.findOne(
-      {
-        id: subscription.userId,
-      },
-      {
-        relations: ['apartments'],
-      },
-    );
-    if (!user) {
-      throw new InternalServerErrorException('User is not found');
-    }
+    const foundApartments = await this.userRepository
+      .createQueryBuilder()
+      .relation('apartments')
+      .of(subscription.userId)
+      .loadMany();
 
     return {
-      data: user.apartments || [],
+      data: foundApartments || [],
       pageInfo: {
         hasNextPage: false,
         endCursor: '',

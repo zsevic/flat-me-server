@@ -25,7 +25,7 @@ export class ApartmentController {
     @Query() foundApartmentListParamsDto: FoundApartmentListParamsDto,
   ): Promise<CursorPaginatedResponse<Apartment>> {
     return this.apartmentService.getFoundApartmentList(
-      foundApartmentListParamsDto.token,
+      foundApartmentListParamsDto,
     );
   }
 
