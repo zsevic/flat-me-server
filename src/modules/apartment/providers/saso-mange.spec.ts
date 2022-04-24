@@ -495,6 +495,279 @@ describe('SasoMange', () => {
 
       expect(result).toEqual(parsedApartmentInfo);
     });
+
+    it('should return parsed apartment info without placeholder cover photo', () => {
+      const provider = new SasoMangeProvider();
+
+      const apartmentInfo = {
+        addresses: [
+          {
+            country: {
+              host: true,
+              name: 'Srbija',
+            },
+            location: [
+              {
+                code: 'beograd',
+                hasChildren: true,
+                latitude: 44.1234,
+                longitude: 20.1234,
+                name: 'Beograd',
+                type: 'LOCATION',
+              },
+              {
+                code: 'beograd-vracar',
+                hasChildren: true,
+                latitude: 44.1234,
+                longitude: 20.1234,
+                name: 'Vračar',
+                parentCode: 'beograd',
+                type: 'SUBLOCATION',
+              },
+              {
+                code: 'beograd-vracar-crveni-krst',
+                hasChildren: false,
+                latitude: 44.1234,
+                longitude: 20.5678,
+                name: 'Crveni krst',
+                parentCode: 'beograd-vracar',
+                type: 'MICROLOCATION',
+              },
+            ],
+          },
+        ],
+        code: 'izdavanje-stan-jednosoban-crveni-krst-swbgD',
+        configurable: false,
+        description: 'description',
+        displayDate: '2022-03-13T10:02:09+02:00',
+        highlightedAttributes: [
+          {
+            attributeType: 'number',
+            code:
+              'smrsClassificationCatalog/1.0/general_flats_rent.estate_area',
+            coupled: false,
+            editDisabled: false,
+            featureUnit: {
+              symbol: 'm²',
+            },
+            featureValues: [
+              {
+                name: '36',
+                value: '36',
+              },
+            ],
+            mandatory: true,
+            name: 'Površina',
+            range: true,
+          },
+          {
+            attributeType: 'enum',
+            code: 'smrsClassificationCatalog/1.0/general_flats_rent.flat_type',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: 'Stan u zgradi',
+                value: 'Stan u zgradi',
+              },
+            ],
+            mandatory: false,
+            name: 'Tip stana',
+            range: false,
+          },
+        ],
+        images: [
+          {
+            imageType: 'PRIMARY',
+            format: 'smThumbnailFormat',
+            url:
+              'https://medias.sasomange.rs/medias/realestate-oglasivac-sm800x600PlaceholderFormat?context=bWFzdGVyfGltYWdlc3w0MTM0MXxpbWFnZS9qcGVnfGg1YS9oNTQvMTM0MTkwMjY4NzQzOTgvcmVhbGVzdGF0ZS9vZ2xhc2l2YWNfc204MDB4NjAwUGxhY2Vob2xkZXJGb3JtYXR8N2MxNWYyMTg1ZmNkYWJkNzNjMGU0NmEyY2M1NjFmNWE2OWFjODUzYzEwM2FhMjlmYzZlZGUzNDQ5MzRmNWZmYg',
+          },
+        ],
+        name: 'Izdavanje, Stan, Jednosoban, Crveni Krst, ID#24820',
+        noDFP: false,
+        numberOfGalleryImages: 8,
+        numberOfMultimedia: 0,
+        numberOfVisits: 378,
+        originalPublishedDate: new Date('2021-11-08T08:59:19.000Z'),
+        price: {
+          priceType: 'BUY',
+          currencyIso: 'EUR',
+          formattedValue: '250,00 €',
+          formattedValueWithoutCurrency: '250,00',
+          value: 250,
+        },
+        priceRange: {},
+        publishedDate: '2022-03-12T10:02:09+02:00',
+        searchScore: 1,
+        smSku: '1234321',
+        url: '/1234321/izdavanje-stan-jednosoban-crveni-krst',
+        vendor: {
+          code: '00003F6N',
+        },
+        vendorSku: '24830',
+        volumePricesFlag: false,
+        rentOrSale: RentOrSale.rent,
+      };
+      const parsedApartmentInfo = {
+        id: 'sasoMange_1234321',
+        address: 'Crveni Krst',
+        apartmentId: '1234321',
+        floor: null,
+        heatingTypes: null,
+        location: {
+          latitude: 44.1234,
+          longitude: 20.5678,
+        },
+        municipality: 'Vračar',
+        place: 'Crveni Krst',
+        postedAt: new Date('2021-11-08T08:59:19.000Z'),
+        price: 250,
+        providerName: 'sasoMange',
+        rentOrSale: RentOrSale.rent,
+        size: 36,
+        structure: null,
+        url:
+          'https://sasomange.rs/p/1234321/izdavanje-stan-jednosoban-crveni-krst',
+      };
+
+      const result = provider.parseApartmentInfo(apartmentInfo);
+
+      expect(result).toEqual(parsedApartmentInfo);
+    });
+
+    it('should return parsed apartment info without cover photo', () => {
+      const provider = new SasoMangeProvider();
+
+      const apartmentInfo = {
+        addresses: [
+          {
+            country: {
+              host: true,
+              name: 'Srbija',
+            },
+            location: [
+              {
+                code: 'beograd',
+                hasChildren: true,
+                latitude: 44.1234,
+                longitude: 20.1234,
+                name: 'Beograd',
+                type: 'LOCATION',
+              },
+              {
+                code: 'beograd-vracar',
+                hasChildren: true,
+                latitude: 44.1234,
+                longitude: 20.1234,
+                name: 'Vračar',
+                parentCode: 'beograd',
+                type: 'SUBLOCATION',
+              },
+              {
+                code: 'beograd-vracar-crveni-krst',
+                hasChildren: false,
+                latitude: 44.1234,
+                longitude: 20.5678,
+                name: 'Crveni krst',
+                parentCode: 'beograd-vracar',
+                type: 'MICROLOCATION',
+              },
+            ],
+          },
+        ],
+        code: 'izdavanje-stan-jednosoban-crveni-krst-swbgD',
+        configurable: false,
+        description: 'description',
+        displayDate: '2022-03-13T10:02:09+02:00',
+        highlightedAttributes: [
+          {
+            attributeType: 'number',
+            code:
+              'smrsClassificationCatalog/1.0/general_flats_rent.estate_area',
+            coupled: false,
+            editDisabled: false,
+            featureUnit: {
+              symbol: 'm²',
+            },
+            featureValues: [
+              {
+                name: '36',
+                value: '36',
+              },
+            ],
+            mandatory: true,
+            name: 'Površina',
+            range: true,
+          },
+          {
+            attributeType: 'enum',
+            code: 'smrsClassificationCatalog/1.0/general_flats_rent.flat_type',
+            coupled: false,
+            editDisabled: false,
+            featureValues: [
+              {
+                name: 'Stan u zgradi',
+                value: 'Stan u zgradi',
+              },
+            ],
+            mandatory: false,
+            name: 'Tip stana',
+            range: false,
+          },
+        ],
+        images: [],
+        name: 'Izdavanje, Stan, Jednosoban, Crveni Krst, ID#24820',
+        noDFP: false,
+        numberOfGalleryImages: 8,
+        numberOfMultimedia: 0,
+        numberOfVisits: 378,
+        originalPublishedDate: new Date('2021-11-08T08:59:19.000Z'),
+        price: {
+          priceType: 'BUY',
+          currencyIso: 'EUR',
+          formattedValue: '250,00 €',
+          formattedValueWithoutCurrency: '250,00',
+          value: 250,
+        },
+        priceRange: {},
+        publishedDate: '2022-03-12T10:02:09+02:00',
+        searchScore: 1,
+        smSku: '1234321',
+        url: '/1234321/izdavanje-stan-jednosoban-crveni-krst',
+        vendor: {
+          code: '00003F6N',
+        },
+        vendorSku: '24830',
+        volumePricesFlag: false,
+        rentOrSale: RentOrSale.rent,
+      };
+      const parsedApartmentInfo = {
+        id: 'sasoMange_1234321',
+        address: 'Crveni Krst',
+        apartmentId: '1234321',
+        floor: null,
+        heatingTypes: null,
+        location: {
+          latitude: 44.1234,
+          longitude: 20.5678,
+        },
+        municipality: 'Vračar',
+        place: 'Crveni Krst',
+        postedAt: new Date('2021-11-08T08:59:19.000Z'),
+        price: 250,
+        providerName: 'sasoMange',
+        rentOrSale: RentOrSale.rent,
+        size: 36,
+        structure: null,
+        url:
+          'https://sasomange.rs/p/1234321/izdavanje-stan-jednosoban-crveni-krst',
+      };
+
+      const result = provider.parseApartmentInfo(apartmentInfo);
+
+      expect(result).toEqual(parsedApartmentInfo);
+    });
   });
 
   describe('parseFloor', () => {

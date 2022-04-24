@@ -129,10 +129,15 @@ export class SasoMangeProvider implements Provider {
   }
 
   private getCoverPhotoUrl(apartmentInfo): string {
-    return apartmentInfo.images?.find(
+    const photoUrl = apartmentInfo.images?.find(
       image =>
         image.format === 'smThumbnailFormat' || image.imageType === 'PRIMARY',
     )?.url;
+    if (!photoUrl) return;
+
+    if (photoUrl?.includes('PlaceholderFormat')) return;
+
+    return photoUrl;
   }
 
   private getFloorValue(code: string, apartmentData: any, rentOrSale?: string) {
