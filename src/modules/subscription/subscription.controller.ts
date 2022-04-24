@@ -6,6 +6,7 @@ import {
   NOTIFICATION_SUBSCRIPTION_LIMIT,
   NOTIFICATION_SUBSCRIPTION_TTL,
 } from 'common/config/rate-limiter';
+import { NotificationSubscriptionResponseDto } from './notification-subscription-response.dto';
 import { NotificationSubscriptionDto } from './notification-subscription.dto';
 import { Subscription } from './subscription.dto';
 import { SubscriptionService } from './subscription.service';
@@ -24,7 +25,7 @@ export class SubscriptionController {
   @Post('notifications/subscribe')
   async subscribeForNotifications(
     @Body() notificationSubscriptionDto: NotificationSubscriptionDto,
-  ) {
+  ): Promise<NotificationSubscriptionResponseDto> {
     return this.subscriptionService.subscribeForNotifications(
       notificationSubscriptionDto,
     );

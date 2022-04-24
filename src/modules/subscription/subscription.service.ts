@@ -16,6 +16,7 @@ import { NotificationSubscriptionDto } from './notification-subscription.dto';
 import { NotificationSubscriptionRepository } from './notification-subscription.repository';
 import { NotificationSubscription } from './notification-subscription.interface';
 import { generateNotificationText } from './notification-subscription.utils';
+import { NotificationSubscriptionResponseDto } from './notification-subscription-response.dto';
 
 @Injectable()
 export class SubscriptionService {
@@ -159,7 +160,7 @@ export class SubscriptionService {
   async subscribeForNotifications(
     notificationSubscriptionDto: NotificationSubscriptionDto,
     subscriptionType = Subscription.FREE,
-  ): Promise<void> {
+  ): Promise<NotificationSubscriptionResponseDto> {
     try {
       const storedNotificationSubscription = await this.notificationSubscriptionRepository.findOne(
         {
@@ -180,7 +181,9 @@ export class SubscriptionService {
           notificationSubscriptionDto.token,
           newUser.id,
         );
-        return;
+        return {
+          isUpdated: false,
+        };
       }
 
       await this.filterRepository.update(
@@ -195,6 +198,9 @@ export class SubscriptionService {
         notificationSubscriptionDto.filter,
         storedNotificationSubscription.userId,
       );
+      return {
+        isUpdated: true,
+      };
     } catch (error) {
       this.logger.error('Subscribing for notifications failed', error);
       throw new InternalServerErrorException(
