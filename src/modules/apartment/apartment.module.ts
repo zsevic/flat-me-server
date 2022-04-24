@@ -12,6 +12,7 @@ import { BaseProvider } from './providers';
     TypeOrmModule.forFeature([
       ApartmentRepository,
       NotificationSubscriptionRepository,
+      UserRepository,
     ]),
   ],
   providers: [ApartmentService, BaseProvider],

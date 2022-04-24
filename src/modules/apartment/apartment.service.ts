@@ -1,4 +1,9 @@
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { Filter } from 'modules/filter/filter.interface';
 import {
@@ -7,8 +12,9 @@ import {
   PaginationParams,
 } from 'modules/pagination/pagination.interfaces';
 import { NotificationSubscriptionRepository } from 'modules/subscription/notification-subscription.repository';
+import { Subscription } from 'modules/user/subscription.enum';
+import { UserRepository } from 'modules/user/user.repository';
 import { requiredFields } from './apartment.constants';
-import { ApartmentEntity } from './apartment.entity';
 import { Apartment, ApartmentStatus } from './apartment.interface';
 import { ApartmentRepository } from './apartment.repository';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
@@ -23,6 +29,7 @@ export class ApartmentService {
   constructor(
     private readonly apartmentRepository: ApartmentRepository,
     private readonly notificationSubscriptionRepository: NotificationSubscriptionRepository,
+    private readonly userRepository: UserRepository,
     private readonly baseProvider: BaseProvider,
   ) {}
 
@@ -176,9 +183,19 @@ export class ApartmentService {
       throw new UnauthorizedException('Subscription token is not valid');
     }
 
+    const user = await this.userRepository.findOne({
+      where: {
+        id: subscription.userId,
+      },
+    });
+    if (!user) {
+      throw new InternalServerErrorException('User is not found');
+    }
+
     return this.apartmentRepository.getFoundApartmentList(
       subscription.userId,
       filter,
+      Subscription[user.subscription],
     );
   }
 

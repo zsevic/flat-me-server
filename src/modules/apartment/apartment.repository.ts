@@ -28,6 +28,7 @@ import {
   getSkip,
   toCursorHash,
 } from 'modules/pagination/pagination.utils';
+import { Subscription } from 'modules/user/subscription.enum';
 import { ApartmentEntity } from './apartment.entity';
 import { Apartment } from './apartment.interface';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
@@ -159,9 +160,24 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
     };
   }
 
+  private generateFilterDate(): Date {
+    const date = new Date();
+    const filterDate = new Date(date);
+    const dateHours = date.getHours();
+    if (dateHours >= 0 && dateHours <= 7) {
+      filterDate.setDate(date.getDate() - 1);
+    }
+    filterDate.setHours(8);
+    filterDate.setMinutes(0);
+    filterDate.setSeconds(0);
+    filterDate.setMilliseconds(0);
+    return filterDate;
+  }
+
   async getFoundApartmentList(
     userId: string,
     filter: FoundApartmentListParamsDto,
+    userSubscription: Subscription,
   ): Promise<CursorPaginatedResponse<Apartment>> {
     let queryBuilder = this.createQueryBuilder('apartment').innerJoin(
       'apartment.users',
@@ -172,9 +188,20 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
       },
     );
 
+    const filterDate = this.generateFilterDate();
     if (filter.cursor) {
       queryBuilder = queryBuilder.where('apartment.postedAt < :date', {
         date: new Date(fromCursorHash(filter.cursor)),
+      });
+    }
+    if (filter.cursor && userSubscription === Subscription.FREE) {
+      queryBuilder = queryBuilder.andWhere('apartment.createdAt < :createdAt', {
+        createdAt: filterDate,
+      });
+    }
+    if (!filter.cursor && userSubscription === Subscription.FREE) {
+      queryBuilder = queryBuilder.where('apartment.createdAt < :createdAt', {
+        createdAt: filterDate,
       });
     }
 
