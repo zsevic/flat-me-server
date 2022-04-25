@@ -7,8 +7,6 @@ export const PROVIDERS = [
   'sasoMange',
 ];
 
-export const RECEIVED_APARTMENTS_SIZE = 10;
-
 export const apartmentStatusFinished = 'FINISHED';
 export const apartmentStatusNotAvailable = 'NOT-AVAILABLE';
 export const apartmentStatusPublished = 'PUBLISHED';

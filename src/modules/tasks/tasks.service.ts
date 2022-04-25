@@ -1,14 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
-import { RECEIVED_APARTMENTS_SIZE } from 'modules/apartment/apartment.constants';
 import { ApartmentService } from 'modules/apartment/apartment.service';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { filters } from 'modules/filter/filter.constants';
 import { Filter } from 'modules/filter/filter.interface';
 import { FilterService } from 'modules/filter/filter.service';
 import { MailService } from 'modules/mail/mail.service';
-import { defaultPaginationParams } from 'modules/pagination/pagination.constants';
+import {
+  defaultPaginationParams,
+  DEFAULT_LIMIT_PER_PAGE,
+} from 'modules/pagination/pagination.constants';
 import { getSkip } from 'modules/pagination/pagination.utils';
 import { SubscriptionService } from 'modules/subscription/subscription.service';
 import { FILTER_DEACTIVATION_TOKEN_EXPIRATION_HOURS } from 'modules/token/token.constants';
@@ -116,7 +118,7 @@ export class TasksService {
 
     const apartmentList = await this.apartmentService.getApartmentListFromDatabaseByFilter(
       filter,
-      RECEIVED_APARTMENTS_SIZE,
+      DEFAULT_LIMIT_PER_PAGE,
     );
     if (apartmentList.data.length === 0) {
       return;

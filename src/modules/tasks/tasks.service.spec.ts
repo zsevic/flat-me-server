@@ -1,5 +1,4 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { RECEIVED_APARTMENTS_SIZE } from 'modules/apartment/apartment.constants';
 import { ApartmentService } from 'modules/apartment/apartment.service';
 import { filters } from 'modules/filter/filter.constants';
 import { FilterService } from 'modules/filter/filter.service';
@@ -7,6 +6,7 @@ import { MailService } from 'modules/mail/mail.service';
 import {
   defaultPaginationParams,
   emptyPaginatedResponse,
+  DEFAULT_LIMIT_PER_PAGE,
 } from 'modules/pagination/pagination.constants';
 import { FILTER_DEACTIVATION_TOKEN_EXPIRATION_HOURS } from 'modules/token/token.constants';
 import { TokenType } from 'modules/token/token.enums';
@@ -328,10 +328,10 @@ describe('TasksService', () => {
       expect(tokenService.deleteTokenByFilterId).toHaveBeenCalledTimes(2);
       expect(
         apartmentService.getApartmentListFromDatabaseByFilter,
-      ).not.toHaveBeenCalledWith(foundFilters[0], RECEIVED_APARTMENTS_SIZE);
+      ).not.toHaveBeenCalledWith(foundFilters[0], DEFAULT_LIMIT_PER_PAGE);
       expect(
         apartmentService.getApartmentListFromDatabaseByFilter,
-      ).toHaveBeenCalledWith(foundFilters[1], RECEIVED_APARTMENTS_SIZE);
+      ).toHaveBeenCalledWith(foundFilters[1], DEFAULT_LIMIT_PER_PAGE);
       expect(mailService.sendMailWithNewApartments).not.toHaveBeenCalled();
     });
   });
