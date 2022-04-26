@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   InternalServerErrorException,
@@ -164,16 +165,21 @@ export class SubscriptionService {
     });
     if (!subscription) throw new UnauthorizedException('Token is not valid');
 
-    await this.filterRepository.update(
-      {
+    const filter = await this.filterRepository.findOne({
+      where: {
         userId: subscription.userId,
         isActive: true,
         isVerified: true,
       },
-      {
-        isActive: false,
-      },
-    );
+    });
+    if (!filter) {
+      throw new BadRequestException('Active filter is not found');
+    }
+
+    await this.filterRepository.save({
+      ...filter,
+      isActive: false,
+    });
   }
 
   @Transactional()
@@ -206,20 +212,30 @@ export class SubscriptionService {
         };
       }
 
-      await this.filterRepository.update(
+      const [, activeFiltersCounter] = await this.filterRepository.findAndCount(
         {
           userId: storedNotificationSubscription.userId,
-        },
-        {
-          isActive: false,
+          isActive: true,
         },
       );
+      let isUpdated = false;
+      if (activeFiltersCounter !== 0) {
+        await this.filterRepository.update(
+          {
+            userId: storedNotificationSubscription.userId,
+          },
+          {
+            isActive: false,
+          },
+        );
+        isUpdated = true;
+      }
       await this.filterRepository.saveFilterForNotificationSubscription(
         notificationSubscriptionDto.filter,
         storedNotificationSubscription.userId,
       );
       return {
-        isUpdated: true,
+        isUpdated,
       };
     } catch (error) {
       this.logger.error('Subscribing for notifications failed', error);
