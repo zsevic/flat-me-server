@@ -22,3 +22,8 @@ export const NOTIFICATION_SUBSCRIPTION_LIMIT = !isEnvironment('production')
   ? Infinity
   : 3;
 export const NOTIFICATION_SUBSCRIPTION_TTL = 60 * 60 * 24;
+
+export const NOTIFICATION_UNSUBSCRIPTION_LIMIT = !isEnvironment('production')
+  ? Infinity
+  : 1;
+export const NOTIFICATION_UNSUBSCRIPTION_TTL = 60 * 60 * 24;

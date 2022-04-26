@@ -3,6 +3,7 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios, { AxiosResponse } from 'axios';
@@ -12,7 +13,7 @@ import { Filter } from 'modules/filter/filter.interface';
 import { FilterRepository } from 'modules/filter/filter.repository';
 import { Subscription } from 'modules/user/subscription.enum';
 import { UserRepository } from 'modules/user/user.repository';
-import { NotificationSubscriptionDto } from './notification-subscription.dto';
+import { NotificationSubscriptionDto } from './dto';
 import { NotificationSubscriptionRepository } from './notification-subscription.repository';
 import { NotificationSubscription } from './notification-subscription.interface';
 import { generateNotificationText } from './notification-subscription.utils';
@@ -154,6 +155,25 @@ export class SubscriptionService {
       this.logger.error(`Subscribing user with email ${email} failed`, error);
       throw new ConflictException();
     }
+  }
+
+  @Transactional()
+  async unsubscribeFromNotifications(token: string): Promise<void> {
+    const subscription = await this.notificationSubscriptionRepository.findOne({
+      token,
+    });
+    if (!subscription) throw new UnauthorizedException('Token is not valid');
+
+    await this.filterRepository.update(
+      {
+        userId: subscription.userId,
+        isActive: true,
+        isVerified: true,
+      },
+      {
+        isActive: false,
+      },
+    );
   }
 
   @Transactional()
