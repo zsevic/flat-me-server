@@ -418,7 +418,7 @@ describe('TasksService', () => {
       expect(userService.insertReceivedApartments).not.toBeCalled();
     });
 
-    it.only('should send push notifications for found filters', async () => {
+    it('should send push notifications for found filters', async () => {
       const foundFilter = {
         id: '5b87d75f-5849-4a3d-a3f5-6462a9147f41',
         structures: [1, 2, 0.5, 1.5],
@@ -471,9 +471,6 @@ describe('TasksService', () => {
         limitPerPage: defaultPaginationParams.limitPerPage,
         pageNumber: 1,
       });
-      expect(tokenService.deleteTokenByFilterId).toHaveBeenCalledWith(
-        foundFilter.id,
-      );
       expect(tokenService.deleteTokenByFilterId).not.toHaveBeenCalled();
       expect(
         filterService.createTokenAndDeactivationUrl,
