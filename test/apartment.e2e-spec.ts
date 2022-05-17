@@ -87,4 +87,32 @@ describe('ApartmentController (e2e)', () => {
         .expect(HttpStatus.OK);
     });
   });
+
+  describe('/found-apartments (GET)', () => {
+    it('should return 400 status code when params are missing', () => {
+      return request(app.getHttpServer())
+        .get('/found-apartments')
+        .expect(HttpStatus.BAD_REQUEST);
+    });
+
+    it("should return 400 status code when params don't have valid values", () => {
+      return request(app.getHttpServer())
+        .get('/found-apartments')
+        .query({
+          token: 'token',
+          limitPerPage: 'test',
+        })
+        .expect(HttpStatus.BAD_REQUEST);
+    });
+
+    it("should return 401 error when token doesn't exist", () => {
+      return request(app.getHttpServer())
+        .get('/found-apartments')
+        .query({
+          token: 'token',
+          limitPerPage: 2,
+        })
+        .expect(HttpStatus.UNAUTHORIZED);
+    });
+  });
 });
