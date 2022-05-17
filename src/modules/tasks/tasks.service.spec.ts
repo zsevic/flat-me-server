@@ -35,7 +35,9 @@ const mailService = {
   sendMailWithNewApartments: jest.fn(),
 };
 
-const subscriptionService = {};
+const subscriptionService = {
+  sendNotification: jest.fn(),
+};
 
 const tokenService = {
   deleteTokenByFilterId: jest.fn(),
@@ -349,6 +351,142 @@ describe('TasksService', () => {
         apartmentService.getApartmentListFromDatabaseByFilter,
       ).toHaveBeenCalledWith(foundFilters[1], DEFAULT_LIMIT_PER_PAGE);
       expect(mailService.sendMailWithNewApartments).not.toHaveBeenCalled();
+    });
+
+    it('should handle when push notification is not sent', async () => {
+      const foundFilter = {
+        id: '5b87d75f-5849-4a3d-a3f5-6462a9147f41',
+        structures: [1, 2, 0.5, 1.5],
+        municipalities: ['Savski venac', 'Zemun'],
+        furnished: ['semi-furnished'],
+        rentOrSale: 'rent',
+        minPrice: 120,
+        maxPrice: 370,
+        user: 'ad7bf1ac-df4b-4556-bb67-122bd82d3214',
+        createdAt: '2021-08-18T00:52:18.296Z',
+      };
+      const apartmentList = [
+        {
+          heatingTypes: ['central'],
+          id: 'cetiriZida_id1',
+          price: 350,
+          apartmentId: 'id',
+          providerName: 'cetiriZida',
+          address: 'street',
+          coverPhotoUrl: 'url',
+          floor: 'ground floor',
+          furnished: 'semi-furnished',
+          municipality: 'Savski venac',
+          place: 'Sarajevska',
+          postedAt: new Date('2021-06-23T13:38:19+02:00'),
+          rentOrSale: 'rent',
+          size: 41,
+          structure: 3,
+          url: 'url',
+          createdAt: '2021-08-14T18:12:32.133Z',
+          updatedAt: '2021-08-14T18:12:32.133Z',
+        },
+      ];
+      jest
+        .spyOn(filterService, 'getFilterListBySubscriptionType')
+        .mockResolvedValue({ data: [foundFilter], total: 1 });
+      jest
+        .spyOn(apartmentService, 'getApartmentListFromDatabaseByFilter')
+        .mockResolvedValue({ data: apartmentList });
+      jest.spyOn(userService, 'getUserEmail').mockResolvedValue(null);
+      jest
+        .spyOn(subscriptionService, 'sendNotification')
+        .mockResolvedValue(false);
+
+      await tasksService.handleSendingNewApartments();
+
+      expect(
+        filterService.getFilterListBySubscriptionType,
+      ).toHaveBeenNthCalledWith(1, Subscription.FREE, {
+        limitPerPage: defaultPaginationParams.limitPerPage,
+        pageNumber: 1,
+      });
+      expect(tokenService.deleteTokenByFilterId).not.toHaveBeenCalled();
+      expect(
+        filterService.createTokenAndDeactivationUrl,
+      ).not.toHaveBeenCalled();
+      expect(mailService.sendMailWithNewApartments).not.toHaveBeenCalled();
+      expect(subscriptionService.sendNotification).toHaveBeenCalledWith(
+        foundFilter,
+        1,
+      );
+      expect(userService.insertReceivedApartments).not.toBeCalled();
+    });
+
+    it.only('should send push notifications for found filters', async () => {
+      const foundFilter = {
+        id: '5b87d75f-5849-4a3d-a3f5-6462a9147f41',
+        structures: [1, 2, 0.5, 1.5],
+        municipalities: ['Savski venac', 'Zemun'],
+        furnished: ['semi-furnished'],
+        rentOrSale: 'rent',
+        minPrice: 120,
+        maxPrice: 370,
+        userId: 'ad7bf1ac-df4b-4556-bb67-122bd82d3214',
+        createdAt: '2021-08-18T00:52:18.296Z',
+      };
+      const apartmentList = [
+        {
+          heatingTypes: ['central'],
+          id: 'cetiriZida_id1',
+          price: 350,
+          apartmentId: 'id',
+          providerName: 'cetiriZida',
+          address: 'street',
+          coverPhotoUrl: 'url',
+          floor: 'ground floor',
+          furnished: 'semi-furnished',
+          municipality: 'Savski venac',
+          place: 'Sarajevska',
+          postedAt: new Date('2021-06-23T13:38:19+02:00'),
+          rentOrSale: 'rent',
+          size: 41,
+          structure: 3,
+          url: 'url',
+          createdAt: '2021-08-14T18:12:32.133Z',
+          updatedAt: '2021-08-14T18:12:32.133Z',
+        },
+      ];
+      jest
+        .spyOn(filterService, 'getFilterListBySubscriptionType')
+        .mockResolvedValue({ data: [foundFilter], total: 1 });
+      jest
+        .spyOn(apartmentService, 'getApartmentListFromDatabaseByFilter')
+        .mockResolvedValue({ data: apartmentList });
+      jest.spyOn(userService, 'getUserEmail').mockResolvedValue(null);
+      jest
+        .spyOn(subscriptionService, 'sendNotification')
+        .mockResolvedValue(true);
+
+      await tasksService.handleSendingNewApartments();
+
+      expect(
+        filterService.getFilterListBySubscriptionType,
+      ).toHaveBeenNthCalledWith(1, Subscription.FREE, {
+        limitPerPage: defaultPaginationParams.limitPerPage,
+        pageNumber: 1,
+      });
+      expect(tokenService.deleteTokenByFilterId).toHaveBeenCalledWith(
+        foundFilter.id,
+      );
+      expect(tokenService.deleteTokenByFilterId).not.toHaveBeenCalled();
+      expect(
+        filterService.createTokenAndDeactivationUrl,
+      ).not.toHaveBeenCalled();
+      expect(mailService.sendMailWithNewApartments).not.toHaveBeenCalled();
+      expect(subscriptionService.sendNotification).toHaveBeenCalledWith(
+        foundFilter,
+        1,
+      );
+      expect(userService.insertReceivedApartments).toHaveBeenCalledWith(
+        foundFilter.userId,
+        apartmentList,
+      );
     });
   });
 });
