@@ -4,6 +4,7 @@ import { Repository, SelectQueryBuilder } from 'typeorm';
 import { defaultPaginationParams } from 'modules/pagination/pagination.constants';
 import { Subscription } from 'modules/user/subscription.enum';
 import { FilterEntity } from './filter.entity';
+import { RentOrSale } from './filter.enums';
 import { FilterRepository } from './filter.repository';
 
 describe('FilterRepository', () => {
@@ -92,6 +93,37 @@ describe('FilterRepository', () => {
       );
 
       expect(result).toEqual(filters);
+    });
+  });
+
+  describe('saveFilterForNotificationSubscription', () => {
+    it('should save filter', async () => {
+      const filterDto = {
+        advertiserTypes: [],
+        rentOrSale: RentOrSale.rent,
+        municipalities: ['Palilula'],
+        structures: [],
+        furnished: ['semi-furnished'],
+        minPrice: 200,
+        maxPrice: 300,
+      };
+      const userId = 'userid';
+      const filterForSaving = {
+        ...filterDto,
+        userId,
+        isActive: true,
+        isVerified: true,
+      };
+      const saveSpy = jest
+        .spyOn(filterRepository, 'saveFilter')
+        .mockResolvedValue(undefined);
+
+      await filterRepository.saveFilterForNotificationSubscription(
+        filterDto,
+        userId,
+      );
+
+      expect(saveSpy).toHaveBeenCalledWith(filterForSaving);
     });
   });
 });
