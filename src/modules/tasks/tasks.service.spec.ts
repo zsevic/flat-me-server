@@ -8,6 +8,7 @@ import {
   emptyPaginatedResponse,
   DEFAULT_LIMIT_PER_PAGE,
 } from 'modules/pagination/pagination.constants';
+import { SubscriptionService } from 'modules/subscription/subscription.service';
 import { FILTER_DEACTIVATION_TOKEN_EXPIRATION_HOURS } from 'modules/token/token.constants';
 import { TokenType } from 'modules/token/token.enums';
 import { TokenService } from 'modules/token/token.service';
@@ -33,6 +34,8 @@ const filterService = {
 const mailService = {
   sendMailWithNewApartments: jest.fn(),
 };
+
+const subscriptionService = {};
 
 const tokenService = {
   deleteTokenByFilterId: jest.fn(),
@@ -69,6 +72,10 @@ describe('TasksService', () => {
         {
           provide: MailService,
           useValue: mailService,
+        },
+        {
+          provide: SubscriptionService,
+          useValue: subscriptionService,
         },
         {
           provide: TokenService,
