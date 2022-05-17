@@ -19,6 +19,7 @@ import { NotificationSubscriptionRepository } from './notification-subscription.
 import { NotificationSubscription } from './notification-subscription.interface';
 import { generateNotificationText } from './notification-subscription.utils';
 import { NotificationSubscriptionResponseDto } from './notification-subscription-response.dto';
+import { SUBSCRIPTION_URL } from './subscription.constants';
 
 @Injectable()
 export class SubscriptionService {
@@ -31,7 +32,7 @@ export class SubscriptionService {
     private readonly userRepository: UserRepository,
   ) {}
 
-  async getNotificationSubscription(
+  private async getNotificationSubscription(
     userId: string,
   ): Promise<NotificationSubscription> {
     const subscription = await this.notificationSubscriptionRepository.findOne({
@@ -75,7 +76,7 @@ export class SubscriptionService {
     const { userId } = filter;
     const subscription = await this.getNotificationSubscription(userId);
     if (!subscription) {
-      this.logger.log(`Subscription not found, unverifing user ${userId}`);
+      this.logger.warn(`Subscription not found, unverifing user ${userId}`);
       await this.userRepository.update(
         {
           id: userId,
@@ -114,7 +115,7 @@ export class SubscriptionService {
     const notificationIconUrl = `${clientUrl}/icons/icon-128x128.png`;
 
     return axios.post(
-      'https://fcm.googleapis.com/fcm/send',
+      SUBSCRIPTION_URL,
       {
         notification: {
           title: 'Novi pronađeni stanovi',
