@@ -109,7 +109,7 @@ describe('ApartmentController (e2e)', () => {
       return request(app.getHttpServer())
         .get('/found-apartments')
         .query({
-          token: 'token',
+          token: 'token' + Math.random() * 1000,
           limitPerPage: 2,
         })
         .expect(HttpStatus.UNAUTHORIZED);
