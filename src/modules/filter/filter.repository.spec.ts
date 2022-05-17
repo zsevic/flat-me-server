@@ -97,7 +97,7 @@ describe('FilterRepository', () => {
   });
 
   describe('saveFilterForNotificationSubscription', () => {
-    it('should save filter', async () => {
+    it('should save filter for rent', async () => {
       const filterDto = {
         advertiserTypes: [],
         rentOrSale: RentOrSale.rent,
@@ -110,6 +110,36 @@ describe('FilterRepository', () => {
       const userId = 'userid';
       const filterForSaving = {
         ...filterDto,
+        userId,
+        isActive: true,
+        isVerified: true,
+      };
+      const saveSpy = jest
+        .spyOn(filterRepository, 'saveFilter')
+        .mockResolvedValue(undefined);
+
+      await filterRepository.saveFilterForNotificationSubscription(
+        filterDto,
+        userId,
+      );
+
+      expect(saveSpy).toHaveBeenCalledWith(filterForSaving);
+    });
+
+    it('should save filter for sale', async () => {
+      const filterDto = {
+        advertiserTypes: [],
+        rentOrSale: RentOrSale.sale,
+        municipalities: ['Palilula'],
+        structures: [],
+        furnished: ['semi-furnished'],
+        minPrice: 200,
+        maxPrice: 300,
+      };
+      const userId = 'userid';
+      const filterForSaving = {
+        ...filterDto,
+        furnished: [],
         userId,
         isActive: true,
         isVerified: true,
