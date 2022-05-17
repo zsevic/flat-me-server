@@ -140,6 +140,9 @@ describe('TasksService', () => {
       jest
         .spyOn(apartmentService, 'getApartmentListFromDatabaseByFilter')
         .mockResolvedValue({ data: [] });
+      jest
+        .spyOn(userService, 'getUserEmail')
+        .mockResolvedValue('test@example.com');
 
       await tasksService.handleSendingNewApartments();
 
@@ -270,6 +273,9 @@ describe('TasksService', () => {
       jest
         .spyOn(apartmentService, 'getApartmentListFromDatabaseByFilter')
         .mockResolvedValue({ data: [] });
+      jest
+        .spyOn(userService, 'getUserEmail')
+        .mockResolvedValue('test@example.com');
 
       await tasksService.handleSendingNewApartments();
 
@@ -321,6 +327,9 @@ describe('TasksService', () => {
       jest
         .spyOn(apartmentService, 'getApartmentListFromDatabaseByFilter')
         .mockResolvedValue({ data: [] });
+      jest
+        .spyOn(userService, 'getUserEmail')
+        .mockResolvedValue('test@example.com');
 
       await tasksService.handleSendingNewApartments();
 
