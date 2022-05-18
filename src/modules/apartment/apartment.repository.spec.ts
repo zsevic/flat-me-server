@@ -310,14 +310,8 @@ describe('ApartmentRepository', () => {
         filter,
       );
 
-      expect(response).toEqual({
-        data: [apartmentList[0]],
-        pageInfo: {
-          hasNextPage: true,
-          endCursor:
-            'V2VkIEp1biAyMyAyMDIxIDEzOjM4OjE5IEdNVCswMjAwIChDZW50cmFsIEV1cm9wZWFuIFN1bW1lciBUaW1lKQ==',
-        },
-      });
+      expect(response.data).toEqual([apartmentList[0]]);
+      expect(response.pageInfo.hasNextPage).toEqual(true);
     });
   });
 });
