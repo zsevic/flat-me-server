@@ -5,6 +5,7 @@ import {
   InternalServerErrorException,
   Logger,
   UnauthorizedException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios, { AxiosResponse } from 'axios';
@@ -189,32 +190,54 @@ export class SubscriptionService {
         };
       }
 
+      const createdFilter = this.filterRepository.createFilter(
+        notificationSubscriptionDto.filter,
+        storedNotificationSubscription.userId,
+      );
+      const storedFilter = await this.filterRepository.findOne({
+        where: createdFilter,
+      });
+      if (storedFilter && storedFilter.isActive) {
+        throw new UnprocessableEntityException('Filter is already active');
+      }
+
       const [, activeFiltersCounter] = await this.filterRepository.findAndCount(
         {
           userId: storedNotificationSubscription.userId,
           isActive: true,
         },
       );
-      let isUpdated = false;
       if (activeFiltersCounter !== 0) {
         await this.filterRepository.update(
           {
             userId: storedNotificationSubscription.userId,
+            isActive: true,
           },
           {
             isActive: false,
           },
         );
-        isUpdated = true;
       }
+      if (storedFilter) {
+        await this.filterRepository.save({
+          ...storedFilter,
+          isActive: true,
+        });
+        return { isUpdated: true };
+      }
+
       await this.filterRepository.saveFilterForNotificationSubscription(
         notificationSubscriptionDto.filter,
         storedNotificationSubscription.userId,
       );
       return {
-        isUpdated,
+        isUpdated: true,
       };
     } catch (error) {
+      if (error instanceof UnprocessableEntityException) {
+        throw new UnprocessableEntityException(error.message);
+      }
+
       this.logger.error('Subscribing for notifications failed', error);
       throw new InternalServerErrorException(
         'Subscribing for notifications failed',

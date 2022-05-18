@@ -14,6 +14,13 @@ import { Filter } from './filter.interface';
 @Injectable()
 @EntityRepository(FilterEntity)
 export class FilterRepository extends Repository<FilterEntity> {
+  createFilter = (filterDto: FilterDto, userId: string) => ({
+    ...filterDto,
+    furnished:
+      filterDto.rentOrSale === RentOrSale.sale ? [] : filterDto.furnished,
+    userId,
+  });
+
   async deactivateFilter(filterId: string): Promise<void> {
     const filter = await this.findOne({ id: filterId });
     if (!filter) {
@@ -82,16 +89,13 @@ export class FilterRepository extends Repository<FilterEntity> {
     filterDto: FilterDto,
     userId: string,
   ): Promise<void> {
-    const newFilter: Filter = {
-      ...filterDto,
-      furnished:
-        filterDto.rentOrSale === RentOrSale.sale ? [] : filterDto.furnished,
-      userId,
+    const newFilter = this.createFilter(filterDto, userId);
+
+    await this.saveFilter({
+      ...newFilter,
       isActive: true,
       isVerified: true,
-    };
-
-    await this.saveFilter(newFilter);
+    });
   }
 
   async verifyAndActivateFilter(filter: Filter): Promise<void> {
