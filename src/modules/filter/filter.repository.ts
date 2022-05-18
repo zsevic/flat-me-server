@@ -6,7 +6,9 @@ import {
 import { getSkip } from 'modules/pagination/pagination.utils';
 import { Subscription } from 'modules/user/subscription.enum';
 import { EntityRepository, Repository } from 'typeorm';
+import { FilterDto } from './dto/filter.dto';
 import { FilterEntity } from './filter.entity';
+import { RentOrSale } from './filter.enums';
 import { Filter } from './filter.interface';
 
 @Injectable()
@@ -74,6 +76,22 @@ export class FilterRepository extends Repository<FilterEntity> {
 
   async saveFilter(filter: Filter): Promise<Filter> {
     return this.save(filter);
+  }
+
+  async saveFilterForNotificationSubscription(
+    filterDto: FilterDto,
+    userId: string,
+  ): Promise<void> {
+    const newFilter: Filter = {
+      ...filterDto,
+      furnished:
+        filterDto.rentOrSale === RentOrSale.sale ? [] : filterDto.furnished,
+      userId,
+      isActive: true,
+      isVerified: true,
+    };
+
+    await this.saveFilter(newFilter);
   }
 
   async verifyAndActivateFilter(filter: Filter): Promise<void> {

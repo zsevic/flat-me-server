@@ -1,5 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { Filter } from 'modules/filter/filter.interface';
 import {
@@ -7,10 +11,14 @@ import {
   PaginatedResponse,
   PaginationParams,
 } from 'modules/pagination/pagination.interfaces';
+import { NotificationSubscriptionRepository } from 'modules/subscription/notification-subscription.repository';
+import { Subscription } from 'modules/user/subscription.enum';
+import { UserRepository } from 'modules/user/user.repository';
 import { requiredFields } from './apartment.constants';
 import { Apartment, ApartmentStatus } from './apartment.interface';
 import { ApartmentRepository } from './apartment.repository';
 import { ApartmentListParamsDto } from './dto/apartment-list-params.dto';
+import { FoundApartmentListParamsDto } from './dto/found-apartment-list-params.dto';
 import { BaseProvider } from './providers';
 import { Provider } from './providers/provider.interface';
 
@@ -19,8 +27,9 @@ export class ApartmentService {
   private readonly logger = new Logger(ApartmentService.name);
 
   constructor(
-    @InjectRepository(ApartmentRepository)
     private readonly apartmentRepository: ApartmentRepository,
+    private readonly notificationSubscriptionRepository: NotificationSubscriptionRepository,
+    private readonly userRepository: UserRepository,
     private readonly baseProvider: BaseProvider,
   ) {}
 
@@ -161,6 +170,34 @@ export class ApartmentService {
     }
     return foundAparments;
   };
+
+  async getFoundApartmentList(
+    filter: FoundApartmentListParamsDto,
+  ): Promise<CursorPaginatedResponse<Apartment>> {
+    const subscription = await this.notificationSubscriptionRepository.findOne({
+      where: {
+        token: filter.token,
+      },
+    });
+    if (!subscription) {
+      throw new UnauthorizedException('Subscription token is not valid');
+    }
+
+    const user = await this.userRepository.findOne({
+      where: {
+        id: subscription.userId,
+      },
+    });
+    if (!user) {
+      throw new InternalServerErrorException('User is not found');
+    }
+
+    return this.apartmentRepository.getFoundApartmentList(
+      subscription.userId,
+      filter,
+      Subscription[user.subscription],
+    );
+  }
 
   async getValidApartmentList(
     apartmentListParamsDto: ApartmentListParamsDto,

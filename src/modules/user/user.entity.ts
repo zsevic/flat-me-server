@@ -1,5 +1,6 @@
 import { ApartmentEntity } from 'modules/apartment/apartment.entity';
 import { FilterEntity } from 'modules/filter/filter.entity';
+import { NotificationSubscriptionEntity } from 'modules/subscription/notification-subscription.entity';
 import { TokenEntity } from 'modules/token/token.entity';
 import {
   Column,
@@ -18,7 +19,9 @@ export class UserEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   email: string;
 
   @Column({
@@ -32,7 +35,10 @@ export class UserEntity {
   })
   subscription: string;
 
-  @ManyToMany(() => ApartmentEntity)
+  @ManyToMany(
+    () => ApartmentEntity,
+    apartmentEntity => apartmentEntity.users,
+  )
   @JoinTable({
     name: 'user_received_apartment',
     joinColumn: {
@@ -57,4 +63,10 @@ export class UserEntity {
     tokenEntity => tokenEntity.user,
   )
   tokens?: FilterEntity[];
+
+  @OneToMany(
+    () => NotificationSubscriptionEntity,
+    notificationSubscriptionEntity => notificationSubscriptionEntity.user,
+  )
+  notificationSubscriptions?: NotificationSubscriptionEntity[];
 }

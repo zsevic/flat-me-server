@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ADVERTISER_TYPES, STRUCTURES } from 'modules/filter/filter.constants';
+import { RentOrSale } from 'modules/filter/filter.enums';
 import {
   defaultPaginationParams,
   DEFAULT_LIMIT_PER_PAGE,
@@ -240,6 +241,81 @@ describe('ApartmentRepository', () => {
         order: {
           postedAt: 'DESC',
           createdAt: 'DESC',
+        },
+      });
+    });
+  });
+
+  describe('getCursorPaginatedApartmentList', () => {
+    it('should return cursor paginated list', async () => {
+      const filter = {
+        advertiserTypes: [],
+        rentOrSale: RentOrSale.rent,
+        municipalities: ['Palilula'],
+        structures: [1, 1.5],
+        furnished: ['semi-furnished'],
+        minPrice: 200,
+        maxPrice: 300,
+        limitPerPage: 1,
+      };
+      const apartmentList = [
+        {
+          heatingTypes: ['central'],
+          id: 'cetiriZida_id1',
+          price: 350,
+          apartmentId: 'id',
+          advertiserType: AdvertiserType.Agency,
+          providerName: 'cetiriZida',
+          address: 'street',
+          coverPhotoUrl: 'url',
+          floor: 'ground floor',
+          furnished: 'semi-furnished',
+          municipality: 'Savski venac',
+          lastCheckedAt: null,
+          place: 'Sarajevska',
+          postedAt: new Date('2021-06-23T13:38:19+02:00'),
+          rentOrSale: 'rent',
+          size: 41,
+          structure: 3,
+          url: 'url',
+          createdAt: new Date('2021-08-14T18:12:32.133Z'),
+          updatedAt: new Date('2021-08-14T18:12:32.133Z'),
+        },
+        {
+          heatingTypes: ['central'],
+          id: 'cetiriZida_id2',
+          price: 350,
+          apartmentId: 'id2',
+          advertiserType: AdvertiserType.Agency,
+          providerName: 'cetiriZida',
+          address: 'street',
+          coverPhotoUrl: 'url',
+          floor: 'ground floor',
+          furnished: 'semi-furnished',
+          municipality: 'Savski venac',
+          lastCheckedAt: null,
+          place: 'Sarajevska',
+          postedAt: new Date('2021-06-23T13:38:19+02:00'),
+          rentOrSale: 'rent',
+          size: 41,
+          structure: 3,
+          url: 'url',
+          createdAt: new Date('2021-08-14T18:12:32.133Z'),
+          updatedAt: new Date('2021-08-14T18:12:32.133Z'),
+        },
+      ];
+      jest.spyOn(apartmentRepository, 'find').mockResolvedValue(apartmentList);
+
+      const response = await apartmentRepository.getCursorPaginatedApartmentList(
+        filter,
+      );
+
+      expect(response).toEqual({
+        data: [apartmentList[0]],
+        pageInfo: {
+          hasNextPage: true,
+          endCursor:
+            'V2VkIEp1biAyMyAyMDIxIDEzOjM4OjE5IEdNVCswMjAwIChDZW50cmFsIEV1cm9wZWFuIFN1bW1lciBUaW1lKQ==',
         },
       });
     });

@@ -1,8 +1,15 @@
+import {
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { RentOrSale } from 'modules/filter/filter.enums';
-import { UserService } from 'modules/user/user.service';
+import { NotificationSubscriptionRepository } from 'modules/subscription/notification-subscription.repository';
+import { Subscription } from 'modules/user/subscription.enum';
+import { UserRepository } from 'modules/user/user.repository';
 import { ApartmentRepository } from './apartment.repository';
 import { ApartmentService } from './apartment.service';
+import { FoundApartmentListParamsDto } from './dto/found-apartment-list-params.dto';
 import { AdvertiserType } from './enums/advertiser-type.enum';
 import {
   BaseProvider,
@@ -14,8 +21,17 @@ const apartmentRepository = {
   deleteApartment: jest.fn(),
   findOne: jest.fn(),
   getApartmentList: jest.fn(),
+  getFoundApartmentList: jest.fn(),
   saveApartmentList: jest.fn(),
   updateLastCheckedDatetime: jest.fn(),
+};
+
+const notificationSubscriptionRepository = {
+  findOne: jest.fn(),
+};
+
+const userRepository = {
+  findOne: jest.fn(),
 };
 
 const cetiriZidaProvider = new CetiriZidaProvider();
@@ -50,8 +66,12 @@ describe('ApartmentService', () => {
           useValue: apartmentRepository,
         },
         {
-          provide: UserService,
-          useValue: {},
+          provide: NotificationSubscriptionRepository,
+          useValue: notificationSubscriptionRepository,
+        },
+        {
+          provide: UserRepository,
+          useValue: userRepository,
         },
       ],
     }).compile();
@@ -125,6 +145,60 @@ describe('ApartmentService', () => {
         apartmentListParams,
         apartmentsIds,
         filter.createdAt,
+      );
+    });
+  });
+
+  describe('getFoundApartmentList', () => {
+    it('should throw an error when notification subscription is not found', async () => {
+      const filter: FoundApartmentListParamsDto = {
+        token: 'token',
+        limitPerPage: 12,
+      };
+      await expect(
+        apartmentService.getFoundApartmentList(filter),
+      ).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('should throw an error when user is not found', async () => {
+      const filter: FoundApartmentListParamsDto = {
+        token: 'token',
+        limitPerPage: 12,
+      };
+      const subscription = {
+        userId: 'userid',
+      };
+      jest
+        .spyOn(notificationSubscriptionRepository, 'findOne')
+        .mockResolvedValue(subscription);
+
+      await expect(
+        apartmentService.getFoundApartmentList(filter),
+      ).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should return found apartment list for the found user by token', async () => {
+      const filter: FoundApartmentListParamsDto = {
+        token: 'token',
+        limitPerPage: 12,
+      };
+      const subscription = {
+        userId: 'userid',
+      };
+      const user = {
+        subscription: Subscription.FREE,
+      };
+      jest
+        .spyOn(notificationSubscriptionRepository, 'findOne')
+        .mockResolvedValue(subscription);
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(user);
+
+      await apartmentService.getFoundApartmentList(filter);
+
+      expect(apartmentRepository.getFoundApartmentList).toHaveBeenCalledWith(
+        subscription.userId,
+        filter,
+        user.subscription,
       );
     });
   });

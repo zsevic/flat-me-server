@@ -1,10 +1,14 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, ManyToMany, PrimaryColumn } from 'typeorm';
 import { BaseEntity } from 'common/entities/base.entity';
 import { Location } from 'common/interfaces/location.interface';
+import { UserEntity } from 'modules/user/user.entity';
 import { AdvertiserType } from './enums/advertiser-type.enum';
 
 @Entity({
   name: 'apartment',
+  orderBy: {
+    postedAt: 'DESC',
+  },
 })
 export class ApartmentEntity extends BaseEntity {
   @PrimaryColumn('varchar')
@@ -99,4 +103,10 @@ export class ApartmentEntity extends BaseEntity {
 
   @Column()
   url: string;
+
+  @ManyToMany(
+    () => UserEntity,
+    userEntity => userEntity.apartments,
+  )
+  users?: UserEntity[];
 }

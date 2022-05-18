@@ -1,7 +1,7 @@
 import { Location } from 'common/interfaces/location.interface';
 import { AdvertiserType } from './enums/advertiser-type.enum';
 
-export interface Apartment {
+export class Apartment {
   id: string;
 
   apartmentId: string;
@@ -23,6 +23,8 @@ export interface Apartment {
   heatingTypes: string[];
 
   furnished?: string;
+
+  lastCheckedAt?: Date;
 
   location?: Location;
 

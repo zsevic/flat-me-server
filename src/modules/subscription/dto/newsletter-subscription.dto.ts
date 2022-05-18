@@ -1,7 +1,7 @@
 import { Transform } from 'class-transformer';
 import { IsEmail, IsNotEmpty, NotContains } from 'class-validator';
 
-export class Subscription {
+export class NewsletterSubscriptionDto {
   @NotContains('+')
   @IsNotEmpty()
   @IsEmail()

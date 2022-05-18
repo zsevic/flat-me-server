@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
 import { TOKEN_DEFAULT_EXPIRATION_HOURS } from './token.constants';
 import { Token } from './token.interface';
 import { TokenRepository } from './token.repository';
@@ -10,7 +9,6 @@ export class TokenService {
   private readonly logger = new Logger(TokenService.name);
 
   constructor(
-    @InjectRepository(TokenRepository)
     private readonly tokenRepository: TokenRepository,
     private readonly jwtService: JwtService,
   ) {}

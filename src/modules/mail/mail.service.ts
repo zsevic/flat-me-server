@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { Apartment } from 'modules/apartment/apartment.interface';
 import { localizeApartment } from 'modules/apartment/apartment.utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
+import { generateNotificationText } from 'modules/subscription/notification-subscription.utils';
 import { DEACTIVATION_FEEDBACK_EMAIL_ADDRESS } from './mail.constants';
 
 @Injectable()
@@ -14,18 +15,6 @@ export class MailService {
     private readonly configService: ConfigService,
     private readonly mailerService: MailerService,
   ) {}
-
-  private getMailSubjectForNewApartments = (
-    filter: FilterDto,
-    apartmentListLength: number,
-  ): string => {
-    const rentOrSale =
-      filter.rentOrSale === 'rent' ? 'iznajmljivanje' : 'kupovinu';
-    if (apartmentListLength === 1) return `1 novi stan za ${rentOrSale}`;
-    if (apartmentListLength <= 4)
-      return `${apartmentListLength} nova stana za ${rentOrSale}`;
-    return `${apartmentListLength} novih stanova za ${rentOrSale}`;
-  };
 
   async sendFilterVerificationMail(
     email: string,
@@ -70,8 +59,8 @@ export class MailService {
     );
     await this.mailerService.sendMail({
       to: email,
-      subject: this.getMailSubjectForNewApartments(
-        filter,
+      subject: generateNotificationText(
+        filter.rentOrSale,
         apartmentList.length,
       ),
       template:
