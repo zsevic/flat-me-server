@@ -2,7 +2,9 @@ import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import axios from 'axios';
+import { RentOrSale } from 'modules/filter/filter.enums';
 import { FilterRepository } from 'modules/filter/filter.repository';
+import { Subscription } from 'modules/user/subscription.enum';
 import { UserRepository } from 'modules/user/user.repository';
 import { NotificationSubscriptionRepository } from './notification-subscription.repository';
 import { SUBSCRIPTION_URL } from './subscription.constants';
@@ -15,14 +17,17 @@ const configService = {
 const filterRepository = {
   findOne: jest.fn(),
   save: jest.fn(),
+  saveFilterForNotificationSubscription: jest.fn(),
 };
 
 const notificationSubscriptionRepository = {
   findOne: jest.fn(),
+  saveSubscription: jest.fn(),
   update: jest.fn(),
 };
 
 const userRepository = {
+  save: jest.fn(),
   update: jest.fn(),
 };
 
@@ -231,6 +236,57 @@ describe('SubscriptionService', () => {
         },
       );
       expect(response).toEqual(true);
+    });
+  });
+
+  describe('subscribeForNotifications', () => {
+    it('should subscribe for new filter', async () => {
+      const subscriptionType = Subscription.FREE;
+      const subscriptionDto = {
+        filter: {
+          advertiserTypes: [],
+          rentOrSale: RentOrSale.rent,
+          municipalities: ['Palilula'],
+          structures: [],
+          furnished: ['semi-furnished'],
+          minPrice: 200,
+          maxPrice: 300,
+        },
+        token: 'token',
+      };
+      const newUser = {
+        id: 'userid',
+      };
+      const userSaveSpy = jest
+        .spyOn(userRepository, 'save')
+        .mockResolvedValue(newUser);
+      const saveFilterSpy = jest.spyOn(
+        filterRepository,
+        'saveFilterForNotificationSubscription',
+      );
+      const saveSubscriptionSpy = jest.spyOn(
+        notificationSubscriptionRepository,
+        'saveSubscription',
+      );
+
+      const response = await subscriptionService.subscribeForNotifications(
+        subscriptionDto,
+      );
+
+      expect(response.isUpdated).toEqual(false);
+      expect(userSaveSpy).toHaveBeenCalledWith({
+        isVerified: true,
+        subscription: subscriptionType,
+        receivedApartments: [],
+      });
+      expect(saveFilterSpy).toHaveBeenCalledWith(
+        subscriptionDto.filter,
+        newUser.id,
+      );
+      expect(saveSubscriptionSpy).toHaveBeenCalledWith(
+        subscriptionDto.token,
+        newUser.id,
+      );
     });
   });
 
