@@ -419,6 +419,63 @@ describe('SubscriptionService', () => {
         subscriptionService.subscribeForNotifications(subscriptionDto),
       ).rejects.toThrow(UnprocessableEntityException);
     });
+
+    it('should reactivate old filter', async () => {
+      const token = 'token';
+      const subscriptionDto = {
+        filter: {
+          advertiserTypes: [],
+          rentOrSale: RentOrSale.rent,
+          municipalities: ['Palilula'],
+          structures: [],
+          furnished: ['semi-furnished'],
+          minPrice: 200,
+          maxPrice: 300,
+        },
+        token,
+      };
+      const foundSubscription = {
+        token,
+        userId: 'userid',
+      };
+      jest
+        .spyOn(notificationSubscriptionRepository, 'findOne')
+        .mockResolvedValue(foundSubscription);
+      jest
+        .spyOn(filterRepository, 'createFilter')
+        .mockReturnValue(subscriptionDto.filter);
+      jest.spyOn(filterRepository, 'findOne').mockResolvedValue({
+        ...subscriptionDto.filter,
+        isActive: false,
+      });
+      jest.spyOn(filterRepository, 'findAndCount').mockResolvedValue([null, 1]);
+
+      const response = await subscriptionService.subscribeForNotifications(
+        subscriptionDto,
+      );
+
+      expect(response.isUpdated).toEqual(true);
+      expect(filterRepository.findAndCount).toHaveBeenCalledWith({
+        userId: foundSubscription.userId,
+        isActive: true,
+      });
+      expect(filterRepository.update).toHaveBeenCalledWith(
+        {
+          userId: foundSubscription.userId,
+          isActive: true,
+        },
+        {
+          isActive: false,
+        },
+      );
+      expect(filterRepository.save).toHaveBeenCalledWith({
+        ...subscriptionDto.filter,
+        isActive: true,
+      });
+      expect(
+        filterRepository.saveFilterForNotificationSubscription,
+      ).not.toHaveBeenCalled();
+    });
   });
 
   describe('unsubscribeFromNotifications', () => {
