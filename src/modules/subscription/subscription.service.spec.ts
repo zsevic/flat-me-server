@@ -1,3 +1,4 @@
+import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import axios from 'axios';
@@ -11,7 +12,10 @@ const configService = {
   get: jest.fn(),
 };
 
-const filterRepository = {};
+const filterRepository = {
+  findOne: jest.fn(),
+  save: jest.fn(),
+};
 
 const notificationSubscriptionRepository = {
   findOne: jest.fn(),
@@ -21,6 +25,10 @@ const notificationSubscriptionRepository = {
 const userRepository = {
   update: jest.fn(),
 };
+
+jest.mock('typeorm-transactional-cls-hooked', () => ({
+  Transactional: () => () => ({}),
+}));
 
 describe('SubscriptionService', () => {
   let subscriptionService: SubscriptionService;
@@ -223,6 +231,56 @@ describe('SubscriptionService', () => {
         },
       );
       expect(response).toEqual(true);
+    });
+  });
+
+  describe('unsubscribeFromNotifications', () => {
+    it('should throw an error when token is not found', async () => {
+      await expect(
+        subscriptionService.unsubscribeFromNotifications('token'),
+      ).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('should throw an error when filter is not found', async () => {
+      jest
+        .spyOn(notificationSubscriptionRepository, 'findOne')
+        .mockResolvedValue({
+          userId: 'userid',
+        });
+
+      await expect(
+        subscriptionService.unsubscribeFromNotifications('token'),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('should unsubscribe notifications from the found filter', async () => {
+      const userId = 'userid';
+      const filter = {
+        advertiserTypes: [],
+        rentOrSale: 'rent',
+        municipalities: ['Palilula'],
+        structures: [],
+        furnished: ['semi-furnished'],
+        minPrice: 200,
+        maxPrice: 300,
+        userId,
+        isActive: true,
+        isVerified: true,
+      };
+      jest
+        .spyOn(notificationSubscriptionRepository, 'findOne')
+        .mockResolvedValue({
+          userId,
+        });
+      jest.spyOn(filterRepository, 'findOne').mockResolvedValue(filter);
+      const saveFilterSpy = jest.spyOn(filterRepository, 'save');
+
+      await subscriptionService.unsubscribeFromNotifications('token');
+
+      expect(saveFilterSpy).toHaveBeenCalledWith({
+        ...filter,
+        isActive: false,
+      });
     });
   });
 });
