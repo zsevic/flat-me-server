@@ -207,6 +207,7 @@ export class SubscriptionService {
           isActive: true,
         },
       );
+      let isUpdated = false;
       if (activeFiltersCounter !== 0) {
         await this.filterRepository.update(
           {
@@ -217,6 +218,7 @@ export class SubscriptionService {
             isActive: false,
           },
         );
+        isUpdated = true;
       }
       if (storedFilter) {
         await this.filterRepository.save({
@@ -231,7 +233,7 @@ export class SubscriptionService {
         storedNotificationSubscription.userId,
       );
       return {
-        isUpdated: true,
+        isUpdated,
       };
     } catch (error) {
       if (error instanceof UnprocessableEntityException) {

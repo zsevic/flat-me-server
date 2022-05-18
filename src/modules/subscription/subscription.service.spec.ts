@@ -1,4 +1,8 @@
-import { BadRequestException, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  UnauthorizedException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import axios from 'axios';
@@ -15,6 +19,7 @@ const configService = {
 };
 
 const filterRepository = {
+  createFilter: jest.fn(),
   findOne: jest.fn(),
   findAndCount: jest.fn(),
   save: jest.fn(),
@@ -312,6 +317,9 @@ describe('SubscriptionService', () => {
       jest
         .spyOn(notificationSubscriptionRepository, 'findOne')
         .mockResolvedValue(foundSubscription);
+      jest
+        .spyOn(filterRepository, 'createFilter')
+        .mockReturnValue(subscriptionDto.filter);
       jest.spyOn(filterRepository, 'findAndCount').mockResolvedValue([null, 0]);
 
       const response = await subscriptionService.subscribeForNotifications(
@@ -350,6 +358,9 @@ describe('SubscriptionService', () => {
       jest
         .spyOn(notificationSubscriptionRepository, 'findOne')
         .mockResolvedValue(foundSubscription);
+      jest
+        .spyOn(filterRepository, 'createFilter')
+        .mockReturnValue(subscriptionDto.filter);
       jest.spyOn(filterRepository, 'findAndCount').mockResolvedValue([null, 1]);
 
       const response = await subscriptionService.subscribeForNotifications(
@@ -364,6 +375,7 @@ describe('SubscriptionService', () => {
       expect(filterRepository.update).toHaveBeenCalledWith(
         {
           userId: foundSubscription.userId,
+          isActive: true,
         },
         {
           isActive: false,
@@ -372,6 +384,40 @@ describe('SubscriptionService', () => {
       expect(
         filterRepository.saveFilterForNotificationSubscription,
       ).toHaveBeenCalledWith(subscriptionDto.filter, foundSubscription.userId);
+    });
+
+    it('should throw an error when filter is already active', async () => {
+      const token = 'token';
+      const subscriptionDto = {
+        filter: {
+          advertiserTypes: [],
+          rentOrSale: RentOrSale.rent,
+          municipalities: ['Palilula'],
+          structures: [],
+          furnished: ['semi-furnished'],
+          minPrice: 200,
+          maxPrice: 300,
+        },
+        token,
+      };
+      const foundSubscription = {
+        token,
+        userId: 'userid',
+      };
+      jest
+        .spyOn(notificationSubscriptionRepository, 'findOne')
+        .mockResolvedValue(foundSubscription);
+      jest
+        .spyOn(filterRepository, 'createFilter')
+        .mockReturnValue(subscriptionDto.filter);
+      jest.spyOn(filterRepository, 'findOne').mockResolvedValue({
+        ...subscriptionDto.filter,
+        isActive: true,
+      });
+
+      await expect(
+        subscriptionService.subscribeForNotifications(subscriptionDto),
+      ).rejects.toThrow(UnprocessableEntityException);
     });
   });
 
