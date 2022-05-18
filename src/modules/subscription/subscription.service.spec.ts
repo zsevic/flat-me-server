@@ -16,8 +16,10 @@ const configService = {
 
 const filterRepository = {
   findOne: jest.fn(),
+  findAndCount: jest.fn(),
   save: jest.fn(),
   saveFilterForNotificationSubscription: jest.fn(),
+  update: jest.fn(),
 };
 
 const notificationSubscriptionRepository = {
@@ -287,6 +289,89 @@ describe('SubscriptionService', () => {
         subscriptionDto.token,
         newUser.id,
       );
+    });
+
+    it('should add first subscription', async () => {
+      const token = 'token';
+      const subscriptionDto = {
+        filter: {
+          advertiserTypes: [],
+          rentOrSale: RentOrSale.rent,
+          municipalities: ['Palilula'],
+          structures: [],
+          furnished: ['semi-furnished'],
+          minPrice: 200,
+          maxPrice: 300,
+        },
+        token,
+      };
+      const foundSubscription = {
+        token,
+        userId: 'userid',
+      };
+      jest
+        .spyOn(notificationSubscriptionRepository, 'findOne')
+        .mockResolvedValue(foundSubscription);
+      jest.spyOn(filterRepository, 'findAndCount').mockResolvedValue([null, 0]);
+
+      const response = await subscriptionService.subscribeForNotifications(
+        subscriptionDto,
+      );
+
+      expect(response.isUpdated).toEqual(false);
+      expect(filterRepository.findAndCount).toHaveBeenCalledWith({
+        userId: foundSubscription.userId,
+        isActive: true,
+      });
+      expect(filterRepository.update).not.toHaveBeenCalled();
+      expect(
+        filterRepository.saveFilterForNotificationSubscription,
+      ).toHaveBeenCalledWith(subscriptionDto.filter, foundSubscription.userId);
+    });
+
+    it('should update subscription for new filter', async () => {
+      const token = 'token';
+      const subscriptionDto = {
+        filter: {
+          advertiserTypes: [],
+          rentOrSale: RentOrSale.rent,
+          municipalities: ['Palilula'],
+          structures: [],
+          furnished: ['semi-furnished'],
+          minPrice: 200,
+          maxPrice: 300,
+        },
+        token,
+      };
+      const foundSubscription = {
+        token,
+        userId: 'userid',
+      };
+      jest
+        .spyOn(notificationSubscriptionRepository, 'findOne')
+        .mockResolvedValue(foundSubscription);
+      jest.spyOn(filterRepository, 'findAndCount').mockResolvedValue([null, 1]);
+
+      const response = await subscriptionService.subscribeForNotifications(
+        subscriptionDto,
+      );
+
+      expect(response.isUpdated).toEqual(true);
+      expect(filterRepository.findAndCount).toHaveBeenCalledWith({
+        userId: foundSubscription.userId,
+        isActive: true,
+      });
+      expect(filterRepository.update).toHaveBeenCalledWith(
+        {
+          userId: foundSubscription.userId,
+        },
+        {
+          isActive: false,
+        },
+      );
+      expect(
+        filterRepository.saveFilterForNotificationSubscription,
+      ).toHaveBeenCalledWith(subscriptionDto.filter, foundSubscription.userId);
     });
   });
 
