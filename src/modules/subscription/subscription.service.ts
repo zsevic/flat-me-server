@@ -160,30 +160,6 @@ export class SubscriptionService {
   }
 
   @Transactional()
-  async unsubscribeFromNotifications(token: string): Promise<void> {
-    const subscription = await this.notificationSubscriptionRepository.findOne({
-      token,
-    });
-    if (!subscription) throw new UnauthorizedException('Token is not valid');
-
-    const filter = await this.filterRepository.findOne({
-      where: {
-        userId: subscription.userId,
-        isActive: true,
-        isVerified: true,
-      },
-    });
-    if (!filter) {
-      throw new BadRequestException('Active filter is not found');
-    }
-
-    await this.filterRepository.save({
-      ...filter,
-      isActive: false,
-    });
-  }
-
-  @Transactional()
   async subscribeForNotifications(
     notificationSubscriptionDto: NotificationSubscriptionDto,
     subscriptionType = Subscription.FREE,
@@ -244,5 +220,29 @@ export class SubscriptionService {
         'Subscribing for notifications failed',
       );
     }
+  }
+
+  @Transactional()
+  async unsubscribeFromNotifications(token: string): Promise<void> {
+    const subscription = await this.notificationSubscriptionRepository.findOne({
+      token,
+    });
+    if (!subscription) throw new UnauthorizedException('Token is not valid');
+
+    const filter = await this.filterRepository.findOne({
+      where: {
+        userId: subscription.userId,
+        isActive: true,
+        isVerified: true,
+      },
+    });
+    if (!filter) {
+      throw new BadRequestException('Active filter is not found');
+    }
+
+    await this.filterRepository.save({
+      ...filter,
+      isActive: false,
+    });
   }
 }
