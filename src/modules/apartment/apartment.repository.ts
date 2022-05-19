@@ -206,6 +206,7 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
     }
 
     const apartments = await queryBuilder
+      .orderBy('apartment.createdAt', 'DESC')
       .take(filter.limitPerPage + 1)
       .getMany();
 
