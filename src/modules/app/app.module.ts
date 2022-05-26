@@ -64,6 +64,7 @@ import { ThrottlerStorageService } from 'modules/throttler-storage/throttler-sto
           SENDGRID_API_KEY: Joi.string().required(),
           SENDGRID_MAILING_ID: Joi.string().required(),
           SENTRY_DSN: Joi.string().required(),
+          SERVICE_ACCOUNT_KEY: Joi.string().required(),
         }),
       }),
     }),

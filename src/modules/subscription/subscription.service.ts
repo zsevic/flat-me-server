@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios, { AxiosResponse } from 'axios';
+import * as googleAuth from 'google-auth-library';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { isEnvironment } from 'common/utils';
 import { Filter } from 'modules/filter/filter.interface';
@@ -108,9 +109,11 @@ export class SubscriptionService {
     rentOrSale: string,
     newApartmentsLength: number,
   ) {
-    const authorizationHeader = `key=${this.configService.get(
-      'PUSH_NOTIFICATIONS_SERVER_KEY',
-    )}`;
+    const serviceAccountKeyEncoded = this.configService.get('SERVICE_ACCOUNT_KEY');
+    const serviceAccountKeyDecoded = JSON.parse(Buffer.from(serviceAccountKeyEncoded, 'base64').toString('ascii'));
+    const jwt = new googleAuth.JWT(serviceAccountKeyDecoded.client_email, null, serviceAccountKeyDecoded.private_key, ['https://www.googleapis.com/auth/firebase.messaging'], null);
+    const tokens = await jwt.authorize();
+    const authorizationHeader = `Bearer ${tokens.access_token}`;
     const clientUrl = this.configService.get('CLIENT_URL');
     const notificationUrl = `${clientUrl}/app?tab=2&foundCounter=${newApartmentsLength}`;
     const notificationIconUrl = `${clientUrl}/icons/icon-128x128.png`;
@@ -118,13 +121,18 @@ export class SubscriptionService {
     return axios.post(
       SUBSCRIPTION_URL,
       {
-        notification: {
-          title: 'Novi pronađeni stanovi',
-          body: generateNotificationText(rentOrSale, newApartmentsLength),
-          click_action: notificationUrl,
-          icon: notificationIconUrl,
+        message: {
+          notification: {
+            title: 'Novi pronađeni stanovi',
+            body: generateNotificationText(rentOrSale, newApartmentsLength),
+          },
+          webpush: {
+            notification: {
+              icon: notificationIconUrl,
+            },
+          },
+          token: subscription.token,
         },
-        to: subscription.token,
       },
       {
         headers: {
