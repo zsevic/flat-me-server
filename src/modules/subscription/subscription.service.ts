@@ -47,30 +47,6 @@ export class SubscriptionService {
     return subscription;
   }
 
-  private async handleNotificationFailure(
-    response: AxiosResponse,
-    subscription: NotificationSubscription,
-  ): Promise<void> {
-    const { results } = response.data;
-    const { userId } = subscription;
-    this.logger.log(`Sending push notification failed for user ${userId}`);
-    if (results?.[0]?.error === 'InvalidRegistration') {
-      this.logger.log(`Invalidating subscription for user ${userId}`);
-      await this.notificationSubscriptionRepository.update(
-        {
-          token: subscription.token,
-        },
-        {
-          isValid: false,
-        },
-      );
-      return;
-    }
-
-    // NotRegistered error
-    this.logger.error(results?.[0]?.error);
-  }
-
   async sendNotification(
     filter: Filter,
     newApartmentsLength: number,
@@ -94,14 +70,12 @@ export class SubscriptionService {
       filter.rentOrSale,
       newApartmentsLength,
     );
-    if (response.data?.success === 1) {
+    if (response.data?.name) {
       this.logger.log(
         `Push notification is successfully sent to user ${userId}`,
       );
       return true;
     }
-
-    await this.handleNotificationFailure(response, subscription);
   }
 
   async sendPushNotification(
@@ -109,9 +83,19 @@ export class SubscriptionService {
     rentOrSale: string,
     newApartmentsLength: number,
   ) {
-    const serviceAccountKeyEncoded = this.configService.get('SERVICE_ACCOUNT_KEY');
-    const serviceAccountKeyDecoded = JSON.parse(Buffer.from(serviceAccountKeyEncoded, 'base64').toString('ascii'));
-    const jwt = new googleAuth.JWT(serviceAccountKeyDecoded.client_email, null, serviceAccountKeyDecoded.private_key, ['https://www.googleapis.com/auth/firebase.messaging'], null);
+    const serviceAccountKeyEncoded = this.configService.get(
+      'SERVICE_ACCOUNT_KEY',
+    );
+    const serviceAccountKeyDecoded = JSON.parse(
+      Buffer.from(serviceAccountKeyEncoded, 'base64').toString('ascii'),
+    );
+    const jwt = new googleAuth.JWT(
+      serviceAccountKeyDecoded.client_email,
+      null,
+      serviceAccountKeyDecoded.private_key,
+      ['https://www.googleapis.com/auth/firebase.messaging'],
+      null,
+    );
     const tokens = await jwt.authorize();
     const authorizationHeader = `Bearer ${tokens.access_token}`;
     const clientUrl = this.configService.get('CLIENT_URL');
