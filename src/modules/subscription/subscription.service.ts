@@ -130,6 +130,9 @@ export class SubscriptionService {
             notification: {
               icon: notificationIconUrl,
             },
+            fcmOptions: {
+              link: notificationUrl,
+            },
           },
           token: subscription.token,
         },
