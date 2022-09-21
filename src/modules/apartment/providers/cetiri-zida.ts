@@ -14,6 +14,7 @@ import {
 } from './utils';
 import {
   apartmentStateInProgress,
+  apartmentStatusHidden,
   CETIRI_ZIDA_LOGO_URL,
 } from '../apartment.constants';
 import { Apartment } from '../apartment.interface';
@@ -143,9 +144,11 @@ export class CetiriZidaProvider implements Provider {
     const [, apartmentId] = id.split('_');
     try {
       const url = this.getApartmentUrl(apartmentId);
-      await axios.get(url, {
+      const response = await axios.get(url, {
         timeout: DEFAULT_TIMEOUT,
       });
+      const status = response?.data?.status;
+      if (status === apartmentStatusHidden) return true;
     } catch (error) {
       if (error.response?.status === HttpStatus.NOT_FOUND) return true;
       if (error.code === ECONNABORTED) {

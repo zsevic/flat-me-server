@@ -2,7 +2,10 @@ import { HttpStatus } from '@nestjs/common';
 import axios from 'axios';
 import { DEFAULT_TIMEOUT, ECONNABORTED } from 'common/constants';
 import { RentOrSale } from 'modules/filter/filter.enums';
-import { apartmentStateInProgress } from '../apartment.constants';
+import {
+  apartmentStateInProgress,
+  apartmentStatusHidden,
+} from '../apartment.constants';
 import { Apartment } from '../apartment.interface';
 import { AdvertiserType } from '../enums/advertiser-type.enum';
 import { CetiriZidaProvider } from './cetiri-zida';
@@ -192,6 +195,25 @@ describe('CetiriZida', () => {
       );
 
       expect(isApartmentInactive).toEqual(undefined);
+      expect(axios.get).toHaveBeenCalledWith(provider.getApartmentUrl(id), {
+        timeout: DEFAULT_TIMEOUT,
+      });
+    });
+
+    it('should return true when apartment ad is redirected to other ad', async () => {
+      const provider = new CetiriZidaProvider();
+      // @ts-ignore
+      axios.get.mockResolvedValue({
+        data: {
+          status: apartmentStatusHidden,
+        },
+      });
+
+      const isApartmentInactive = await provider.isApartmentInactive(
+        `${providerPrefix}_${id}`,
+      );
+
+      expect(isApartmentInactive).toEqual(true);
       expect(axios.get).toHaveBeenCalledWith(provider.getApartmentUrl(id), {
         timeout: DEFAULT_TIMEOUT,
       });
