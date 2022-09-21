@@ -5,13 +5,12 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import axios, { AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
 import { RentOrSale } from 'modules/filter/filter.enums';
 import { FilterRepository } from 'modules/filter/filter.repository';
 import { Subscription } from 'modules/user/subscription.enum';
 import { UserRepository } from 'modules/user/user.repository';
 import { NotificationSubscriptionRepository } from './notification-subscription.repository';
-import { SUBSCRIPTION_URL } from './subscription.constants';
 import { SubscriptionService } from './subscription.service';
 
 const configService = {

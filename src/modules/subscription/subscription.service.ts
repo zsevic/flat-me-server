@@ -8,7 +8,7 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 import * as googleAuth from 'google-auth-library';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { isEnvironment } from 'common/utils';
