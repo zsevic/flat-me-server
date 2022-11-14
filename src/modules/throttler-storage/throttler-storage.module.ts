@@ -8,7 +8,7 @@ import { ThrottlerStorageService } from './throttler-storage.service';
     ConfigModule.forRoot(),
     RedisModule.forRootAsync({
       useFactory: (configService: ConfigService) => {
-        const redisUrl = configService.get('REDIS_URL');
+        const redisUrl = configService.get('UPSTASH_REDIS_URL');
 
         return {
           config: {

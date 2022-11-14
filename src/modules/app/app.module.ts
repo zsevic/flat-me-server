@@ -57,7 +57,7 @@ import { ThrottlerStorageService } from 'modules/throttler-storage/throttler-sto
             .default('development')
             .required(),
           PORT: Joi.number().required(),
-          REDIS_URL: Joi.string()
+          UPSTASH_REDIS_URL: Joi.string()
             .uri()
             .required(),
           SENDGRID_API_KEY: Joi.string().required(),
