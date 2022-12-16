@@ -41,7 +41,7 @@ describe('FeedbackController (e2e)', () => {
         .expect(HttpStatus.BAD_REQUEST);
     });
 
-    it('should return 200 status code when feedback is sent', () => {
+    it.skip('should return 200 status code when feedback is sent', () => {
       return request(app.getHttpServer())
         .post('/feedbacks')
         .send({
