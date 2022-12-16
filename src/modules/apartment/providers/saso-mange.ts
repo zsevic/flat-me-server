@@ -27,6 +27,7 @@ export class SasoMangeProvider implements Provider {
   private readonly productsSort = 'newnessDesc';
   private readonly floorMap = {
     floor_basement: Floor.Basement,
+    floor_half_basment: Floor.SemiBasement,
     floor_low_ground_floor: Floor.LowGroundFloor,
     floor_ground_floor: Floor.GroundFloor,
     floor_high_floor: Floor.HighGroundFloor,
