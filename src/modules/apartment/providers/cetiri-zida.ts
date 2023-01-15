@@ -22,6 +22,7 @@ import { AdvertiserType } from '../enums/advertiser-type.enum';
 import { Floor } from '../enums/floor.enum';
 import { Furnished } from '../enums/furnished.enum';
 import { HeatingType } from '../enums/heating-type.enum';
+import { ApartmentRepository } from '../apartment.repository';
 
 export class CetiriZidaProvider implements Provider {
   private readonly providerName = 'cetiriZida';
@@ -140,7 +141,10 @@ export class CetiriZidaProvider implements Provider {
     return currentCount > 0 && data.total > currentCount;
   };
 
-  async isApartmentInactive(id: string): Promise<boolean> {
+  async isApartmentInactive(
+    id: string,
+    repository: ApartmentRepository,
+  ): Promise<boolean> {
     const [, apartmentId] = id.split('_');
     try {
       const url = this.getApartmentUrl(apartmentId);
@@ -148,6 +152,7 @@ export class CetiriZidaProvider implements Provider {
         timeout: DEFAULT_TIMEOUT,
       });
       const status = response?.data?.status;
+      await repository.updateCurrentPrice(id, response?.data.price);
       if (status === apartmentStatusHidden) return true;
     } catch (error) {
       if (error.response?.status === HttpStatus.NOT_FOUND) return true;

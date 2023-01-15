@@ -17,6 +17,7 @@ import { AdvertiserType } from '../enums/advertiser-type.enum';
 import { Floor } from '../enums/floor.enum';
 import { Furnished } from '../enums/furnished.enum';
 import { HeatingType } from '../enums/heating-type.enum';
+import { ApartmentRepository } from '../apartment.repository';
 
 export class CityExpertProvider implements Provider {
   private readonly providerName = 'cityExpert';
@@ -188,7 +189,10 @@ export class CityExpertProvider implements Provider {
 
   hasNextPage = (data): boolean => data.info.hasNextPage;
 
-  async isApartmentInactive(id: string): Promise<boolean> {
+  async isApartmentInactive(
+    id: string,
+    repository: ApartmentRepository,
+  ): Promise<boolean> {
     try {
       const [, apartmentId] = id.split('_');
 
@@ -196,6 +200,7 @@ export class CityExpertProvider implements Provider {
       const response = await axios.get(url, {
         timeout: DEFAULT_TIMEOUT,
       });
+      await repository.updateCurrentPrice(id, response.data.price);
       if (response.data.status !== apartmentStatusPublished) {
         return true;
       }

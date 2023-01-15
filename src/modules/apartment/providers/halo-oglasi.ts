@@ -21,6 +21,7 @@ import { AdvertiserType } from '../enums/advertiser-type.enum';
 import { Floor } from '../enums/floor.enum';
 import { Furnished } from '../enums/furnished.enum';
 import { HeatingType } from '../enums/heating-type.enum';
+import { ApartmentRepository } from '../apartment.repository';
 
 export class HaloOglasiProvider implements Provider {
   private readonly providerName = 'haloOglasi';
@@ -161,7 +162,11 @@ export class HaloOglasiProvider implements Provider {
 
   hasNextPage = (): boolean => true;
 
-  async isApartmentInactive(id: string, url?: string): Promise<boolean> {
+  async isApartmentInactive(
+    id: string,
+    repository: ApartmentRepository,
+    url?: string,
+  ): Promise<boolean> {
     try {
       if (!url) {
         throw new Error(`Url for apartment ${id} is missing`);
@@ -188,6 +193,10 @@ export class HaloOglasiProvider implements Provider {
         )
       )
         return true;
+      await repository.updateCurrentPrice(
+        id,
+        quidditaEnvironment.CurrentClassified.cena_d,
+      );
     } catch (error) {
       if (error.response?.status === HttpStatus.NOT_FOUND) return true;
       if ([ECONNABORTED, ECONNRESET].includes(error.code)) {

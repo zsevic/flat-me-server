@@ -217,6 +217,15 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
     await this.save(apartments);
   }
 
+  async updateCurrentPrice(id: string, price: number): Promise<void> {
+    await this.update(
+      { id },
+      {
+        currentPrice: price,
+      },
+    );
+  }
+
   async updateLastCheckedDatetime(apartmentId: string): Promise<void> {
     const apartment = await this.findOne({ id: apartmentId });
     if (!apartment) {
