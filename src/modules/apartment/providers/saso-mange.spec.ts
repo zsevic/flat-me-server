@@ -11,6 +11,9 @@ import { HeatingType } from '../enums/heating-type.enum';
 
 jest.mock('axios');
 jest.mock('jsdom');
+const apartmentRepository = {
+  updateCurrentPrice: jest.fn(),
+};
 
 describe('SasoMange', () => {
   describe('createRequestConfig', () => {
@@ -170,7 +173,11 @@ describe('SasoMange', () => {
     it('should return undefined when url is missing', async () => {
       const provider = new SasoMangeProvider();
 
-      const isApartmentInactive = await provider.isApartmentInactive('id');
+      const isApartmentInactive = await provider.isApartmentInactive(
+        'id',
+        // @ts-ignore
+        apartmentRepository,
+      );
 
       expect(isApartmentInactive).toEqual(undefined);
     });
@@ -186,6 +193,8 @@ describe('SasoMange', () => {
 
       const isApartmentInactive = await provider.isApartmentInactive(
         `${providerPrefix}_${id}`,
+        // @ts-ignore
+        apartmentRepository,
         url,
       );
 
@@ -204,6 +213,8 @@ describe('SasoMange', () => {
 
       const isApartmentInactive = await provider.isApartmentInactive(
         `${providerPrefix}_${id}`,
+        // @ts-ignore
+        apartmentRepository,
         url,
       );
 
@@ -222,6 +233,8 @@ describe('SasoMange', () => {
 
       const isApartmentInactive = await provider.isApartmentInactive(
         `${providerPrefix}_${id}`,
+        // @ts-ignore
+        apartmentRepository,
         url,
       );
 
@@ -238,6 +251,8 @@ describe('SasoMange', () => {
 
       const isApartmentInactive = await provider.isApartmentInactive(
         `${providerPrefix}_${id}`,
+        // @ts-ignore
+        apartmentRepository,
         url,
       );
 
@@ -270,6 +285,8 @@ describe('SasoMange', () => {
 
       const isApartmentInactive = await provider.isApartmentInactive(
         `${providerPrefix}_${id}`,
+        // @ts-ignore
+        apartmentRepository,
         url,
       );
 
@@ -289,6 +306,8 @@ describe('SasoMange', () => {
 
       const isApartmentInactive = await provider.isApartmentInactive(
         `${providerPrefix}_${id}`,
+        // @ts-ignore
+        apartmentRepository,
         url,
       );
 
@@ -313,6 +332,8 @@ describe('SasoMange', () => {
 
       const isApartmentInactive = await provider.isApartmentInactive(
         `${providerPrefix}_${id}`,
+        // @ts-ignore
+        apartmentRepository,
         url,
       );
 
@@ -345,6 +366,8 @@ describe('SasoMange', () => {
 
       const isApartmentInactive = await provider.isApartmentInactive(
         `${providerPrefix}_${id}`,
+        // @ts-ignore
+        apartmentRepository,
         url,
       );
 

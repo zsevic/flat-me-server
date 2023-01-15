@@ -7,10 +7,14 @@ import {
   apartmentStatusNotAvailable,
   apartmentStatusReserved,
 } from '../apartment.constants';
+import { ApartmentRepository } from '../apartment.repository';
 import { AdvertiserType } from '../enums/advertiser-type.enum';
 import { CityExpertProvider } from './city-expert';
 
 jest.mock('axios');
+const apartmentRepository = {
+  updateCurrentPrice: jest.fn(),
+};
 
 describe('CityExpert', () => {
   describe('createRequestConfig', () => {
@@ -225,7 +229,11 @@ describe('CityExpert', () => {
 
     it('should return undefined for invalid id', async () => {
       const provider = new CityExpertProvider();
-      const isApartmentInactive = await provider.isApartmentInactive('id');
+      const isApartmentInactive = await provider.isApartmentInactive(
+        'id',
+        // @ts-ignore
+        apartmentRepository,
+      );
 
       expect(isApartmentInactive).toEqual(undefined);
     });
@@ -241,6 +249,8 @@ describe('CityExpert', () => {
 
       const isApartmentInactive = await provider.isApartmentInactive(
         `${providerPrefix}_${id}`,
+        // @ts-ignore
+        apartmentRepository,
       );
 
       expect(isApartmentInactive).toEqual(true);
@@ -260,6 +270,8 @@ describe('CityExpert', () => {
 
       const isApartmentInactive = await provider.isApartmentInactive(
         `${providerPrefix}_${id}`,
+        // @ts-ignore
+        apartmentRepository,
       );
 
       expect(isApartmentInactive).toEqual(true);
@@ -279,6 +291,8 @@ describe('CityExpert', () => {
 
       const isApartmentInactive = await provider.isApartmentInactive(
         `${providerPrefix}_${id}`,
+        // @ts-ignore
+        apartmentRepository,
       );
 
       expect(isApartmentInactive).toEqual(true);
@@ -298,6 +312,8 @@ describe('CityExpert', () => {
 
       const isApartmentInactive = await provider.isApartmentInactive(
         `${providerPrefix}_${id}`,
+        // @ts-ignore
+        apartmentRepository,
       );
 
       expect(isApartmentInactive).toEqual(true);
@@ -315,6 +331,8 @@ describe('CityExpert', () => {
 
       const isApartmentInactive = await provider.isApartmentInactive(
         `${providerPrefix}_${id}`,
+        // @ts-ignore
+        apartmentRepository,
       );
 
       expect(isApartmentInactive).toEqual(undefined);

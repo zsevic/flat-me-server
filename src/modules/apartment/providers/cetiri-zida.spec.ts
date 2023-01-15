@@ -11,6 +11,9 @@ import { AdvertiserType } from '../enums/advertiser-type.enum';
 import { CetiriZidaProvider } from './cetiri-zida';
 
 jest.mock('axios');
+const apartmentRepository = {
+  updateCurrentPrice: jest.fn(),
+};
 
 describe('CetiriZida', () => {
   describe('createRequestConfig', () => {
@@ -129,7 +132,11 @@ describe('CetiriZida', () => {
       // @ts-ignore
       axios.get.mockRejectedValue('not valid');
 
-      const isApartmentInactive = await provider.isApartmentInactive('id');
+      const isApartmentInactive = await provider.isApartmentInactive(
+        'id',
+        // @ts-ignore
+        apartmentRepository,
+      );
 
       expect(isApartmentInactive).toEqual(undefined);
     });
@@ -145,6 +152,8 @@ describe('CetiriZida', () => {
 
       const isApartmentInactive = await provider.isApartmentInactive(
         `${providerPrefix}_${id}`,
+        // @ts-ignore
+        apartmentRepository,
       );
 
       expect(isApartmentInactive).toEqual(true);
@@ -162,6 +171,8 @@ describe('CetiriZida', () => {
 
       const isApartmentInactive = await provider.isApartmentInactive(
         `${providerPrefix}_${id}`,
+        // @ts-ignore
+        apartmentRepository,
       );
 
       expect(isApartmentInactive).toEqual(undefined);
@@ -177,6 +188,8 @@ describe('CetiriZida', () => {
 
       const isApartmentInactive = await provider.isApartmentInactive(
         `${providerPrefix}_${id}`,
+        // @ts-ignore
+        apartmentRepository,
       );
 
       expect(isApartmentInactive).toEqual(undefined);
@@ -192,6 +205,8 @@ describe('CetiriZida', () => {
 
       const isApartmentInactive = await provider.isApartmentInactive(
         `${providerPrefix}_${id}`,
+        // @ts-ignore
+        apartmentRepository,
       );
 
       expect(isApartmentInactive).toEqual(undefined);
@@ -211,6 +226,8 @@ describe('CetiriZida', () => {
 
       const isApartmentInactive = await provider.isApartmentInactive(
         `${providerPrefix}_${id}`,
+        // @ts-ignore
+        apartmentRepository,
       );
 
       expect(isApartmentInactive).toEqual(true);

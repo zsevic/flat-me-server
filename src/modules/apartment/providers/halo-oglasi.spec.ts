@@ -12,6 +12,9 @@ import { AdvertiserType } from '../enums/advertiser-type.enum';
 
 jest.mock('axios');
 jest.mock('jsdom');
+const apartmentRepository = {
+  updateCurrentPrice: jest.fn(),
+};
 
 describe('HaloOglasi', () => {
   describe('createRequestConfig', () => {
@@ -188,7 +191,10 @@ describe('HaloOglasi', () => {
     it('should return undefined when url is missing', async () => {
       const provider = new HaloOglasiProvider();
 
-      const isApartmentInactive = await provider.isApartmentInactive('id');
+      const isApartmentInactive = await provider.isApartmentInactive('id',
+      // @ts-ignore
+      apartmentRepository,
+      );
 
       expect(isApartmentInactive).toEqual(undefined);
     });
@@ -204,6 +210,8 @@ describe('HaloOglasi', () => {
 
       const isApartmentInactive = await provider.isApartmentInactive(
         `${providerPrefix}_${id}`,
+        // @ts-ignore
+        apartmentRepository,
         url,
       );
 
@@ -222,6 +230,8 @@ describe('HaloOglasi', () => {
 
       const isApartmentInactive = await provider.isApartmentInactive(
         `${providerPrefix}_${id}`,
+        // @ts-ignore
+        apartmentRepository,
         url,
       );
 
@@ -240,6 +250,8 @@ describe('HaloOglasi', () => {
 
       const isApartmentInactive = await provider.isApartmentInactive(
         `${providerPrefix}_${id}`,
+        // @ts-ignore
+        apartmentRepository,
         url,
       );
 
@@ -256,6 +268,8 @@ describe('HaloOglasi', () => {
 
       const isApartmentInactive = await provider.isApartmentInactive(
         `${providerPrefix}_${id}`,
+        // @ts-ignore
+        apartmentRepository,
         url,
       );
 
@@ -272,6 +286,8 @@ describe('HaloOglasi', () => {
 
       const isApartmentInactive = await provider.isApartmentInactive(
         `${providerPrefix}_${id}`,
+        // @ts-ignore
+        apartmentRepository,
         url,
       );
 
@@ -302,6 +318,8 @@ describe('HaloOglasi', () => {
 
       const isApartmentInactive = await provider.isApartmentInactive(
         `${providerPrefix}_${id}`,
+        // @ts-ignore
+        apartmentRepository,
         url,
       );
 
@@ -321,6 +339,8 @@ describe('HaloOglasi', () => {
 
       const isApartmentInactive = await provider.isApartmentInactive(
         `${providerPrefix}_${id}`,
+        // @ts-ignore
+        apartmentRepository,
         url,
       );
 
@@ -351,6 +371,8 @@ describe('HaloOglasi', () => {
 
       const isApartmentInactive = await provider.isApartmentInactive(
         `${providerPrefix}_${id}`,
+        // @ts-ignore
+        apartmentRepository,
         url,
       );
 
@@ -377,6 +399,8 @@ describe('HaloOglasi', () => {
 
       const isApartmentInactive = await provider.isApartmentInactive(
         `${providerPrefix}_${id}`,
+        // @ts-ignore
+        apartmentRepository,
         url,
       );
 
@@ -401,6 +425,8 @@ describe('HaloOglasi', () => {
 
       const isApartmentInactive = await provider.isApartmentInactive(
         `${providerPrefix}_${id}`,
+        // @ts-ignore
+        apartmentRepository,
         url,
       );
 
