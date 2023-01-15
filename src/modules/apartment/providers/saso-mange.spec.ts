@@ -165,7 +165,7 @@ describe('SasoMange', () => {
     });
   });
 
-  describe('isApartmentInactive', () => {
+  describe('updateCurrentPriceAndReturnIsApartmentInactive', () => {
     const id = 'id';
     const url = 'url';
     const providerPrefix = 'sasoMange';
@@ -262,8 +262,9 @@ describe('SasoMange', () => {
       });
     });
 
-    it('should return undefined when apartment is active', async () => {
+    it('should return undefined when apartment is active and update the current price', async () => {
       const provider = new SasoMangeProvider();
+      const currentPrice = 500;
       // @ts-ignore
       axios.get.mockResolvedValue({
         data: 'html',
@@ -275,16 +276,18 @@ describe('SasoMange', () => {
           document: {
             getElementById() {
               return {
-                value: `{"product":{"status": "${ApartmentStatus.Active}"}}`,
+                value: `{"product":{"status": "${ApartmentStatus.Active}", "price":{"value":${currentPrice}}}}`,
               };
             },
           },
         },
       };
       jsdom.JSDOM.mockReturnValue(dom);
+      const apartmentRepositorySpy = jest.spyOn(apartmentRepository, 'updateCurrentPrice');
 
+      const apartmentId = `${providerPrefix}_${id}`;
       const isApartmentInactive = await provider.updateCurrentPriceAndReturnIsApartmentInactive(
-        `${providerPrefix}_${id}`,
+        apartmentId,
         // @ts-ignore
         apartmentRepository,
         url,
@@ -294,6 +297,7 @@ describe('SasoMange', () => {
       expect(axios.get).toHaveBeenCalledWith(url, {
         timeout: DEFAULT_TIMEOUT,
       });
+      expect(apartmentRepositorySpy).toBeCalledWith(apartmentId, currentPrice);
     });
 
     it('should return true when apartment ad is redirected to other ad', async () => {

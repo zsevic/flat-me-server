@@ -214,11 +214,11 @@ export class SasoMangeProvider implements Provider {
       const apartmentData = this.getApartmentDataFromDom(dom);
       if (!apartmentData) return;
 
-      await repository.updateCurrentPrice(
-        id,
-        apartmentData.product.price.value,
-      );
       if (apartmentData.product.status === ApartmentStatus.Active) {
+        await repository.updateCurrentPrice(
+          id,
+          apartmentData.product.price.value,
+        );  
         return;
       }
     } catch (error) {
