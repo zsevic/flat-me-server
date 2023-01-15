@@ -89,6 +89,12 @@ export class ApartmentEntity extends BaseEntity {
   price: number;
 
   @Column({
+    name: 'current_price',
+    nullable: true,
+  })
+  currentPrice?: number;
+
+  @Column({
     name: 'rent_or_sale',
   })
   rentOrSale: string;

@@ -36,6 +36,8 @@ export class Apartment {
 
   price: number;
 
+  currentPrice?: number;
+
   rentOrSale: string;
 
   size: number;
