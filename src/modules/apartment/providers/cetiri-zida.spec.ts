@@ -123,7 +123,7 @@ describe('CetiriZida', () => {
     });
   });
 
-  describe('isApartmentInactive', () => {
+  describe('updateCurrentPriceAndReturnIsApartmentInactive', () => {
     const id = 'id';
     const providerPrefix = 'cetiriZida';
 
@@ -198,13 +198,20 @@ describe('CetiriZida', () => {
       });
     });
 
-    it('should return undefined when apartment is active', async () => {
+    it('should update the current price and return undefined when apartment is active', async () => {
       const provider = new CetiriZidaProvider();
+      const currentPrice = 500;
       // @ts-ignore
-      axios.get.mockResolvedValue(undefined);
+      axios.get.mockResolvedValue({
+        data: {
+          price: currentPrice,
+        },
+      });
+      const apartmentId = `${providerPrefix}_${id}`;
+      const apartmentRepositorySpy = jest.spyOn(apartmentRepository, 'updateCurrentPrice');
 
       const isApartmentInactive = await provider.updateCurrentPriceAndReturnIsApartmentInactive(
-        `${providerPrefix}_${id}`,
+        apartmentId,
         // @ts-ignore
         apartmentRepository,
       );
@@ -213,6 +220,7 @@ describe('CetiriZida', () => {
       expect(axios.get).toHaveBeenCalledWith(provider.getApartmentUrl(id), {
         timeout: DEFAULT_TIMEOUT,
       });
+      expect(apartmentRepositorySpy).toBeCalledWith(apartmentId, currentPrice);
     });
 
     it('should return true when apartment ad is redirected to other ad', async () => {

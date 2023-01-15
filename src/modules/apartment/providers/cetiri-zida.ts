@@ -152,8 +152,8 @@ export class CetiriZidaProvider implements Provider {
         timeout: DEFAULT_TIMEOUT,
       });
       const status = response?.data?.status;
-      await repository.updateCurrentPrice(id, response?.data.price);
       if (status === apartmentStatusHidden) return true;
+      await repository.updateCurrentPrice(id, response?.data.price);
     } catch (error) {
       if (error.response?.status === HttpStatus.NOT_FOUND) return true;
       if (error.code === ECONNABORTED) {
