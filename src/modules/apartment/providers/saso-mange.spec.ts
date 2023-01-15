@@ -262,7 +262,7 @@ describe('SasoMange', () => {
       });
     });
 
-    it('should return undefined when apartment is active and update the current price', async () => {
+    it('should update the current price and return undefined when apartment is active', async () => {
       const provider = new SasoMangeProvider();
       const currentPrice = 500;
       // @ts-ignore

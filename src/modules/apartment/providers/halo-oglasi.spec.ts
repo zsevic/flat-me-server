@@ -183,7 +183,7 @@ describe('HaloOglasi', () => {
     });
   });
 
-  describe('isApartmentInactive', () => {
+  describe('updateCurrentPriceAndReturnIsApartmentInactive', () => {
     const id = 'id';
     const url = 'url';
     const providerPrefix = 'haloOglasi';
@@ -279,22 +279,39 @@ describe('HaloOglasi', () => {
       });
     });
 
-    it('should return undefined when apartment is active', async () => {
+    it('should update the current price and return undefined when apartment is active', async () => {
       const provider = new HaloOglasiProvider();
+      const currentPrice = 500;
+      const apartmentId = `${providerPrefix}_${id}`;
       // @ts-ignore
-      axios.get.mockResolvedValue(undefined);
+      axios.get.mockResolvedValue({
+        data: 'html',
+        request: { res: { responseUrl: url } },
+      });
+      const dom = {
+        window: {
+          QuidditaEnvironment: {
+            CurrentClassified: {
+              cena_d: currentPrice,
+            },
+          },
+        },
+      };
+      jsdom.JSDOM.mockReturnValue(dom);
 
       const isApartmentInactive = await provider.updateCurrentPriceAndReturnIsApartmentInactive(
-        `${providerPrefix}_${id}`,
+        apartmentId,
         // @ts-ignore
         apartmentRepository,
         url,
       );
+      const apartmentRepositorySpy = jest.spyOn(apartmentRepository, 'updateCurrentPrice');
 
       expect(isApartmentInactive).toEqual(undefined);
       expect(axios.get).toHaveBeenCalledWith(url, {
         timeout: DEFAULT_TIMEOUT,
       });
+      expect(apartmentRepositorySpy).toBeCalledWith(apartmentId, currentPrice);
     });
 
     it('should return true when apartment ad is paused', async () => {
