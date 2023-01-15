@@ -200,10 +200,10 @@ export class CityExpertProvider implements Provider {
       const response = await axios.get(url, {
         timeout: DEFAULT_TIMEOUT,
       });
-      await repository.updateCurrentPrice(id, response.data.price);
       if (response.data.status !== apartmentStatusPublished) {
         return true;
       }
+      await repository.updateCurrentPrice(id, response.data.price);
     } catch (error) {
       if (error.response?.status === HttpStatus.NOT_FOUND) return true;
       if (error.code === ECONNABORTED) {

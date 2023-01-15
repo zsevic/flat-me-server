@@ -5,6 +5,7 @@ import { RentOrSale } from 'modules/filter/filter.enums';
 import {
   apartmentStatusFinished,
   apartmentStatusNotAvailable,
+  apartmentStatusPublished,
   apartmentStatusReserved,
 } from '../apartment.constants';
 import { ApartmentRepository } from '../apartment.repository';
@@ -223,7 +224,7 @@ describe('CityExpert', () => {
     });
   });
 
-  describe('isApartmentInactive', () => {
+  describe('updateCurrentPriceAndReturnIsApartmentInactive', () => {
     const id = '3546-BR';
     const providerPrefix = 'cityExpert';
 
@@ -320,6 +321,32 @@ describe('CityExpert', () => {
       expect(axios.get).toHaveBeenCalledWith(provider.getApartmentUrl(id), {
         timeout: DEFAULT_TIMEOUT,
       });
+    });
+
+    it('should update the current price and return undefined when apartment is active', async () => {
+      const provider = new CityExpertProvider();
+      const currentPrice = 500;
+      // @ts-ignore
+      axios.get.mockResolvedValue({
+        data: {
+          status: apartmentStatusPublished,
+          price: currentPrice,
+        },
+      });      
+      const apartmentId = `${providerPrefix}_${id}`;
+      const apartmentRepositorySpy = jest.spyOn(apartmentRepository, 'updateCurrentPrice');
+
+      const isApartmentInactive = await provider.updateCurrentPriceAndReturnIsApartmentInactive(
+        apartmentId,
+        // @ts-ignore
+        apartmentRepository,
+      );
+
+      expect(isApartmentInactive).toEqual(undefined);
+      expect(axios.get).toHaveBeenCalledWith(provider.getApartmentUrl(id), {
+        timeout: DEFAULT_TIMEOUT,
+      });
+      expect(apartmentRepositorySpy).toBeCalledWith(apartmentId, currentPrice);
     });
 
     it('should return undefined when request connection is aborted', async () => {
