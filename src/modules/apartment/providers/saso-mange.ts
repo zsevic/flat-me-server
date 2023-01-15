@@ -189,7 +189,7 @@ export class SasoMangeProvider implements Provider {
     );
   };
 
-  async isApartmentInactive(
+  async updateCurrentPriceAndReturnIsApartmentInactive(
     id: string,
     repository: ApartmentRepository,
     url?: string,

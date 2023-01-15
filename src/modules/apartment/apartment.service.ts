@@ -237,7 +237,7 @@ export class ApartmentService {
     try {
       const [providerName] = id.split('_');
       const provider = this.baseProvider.createProvider(providerName);
-      return provider.isApartmentInactive(id, this.apartmentRepository, url);
+      return provider.updateCurrentPriceAndReturnIsApartmentInactive(id, this.apartmentRepository, url);
     } catch (error) {
       this.logger.error(error);
       return false;

@@ -229,7 +229,7 @@ describe('CityExpert', () => {
 
     it('should return undefined for invalid id', async () => {
       const provider = new CityExpertProvider();
-      const isApartmentInactive = await provider.isApartmentInactive(
+      const isApartmentInactive = await provider.updateCurrentPriceAndReturnIsApartmentInactive(
         'id',
         // @ts-ignore
         apartmentRepository,
@@ -247,7 +247,7 @@ describe('CityExpert', () => {
         },
       });
 
-      const isApartmentInactive = await provider.isApartmentInactive(
+      const isApartmentInactive = await provider.updateCurrentPriceAndReturnIsApartmentInactive(
         `${providerPrefix}_${id}`,
         // @ts-ignore
         apartmentRepository,
@@ -268,7 +268,7 @@ describe('CityExpert', () => {
         },
       });
 
-      const isApartmentInactive = await provider.isApartmentInactive(
+      const isApartmentInactive = await provider.updateCurrentPriceAndReturnIsApartmentInactive(
         `${providerPrefix}_${id}`,
         // @ts-ignore
         apartmentRepository,
@@ -289,7 +289,7 @@ describe('CityExpert', () => {
         },
       });
 
-      const isApartmentInactive = await provider.isApartmentInactive(
+      const isApartmentInactive = await provider.updateCurrentPriceAndReturnIsApartmentInactive(
         `${providerPrefix}_${id}`,
         // @ts-ignore
         apartmentRepository,
@@ -310,7 +310,7 @@ describe('CityExpert', () => {
         },
       });
 
-      const isApartmentInactive = await provider.isApartmentInactive(
+      const isApartmentInactive = await provider.updateCurrentPriceAndReturnIsApartmentInactive(
         `${providerPrefix}_${id}`,
         // @ts-ignore
         apartmentRepository,
@@ -329,7 +329,7 @@ describe('CityExpert', () => {
         code: ECONNABORTED,
       });
 
-      const isApartmentInactive = await provider.isApartmentInactive(
+      const isApartmentInactive = await provider.updateCurrentPriceAndReturnIsApartmentInactive(
         `${providerPrefix}_${id}`,
         // @ts-ignore
         apartmentRepository,

@@ -141,7 +141,7 @@ export class CetiriZidaProvider implements Provider {
     return currentCount > 0 && data.total > currentCount;
   };
 
-  async isApartmentInactive(
+  async updateCurrentPriceAndReturnIsApartmentInactive(
     id: string,
     repository: ApartmentRepository,
   ): Promise<boolean> {

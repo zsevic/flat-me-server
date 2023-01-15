@@ -191,7 +191,7 @@ describe('HaloOglasi', () => {
     it('should return undefined when url is missing', async () => {
       const provider = new HaloOglasiProvider();
 
-      const isApartmentInactive = await provider.isApartmentInactive('id',
+      const isApartmentInactive = await provider.updateCurrentPriceAndReturnIsApartmentInactive('id',
       // @ts-ignore
       apartmentRepository,
       );
@@ -208,7 +208,7 @@ describe('HaloOglasi', () => {
         },
       });
 
-      const isApartmentInactive = await provider.isApartmentInactive(
+      const isApartmentInactive = await provider.updateCurrentPriceAndReturnIsApartmentInactive(
         `${providerPrefix}_${id}`,
         // @ts-ignore
         apartmentRepository,
@@ -228,7 +228,7 @@ describe('HaloOglasi', () => {
         code: ECONNABORTED,
       });
 
-      const isApartmentInactive = await provider.isApartmentInactive(
+      const isApartmentInactive = await provider.updateCurrentPriceAndReturnIsApartmentInactive(
         `${providerPrefix}_${id}`,
         // @ts-ignore
         apartmentRepository,
@@ -248,7 +248,7 @@ describe('HaloOglasi', () => {
         code: ECONNRESET,
       });
 
-      const isApartmentInactive = await provider.isApartmentInactive(
+      const isApartmentInactive = await provider.updateCurrentPriceAndReturnIsApartmentInactive(
         `${providerPrefix}_${id}`,
         // @ts-ignore
         apartmentRepository,
@@ -266,7 +266,7 @@ describe('HaloOglasi', () => {
       // @ts-ignore
       axios.get.mockRejectedValue(new Error('error'));
 
-      const isApartmentInactive = await provider.isApartmentInactive(
+      const isApartmentInactive = await provider.updateCurrentPriceAndReturnIsApartmentInactive(
         `${providerPrefix}_${id}`,
         // @ts-ignore
         apartmentRepository,
@@ -284,7 +284,7 @@ describe('HaloOglasi', () => {
       // @ts-ignore
       axios.get.mockResolvedValue(undefined);
 
-      const isApartmentInactive = await provider.isApartmentInactive(
+      const isApartmentInactive = await provider.updateCurrentPriceAndReturnIsApartmentInactive(
         `${providerPrefix}_${id}`,
         // @ts-ignore
         apartmentRepository,
@@ -316,7 +316,7 @@ describe('HaloOglasi', () => {
       };
       jsdom.JSDOM.mockReturnValue(dom);
 
-      const isApartmentInactive = await provider.isApartmentInactive(
+      const isApartmentInactive = await provider.updateCurrentPriceAndReturnIsApartmentInactive(
         `${providerPrefix}_${id}`,
         // @ts-ignore
         apartmentRepository,
@@ -337,7 +337,7 @@ describe('HaloOglasi', () => {
         request: { res: { responseUrl: 'redirected-url' } },
       });
 
-      const isApartmentInactive = await provider.isApartmentInactive(
+      const isApartmentInactive = await provider.updateCurrentPriceAndReturnIsApartmentInactive(
         `${providerPrefix}_${id}`,
         // @ts-ignore
         apartmentRepository,
@@ -369,7 +369,7 @@ describe('HaloOglasi', () => {
       };
       jsdom.JSDOM.mockReturnValue(dom);
 
-      const isApartmentInactive = await provider.isApartmentInactive(
+      const isApartmentInactive = await provider.updateCurrentPriceAndReturnIsApartmentInactive(
         `${providerPrefix}_${id}`,
         // @ts-ignore
         apartmentRepository,
@@ -397,7 +397,7 @@ describe('HaloOglasi', () => {
       };
       jsdom.JSDOM.mockReturnValue(dom);
 
-      const isApartmentInactive = await provider.isApartmentInactive(
+      const isApartmentInactive = await provider.updateCurrentPriceAndReturnIsApartmentInactive(
         `${providerPrefix}_${id}`,
         // @ts-ignore
         apartmentRepository,
@@ -423,7 +423,7 @@ describe('HaloOglasi', () => {
       };
       jsdom.JSDOM.mockReturnValue(dom);
 
-      const isApartmentInactive = await provider.isApartmentInactive(
+      const isApartmentInactive = await provider.updateCurrentPriceAndReturnIsApartmentInactive(
         `${providerPrefix}_${id}`,
         // @ts-ignore
         apartmentRepository,

@@ -14,7 +14,7 @@ export interface Provider {
   getApartmentUrl?(apartmentId: string): string;
   getResults(data, filter?: FilterDto);
   hasNextPage(data, pageNumber?: number): boolean;
-  isApartmentInactive(
+  updateCurrentPriceAndReturnIsApartmentInactive(
     id: string,
     repository: ApartmentRepository,
     url?: string,

@@ -162,7 +162,7 @@ export class HaloOglasiProvider implements Provider {
 
   hasNextPage = (): boolean => true;
 
-  async isApartmentInactive(
+  async updateCurrentPriceAndReturnIsApartmentInactive(
     id: string,
     repository: ApartmentRepository,
     url?: string,

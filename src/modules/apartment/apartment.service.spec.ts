@@ -277,7 +277,7 @@ describe('ApartmentService', () => {
         .spyOn(baseProvider, 'createProvider')
         .mockReturnValue(cetiriZidaProvider);
       jest
-        .spyOn(cetiriZidaProvider, 'isApartmentInactive')
+        .spyOn(cetiriZidaProvider, 'updateCurrentPriceAndReturnIsApartmentInactive')
         .mockResolvedValue(false);
 
       const isApartmentInactive = await apartmentService.isApartmentInactive(
@@ -312,7 +312,7 @@ describe('ApartmentService', () => {
         .spyOn(baseProvider, 'createProvider')
         .mockReturnValue(cetiriZidaProvider);
       jest
-        .spyOn(cetiriZidaProvider, 'isApartmentInactive')
+        .spyOn(cetiriZidaProvider, 'updateCurrentPriceAndReturnIsApartmentInactive')
         .mockResolvedValue(true);
 
       const isApartmentInactive = await apartmentService.isApartmentInactive(

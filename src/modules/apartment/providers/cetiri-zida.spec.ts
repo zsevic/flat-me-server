@@ -132,7 +132,7 @@ describe('CetiriZida', () => {
       // @ts-ignore
       axios.get.mockRejectedValue('not valid');
 
-      const isApartmentInactive = await provider.isApartmentInactive(
+      const isApartmentInactive = await provider.updateCurrentPriceAndReturnIsApartmentInactive(
         'id',
         // @ts-ignore
         apartmentRepository,
@@ -150,7 +150,7 @@ describe('CetiriZida', () => {
         },
       });
 
-      const isApartmentInactive = await provider.isApartmentInactive(
+      const isApartmentInactive = await provider.updateCurrentPriceAndReturnIsApartmentInactive(
         `${providerPrefix}_${id}`,
         // @ts-ignore
         apartmentRepository,
@@ -169,7 +169,7 @@ describe('CetiriZida', () => {
         code: ECONNABORTED,
       });
 
-      const isApartmentInactive = await provider.isApartmentInactive(
+      const isApartmentInactive = await provider.updateCurrentPriceAndReturnIsApartmentInactive(
         `${providerPrefix}_${id}`,
         // @ts-ignore
         apartmentRepository,
@@ -186,7 +186,7 @@ describe('CetiriZida', () => {
       // @ts-ignore
       axios.get.mockRejectedValue(new Error('error'));
 
-      const isApartmentInactive = await provider.isApartmentInactive(
+      const isApartmentInactive = await provider.updateCurrentPriceAndReturnIsApartmentInactive(
         `${providerPrefix}_${id}`,
         // @ts-ignore
         apartmentRepository,
@@ -203,7 +203,7 @@ describe('CetiriZida', () => {
       // @ts-ignore
       axios.get.mockResolvedValue(undefined);
 
-      const isApartmentInactive = await provider.isApartmentInactive(
+      const isApartmentInactive = await provider.updateCurrentPriceAndReturnIsApartmentInactive(
         `${providerPrefix}_${id}`,
         // @ts-ignore
         apartmentRepository,
@@ -224,7 +224,7 @@ describe('CetiriZida', () => {
         },
       });
 
-      const isApartmentInactive = await provider.isApartmentInactive(
+      const isApartmentInactive = await provider.updateCurrentPriceAndReturnIsApartmentInactive(
         `${providerPrefix}_${id}`,
         // @ts-ignore
         apartmentRepository,
