@@ -8,7 +8,6 @@ import {
   apartmentStatusPublished,
   apartmentStatusReserved,
 } from '../apartment.constants';
-import { ApartmentRepository } from '../apartment.repository';
 import { AdvertiserType } from '../enums/advertiser-type.enum';
 import { CityExpertProvider } from './city-expert';
 
