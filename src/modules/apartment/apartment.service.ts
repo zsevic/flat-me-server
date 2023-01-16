@@ -173,6 +173,7 @@ export class ApartmentService {
 
   async getFoundApartmentList(
     filter: FoundApartmentListParamsDto,
+    withCurrentPrice?: boolean,
   ): Promise<CursorPaginatedResponse<Apartment>> {
     const subscription = await this.notificationSubscriptionRepository.findOne({
       where: {
@@ -196,6 +197,7 @@ export class ApartmentService {
       subscription.userId,
       filter,
       Subscription[user.subscription],
+      withCurrentPrice,
     );
   }
 
@@ -237,7 +239,11 @@ export class ApartmentService {
     try {
       const [providerName] = id.split('_');
       const provider = this.baseProvider.createProvider(providerName);
-      return provider.updateCurrentPriceAndReturnIsApartmentInactive(id, this.apartmentRepository, url);
+      return provider.updateCurrentPriceAndReturnIsApartmentInactive(
+        id,
+        this.apartmentRepository,
+        url,
+      );
     } catch (error) {
       this.logger.error(error);
       return false;

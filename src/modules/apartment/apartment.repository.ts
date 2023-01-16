@@ -178,6 +178,7 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
     userId: string,
     filter: FoundApartmentListParamsDto,
     userSubscription: Subscription,
+    withCurrentPrice?: boolean,
   ): Promise<CursorPaginatedResponse<Apartment>> {
     let queryBuilder = this.createQueryBuilder('apartment').innerJoin(
       'apartment.users',
@@ -203,6 +204,11 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
       queryBuilder = queryBuilder.where('apartment.createdAt < :createdAt', {
         createdAt: filterDate,
       });
+    }
+    if (withCurrentPrice) {
+      queryBuilder = queryBuilder.andWhere(
+        'apartment.currentPrice IS NOT NULL',
+      );
     }
 
     const apartments = await queryBuilder

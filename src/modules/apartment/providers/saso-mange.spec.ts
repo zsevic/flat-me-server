@@ -283,7 +283,10 @@ describe('SasoMange', () => {
         },
       };
       jsdom.JSDOM.mockReturnValue(dom);
-      const apartmentRepositorySpy = jest.spyOn(apartmentRepository, 'updateCurrentPrice');
+      const apartmentRepositorySpy = jest.spyOn(
+        apartmentRepository,
+        'updateCurrentPrice',
+      );
 
       const apartmentId = `${providerPrefix}_${id}`;
       const isApartmentInactive = await provider.updateCurrentPriceAndReturnIsApartmentInactive(

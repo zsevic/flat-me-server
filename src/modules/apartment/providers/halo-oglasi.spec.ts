@@ -191,9 +191,10 @@ describe('HaloOglasi', () => {
     it('should return undefined when url is missing', async () => {
       const provider = new HaloOglasiProvider();
 
-      const isApartmentInactive = await provider.updateCurrentPriceAndReturnIsApartmentInactive('id',
-      // @ts-ignore
-      apartmentRepository,
+      const isApartmentInactive = await provider.updateCurrentPriceAndReturnIsApartmentInactive(
+        'id',
+        // @ts-ignore
+        apartmentRepository,
       );
 
       expect(isApartmentInactive).toEqual(undefined);
@@ -305,7 +306,10 @@ describe('HaloOglasi', () => {
         apartmentRepository,
         url,
       );
-      const apartmentRepositorySpy = jest.spyOn(apartmentRepository, 'updateCurrentPrice');
+      const apartmentRepositorySpy = jest.spyOn(
+        apartmentRepository,
+        'updateCurrentPrice',
+      );
 
       expect(isApartmentInactive).toEqual(undefined);
       expect(axios.get).toHaveBeenCalledWith(url, {

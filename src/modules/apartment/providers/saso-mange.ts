@@ -218,7 +218,7 @@ export class SasoMangeProvider implements Provider {
         await repository.updateCurrentPrice(
           id,
           apartmentData.product.price.value,
-        );  
+        );
         return;
       }
     } catch (error) {

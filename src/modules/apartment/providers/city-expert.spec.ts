@@ -331,9 +331,12 @@ describe('CityExpert', () => {
           status: apartmentStatusPublished,
           price: currentPrice,
         },
-      });      
+      });
       const apartmentId = `${providerPrefix}_${id}`;
-      const apartmentRepositorySpy = jest.spyOn(apartmentRepository, 'updateCurrentPrice');
+      const apartmentRepositorySpy = jest.spyOn(
+        apartmentRepository,
+        'updateCurrentPrice',
+      );
 
       const isApartmentInactive = await provider.updateCurrentPriceAndReturnIsApartmentInactive(
         apartmentId,

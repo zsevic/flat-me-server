@@ -199,6 +199,7 @@ describe('ApartmentService', () => {
         subscription.userId,
         filter,
         user.subscription,
+        undefined,
       );
     });
   });
@@ -277,7 +278,10 @@ describe('ApartmentService', () => {
         .spyOn(baseProvider, 'createProvider')
         .mockReturnValue(cetiriZidaProvider);
       jest
-        .spyOn(cetiriZidaProvider, 'updateCurrentPriceAndReturnIsApartmentInactive')
+        .spyOn(
+          cetiriZidaProvider,
+          'updateCurrentPriceAndReturnIsApartmentInactive',
+        )
         .mockResolvedValue(false);
 
       const isApartmentInactive = await apartmentService.isApartmentInactive(
@@ -312,7 +316,10 @@ describe('ApartmentService', () => {
         .spyOn(baseProvider, 'createProvider')
         .mockReturnValue(cetiriZidaProvider);
       jest
-        .spyOn(cetiriZidaProvider, 'updateCurrentPriceAndReturnIsApartmentInactive')
+        .spyOn(
+          cetiriZidaProvider,
+          'updateCurrentPriceAndReturnIsApartmentInactive',
+        )
         .mockResolvedValue(true);
 
       const isApartmentInactive = await apartmentService.isApartmentInactive(

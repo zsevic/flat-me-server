@@ -26,6 +26,7 @@ export class ApartmentController {
   ): Promise<CursorPaginatedResponse<Apartment>> {
     return this.apartmentService.getFoundApartmentList(
       foundApartmentListParamsDto,
+      true,
     );
   }
 
