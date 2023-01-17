@@ -294,7 +294,6 @@ export class ApartmentService {
     filter: ApartmentListParamsDto,
   ): Promise<void> {
     try {
-      const hasNextPage = false;
       let apartmentListLength = 0;
       const cursorFilter = Object.assign({}, filter);
 

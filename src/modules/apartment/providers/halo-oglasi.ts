@@ -14,6 +14,7 @@ import {
 } from './utils';
 import {
   apartmentStatusExpired,
+  apartmentStatusNotValid,
   apartmentStatusPaused,
 } from '../apartment.constants';
 import { Apartment } from '../apartment.interface';
@@ -188,9 +189,11 @@ export class HaloOglasiProvider implements Provider {
       if (quidditaEnvironment && !quidditaEnvironment?.CurrentClassified)
         return true;
       if (
-        [apartmentStatusPaused, apartmentStatusExpired].includes(
-          quidditaEnvironment?.CurrentClassified?.StateId,
-        )
+        [
+          apartmentStatusPaused,
+          apartmentStatusNotValid,
+          apartmentStatusExpired,
+        ].includes(quidditaEnvironment?.CurrentClassified?.StateId)
       )
         return true;
       await repository.updateCurrentPrice(

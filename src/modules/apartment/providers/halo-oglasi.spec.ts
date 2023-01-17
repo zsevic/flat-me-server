@@ -6,6 +6,7 @@ import { RentOrSale } from 'modules/filter/filter.enums';
 import { HaloOglasiProvider } from './halo-oglasi';
 import {
   apartmentStatusExpired,
+  apartmentStatusNotValid,
   apartmentStatusPaused,
 } from '../apartment.constants';
 import { AdvertiserType } from '../enums/advertiser-type.enum';
@@ -331,6 +332,38 @@ describe('HaloOglasi', () => {
           QuidditaEnvironment: {
             CurrentClassified: {
               StateId: apartmentStatusPaused,
+            },
+          },
+        },
+      };
+      jsdom.JSDOM.mockReturnValue(dom);
+
+      const isApartmentInactive = await provider.updateCurrentPriceAndReturnIsApartmentInactive(
+        `${providerPrefix}_${id}`,
+        // @ts-ignore
+        apartmentRepository,
+        url,
+      );
+
+      expect(isApartmentInactive).toEqual(true);
+      expect(axios.get).toHaveBeenCalledWith(url, {
+        timeout: DEFAULT_TIMEOUT,
+      });
+    });
+
+    it('should return true when apartment ad is not valid', async () => {
+      const provider = new HaloOglasiProvider();
+      // @ts-ignore
+      axios.get.mockResolvedValue({
+        data: 'html',
+        request: { res: { responseUrl: url } },
+      });
+
+      const dom = {
+        window: {
+          QuidditaEnvironment: {
+            CurrentClassified: {
+              StateId: apartmentStatusNotValid,
             },
           },
         },

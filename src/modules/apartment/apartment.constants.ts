@@ -14,6 +14,7 @@ export const apartmentStatusNotAvailable = 'NOT-AVAILABLE';
 export const apartmentStatusPublished = 'PUBLISHED';
 export const apartmentStatusReserved = 'KAPARISANA';
 
+export const apartmentStatusNotValid = 105;
 export const apartmentStatusPaused = 111;
 export const apartmentStatusExpired = 112;
 
