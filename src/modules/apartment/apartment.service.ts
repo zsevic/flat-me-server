@@ -305,6 +305,7 @@ export class ApartmentService {
         } = await this.apartmentRepository.getCursorPaginatedApartmentList(
           cursorFilter,
         );
+        if (apartmentList.length === 0) break;
         const apartmentsIds = await Promise.all(
           apartmentList.map(apartment =>
             this.handleDeletingInactiveApartment(
@@ -319,7 +320,7 @@ export class ApartmentService {
         );
         cursorFilter.cursor = pageInfo.endCursor;
         apartmentListLength += activeApartmentsIds.length;
-      } while (hasNextPage && apartmentListLength < filter.limitPerPage);
+      } while (apartmentListLength < filter.limitPerPage);
     } catch (error) {
       this.logger.error(error);
     }
