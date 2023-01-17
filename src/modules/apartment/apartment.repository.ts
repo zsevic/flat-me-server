@@ -4,6 +4,7 @@ import {
   Between,
   EntityRepository,
   In,
+  IsNull,
   LessThan,
   MoreThan,
   Not,
@@ -41,6 +42,7 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
     filter: ApartmentListParamsDto,
     skippedApartments?: string[],
     dateFilter?: Date,
+    withCurrentPrice?: boolean,
   ) => {
     const floor =
       filter.floor?.reduce((acc: string[], current: string): string[] => {
@@ -64,6 +66,7 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
       ...(dateFilter && {
         createdAt: MoreThan(dateFilter),
       }),
+      ...(withCurrentPrice && { currentPrice: Not(IsNull()) }),
       ...(floor && { floor: Not(In(floor)) }),
       ...(filter.rentOrSale === 'rent' && {
         furnished: In(filter.furnished),
@@ -113,8 +116,9 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
 
   async getCursorPaginatedApartmentList(
     filter: ApartmentListParamsDto,
+    withCurrentPrice?: boolean,
   ): Promise<CursorPaginatedResponse<Apartment>> {
-    const query = this.createQueryForApartmentList(filter);
+    const query = this.createQueryForApartmentList(filter, undefined, undefined, withCurrentPrice);
 
     const apartments = await this.find({
       where: query,
@@ -178,7 +182,6 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
     userId: string,
     filter: FoundApartmentListParamsDto,
     userSubscription: Subscription,
-    withCurrentPrice?: boolean,
   ): Promise<CursorPaginatedResponse<Apartment>> {
     let queryBuilder = this.createQueryBuilder('apartment').innerJoin(
       'apartment.users',
@@ -204,11 +207,6 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
       queryBuilder = queryBuilder.where('apartment.createdAt < :createdAt', {
         createdAt: filterDate,
       });
-    }
-    if (withCurrentPrice) {
-      queryBuilder = queryBuilder.andWhere(
-        'apartment.currentPrice IS NOT NULL',
-      );
     }
 
     const apartments = await queryBuilder

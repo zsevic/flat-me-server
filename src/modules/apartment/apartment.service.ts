@@ -173,7 +173,6 @@ export class ApartmentService {
 
   async getFoundApartmentList(
     filter: FoundApartmentListParamsDto,
-    withCurrentPrice?: boolean,
   ): Promise<CursorPaginatedResponse<Apartment>> {
     const subscription = await this.notificationSubscriptionRepository.findOne({
       where: {
@@ -197,17 +196,18 @@ export class ApartmentService {
       subscription.userId,
       filter,
       Subscription[user.subscription],
-      withCurrentPrice,
     );
   }
 
   async getValidApartmentList(
     apartmentListParamsDto: ApartmentListParamsDto,
+    withCurrentPrice?: boolean,
   ): Promise<CursorPaginatedResponse<Apartment>> {
     await this.validateApartmentListFromDatabase(apartmentListParamsDto);
 
     return this.apartmentRepository.getCursorPaginatedApartmentList(
       apartmentListParamsDto,
+      withCurrentPrice,
     );
   }
 
