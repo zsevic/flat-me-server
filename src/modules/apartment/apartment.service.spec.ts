@@ -199,7 +199,6 @@ describe('ApartmentService', () => {
         subscription.userId,
         filter,
         user.subscription,
-        undefined,
       );
     });
   });
