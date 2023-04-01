@@ -1,5 +1,4 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
-import { SkipThrottle } from '@nestjs/throttler';
 import { CursorPaginatedResponse } from 'modules/pagination/pagination.interfaces';
 import { Apartment, ApartmentStatus } from './apartment.interface';
 import { ApartmentService } from './apartment.service';
@@ -11,7 +10,6 @@ import { FoundApartmentListParamsDto } from './dto/found-apartment-list-params.d
 export class ApartmentController {
   constructor(private readonly apartmentService: ApartmentService) {}
 
-  @SkipThrottle()
   @Get('apartments')
   async getApartmentList(
     @Query() apartmentListParamsDto: ApartmentListParamsDto,
@@ -19,7 +17,6 @@ export class ApartmentController {
     return this.apartmentService.getValidApartmentList(apartmentListParamsDto, true);
   }
 
-  @SkipThrottle()
   @Get('found-apartments')
   async getFoundApartmentList(
     @Query() foundApartmentListParamsDto: FoundApartmentListParamsDto,
@@ -29,7 +26,6 @@ export class ApartmentController {
     );
   }
 
-  @SkipThrottle()
   @Get('apartments/:id')
   async validateApartment(
     @Param() params: ApartmentStatusDto,
