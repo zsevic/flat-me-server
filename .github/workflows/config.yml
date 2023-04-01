@@ -11,7 +11,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: node:16.10.0-alpine3.14
+    container: node:14.21.3-alpine3.16
 
     strategy:
       matrix:
