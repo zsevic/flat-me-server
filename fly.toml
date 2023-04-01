@@ -1,6 +1,6 @@
-# fly.toml file generated for flat-me on 2023-02-25T12:52:14+01:00
+# fly.toml file generated for flatme on 2023-04-01T17:26:49+02:00
 
-app = "flat-me"
+app = "flatme"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
