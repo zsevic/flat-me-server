@@ -29,6 +29,8 @@ jobs:
           - redis
         redis-port:
           - 6379
+        node-version:
+          - 14
 
     services:
       postgres:
@@ -56,10 +58,10 @@ jobs:
 
     steps:
       - name: Github checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
 
