@@ -27,11 +27,6 @@ export class PostgresConfigService implements TypeOrmOptionsFactory {
       ],
       migrationsTableName: 'migrations',
       migrationsRun: true,
-      ...(isEnvironment('production') && {
-        ssl: {
-          rejectUnauthorized: false,
-        },
-      }),
       synchronize: false,
     };
   }
