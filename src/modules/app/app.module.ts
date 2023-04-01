@@ -16,7 +16,6 @@ import { isEnvironment } from 'common/utils';
 import { ApartmentModule } from 'modules/apartment/apartment.module';
 import { FeedbackModule } from 'modules/feedback/feedback.module';
 import { FilterModule } from 'modules/filter/filter.module';
-import { HealthCheckModule } from 'modules/health-check/health-check.module';
 import { SubscriptionModule } from 'modules/subscription/subscription.module';
 import { TasksModule } from 'modules/tasks/tasks.module';
 
@@ -66,7 +65,6 @@ import { TasksModule } from 'modules/tasks/tasks.module';
       useClass: PostgresConfigService,
       inject: [PostgresConfigService],
     }),
-    HealthCheckModule,
     ScheduleModule.forRoot(),
     ApartmentModule,
     FeedbackModule,
