@@ -14,7 +14,10 @@ export class ApartmentController {
   async getApartmentList(
     @Query() apartmentListParamsDto: ApartmentListParamsDto,
   ): Promise<CursorPaginatedResponse<Apartment>> {
-    return this.apartmentService.getValidApartmentList(apartmentListParamsDto, true);
+    return this.apartmentService.getValidApartmentList(
+      apartmentListParamsDto,
+      true,
+    );
   }
 
   @Get('found-apartments')

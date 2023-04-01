@@ -101,9 +101,9 @@ export class AppModule implements OnApplicationShutdown {
 
     this.stopCronJobs();
     this.shutdownListener$.next();
-    await Promise.all([
-      this.closeDatabaseConnection(),
-    ]).catch(error => this.logger.error(error.message));
+    await Promise.all([this.closeDatabaseConnection()]).catch(error =>
+      this.logger.error(error.message),
+    );
   }
 
   stopCronJobs(): void {

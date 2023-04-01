@@ -118,7 +118,12 @@ export class ApartmentRepository extends Repository<ApartmentEntity> {
     filter: ApartmentListParamsDto,
     withCurrentPrice?: boolean,
   ): Promise<CursorPaginatedResponse<Apartment>> {
-    const query = this.createQueryForApartmentList(filter, undefined, undefined, withCurrentPrice);
+    const query = this.createQueryForApartmentList(
+      filter,
+      undefined,
+      undefined,
+      withCurrentPrice,
+    );
 
     const apartments = await this.find({
       where: query,
