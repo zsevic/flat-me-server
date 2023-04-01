@@ -5,6 +5,9 @@ on:
     branches:
       - master
 
+env:
+  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -78,3 +81,9 @@ jobs:
           EMAIL_USERNAME: ${{ secrets.EMAIL_USERNAME }}
 
       # - run: npm audit --audit-level=critical
+
+      - name: Setup Fly.io config
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Deploy to Fly.io
+        run: flyctl deploy --remote-only --no-cache
