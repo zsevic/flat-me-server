@@ -28,7 +28,6 @@
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js --config src/common/config/database/ormconfig.ts"
   },
   "dependencies": {
-    "@liaoliaots/nestjs-redis": "3.0.0",
     "@nestjs-modules/mailer": "1.7.1",
     "@nestjs/cli": "8.2.1",
     "@nestjs/common": "8.0.6",
@@ -52,7 +51,6 @@
     "handlebars": "4.7.7",
     "helmet": "4.6.0",
     "i18n": "0.13.3",
-    "ioredis": "4.27.9",
     "joi": "17.4.2",
     "jsdom": "19.0.0",
     "latinize": "0.5.0",
@@ -79,7 +77,6 @@
     "@types/eslint": "8.37.0",
     "@types/estree": "1.0.0",
     "@types/express": "4.17.12",
-    "@types/ioredis": "4.27.2",
     "@types/jest": "27.0.1",
     "@types/node": "17.0.25",
     "@types/supertest": "2.0.11",

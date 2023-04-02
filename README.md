@@ -50,4 +50,4 @@ API documentation is generated using [@nestjs/swagger](https://www.npmjs.com/pac
 
 ### Technologies used
 
-- Node.js, TypeScript, NestJS, TypeORM, Redis
+- Node.js, TypeScript, NestJS, TypeORM

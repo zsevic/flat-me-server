@@ -25,10 +25,6 @@ jobs:
           - postgres
         database-port:
           - 5432
-        redis-host:
-          - redis
-        redis-port:
-          - 6379
         node-version:
           - 14
 
@@ -43,15 +39,6 @@ jobs:
           - ${{ matrix.database-port }}:${{ matrix.database-port }}
         # Set health checks to wait until postgres has started
         options: --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-      redis:
-        image: redis
-        # Set health checks to wait until redis has started
-        options: >-
-          --health-cmd "redis-cli ping"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -76,7 +63,6 @@ jobs:
       - run: npm run test:e2e
         env:
           DATABASE_URL: postgres://${{ matrix.database-user }}:${{ matrix.database-password }}@${{ matrix.database-host }}:${{ matrix.database-port }}/${{ matrix.database-name }}
-          UPSTASH_REDIS_URL: redis://${{ matrix.redis-host }}:${{ matrix.redis-port }}
           EMAIL_HOST: smtp.mailtrap.io
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
           EMAIL_PORT: 2525

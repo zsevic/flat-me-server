@@ -46,9 +46,6 @@ import { TasksModule } from 'modules/tasks/tasks.module';
             .default('development')
             .required(),
           PORT: Joi.number().required(),
-          UPSTASH_REDIS_URL: Joi.string()
-            .uri()
-            .required(),
           SENDGRID_API_KEY: Joi.string().required(),
           SENDGRID_MAILING_ID: Joi.string().required(),
           SENTRY_DSN: Joi.string().required(),
