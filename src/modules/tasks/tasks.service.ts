@@ -37,9 +37,9 @@ export class TasksService {
     return process.env?.NODE_APP_INSTANCE === '0';
   }
 
-  @Cron(CronExpression.EVERY_10_MINUTES, {
-    name: SAVING_APARTMENT_LIST_FROM_PROVIDERS_CRON_JOB,
-  })
+  // @Cron(CronExpression.EVERY_10_MINUTES, {
+  //   name: SAVING_APARTMENT_LIST_FROM_PROVIDERS_CRON_JOB,
+  // })
   async handleSavingApartmentListFromProviders(): Promise<void> {
     if (!this.shouldRunCronJob()) return;
 
