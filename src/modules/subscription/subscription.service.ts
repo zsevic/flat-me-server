@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  HttpStatus,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -65,16 +66,30 @@ export class SubscriptionService {
       );
       return;
     }
-    const response = await this.sendPushNotification(
-      subscription,
-      filter.rentOrSale,
-      newApartmentsLength,
-    );
-    if (response.data?.name) {
-      this.logger.log(
-        `Push notification is successfully sent to user ${userId}`,
+    try {
+      const response = await this.sendPushNotification(
+        subscription,
+        filter.rentOrSale,
+        newApartmentsLength,
       );
-      return true;
+      if (response.data?.name) {
+        this.logger.log(
+          `Push notification is successfully sent to user ${userId}`,
+        );
+        return true;
+      }
+    } catch (error) {
+      if (error?.response?.status === HttpStatus.NOT_FOUND) {
+        this.logger.warn(
+          `Push token is not valid anymore, deleting ${subscription.token}`,
+        );
+        await this.notificationSubscriptionRepository.delete({
+          token: subscription.token,
+        });
+        return;
+      }
+
+      throw error;
     }
   }
 
