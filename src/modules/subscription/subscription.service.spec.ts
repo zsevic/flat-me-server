@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  HttpStatus,
   UnauthorizedException,
   UnprocessableEntityException,
 } from '@nestjs/common';
@@ -27,6 +28,7 @@ const filterRepository = {
 };
 
 const notificationSubscriptionRepository = {
+  delete: jest.fn(),
   findOne: jest.fn(),
   saveSubscription: jest.fn(),
   update: jest.fn(),
@@ -95,6 +97,40 @@ describe('SubscriptionService', () => {
           isVerified: false,
         },
       );
+    });
+
+    it('should remove push token when it is expired', async () => {
+      const userId = 'userid';
+      const filter = {
+        userId,
+        rentOrSale: 'rent',
+        municipalities: ['Palilula'],
+        structures: [1, 1.5],
+        furnished: ['semi-furnished'],
+        minPrice: 200,
+        maxPrice: 300,
+        isActive: true,
+        isVerified: true,
+      };
+      const subscription = {
+        userId,
+        token: 'token',
+        isActive: true,
+        isValid: true,
+      };
+      jest
+        .spyOn(notificationSubscriptionRepository, 'findOne')
+        .mockResolvedValue(subscription);
+      const deleteSpy = jest.spyOn(notificationSubscriptionRepository, 'delete');
+      jest.spyOn(subscriptionService, 'sendPushNotification').mockRejectedValue({
+        response: {
+          status: HttpStatus.NOT_FOUND,
+        },
+      });
+
+      await subscriptionService.sendNotification(filter, 1);
+
+      expect(deleteSpy).toHaveBeenCalled();
     });
 
     it('should send notification', async () => {
