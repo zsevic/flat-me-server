@@ -4,7 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Apartment } from 'modules/apartment/apartment.interface';
 import { localizeApartment } from 'modules/apartment/apartment.utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
-import { DEACTIVATION_FEEDBACK_EMAIL_ADDRESS } from './mail.constants';
+import { EMAIL_ADDRESS } from './mail.constants';
 import { MailService } from './mail.service';
 
 const configService = {
@@ -17,7 +17,7 @@ const mailerService = {
 
 describe('MailService', () => {
   let mailService: MailService;
-  const senderEmail = 'info@flatme.com';
+  const senderEmail = EMAIL_ADDRESS;
   const email = 'example@example.com';
   const mailInfo = {
     accepted: [email],
@@ -76,7 +76,7 @@ describe('MailService', () => {
       await mailService.sendMailWithFeedback(feedback);
 
       expect(mailerService.sendMail).toHaveBeenCalledWith({
-        to: DEACTIVATION_FEEDBACK_EMAIL_ADDRESS,
+        to: EMAIL_ADDRESS,
         subject: 'Deaktiviran filter',
         html: feedback,
       });

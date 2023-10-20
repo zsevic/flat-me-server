@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { MailerModule, MailerOptions } from '@nestjs-modules/mailer';
 import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
+import { EMAIL_ADDRESS } from './mail.constants';
 import { MailService } from './mail.service';
 
 @Module({
@@ -27,7 +28,7 @@ import { MailService } from './mail.service';
           defaults: {
             from: {
               name: 'FlatMe',
-              address: 'info@flat-me.com',
+              address: EMAIL_ADDRESS,
             },
           },
           template: {

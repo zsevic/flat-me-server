@@ -5,7 +5,7 @@ import { Apartment } from 'modules/apartment/apartment.interface';
 import { localizeApartment } from 'modules/apartment/apartment.utils';
 import { FilterDto } from 'modules/filter/dto/filter.dto';
 import { generateNotificationText } from 'modules/subscription/notification-subscription.utils';
-import { DEACTIVATION_FEEDBACK_EMAIL_ADDRESS } from './mail.constants';
+import { EMAIL_ADDRESS } from './mail.constants';
 
 @Injectable()
 export class MailService {
@@ -40,7 +40,7 @@ export class MailService {
   async sendMailWithFeedback(feedback: string): Promise<void> {
     this.logger.log('Sending mail with deactivation feedback...');
     await this.mailerService.sendMail({
-      to: DEACTIVATION_FEEDBACK_EMAIL_ADDRESS,
+      to: EMAIL_ADDRESS,
       subject: 'Deaktiviran filter',
       html: feedback,
     });
