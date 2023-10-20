@@ -121,12 +121,17 @@ describe('SubscriptionService', () => {
       jest
         .spyOn(notificationSubscriptionRepository, 'findOne')
         .mockResolvedValue(subscription);
-      const deleteSpy = jest.spyOn(notificationSubscriptionRepository, 'delete');
-      jest.spyOn(subscriptionService, 'sendPushNotification').mockRejectedValue({
-        response: {
-          status: HttpStatus.NOT_FOUND,
-        },
-      });
+      const deleteSpy = jest.spyOn(
+        notificationSubscriptionRepository,
+        'delete',
+      );
+      jest
+        .spyOn(subscriptionService, 'sendPushNotification')
+        .mockRejectedValue({
+          response: {
+            status: HttpStatus.NOT_FOUND,
+          },
+        });
 
       await subscriptionService.sendNotification(filter, 1);
 
