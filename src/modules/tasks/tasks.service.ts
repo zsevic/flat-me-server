@@ -129,28 +129,22 @@ export class TasksService {
         firstApartment.price - secondApartment.price,
     );
 
-    if (userEmail) {
-      const filterDeactivationUrl = await this.filterService.createTokenAndDeactivationUrl(
-        {
-          filterId: filter.id,
-          userId: filter.userId,
-          type: TokenType.DEACTIVATION,
-        },
-        FILTER_DEACTIVATION_TOKEN_EXPIRATION_HOURS,
-      );
-      await this.mailService.sendMailWithNewApartments(
-        userEmail,
-        newApartments,
-        filter as FilterDto,
-        filterDeactivationUrl,
-      );
-    } else {
-      const isNotificationSent = await this.subscriptionService.sendNotification(
-        filter,
-        newApartments.length,
-      );
-      if (!isNotificationSent) return;
-    }
+    if (!userEmail) return;
+
+    const filterDeactivationUrl = await this.filterService.createTokenAndDeactivationUrl(
+      {
+        filterId: filter.id,
+        userId: filter.userId,
+        type: TokenType.DEACTIVATION,
+      },
+      FILTER_DEACTIVATION_TOKEN_EXPIRATION_HOURS,
+    );
+    await this.mailService.sendMailWithNewApartments(
+      userEmail,
+      newApartments,
+      filter as FilterDto,
+      filterDeactivationUrl,
+    );
 
     await this.userService.insertReceivedApartments(
       filter.userId,
